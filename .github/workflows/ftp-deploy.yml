@@ -23,6 +23,7 @@ jobs:
           # Lưu ý tuỳ thuộc bạn muốn chạy ở domain chính hay subdomain.
           server-dir: /domains/onetask.1pixel.vn/
           security: strict
+          port: 21
           exclude: |
             **/.git*
             **/.git*/**
