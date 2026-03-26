@@ -400,7 +400,23 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Pagination -->
+                <div class="logs-pagination-row">
+                    <span class="logs-count">Hiển thị: 1 - 7 / 42 hostings</span>
+                    <div class="logs-pagination">
+                        <button class="pg-btn">Trước</button>
+                        <button class="pg-btn active">1</button>
+                        <button class="pg-btn">2</button>
+                        <button class="pg-btn">3</button>
+                        <button class="pg-btn">4</button>
+                        <button class="pg-btn">5</button>
+                        <button class="pg-btn">Sau</button>
+                    </div>
+                </div>
+
             </div> <!-- end content-body -->
+
         </main>
     </div>
 
