@@ -420,6 +420,20 @@
         </main>
     </div>
 
+<!-- Shared Row Action Dropdown -->
+<div class="row-action-menu" id="rowActionMenu">
+    <button class="ram-item ram-view">
+        <i class="ph ph-eye"></i> Xem Chi Tiết
+    </button>
+    <button class="ram-item ram-edit">
+        <i class="ph ph-pencil-simple"></i> Chỉnh Sửa
+    </button>
+    <div class="ram-divider"></div>
+    <button class="ram-item ram-delete">
+        <i class="ph ph-trash"></i> Xóa
+    </button>
+</div>
+
 <script>
 function toggleHostingFilter() {
     document.getElementById('hostingFilterDropdown').classList.toggle('open');
@@ -436,6 +450,33 @@ function setHostingFilter(val, label, el) {
     });
 }
 document.addEventListener('click', function(e) {
+    const menu = document.getElementById('rowActionMenu');
+
+    // Toggle row action menu
+    if (e.target.closest('.btn-action')) {
+        const btn = e.target.closest('.btn-action');
+        const isOpen = menu.classList.contains('open') && menu._trigger === btn;
+        menu.classList.remove('open');
+        if (!isOpen) {
+            const rect = btn.getBoundingClientRect();
+            menu.style.top  = (rect.bottom + window.scrollY + 6) + 'px';
+            menu.style.left = (rect.right  + window.scrollX - menu.offsetWidth - 4) + 'px';
+            // Adjust if overflows right
+            const menuRight = rect.right + window.scrollX;
+            menu.style.left = Math.max(4, menuRight - 160) + 'px';
+            menu.classList.add('open');
+            menu._trigger = btn;
+        }
+        e.stopPropagation();
+        return;
+    }
+
+    // Close row action menu on outside click
+    if (!e.target.closest('#rowActionMenu')) {
+        menu.classList.remove('open');
+    }
+
+    // Close filter dropdown on outside click
     if (!e.target.closest('.pj-filter-wrapper')) {
         const dd = document.getElementById('hostingFilterDropdown');
         if (dd) dd.classList.remove('open');
