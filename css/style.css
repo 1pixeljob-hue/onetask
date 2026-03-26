@@ -731,6 +731,28 @@ body {
     border: 1px solid #a7f3d0;
 }
 
+.status-badge.doing {
+    background-color: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+
+.status-badge.testing {
+    background-color: #fff7ed;
+    color: #d97706;
+    border: 1px solid #fde68a;
+}
+
+.val-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f9b8e;
+    white-space: nowrap;
+}
+
 .btn-action {
     background-color: var(--bg-color);
     border: 1px solid var(--border-color);
