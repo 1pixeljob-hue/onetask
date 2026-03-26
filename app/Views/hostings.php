@@ -479,6 +479,7 @@ document.addEventListener('click', function(e) {
         menu.classList.remove('open');
         if (menu._trigger) {
             const tr = menu._trigger.closest('tr');
+            currentRowToEdit = tr; // Store reference for Detail Modal actions
             
             // Extract data from table row
             const name = tr.querySelector('.cell-main').textContent.trim();
@@ -526,6 +527,18 @@ document.addEventListener('click', function(e) {
         if (menu._trigger) {
             const tr = menu._trigger.closest('tr');
             openEditModal(tr);
+        }
+        return;
+    }
+
+    // Click on "Xóa"
+    if (e.target.closest('.ram-delete')) {
+        menu.classList.remove('open');
+        if (menu._trigger) {
+            const tr = menu._trigger.closest('tr');
+            if (confirm('Bạn có chắc chắn muốn xóa hosting này?')) {
+                tr.remove();
+            }
         }
         return;
     }
@@ -648,8 +661,8 @@ document.addEventListener('click', function(e) {
             </div>
         </div>
         <div class="detail-footer">
-            <button class="btn-edit-full"><i class="ph ph-pencil-simple"></i> Chỉnh Sửa</button>
-            <button class="btn-delete-outline"><i class="ph ph-trash"></i></button>
+            <button class="btn-edit-full" onclick="editFromDetail()"><i class="ph ph-pencil-simple"></i> Chỉnh Sửa</button>
+            <button class="btn-delete-outline" onclick="deleteFromDetail()"><i class="ph ph-trash"></i></button>
         </div>
     </div>
 </div>
@@ -702,6 +715,18 @@ function closeHostingModalBtn() {
 
     document.getElementById('hostingModal').classList.remove('active');
     document.body.style.overflow = '';
+}
+
+function editFromDetail() {
+    closeDetailModalBtn();
+    if (currentRowToEdit) openEditModal(currentRowToEdit);
+}
+
+function deleteFromDetail() {
+    if (confirm('Bạn có chắc chắn muốn xóa hosting này?')) {
+        if (currentRowToEdit) currentRowToEdit.remove();
+        closeDetailModalBtn();
+    }
 }
 function closeHostingModal(e) {
     if (e.target === document.getElementById('hostingModal')) closeHostingModalBtn();
