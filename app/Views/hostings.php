@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -91,23 +91,31 @@
 
             <div class="content-body">
                 <!-- Toolbar -->
-                <div class="toolbar">
-                    <div class="search-box">
-                        <i class="ph ph-magnifying-glass"></i>
-                        <input type="text" placeholder="Tìm kiếm theo tên, domain, nhà cung cấp...">
+                <div class="pj-toolbar">
+                    <div class="pj-search-wrap">
+                        <i class="ph ph-magnifying-glass pj-search-icon"></i>
+                        <input type="text" class="pj-search-input" placeholder="Tìm kiếm theo tên, domain, nhà cung cấp...">
                     </div>
-                    <div class="toolbar-actions">
-                        <select class="status-select">
-                            <option value="">Tất cả trạng thái</option>
-                            <option value="active">Hoạt động</option>
-                            <option value="expiring">Sắp hết hạn</option>
-                        </select>
-                        <button class="btn-primary btn-add">
+                    <div class="pj-toolbar-right">
+                        <div class="pj-filter-wrapper">
+                            <button class="pj-filter-btn" onclick="toggleHostingFilter()">
+                                <i class="ph ph-funnel-simple"></i>
+                                <span id="hostingFilterLabel">Lọc bởi trạng thái</span>
+                                <i class="ph ph-caret-down"></i>
+                            </button>
+                            <div class="pj-dropdown" id="hostingFilterDropdown">
+                                <div class="pj-dropdown-item active" onclick="setHostingFilter('', 'Lọc bởi trạng thái', this)">Tất cả</div>
+                                <div class="pj-dropdown-item" onclick="setHostingFilter('success', 'Hoạt động', this)">Hoạt động</div>
+                                <div class="pj-dropdown-item" onclick="setHostingFilter('warning', 'Sắp hết hạn', this)">Sắp hết hạn</div>
+                            </div>
+                        </div>
+                        <button class="pj-add-btn">
                             <i class="ph ph-plus"></i>
                             Thêm Mới
                         </button>
                     </div>
                 </div>
+
 
                 <!-- Data Table -->
                 <div class="table-container">
@@ -392,8 +400,31 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> <!-- end content-body -->
         </main>
     </div>
+
+<script>
+function toggleHostingFilter() {
+    document.getElementById('hostingFilterDropdown').classList.toggle('open');
+}
+function setHostingFilter(val, label, el) {
+    document.getElementById('hostingFilterLabel').textContent = label;
+    document.querySelectorAll('#hostingFilterDropdown .pj-dropdown-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('hostingFilterDropdown').classList.remove('open');
+    document.querySelectorAll('.data-table tbody tr').forEach(row => {
+        if (!val) { row.style.display = ''; return; }
+        const badge = row.querySelector('.status-badge');
+        row.style.display = (badge && badge.classList.contains(val)) ? '' : 'none';
+    });
+}
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.pj-filter-wrapper')) {
+        const dd = document.getElementById('hostingFilterDropdown');
+        if (dd) dd.classList.remove('open');
+    }
+});
+</script>
 </body>
 </html>
