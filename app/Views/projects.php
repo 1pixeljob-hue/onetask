@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -91,28 +91,34 @@
 
             <div class="content-body">
                 
-                <div class="table-container">
                     <!-- Toolbar -->
-                    <div class="table-toolbar projects-toolbar">
-                        <div class="search-box">
-                            <i class="ph ph-magnifying-glass"></i>
-                            <input type="text" placeholder="Tìm kiếm theo tên, khách hàng, mô tả...">
+                    <div class="pj-toolbar">
+                        <div class="pj-search-wrap">
+                            <i class="ph ph-magnifying-glass pj-search-icon"></i>
+                            <input type="text" class="pj-search-input" placeholder="Tìm kiếm theo tên, khách hàng, mô tả...">
                         </div>
-                        <div class="toolbar-actions">
-                            <select class="status-select">
-                                <option value="">Tất cả trạng thái</option>
-                                <option value="doing">Đang Thực Hiện</option>
-                                <option value="testing">Chờ Nghiệm Thu</option>
-                                <option value="done">Hoàn Thành</option>
-                            </select>
-                            <button class="btn-primary btn-add">
+                        <div class="pj-toolbar-right">
+                            <div class="pj-filter-wrapper">
+                                <button class="pj-filter-btn" id="statusFilterBtn" onclick="toggleFilterDropdown()">
+                                    <i class="ph ph-funnel-simple"></i>
+                                    <span id="filterLabel">Lọc bởi trạng thái</span>
+                                    <i class="ph ph-caret-down"></i>
+                                </button>
+                                <div class="pj-dropdown" id="filterDropdown">
+                                    <div class="pj-dropdown-item active" onclick="setFilter('', 'Lọc bởi trạng thái', this)">Tất cả</div>
+                                    <div class="pj-dropdown-item" onclick="setFilter('doing', 'Đang Thực Hiện', this)">Đang Thực Hiện</div>
+                                    <div class="pj-dropdown-item" onclick="setFilter('testing', 'Chờ Nghiệm Thu', this)">Chờ Nghiệm Thu</div>
+                                    <div class="pj-dropdown-item" onclick="setFilter('done', 'Hoàn Thành', this)">Hoàn Thành</div>
+                                </div>
+                            </div>
+                            <button class="pj-add-btn">
                                 <i class="ph ph-plus"></i>
                                 Thêm Mới
                             </button>
                         </div>
                     </div>
 
-                    <div class="table-wrapper mt-24">
+                    <div class="table-wrapper pj-table-wrap">
                         <table class="data-table projects-table">
                             <thead>
                                 <tr>
@@ -309,10 +315,38 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-
-            </div>
+                </div> <!-- end content-body -->
         </main>
     </div>
+
+<script>
+function toggleFilterDropdown() {
+    const dd = document.getElementById('filterDropdown');
+    dd.classList.toggle('open');
+}
+function setFilter(val, label, el) {
+    document.getElementById('filterLabel').textContent = label;
+    document.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('filterDropdown').classList.remove('open');
+    filterTable(val);
+}
+function filterTable(status) {
+    document.querySelectorAll('.projects-table tbody tr').forEach(row => {
+        if (!status) { row.style.display = ''; return; }
+        const badge = row.querySelector('.status-badge-outline');
+        if (badge && badge.classList.contains('st-' + status)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.pj-filter-wrapper')) {
+        document.getElementById('filterDropdown').classList.remove('open');
+    }
+});
+</script>
 </body>
 </html>
