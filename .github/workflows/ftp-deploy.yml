@@ -20,9 +20,9 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           # Path tới thư mục chứa source code trên hosting (Ví dụ: iNet Hostings) 
-          # Lưu ý: Do FTP User đã trỏ sẵn vào /domains/onetask.1pixel.vn/ 
-          # Nên thư mục web root chỉ là public_html/ (đường dẫn tương đối)
-          server-dir: public_html/
+          # Lưu ý: Do FTP User đã trỏ sẵn vào /home/ndoagugnhosting/domains/onetask.1pixel.vn/
+          # Nên server-dir để ./ để upload trực tiếp vào thư mục root này.
+          server-dir: ./
           protocol: ftps
           port: 21
           security: loose
