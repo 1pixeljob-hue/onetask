@@ -2607,6 +2607,8 @@ body {
     transition: all 0.2s;
 }
 .modal-btn-submit:hover { background: #0b8a7e; }
+.toggle-edit-blue { background: #2563eb; }
+.toggle-edit-blue:hover { background: #1d4ed8; }
 
 /* ===== Row Action Menu ===== */
 .row-action-menu {

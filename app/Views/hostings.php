@@ -435,6 +435,9 @@
 </div>
 
 <script>
+let currentActionMode = 'add';
+let currentRowToEdit = null;
+
 function toggleHostingFilter() {
     document.getElementById('hostingFilterDropdown').classList.toggle('open');
 }
@@ -471,7 +474,7 @@ document.addEventListener('click', function(e) {
         return;
     }
 
-    // Click on "Xem Chi Tiết" in Row Action Menu
+    // Click on "Xem Chi Tiết"
     if (e.target.closest('.ram-view')) {
         menu.classList.remove('open');
         if (menu._trigger) {
@@ -492,7 +495,7 @@ document.addEventListener('click', function(e) {
             sBadge.className = statusBadgeEl.className; // copy warning/success/etc
             sBadge.innerHTML = statusBadgeEl.innerHTML;
 
-            // Generate mock registration date (1 year before expDate roughly)
+            // Generate mock registration date
             let regDateText = "Đang cập nhật";
             const expMatch = expDate.match(/(\d{2})\/(\d{2})\/(\d{4})/);
             if (expMatch) {
@@ -511,9 +514,18 @@ document.addEventListener('click', function(e) {
             const daysLeftContainer = document.getElementById('dModalDaysLeft');
             daysLeftContainer.innerHTML = daysLeft.includes('Còn') ? `<i class="ph ph-clock"></i> ${daysLeft}` : daysLeft;
             
-            // Open modal
             document.getElementById('detailModal').classList.add('active');
             document.body.style.overflow = 'hidden';
+        }
+        return;
+    }
+
+    // Click on "Chỉnh Sửa"
+    if (e.target.closest('.ram-edit')) {
+        menu.classList.remove('open');
+        if (menu._trigger) {
+            const tr = menu._trigger.closest('tr');
+            openEditModal(tr);
         }
         return;
     }
@@ -535,7 +547,7 @@ document.addEventListener('click', function(e) {
 <div class="modal-overlay" id="hostingModal" onclick="closeHostingModal(event)">
     <div class="modal-box">
         <div class="modal-header">
-            <h3 class="modal-title"><i class="ph ph-hard-drives"></i> Thêm Hosting Mới</h3>
+            <h3 class="modal-title" id="modalTitle"><i class="ph ph-hard-drives"></i> Thêm Hosting Mới</h3>
             <button class="modal-close" onclick="closeHostingModalBtn()"><i class="ph ph-x"></i></button>
         </div>
         <div class="modal-body">
@@ -575,7 +587,7 @@ document.addEventListener('click', function(e) {
         </div>
         <div class="modal-footer">
             <button class="modal-btn-cancel" onclick="closeHostingModalBtn()">Hủy</button>
-            <button class="modal-btn-submit" onclick="addHosting()"><i class="ph ph-plus"></i> Thêm Mới</button>
+            <button class="modal-btn-submit" id="modalSubmitBtn" onclick="submitHostingForm()"><i class="ph ph-plus"></i> Thêm Mới</button>
         </div>
     </div>
 </div>
@@ -644,10 +656,50 @@ document.addEventListener('click', function(e) {
 
 <script>
 function openHostingModal() {
+    currentActionMode = 'add';
+    document.getElementById('modalTitle').innerHTML = '<i class="ph ph-hard-drives"></i> Thêm Hosting Mới';
+    const btn = document.getElementById('modalSubmitBtn');
+    btn.innerHTML = '<i class="ph ph-plus"></i> Thêm Mới';
+    btn.className = 'modal-btn-submit';
+    resetModalForm();
     document.getElementById('hostingModal').classList.add('active');
     document.body.style.overflow = 'hidden';
 }
+
+function openEditModal(tr) {
+    currentActionMode = 'edit';
+    currentRowToEdit = tr;
+    
+    document.getElementById('modalTitle').innerHTML = 'Chỉnh Sửa Hosting';
+    const btn = document.getElementById('modalSubmitBtn');
+    btn.innerHTML = 'Cập Nhật';
+    btn.className = 'modal-btn-submit toggle-edit-blue';
+    
+    const name = tr.querySelector('.cell-main').textContent.trim();
+    const domain = tr.querySelector('.domain-info span').textContent.trim();
+    const provider = tr.querySelector('.provider-info span').textContent.trim();
+    let expDate = tr.querySelector('.date-info').textContent.trim();
+    
+    // Date conversions
+    const expMatch = expDate.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+    let regDate = '';
+    if (expMatch) {
+       expDate = `${expMatch[3]}-${expMatch[2]}-${expMatch[1]}`;
+       regDate = `${parseInt(expMatch[3])-1}-${expMatch[2]}-${expMatch[1]}`;
+    }
+    
+    document.getElementById('mHostingName').value = name;
+    document.getElementById('mDomain').value = domain.replace(/^https?:\/\//, '');
+    document.getElementById('mProvider').value = provider;
+    document.getElementById('mExpDate').value = expDate;
+    document.getElementById('mRegDate').value = regDate;
+    
+    document.getElementById('hostingModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
 function closeHostingModalBtn() {
+
     document.getElementById('hostingModal').classList.remove('active');
     document.body.style.overflow = '';
 }
@@ -675,11 +727,18 @@ function formatDateVN(dateStr) {
     return `${d}/${m}/${y}`;
 }
 
+function submitHostingForm() {
+    if (currentActionMode === 'add') {
+        addHosting();
+    } else {
+        updateHosting();
+    }
+}
+
 function addHosting() {
     const name     = document.getElementById('mHostingName').value.trim();
     const domain   = document.getElementById('mDomain').value.trim();
     const provider = document.getElementById('mProvider').value.trim();
-    const regDate  = document.getElementById('mRegDate').value;
     const expDate  = document.getElementById('mExpDate').value;
 
     if (!name || !domain || !provider || !expDate) {
@@ -688,16 +747,44 @@ function addHosting() {
     }
 
     const status = getStatusFromDate(expDate);
+    const tr = document.createElement('tr');
+    tr.innerHTML = generateRowHTML(name, domain, provider, expDate, status);
+    
+    const tbody = document.querySelector('.data-table tbody');
+    tbody.insertBefore(tr, tbody.firstChild);
+
+    closeHostingModalBtn();
+}
+
+function updateHosting() {
+    if (!currentRowToEdit) return;
+    
+    const name     = document.getElementById('mHostingName').value.trim();
+    const domain   = document.getElementById('mDomain').value.trim();
+    const provider = document.getElementById('mProvider').value.trim();
+    const expDate  = document.getElementById('mExpDate').value;
+
+    if (!name || !domain || !provider || !expDate) {
+        alert('Vui lòng điền đầy đủ các trường bắt buộc (*).');
+        return;
+    }
+
+    const status = getStatusFromDate(expDate);
+    currentRowToEdit.innerHTML = generateRowHTML(name, domain, provider, expDate, status);
+    
+    closeHostingModalBtn();
+}
+
+function generateRowHTML(name, domain, provider, expDate, status) {
     const daysText = status.days !== null
-        ? `<div class="date-sub ${status.cls === 'warning' ? 'error-text' : ''}"><i class="ph ph-clock"></i> Còn ${status.days} ngày</div>`
+        ? `<div class="date-sub ${status.cls === 'warning' ? 'error-text' : (status.cls === 'success' ? 'success-text' : '')}"><i class="ph ph-clock"></i> Còn ${status.days} ngày</div>`
         : `<div class="date-sub error-text"><i class="ph ph-clock"></i> Đã hết hạn</div>`;
 
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
+    return `
         <td><input type="checkbox" class="cb-custom"></td>
         <td>
             <div class="cell-main">${name}</div>
-            <div class="cell-sub">Sử dụng</div>
+            <div class="cell-sub">Sử dụng 1 năm</div>
         </td>
         <td>
             <div class="domain-info">
@@ -712,7 +799,7 @@ function addHosting() {
             </div>
         </td>
         <td>
-            <div class="date-info ${status.cls === 'warning' || status.cls === 'expired' ? 'error-text' : ''}">
+            <div class="date-info ${status.cls === 'warning' || status.cls === 'expired' ? 'error-text' : 'text-main'}">
                 <i class="ph ph-calendar-blank"></i> ${formatDateVN(expDate)}
             </div>
             ${daysText}
@@ -725,12 +812,6 @@ function addHosting() {
         </td>
         <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
     `;
-
-    const tbody = document.querySelector('.data-table tbody');
-    tbody.insertBefore(tr, tbody.firstChild);
-
-    closeHostingModalBtn();
-    resetModalForm();
 }
 
 function resetModalForm() {
