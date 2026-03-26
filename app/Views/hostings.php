@@ -536,9 +536,7 @@ document.addEventListener('click', function(e) {
         menu.classList.remove('open');
         if (menu._trigger) {
             const tr = menu._trigger.closest('tr');
-            if (confirm('Bạn có chắc chắn muốn xóa hosting này?')) {
-                tr.remove();
-            }
+            promptDelete(tr);
         }
         return;
     }
@@ -667,6 +665,33 @@ document.addEventListener('click', function(e) {
     </div>
 </div>
 
+<!-- Modal Xác nhận Xóa -->
+<div class="modal-overlay" id="confirmDeleteModal" onclick="closeConfirmDelete(event)">
+    <div class="modal-box" style="max-width: 420px; padding: 24px; border-radius: 16px;">
+        <button class="modal-close" style="position: absolute; right: 20px; top: 20px;" onclick="closeConfirmDeleteBtn()"><i class="ph ph-x"></i></button>
+        
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+            <div style="color: #ef4444; font-size: 24px; display: flex; align-items: center;"><i class="ph ph-warning"></i></div>
+            <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--text-main);">Xác nhận xóa hosting</h3>
+        </div>
+        
+        <p style="margin: 0 0 24px 0; color: #4b5563; font-size: 14px; line-height: 1.5;">
+            Bạn có chắc chắn muốn xóa hosting "<strong id="cdmHostingName"></strong>"?<br> Hành động này không thể hoàn tác.
+        </p>
+        
+        <div style="display: flex; gap: 12px;">
+            <button class="modal-btn-cancel" style="flex: 1; justify-content: center; border-radius: 8px; font-weight: 600; padding: 10px;" onclick="closeConfirmDeleteBtn()">Cancel</button>
+            <button class="modal-btn-submit" style="flex: 1; background: #fe2c2c; justify-content: center; border-radius: 8px; font-weight: 600; padding: 10px;" onclick="confirmDeleteAction()">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Đang Xóa -->
+<div class="delete-toast" id="deleteToast">
+    <div class="toast-spinner"></div>
+    <span>Đang xóa hosting...</span>
+</div>
+
 <script>
 function openHostingModal() {
     currentActionMode = 'add';
@@ -723,11 +748,39 @@ function editFromDetail() {
 }
 
 function deleteFromDetail() {
-    if (confirm('Bạn có chắc chắn muốn xóa hosting này?')) {
-        if (currentRowToEdit) currentRowToEdit.remove();
-        closeDetailModalBtn();
-    }
+    closeDetailModalBtn();
+    if (currentRowToEdit) promptDelete(currentRowToEdit);
 }
+
+let rowToDelete = null;
+function promptDelete(tr) {
+    rowToDelete = tr;
+    const name = tr.querySelector('.cell-main').textContent.trim();
+    document.getElementById('cdmHostingName').textContent = name;
+    document.getElementById('confirmDeleteModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeConfirmDeleteBtn() {
+    document.getElementById('confirmDeleteModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+function closeConfirmDelete(e) {
+    if (e.target === document.getElementById('confirmDeleteModal')) closeConfirmDeleteBtn();
+}
+
+function confirmDeleteAction() {
+    closeConfirmDeleteBtn();
+    const toast = document.getElementById('deleteToast');
+    toast.classList.add('show');
+    
+    // Simulate delay
+    setTimeout(() => {
+        if (rowToDelete) rowToDelete.remove();
+        toast.classList.remove('show');
+    }, 1200);
+}
+
 function closeHostingModal(e) {
     if (e.target === document.getElementById('hostingModal')) closeHostingModalBtn();
 }
