@@ -2242,3 +2242,109 @@ body {
 .pj-table-wrap {
     margin-top: 4px;
 }
+
+/* --- Logs Module Redesign --- */
+.logs-page-title-block {
+    margin-bottom: 20px;
+}
+.logs-page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0 0 4px 0;
+}
+.logs-page-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.logs-toolbar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.logs-search {
+    flex: 1;
+}
+
+.logs-select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 10px 36px 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-main);
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+    min-width: 180px;
+    font-family: inherit;
+}
+.logs-select:focus, .logs-select:hover {
+    border-color: var(--primary-color);
+}
+
+.logs-table-container {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.log-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+/* Pagination */
+.logs-pagination-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+}
+.logs-count {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+.logs-pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.pg-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+.pg-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+.pg-btn.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+    font-weight: 700;
+}

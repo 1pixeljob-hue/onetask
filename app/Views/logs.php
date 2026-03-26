@@ -90,244 +90,186 @@
             </header>
 
             <div class="content-body">
-                
-                <div class="logs-container">
-                    <div class="logs-header-section">
-                        <h2>Logs</h2>
-                        <p>Theo dõi các hành động và restore dữ liệu đã xóa</p>
+
+                <!-- Page Title in Content -->
+                <div class="logs-page-title-block">
+                    <h2 class="logs-page-title">Logs</h2>
+                    <p class="logs-page-subtitle">Theo dõi các hành động và restore dữ liệu đã xóa</p>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="logs-toolbar-row">
+                    <div class="pj-search-wrap logs-search">
+                        <i class="ph ph-magnifying-glass pj-search-icon"></i>
+                        <input type="text" class="pj-search-input" id="logsSearchInput" placeholder="Tìm kiếm theo tên item hoặc user...">
                     </div>
+                    <select class="logs-select" id="logsModuleSelect" onchange="filterLogs()">
+                        <option value="">Tất cả Module</option>
+                        <option value="Project">Project</option>
+                        <option value="Hosting">Hosting</option>
+                        <option value="CodeX">CodeX</option>
+                    </select>
+                    <select class="logs-select" id="logsActionSelect" onchange="filterLogs()">
+                        <option value="">Tất cả Hành động</option>
+                        <option value="Cập nhật">Cập nhật</option>
+                        <option value="Tạo mới">Tạo mới</option>
+                        <option value="Xoá">Xoá</option>
+                    </select>
+                </div>
 
-                    <div class="table-container mt-4">
-                        <div class="pj-toolbar" style="margin-bottom: 16px;">
-                            <div class="pj-search-wrap">
-                                <i class="ph ph-magnifying-glass pj-search-icon"></i>
-                                <input type="text" class="pj-search-input" placeholder="Tìm kiếm theo tên item hoặc user...">
-                            </div>
-                            <div class="pj-toolbar-right">
-                                <div class="pj-filter-wrapper">
-                                    <button class="pj-filter-btn" onclick="toggleLogsModuleFilter()">
-                                        <i class="ph ph-funnel-simple"></i>
-                                        <span id="logsModuleLabel">Lọc bởi Module</span>
-                                        <i class="ph ph-caret-down"></i>
-                                    </button>
-                                    <div class="pj-dropdown" id="logsModuleDropdown">
-                                        <div class="pj-dropdown-item active" onclick="setLogsFilter('module', '', 'Lọc bởi Module', this)">Tất cả</div>
-                                        <div class="pj-dropdown-item" onclick="setLogsFilter('module', 'Project', 'Project', this)">Project</div>
-                                        <div class="pj-dropdown-item" onclick="setLogsFilter('module', 'Hosting', 'Hosting', this)">Hosting</div>
-                                        <div class="pj-dropdown-item" onclick="setLogsFilter('module', 'CodeX', 'CodeX', this)">CodeX</div>
-                                    </div>
-                                </div>
-                                <div class="pj-filter-wrapper">
-                                    <button class="pj-filter-btn" onclick="toggleLogsActionFilter()">
-                                        <i class="ph ph-funnel-simple"></i>
-                                        <span id="logsActionLabel">Lọc bởi Hành động</span>
-                                        <i class="ph ph-caret-down"></i>
-                                    </button>
-                                    <div class="pj-dropdown" id="logsActionDropdown">
-                                        <div class="pj-dropdown-item active" onclick="setLogsFilter('action', '', 'Lọc bởi Hành động', this)">Tất cả</div>
-                                        <div class="pj-dropdown-item" onclick="setLogsFilter('action', 'Cập nhật', 'Cập nhật', this)">Cập nhật</div>
-                                        <div class="pj-dropdown-item" onclick="setLogsFilter('action', 'Tạo mới', 'Tạo mới', this)">Tạo mới</div>
-                                        <div class="pj-dropdown-item" onclick="setLogsFilter('action', 'Xoá', 'Xoá', this)">Xoá</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <!-- Data Table -->
+                <div class="table-container logs-table-container">
+                    <table class="data-table logs-table" id="logsTable">
+                        <thead>
+                            <tr>
+                                <th width="40"><input type="checkbox" class="cb-custom"></th>
+                                <th>MODULE</th>
+                                <th>HÀNH ĐỘNG</th>
+                                <th>ITEM</th>
+                                <th>USER</th>
+                                <th>THỜI GIAN</th>
+                                <th class="text-center">THAO TÁC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Row 1 -->
+                            <tr data-module="Project" data-action="Cập nhật">
+                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><div class="log-module"><i class="ph ph-folder"></i> Project</div></td>
+                                <td><span class="status-badge badge-blue">Cập nhật</span></td>
+                                <td>Thêm sản phẩm cho web Trái Cây Lâm Thành</td>
+                                <td class="text-muted">quydev</td>
+                                <td class="text-muted">16/03/2026 14:39</td>
+                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
+                            </tr>
+                            <!-- Row 2 -->
+                            <tr data-module="Project" data-action="Cập nhật">
+                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><div class="log-module"><i class="ph ph-folder"></i> Project</div></td>
+                                <td><span class="status-badge badge-blue">Cập nhật</span></td>
+                                <td>Thiết kế website KLP</td>
+                                <td class="text-muted">quydev</td>
+                                <td class="text-muted">16/03/2026 14:39</td>
+                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
+                            </tr>
+                            <!-- Row 3 -->
+                            <tr data-module="Project" data-action="Cập nhật">
+                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><div class="log-module"><i class="ph ph-folder"></i> Project</div></td>
+                                <td><span class="status-badge badge-blue">Cập nhật</span></td>
+                                <td>Onelaw Code section tài liệu kèm iframe view</td>
+                                <td class="text-muted">quydev</td>
+                                <td class="text-muted">16/03/2026 14:39</td>
+                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
+                            </tr>
+                            <!-- Row 4 -->
+                            <tr data-module="Project" data-action="Cập nhật">
+                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><div class="log-module"><i class="ph ph-folder"></i> Project</div></td>
+                                <td><span class="status-badge badge-blue">Cập nhật</span></td>
+                                <td>Hỗ trợ chị Hạnh xử lý web Phú Thành</td>
+                                <td class="text-muted">quydev</td>
+                                <td class="text-muted">11/03/2026 10:41</td>
+                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
+                            </tr>
+                            <!-- Row 5 -->
+                            <tr data-module="Hosting" data-action="Tạo mới">
+                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><div class="log-module"><i class="ph ph-hard-drives"></i> Hosting</div></td>
+                                <td><span class="status-badge badge-green">Tạo mới</span></td>
+                                <td>VINALIGHT</td>
+                                <td class="text-muted">quydev</td>
+                                <td class="text-muted">11/03/2026 10:14</td>
+                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
+                            </tr>
+                            <!-- Row 6 -->
+                            <tr data-module="Hosting" data-action="Tạo mới">
+                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><div class="log-module"><i class="ph ph-hard-drives"></i> Hosting</div></td>
+                                <td><span class="status-badge badge-green">Tạo mới</span></td>
+                                <td>VINALIGHT</td>
+                                <td class="text-muted">quydev</td>
+                                <td class="text-muted">11/03/2026 10:14</td>
+                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
+                            </tr>
+                            <!-- Row 7 -->
+                            <tr data-module="Project" data-action="Cập nhật">
+                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><div class="log-module"><i class="ph ph-folder"></i> Project</div></td>
+                                <td><span class="status-badge badge-blue">Cập nhật</span></td>
+                                <td>VINALIGHT x Rooster</td>
+                                <td class="text-muted">quydev</td>
+                                <td class="text-muted">11/03/2026 10:13</td>
+                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
+                            </tr>
+                            <!-- Row 8 -->
+                            <tr data-module="Project" data-action="Tạo mới">
+                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><div class="log-module"><i class="ph ph-folder"></i> Project</div></td>
+                                <td><span class="status-badge badge-green">Tạo mới</span></td>
+                                <td>VINALIGHT x Rooster</td>
+                                <td class="text-muted">quydev</td>
+                                <td class="text-muted">11/03/2026 10:13</td>
+                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
+                            </tr>
+                            <!-- Row 9 -->
+                            <tr data-module="CodeX" data-action="Cập nhật">
+                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><div class="log-module"><i class="ph ph-code"></i> CodeX</div></td>
+                                <td><span class="status-badge badge-blue">Cập nhật</span></td>
+                                <td>Ẩn 1 menu trong admin WP</td>
+                                <td class="text-muted">quydev</td>
+                                <td class="text-muted">10/03/2026 20:13</td>
+                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
+                            </tr>
+                            <!-- Row 10 -->
+                            <tr data-module="Project" data-action="Cập nhật">
+                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><div class="log-module"><i class="ph ph-folder"></i> Project</div></td>
+                                <td><span class="status-badge badge-blue">Cập nhật</span></td>
+                                <td>Thêm sản phẩm cho web Trái Cây Lâm Thành</td>
+                                <td class="text-muted">quydev</td>
+                                <td class="text-muted">10/03/2026 18:03</td>
+                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-
-                        <div class="table-wrapper">
-                            <table class="data-table logs-table">
-                                <thead>
-                                    <tr>
-                                        <th width="40"><input type="checkbox" class="cb-custom"></th>
-                                        <th>MODULE</th>
-                                        <th>HÀNH ĐỘNG</th>
-                                        <th>ITEM</th>
-                                        <th>USER</th>
-                                        <th>THỜI GIAN</th>
-                                        <th class="text-center">THAO TÁC</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Log Row 1 -->
-                                    <tr>
-                                        <td><input type="checkbox" class="cb-custom"></td>
-                                        <td>
-                                            <div class="log-module">
-                                                <i class="ph ph-folder"></i> Project
-                                            </div>
-                                        </td>
-                                        <td><span class="status-badge badge-blue">Cập nhật</span></td>
-                                        <td>Thêm sản phẩm cho web Trái Cây Lâm Thành</td>
-                                        <td class="text-muted">quydev</td>
-                                        <td class="text-muted">16/03/2026 14:39</td>
-                                        <td class="text-center">
-                                            <div class="action-buttons">
-                                                <button class="btn-action" title="Xem chi tiết"><i class="ph ph-eye color-blue"></i></button>
-                                                <button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Log Row 2 -->
-                                    <tr>
-                                        <td><input type="checkbox" class="cb-custom"></td>
-                                        <td>
-                                            <div class="log-module">
-                                                <i class="ph ph-folder"></i> Project
-                                            </div>
-                                        </td>
-                                        <td><span class="status-badge badge-blue">Cập nhật</span></td>
-                                        <td>Thiết kế website KLP</td>
-                                        <td class="text-muted">quydev</td>
-                                        <td class="text-muted">16/03/2026 14:39</td>
-                                        <td class="text-center">
-                                            <div class="action-buttons">
-                                                <button class="btn-action" title="Xem chi tiết"><i class="ph ph-eye color-blue"></i></button>
-                                                <button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Log Row 3 -->
-                                    <tr>
-                                        <td><input type="checkbox" class="cb-custom"></td>
-                                        <td>
-                                            <div class="log-module">
-                                                <i class="ph ph-folder"></i> Project
-                                            </div>
-                                        </td>
-                                        <td><span class="status-badge badge-blue">Cập nhật</span></td>
-                                        <td>Onelaw Code section tài liệu kèm iframe view</td>
-                                        <td class="text-muted">quydev</td>
-                                        <td class="text-muted">16/03/2026 14:39</td>
-                                        <td class="text-center">
-                                            <div class="action-buttons">
-                                                <button class="btn-action" title="Xem chi tiết"><i class="ph ph-eye color-blue"></i></button>
-                                                <button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Log Row 4 -->
-                                    <tr>
-                                        <td><input type="checkbox" class="cb-custom"></td>
-                                        <td>
-                                            <div class="log-module">
-                                                <i class="ph ph-folder"></i> Project
-                                            </div>
-                                        </td>
-                                        <td><span class="status-badge badge-blue">Cập nhật</span></td>
-                                        <td>Hỗ trợ chị Hạnh xử lý web Phú Thành</td>
-                                        <td class="text-muted">quydev</td>
-                                        <td class="text-muted">11/03/2026 10:41</td>
-                                        <td class="text-center">
-                                            <div class="action-buttons">
-                                                <button class="btn-action" title="Xem chi tiết"><i class="ph ph-eye color-blue"></i></button>
-                                                <button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Log Row 5 -->
-                                    <tr>
-                                        <td><input type="checkbox" class="cb-custom"></td>
-                                        <td>
-                                            <div class="log-module">
-                                                <i class="ph ph-hard-drives"></i> Hosting
-                                            </div>
-                                        </td>
-                                        <td><span class="status-badge badge-green">Tạo mới</span></td>
-                                        <td>VINALIGHT</td>
-                                        <td class="text-muted">quydev</td>
-                                        <td class="text-muted">11/03/2026 10:14</td>
-                                        <td class="text-center">
-                                            <div class="action-buttons">
-                                                <button class="btn-action" title="Xem chi tiết"><i class="ph ph-eye color-blue"></i></button>
-                                                <button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Log Row 6 -->
-                                    <tr>
-                                        <td><input type="checkbox" class="cb-custom"></td>
-                                        <td>
-                                            <div class="log-module">
-                                                <i class="ph ph-folder"></i> Project
-                                            </div>
-                                        </td>
-                                        <td><span class="status-badge badge-blue">Cập nhật</span></td>
-                                        <td>VINALIGHT x Rooster</td>
-                                        <td class="text-muted">quydev</td>
-                                        <td class="text-muted">11/03/2026 10:13</td>
-                                        <td class="text-center">
-                                            <div class="action-buttons">
-                                                <button class="btn-action" title="Xem chi tiết"><i class="ph ph-eye color-blue"></i></button>
-                                                <button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Log Row 7 -->
-                                    <tr>
-                                        <td><input type="checkbox" class="cb-custom"></td>
-                                        <td>
-                                            <div class="log-module">
-                                                <i class="ph ph-code"></i> CodeX
-                                            </div>
-                                        </td>
-                                        <td><span class="status-badge badge-blue">Cập nhật</span></td>
-                                        <td>Ẩn 1 menu trong admin WP</td>
-                                        <td class="text-muted">quydev</td>
-                                        <td class="text-muted">10/03/2026 20:13</td>
-                                        <td class="text-center">
-                                            <div class="action-buttons">
-                                                <button class="btn-action" title="Xem chi tiết"><i class="ph ph-eye color-blue"></i></button>
-                                                <button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-                        </div>
+                <!-- Pagination -->
+                <div class="logs-pagination-row">
+                    <span class="logs-count">Hiển thị: 1 - 10 / 154 logs</span>
+                    <div class="logs-pagination">
+                        <button class="pg-btn">Trước</button>
+                        <button class="pg-btn active">1</button>
+                        <button class="pg-btn">2</button>
+                        <button class="pg-btn">3</button>
+                        <button class="pg-btn">4</button>
+                        <button class="pg-btn">5</button>
+                        <button class="pg-btn">Sau</button>
                     </div>
-
                 </div>
 
             </div>
         </main>
     </div>
-</body>
+
 <script>
-function toggleLogsModuleFilter() {
-    document.getElementById('logsActionDropdown').classList.remove('open');
-    document.getElementById('logsModuleDropdown').classList.toggle('open');
+function filterLogs() {
+    const module = document.getElementById('logsModuleSelect').value;
+    const action = document.getElementById('logsActionSelect').value;
+    const search = document.getElementById('logsSearchInput').value.toLowerCase();
+    document.querySelectorAll('#logsTable tbody tr').forEach(row => {
+        const rowModule = row.dataset.module || '';
+        const rowAction = row.dataset.action || '';
+        const rowText = row.textContent.toLowerCase();
+        const moduleMatch = !module || rowModule === module;
+        const actionMatch = !action || rowAction === action;
+        const searchMatch = !search || rowText.includes(search);
+        row.style.display = (moduleMatch && actionMatch && searchMatch) ? '' : 'none';
+    });
 }
-function toggleLogsActionFilter() {
-    document.getElementById('logsModuleDropdown').classList.remove('open');
-    document.getElementById('logsActionDropdown').classList.toggle('open');
-}
-function setLogsFilter(type, val, label, el) {
-    if (type === 'module') {
-        document.getElementById('logsModuleLabel').textContent = label;
-        document.querySelectorAll('#logsModuleDropdown .pj-dropdown-item').forEach(i => i.classList.remove('active'));
-        el.classList.add('active');
-        document.getElementById('logsModuleDropdown').classList.remove('open');
-    } else {
-        document.getElementById('logsActionLabel').textContent = label;
-        document.querySelectorAll('#logsActionDropdown .pj-dropdown-item').forEach(i => i.classList.remove('active'));
-        el.classList.add('active');
-        document.getElementById('logsActionDropdown').classList.remove('open');
-    }
-}
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('.pj-filter-wrapper')) {
-        ['logsModuleDropdown', 'logsActionDropdown'].forEach(id => {
-            const dd = document.getElementById(id);
-            if (dd) dd.classList.remove('open');
-        });
-    }
-});
+document.getElementById('logsSearchInput').addEventListener('input', filterLogs);
 </script>
+</body>
 </html>
