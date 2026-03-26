@@ -453,26 +453,26 @@ document.addEventListener('click', function(e) {
         <div class="modal-body">
             <div class="modal-field full">
                 <label class="modal-label">Tên Hosting <span class="req">*</span></label>
-                <input type="text" class="modal-input" placeholder="VD: Website Chính">
+                <input type="text" class="modal-input" id="mHostingName" placeholder="VD: Website Chính">
             </div>
             <div class="modal-row">
                 <div class="modal-field">
                     <label class="modal-label">Tên Miền <span class="req">*</span></label>
-                    <input type="text" class="modal-input" placeholder="VD: example.com">
+                    <input type="text" class="modal-input" id="mDomain" placeholder="VD: example.com">
                 </div>
                 <div class="modal-field">
                     <label class="modal-label">Nhà Cung Cấp <span class="req">*</span></label>
-                    <input type="text" class="modal-input" placeholder="iNet" value="iNet">
+                    <input type="text" class="modal-input" id="mProvider" placeholder="iNet" value="iNet">
                 </div>
             </div>
             <div class="modal-row">
                 <div class="modal-field">
                     <label class="modal-label">Ngày Đăng Ký <span class="req">*</span></label>
-                    <input type="date" class="modal-input">
+                    <input type="date" class="modal-input" id="mRegDate">
                 </div>
                 <div class="modal-field">
                     <label class="modal-label">Ngày Hết Hạn <span class="req">*</span></label>
-                    <input type="date" class="modal-input">
+                    <input type="date" class="modal-input" id="mExpDate">
                 </div>
             </div>
             <div class="modal-field full">
@@ -487,7 +487,7 @@ document.addEventListener('click', function(e) {
         </div>
         <div class="modal-footer">
             <button class="modal-btn-cancel" onclick="closeHostingModalBtn()">Hủy</button>
-            <button class="modal-btn-submit"><i class="ph ph-plus"></i> Thêm Mới</button>
+            <button class="modal-btn-submit" onclick="addHosting()"><i class="ph ph-plus"></i> Thêm Mới</button>
         </div>
     </div>
 </div>
@@ -507,6 +507,90 @@ function closeHostingModal(e) {
 function formatPrice() {
     const val = parseInt(document.getElementById('hostingPrice').value) || 0;
     document.getElementById('priceHint').textContent = val.toLocaleString('vi-VN') + ' VNĐ';
+}
+
+function getStatusFromDate(expDateStr) {
+    if (!expDateStr) return null;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const exp = new Date(expDateStr); exp.setHours(0,0,0,0);
+    const diffDays = Math.ceil((exp - today) / (1000 * 60 * 60 * 24));
+    if (diffDays < 0)   return { cls: 'expired',  label: 'Hết hạn',    icon: 'ph-x-circle',       days: null };
+    if (diffDays <= 15) return { cls: 'warning',  label: 'Sắp hết hạn', icon: 'ph-warning-circle',  days: diffDays };
+    return                     { cls: 'success',  label: 'Hoạt động',   icon: 'ph-check-circle',    days: diffDays };
+}
+
+function formatDateVN(dateStr) {
+    if (!dateStr) return '';
+    const [y, m, d] = dateStr.split('-');
+    return `${d}/${m}/${y}`;
+}
+
+function addHosting() {
+    const name     = document.getElementById('mHostingName').value.trim();
+    const domain   = document.getElementById('mDomain').value.trim();
+    const provider = document.getElementById('mProvider').value.trim();
+    const regDate  = document.getElementById('mRegDate').value;
+    const expDate  = document.getElementById('mExpDate').value;
+
+    if (!name || !domain || !provider || !expDate) {
+        alert('Vui lòng điền đầy đủ các trường bắt buộc (*).');
+        return;
+    }
+
+    const status = getStatusFromDate(expDate);
+    const daysText = status.days !== null
+        ? `<div class="date-sub ${status.cls === 'warning' ? 'error-text' : ''}"><i class="ph ph-clock"></i> Còn ${status.days} ngày</div>`
+        : `<div class="date-sub error-text"><i class="ph ph-clock"></i> Đã hết hạn</div>`;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td><input type="checkbox" class="cb-custom"></td>
+        <td>
+            <div class="cell-main">${name}</div>
+            <div class="cell-sub">Sử dụng</div>
+        </td>
+        <td>
+            <div class="domain-info">
+                <i class="ph ph-globe color-gray"></i>
+                <span>${domain.startsWith('http') ? domain : 'https://' + domain}</span>
+            </div>
+        </td>
+        <td>
+            <div class="provider-info">
+                <i class="ph ph-hard-drives color-gray"></i>
+                <span>${provider}</span>
+            </div>
+        </td>
+        <td>
+            <div class="date-info ${status.cls === 'warning' || status.cls === 'expired' ? 'error-text' : ''}">
+                <i class="ph ph-calendar-blank"></i> ${formatDateVN(expDate)}
+            </div>
+            ${daysText}
+        </td>
+        <td>
+            <span class="status-badge ${status.cls}">
+                <i class="ph ${status.icon}"></i>
+                ${status.label}
+            </span>
+        </td>
+        <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
+    `;
+
+    const tbody = document.querySelector('.data-table tbody');
+    tbody.insertBefore(tr, tbody.firstChild);
+
+    closeHostingModalBtn();
+    resetModalForm();
+}
+
+function resetModalForm() {
+    document.getElementById('mHostingName').value = '';
+    document.getElementById('mDomain').value = '';
+    document.getElementById('mProvider').value = 'iNet';
+    document.getElementById('mRegDate').value = '';
+    document.getElementById('mExpDate').value = '';
+    document.getElementById('hostingPrice').value = '1100000';
+    document.getElementById('priceHint').textContent = '1.100.000 VNĐ';
 }
 </script>
 </body>

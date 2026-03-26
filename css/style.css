@@ -743,6 +743,12 @@ body {
     border: 1px solid #fde68a;
 }
 
+.status-badge.expired {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
 .val-badge {
     display: inline-flex;
     align-items: center;
