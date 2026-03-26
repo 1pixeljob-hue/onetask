@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>1Pixel Dashboard</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
@@ -23,35 +23,35 @@
             </div>
 
             <nav class="sidebar-nav">
-                <a href="index.html" class="nav-item active">
+                <a href="/" class="nav-item active">
                     <i class="ph ph-squares-four"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="hostings.html" class="nav-item">
+                <a href="/hostings" class="nav-item">
                     <i class="ph ph-hard-drives"></i>
                     <span>Hostings</span>
                 </a>
-                <a href="projects.html" class="nav-item">
+                <a href="/projects" class="nav-item">
                     <i class="ph ph-kanban"></i>
                     <span>Projects</span>
                 </a>
-                <a href="reports.html" class="nav-item">
+                <a href="/reports" class="nav-item">
                     <i class="ph ph-chart-bar"></i>
                     <span>B&#225;o C&#225;o</span>
                 </a>
-                <a href="passwords.html" class="nav-item">
+                <a href="/passwords" class="nav-item">
                     <i class="ph ph-key"></i>
                     <span>Passwords</span>
                 </a>
-                <a href="codex.html" class="nav-item">
+                <a href="/codex" class="nav-item">
                     <i class="ph ph-code"></i>
                     <span>CodeX</span>
                 </a>
-                <a href="logs.html" class="nav-item">
+                <a href="/logs" class="nav-item">
                     <i class="ph ph-file-text"></i>
                     <span>Logs</span>
                 </a>
-                <a href="settings.html" class="nav-item">
+                <a href="/settings" class="nav-item">
                     <i class="ph ph-gear"></i>
                     <span>Settings</span>
                 </a>
