@@ -1994,3 +1994,120 @@ body {
     text-decoration: underline;
 }
 .mt-20 { margin-top: 20px; }
+/* --- Projects Page Styles --- */
+
+.projects-toolbar {
+    margin-bottom: 24px;
+}
+
+.projects-table th {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+.project-info-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 450px;
+}
+
+.pj-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.pj-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.pj-link {
+    font-size: 11px;
+    color: var(--primary-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pj-link:hover {
+    text-decoration: underline;
+}
+
+.customer-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.customer-info i {
+    font-size: 16px;
+    color: var(--text-muted);
+}
+
+.customer-phone {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.val-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--bg-body);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+.val-badge i {
+    color: #10b981;
+}
+
+.status-badge-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.st-doing {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.st-testing {
+    background-color: rgba(168, 85, 247, 0.1);
+    color: #a855f7;
+    border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.st-done {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.text-muted {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.mt-24 { margin-top: 24px; }
