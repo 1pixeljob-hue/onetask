@@ -2788,7 +2788,7 @@ body {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    transform: translateY(20px);
+    transform: translateX(120%);
     background: #fff;
     padding: 16px 24px;
     border-radius: 12px;
@@ -2802,10 +2802,10 @@ body {
     color: var(--text-main);
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .delete-toast.show {
-    transform: translateY(0);
+    transform: translateX(0);
     opacity: 1;
     visibility: visible;
 }
