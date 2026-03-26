@@ -688,8 +688,9 @@ document.addEventListener('click', function(e) {
 
 <!-- Toast Đang Xóa -->
 <div class="delete-toast" id="deleteToast">
-    <div class="toast-spinner"></div>
-    <span>Đang xóa hosting...</span>
+    <div class="toast-spinner" id="dtSpinner"></div>
+    <div id="dtSuccessIcon" style="display:none; color: #10b981; font-size: 20px; display: flex; align-items: center;"><i class="ph-fill ph-check-circle"></i></div>
+    <span id="dtMessage">Đang xóa hosting...</span>
 </div>
 
 <script>
@@ -772,12 +773,32 @@ function closeConfirmDelete(e) {
 function confirmDeleteAction() {
     closeConfirmDeleteBtn();
     const toast = document.getElementById('deleteToast');
+    const msg = document.getElementById('dtMessage');
+    const spinner = document.getElementById('dtSpinner');
+    const successIcon = document.getElementById('dtSuccessIcon');
+    
+    // Reset state
+    spinner.style.display = 'block';
+    successIcon.style.display = 'none';
+    msg.textContent = 'Đang xóa hosting...';
     toast.classList.add('show');
+    
+    const hostingName = document.getElementById('cdmHostingName').textContent;
     
     // Simulate delay
     setTimeout(() => {
         if (rowToDelete) rowToDelete.remove();
-        toast.classList.remove('show');
+        
+        // Success state
+        spinner.style.display = 'none';
+        successIcon.style.display = 'block';
+        msg.textContent = `Đã xóa hosting "${hostingName}"`;
+        
+        // Hide toast
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2000);
+        
     }, 1200);
 }
 
