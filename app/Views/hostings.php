@@ -471,6 +471,53 @@ document.addEventListener('click', function(e) {
         return;
     }
 
+    // Click on "Xem Chi Tiết" in Row Action Menu
+    if (e.target.closest('.ram-view')) {
+        menu.classList.remove('open');
+        if (menu._trigger) {
+            const tr = menu._trigger.closest('tr');
+            
+            // Extract data from table row
+            const name = tr.querySelector('.cell-main').textContent.trim();
+            const usage = tr.querySelector('.cell-sub').textContent.trim().replace('l', 'l');
+            const domain = tr.querySelector('.domain-info span').textContent.trim();
+            const provider = tr.querySelector('.provider-info span').textContent.trim();
+            const expDate = tr.querySelector('.date-info').textContent.trim();
+            const daysLeftEl = tr.querySelector('.date-sub');
+            const daysLeft = daysLeftEl ? daysLeftEl.textContent.trim() : 'Đã hết hạn';
+            const statusBadgeEl = tr.querySelector('.status-badge');
+            
+            // Populate Detail Modal
+            const sBadge = document.getElementById('dModalStatus');
+            sBadge.className = statusBadgeEl.className; // copy warning/success/etc
+            sBadge.innerHTML = statusBadgeEl.innerHTML;
+
+            // Generate mock registration date (1 year before expDate roughly)
+            let regDateText = "Đang cập nhật";
+            const expMatch = expDate.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+            if (expMatch) {
+                const year = parseInt(expMatch[3]) - 1;
+                regDateText = `${expMatch[1]}/${expMatch[2]}/${year}`;
+            }
+
+            // Fill elements
+            document.getElementById('dModalName').textContent = name;
+            document.getElementById('dModalDomain').innerHTML = `<i class="ph ph-globe color-gray"></i> ${domain}`;
+            document.getElementById('dModalProvider').innerHTML = `<i class="ph ph-hard-drives color-gray"></i> ${provider}`;
+            document.getElementById('dModalExpDate').textContent = expDate;
+            document.getElementById('dModalRegDate').textContent = regDateText;
+            document.getElementById('dModalUsage').textContent = usage || '1 năm';
+            
+            const daysLeftContainer = document.getElementById('dModalDaysLeft');
+            daysLeftContainer.innerHTML = daysLeft.includes('Còn') ? `<i class="ph ph-clock"></i> ${daysLeft}` : daysLeft;
+            
+            // Open modal
+            document.getElementById('detailModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        return;
+    }
+
     // Close row action menu on outside click
     if (!e.target.closest('#rowActionMenu')) {
         menu.classList.remove('open');
@@ -529,6 +576,68 @@ document.addEventListener('click', function(e) {
         <div class="modal-footer">
             <button class="modal-btn-cancel" onclick="closeHostingModalBtn()">Hủy</button>
             <button class="modal-btn-submit" onclick="addHosting()"><i class="ph ph-plus"></i> Thêm Mới</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Chi Tiết Hosting -->
+<div class="modal-overlay" id="detailModal" onclick="closeDetailModal(event)">
+    <div class="modal-box" style="max-width: 520px;">
+        <div class="modal-header-gradient">
+            <h3 class="modal-title-light"><i class="ph ph-hard-drives"></i> Chi Tiết Hosting</h3>
+            <button class="modal-close-light" onclick="closeDetailModalBtn()"><i class="ph ph-x"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="detail-top-row">
+                <span class="status-badge" id="dModalStatus"></span>
+                <div class="detail-price"><i class="ph ph-money"></i> <span id="dModalPrice">1.100.000 VNĐ</span></div>
+            </div>
+            
+            <div class="detail-group">
+                <span class="detail-label">Tên Hosting</span>
+                <span class="detail-val" id="dModalName">Photoeditor 24h</span>
+            </div>
+
+            <div class="detail-info-grid">
+                <div class="detail-group">
+                    <span class="detail-label">Domain</span>
+                    <span class="detail-val-norm" id="dModalDomain"><i class="ph ph-globe color-gray"></i> https://photoeditor24h.com/</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Nhà Cung Cấp</span>
+                    <span class="detail-val-norm" id="dModalProvider"><i class="ph ph-hard-drives color-gray"></i> iNet</span>
+                </div>
+            </div>
+
+            <div class="detail-gray-card">
+                <div class="dgc-title"><i class="ph ph-calendar-blank"></i> Thông Tin Thời Gian</div>
+                
+                <div class="dgc-row">
+                    <div class="detail-group">
+                        <span class="detail-label">Ngày Đăng Ký</span>
+                        <span class="dgc-val" id="dModalRegDate">10/04/2025</span>
+                    </div>
+                    <div class="detail-group" style="text-align: right;">
+                        <span class="detail-label" style="text-align: right;">Ngày Hết Hạn</span>
+                        <span class="dgc-val orange" style="justify-content: flex-end;" id="dModalExpDate">12/04/2026</span>
+                    </div>
+                </div>
+
+                <div class="dgc-row">
+                    <div class="detail-group">
+                        <span class="detail-label">Thời Gian Sử Dụng</span>
+                        <span class="dgc-val" id="dModalUsage">1 năm</span>
+                    </div>
+                    <div class="detail-group" style="text-align: right;">
+                        <span class="detail-label" style="text-align: right;">Còn Lại</span>
+                        <span class="dgc-val orange" style="justify-content: flex-end;" id="dModalDaysLeft"><i class="ph ph-clock"></i> 17 ngày</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="detail-footer">
+            <button class="btn-edit-full"><i class="ph ph-pencil-simple"></i> Chỉnh Sửa</button>
+            <button class="btn-delete-outline"><i class="ph ph-trash"></i></button>
         </div>
     </div>
 </div>
@@ -632,6 +741,14 @@ function resetModalForm() {
     document.getElementById('mExpDate').value = '';
     document.getElementById('hostingPrice').value = '1100000';
     document.getElementById('priceHint').textContent = '1.100.000 VNĐ';
+}
+
+function closeDetailModalBtn() {
+    document.getElementById('detailModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+function closeDetailModal(e) {
+    if (e.target === document.getElementById('detailModal')) closeDetailModalBtn();
 }
 </script>
 </body>
