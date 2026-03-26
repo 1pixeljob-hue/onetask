@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -91,27 +91,36 @@
 
             <div class="content-body">
                 <!-- Toolbar -->
-                <div class="toolbar">
-                    <div class="search-box">
-                        <i class="ph ph-magnifying-glass"></i>
-                        <input type="text" placeholder="Tìm kiếm theo tiêu đề, tên đăng nhập, website...">
+                <div class="pj-toolbar">
+                    <div class="pj-search-wrap">
+                        <i class="ph ph-magnifying-glass pj-search-icon"></i>
+                        <input type="text" class="pj-search-input" placeholder="Tìm kiếm theo tiêu đề, tên đăng nhập, website...">
                     </div>
-                    <div class="toolbar-actions">
-                        <select class="status-select">
-                            <option value="">Tất cả loại</option>
-                            <option value="email">Email</option>
-                            <option value="account">Tài khoản</option>
-                        </select>
-                        <button class="btn-primary btn-purple">
-                            <i class="ph ph-tag"></i> <!-- Tag/Category icon -->
-                            Quản lý Danh Mục
+                    <div class="pj-toolbar-right">
+                        <div class="pj-filter-wrapper">
+                            <button class="pj-filter-btn" onclick="togglePwdFilter()">
+                                <i class="ph ph-funnel-simple"></i>
+                                <span id="pwdFilterLabel">Lọc bởi loại</span>
+                                <i class="ph ph-caret-down"></i>
+                            </button>
+                            <div class="pj-dropdown" id="pwdFilterDropdown">
+                                <div class="pj-dropdown-item active" onclick="setPwdFilter('', 'Lọc bởi loại', this)">Tất cả</div>
+                                <div class="pj-dropdown-item" onclick="setPwdFilter('outline-blue', 'Email', this)">Email</div>
+                                <div class="pj-dropdown-item" onclick="setPwdFilter('outline-red', 'Tài khoản', this)">Tài khoản</div>
+                                <div class="pj-dropdown-item" onclick="setPwdFilter('outline-purple', 'Khác', this)">Khác</div>
+                            </div>
+                        </div>
+                        <button class="pj-filter-btn" style="border-color: #8b5cf6; color: #8b5cf6;">
+                            <i class="ph ph-tag"></i>
+                            Danh Mục
                         </button>
-                        <button class="btn-primary btn-add">
+                        <button class="pj-add-btn">
                             <i class="ph ph-plus"></i>
                             Thêm Mới
                         </button>
                     </div>
                 </div>
+
 
                 <!-- Password Grid -->
                 <div class="pwd-grid">
@@ -462,4 +471,26 @@
         </main>
     </div>
 </body>
+<script>
+function togglePwdFilter() {
+    document.getElementById('pwdFilterDropdown').classList.toggle('open');
+}
+function setPwdFilter(tagClass, label, el) {
+    document.getElementById('pwdFilterLabel').textContent = label;
+    document.querySelectorAll('#pwdFilterDropdown .pj-dropdown-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('pwdFilterDropdown').classList.remove('open');
+    document.querySelectorAll('.pwd-card').forEach(card => {
+        if (!tagClass) { card.style.display = ''; return; }
+        const tag = card.querySelector('.badge-tag.' + tagClass);
+        card.style.display = tag ? '' : 'none';
+    });
+}
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.pj-filter-wrapper')) {
+        const dd = document.getElementById('pwdFilterDropdown');
+        if (dd) dd.classList.remove('open');
+    }
+});
+</script>
 </html>

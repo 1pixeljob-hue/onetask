@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -98,26 +98,41 @@
                     </div>
 
                     <div class="table-container mt-4">
-                        <div class="table-toolbar logs-toolbar">
-                            <div class="search-box">
-                                <i class="ph ph-magnifying-glass"></i>
-                                <input type="text" placeholder="Tìm kiếm theo tên item hoặc user...">
+                        <div class="pj-toolbar" style="margin-bottom: 16px;">
+                            <div class="pj-search-wrap">
+                                <i class="ph ph-magnifying-glass pj-search-icon"></i>
+                                <input type="text" class="pj-search-input" placeholder="Tìm kiếm theo tên item hoặc user...">
                             </div>
-                            <div class="toolbar-actions">
-                                <select class="status-select">
-                                    <option value="">Tất cả Module</option>
-                                    <option value="project">Project</option>
-                                    <option value="hosting">Hosting</option>
-                                    <option value="codex">CodeX</option>
-                                </select>
-                                <select class="status-select">
-                                    <option value="">Tất cả Hành động</option>
-                                    <option value="update">Cập nhật</option>
-                                    <option value="create">Tạo mới</option>
-                                    <option value="delete">Xoá</option>
-                                </select>
+                            <div class="pj-toolbar-right">
+                                <div class="pj-filter-wrapper">
+                                    <button class="pj-filter-btn" onclick="toggleLogsModuleFilter()">
+                                        <i class="ph ph-funnel-simple"></i>
+                                        <span id="logsModuleLabel">Lọc bởi Module</span>
+                                        <i class="ph ph-caret-down"></i>
+                                    </button>
+                                    <div class="pj-dropdown" id="logsModuleDropdown">
+                                        <div class="pj-dropdown-item active" onclick="setLogsFilter('module', '', 'Lọc bởi Module', this)">Tất cả</div>
+                                        <div class="pj-dropdown-item" onclick="setLogsFilter('module', 'Project', 'Project', this)">Project</div>
+                                        <div class="pj-dropdown-item" onclick="setLogsFilter('module', 'Hosting', 'Hosting', this)">Hosting</div>
+                                        <div class="pj-dropdown-item" onclick="setLogsFilter('module', 'CodeX', 'CodeX', this)">CodeX</div>
+                                    </div>
+                                </div>
+                                <div class="pj-filter-wrapper">
+                                    <button class="pj-filter-btn" onclick="toggleLogsActionFilter()">
+                                        <i class="ph ph-funnel-simple"></i>
+                                        <span id="logsActionLabel">Lọc bởi Hành động</span>
+                                        <i class="ph ph-caret-down"></i>
+                                    </button>
+                                    <div class="pj-dropdown" id="logsActionDropdown">
+                                        <div class="pj-dropdown-item active" onclick="setLogsFilter('action', '', 'Lọc bởi Hành động', this)">Tất cả</div>
+                                        <div class="pj-dropdown-item" onclick="setLogsFilter('action', 'Cập nhật', 'Cập nhật', this)">Cập nhật</div>
+                                        <div class="pj-dropdown-item" onclick="setLogsFilter('action', 'Tạo mới', 'Tạo mới', this)">Tạo mới</div>
+                                        <div class="pj-dropdown-item" onclick="setLogsFilter('action', 'Xoá', 'Xoá', this)">Xoá</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
 
                         <div class="table-wrapper">
                             <table class="data-table logs-table">
@@ -284,4 +299,35 @@
         </main>
     </div>
 </body>
+<script>
+function toggleLogsModuleFilter() {
+    document.getElementById('logsActionDropdown').classList.remove('open');
+    document.getElementById('logsModuleDropdown').classList.toggle('open');
+}
+function toggleLogsActionFilter() {
+    document.getElementById('logsModuleDropdown').classList.remove('open');
+    document.getElementById('logsActionDropdown').classList.toggle('open');
+}
+function setLogsFilter(type, val, label, el) {
+    if (type === 'module') {
+        document.getElementById('logsModuleLabel').textContent = label;
+        document.querySelectorAll('#logsModuleDropdown .pj-dropdown-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('logsModuleDropdown').classList.remove('open');
+    } else {
+        document.getElementById('logsActionLabel').textContent = label;
+        document.querySelectorAll('#logsActionDropdown .pj-dropdown-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('logsActionDropdown').classList.remove('open');
+    }
+}
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.pj-filter-wrapper')) {
+        ['logsModuleDropdown', 'logsActionDropdown'].forEach(id => {
+            const dd = document.getElementById(id);
+            if (dd) dd.classList.remove('open');
+        });
+    }
+});
+</script>
 </html>
