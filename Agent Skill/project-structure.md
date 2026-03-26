@@ -9,20 +9,18 @@ Cấu trúc này được thiết kế để đảm bảo tính bảo mật (tá
 ```text
 antigravity-project/
 │
-├── app/                    # 🔒 Toàn bộ logic ứng dụng (Không thể truy cập trực tiếp từ Web)
+├── index.php               # 🌐 Entry point duy nhất (Nằm ở gốc để deploy lên hosting)
+├── .htaccess               # Cấu hình rewrite URL về index.php
+├── css/                    # Các file CSS 
+├── js/                     # Các file JavaScript
+├── images/                 # Hình ảnh tĩnh
+│
+├── app/                    # 🔒 Logic ứng dụng (Được bảo vệ bằng .htaccess nội bộ)
 │   ├── Controllers/        # Xử lý request, gọi Model, trả về View
 │   ├── Models/             # Tương tác với Database (MySQL - PDO)
-│   ├── Views/              # Các file giao diện (.php) chứa HTML, gọi CSS/JS từ public
+│   ├── Views/              # Các file giao diện (.php) chứa HTML, gọi CSS/JS
 │   ├── Core/               # Các class lõi (Database Connection, Router, BaseController)
 │   └── Helpers/            # Các hàm dùng chung (format_date, sanitize_input...)
-│
-├── public/                 # 🌐 Thư mục gốc của Web Server (Document Root)
-│   ├── index.php           # Entry point duy nhất (Tất cả request đều đi qua đây)
-│   ├── .htaccess           # Cấu hình rewrite URL (Chuyển hướng request về index.php)
-│   ├── css/                # Các file CSS (style.css, thư viện ngoài...)
-│   ├── js/                 # Các file JavaScript (app.js, xử lý AJAX...)
-│   ├── images/             # Hình ảnh tĩnh (logo, banner...)
-│   └── uploads/            # File người dùng upload (cần phân quyền CHMOD cẩn thận)
 │
 ├── config/                 # ⚙️ Các file cấu hình hệ thống
 │   └── database.php        # Thông tin kết nối PDO
@@ -46,13 +44,13 @@ antigravity-project/
 
 ---
 
-## 📋 QUY TẮC BỐ TRÍ FILE DÀNH CHO AGENT
+## 📋 QUY TẮC BỐ TRÍ FILE DÀNH CHO AGENT (Dành cho Hosting truy cập trực tiếp Document Root)
 
 ### 1. Giao diện & Tài nguyên tĩnh (Frontend)
 
-- **CSS:** Mọi file `.css` phải đặt trong `public/css/`. Ưu tiên chia nhỏ (VD: `header.css`, `auth.css`) và tuân thủ class quy định từ thư mục Stitch Skills.
-- **JavaScript:** Mọi file `.js` đặt trong `public/js/`. Tách biệt logic xử lý DOM và gọi AJAX.
-- **Views:** Code HTML/Giao diện **bắt buộc** phải nằm trong `app/Views/` với phần mở rộng là `.php`. Giao diện này không được chứa truy vấn SQL. Các file tĩnh (CSS/JS) được nhúng qua đường dẫn tuyệt đối (VD: `/css/style.css`).
+- **CSS:** Mọi file `.css` phải đặt trong thư mục `css/` ở thư mục gốc. Ưu tiên chia nhỏ (VD: `header.css`, `auth.css`) và tuân thủ class quy định từ thư mục Stitch Skills.
+- **JavaScript:** Mọi file `.js` đặt trong thư mục `js/` ở gốc. Tách biệt logic xử lý DOM và gọi AJAX.
+- **Views:** Code HTML/Giao diện **bắt buộc** phải nằm trong `app/Views/` với phần mở rộng là `.php`. Giao diện này không được chứa truy vấn SQL. Các file tải tĩnh (CSS/JS/Ảnh) được nhúng qua đường dẫn tuyệt đối hoặc tương đối (VD: `/css/style.css`).
 
 ### 2. Logic xử lý (Backend)
 
@@ -61,5 +59,5 @@ antigravity-project/
 
 ### 3. Nguyên tắc Bảo mật (Security)
 
-- **Bảo vệ thư mục lõi:** Thư mục `app/`, `config/`, `storage/` phải nằm ngoài tầm với của HTTP Request (Thường cấu hình Nginx/Apache trỏ Document Root thẳng vào thư mục `public/`).
-- **Một cổng duy nhất (Single Entry Point):** Mọi URL (như `domain.com/login`, `domain.com/user/profile`) đều được `.htaccess` định tuyến về `public/index.php`. Tại đây, Router sẽ quyết định load Controller nào.
+- **Bảo vệ thư mục lõi:** Vì repo Git được deploy ngang hàng với Document Root (Ví dụ: host iNet trỏ thẳng `public_html/` = Repo Root), do đó **Bắt buộc** các thư mục `app/`, `config/`, `routes/`, `storage/` phải chứa file `.htaccess` với nội dung `Deny from all` để chặn người dùng từ Internet truy cập trực tiếp vào source code.
+- **Một cổng duy nhất (Single Entry Point):** File `index.php` nằm ở gốc tiếp nhận toàn bộ request. File `.htaccess` ở thư mục gốc định tuyến mọi thứ (không chứa file vật lý) về `index.php`.
