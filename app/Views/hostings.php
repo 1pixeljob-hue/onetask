@@ -109,7 +109,7 @@
                                 <div class="pj-dropdown-item" onclick="setHostingFilter('warning', 'Sắp hết hạn', this)">Sắp hết hạn</div>
                             </div>
                         </div>
-                        <button class="pj-add-btn">
+                        <button class="pj-add-btn" onclick="openHostingModal()">
                             <i class="ph ph-plus"></i>
                             Thêm Mới
                         </button>
@@ -441,6 +441,73 @@ document.addEventListener('click', function(e) {
         if (dd) dd.classList.remove('open');
     }
 });
+</script>
+
+<!-- Modal Thêm Hosting Mới -->
+<div class="modal-overlay" id="hostingModal" onclick="closeHostingModal(event)">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 class="modal-title"><i class="ph ph-hard-drives"></i> Thêm Hosting Mới</h3>
+            <button class="modal-close" onclick="closeHostingModalBtn()"><i class="ph ph-x"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-field full">
+                <label class="modal-label">Tên Hosting <span class="req">*</span></label>
+                <input type="text" class="modal-input" placeholder="VD: Website Chính">
+            </div>
+            <div class="modal-row">
+                <div class="modal-field">
+                    <label class="modal-label">Tên Miền <span class="req">*</span></label>
+                    <input type="text" class="modal-input" placeholder="VD: example.com">
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Nhà Cung Cấp <span class="req">*</span></label>
+                    <input type="text" class="modal-input" placeholder="iNet" value="iNet">
+                </div>
+            </div>
+            <div class="modal-row">
+                <div class="modal-field">
+                    <label class="modal-label">Ngày Đăng Ký <span class="req">*</span></label>
+                    <input type="date" class="modal-input">
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Ngày Hết Hạn <span class="req">*</span></label>
+                    <input type="date" class="modal-input">
+                </div>
+            </div>
+            <div class="modal-field full">
+                <label class="modal-label">Giá (VNĐ) <span class="req">*</span></label>
+                <input type="number" class="modal-input" id="hostingPrice" value="1100000" oninput="formatPrice()">
+                <div class="modal-price-hint" id="priceHint">1.100.000 VNĐ</div>
+            </div>
+            <div class="modal-field full">
+                <label class="modal-label">Ghi Chú</label>
+                <textarea class="modal-textarea" placeholder="Thêm ghi chú về hosting này..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn-cancel" onclick="closeHostingModalBtn()">Hủy</button>
+            <button class="modal-btn-submit"><i class="ph ph-plus"></i> Thêm Mới</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function openHostingModal() {
+    document.getElementById('hostingModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+function closeHostingModalBtn() {
+    document.getElementById('hostingModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+function closeHostingModal(e) {
+    if (e.target === document.getElementById('hostingModal')) closeHostingModalBtn();
+}
+function formatPrice() {
+    const val = parseInt(document.getElementById('hostingPrice').value) || 0;
+    document.getElementById('priceHint').textContent = val.toLocaleString('vi-VN') + ' VNĐ';
+}
 </script>
 </body>
 </html>
