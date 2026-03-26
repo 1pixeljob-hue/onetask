@@ -21,7 +21,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           # Path tới thư mục chứa source code trên hosting (Ví dụ: iNet Hostings) 
           # Lưu ý tuỳ thuộc bạn muốn chạy ở domain chính hay subdomain.
-          server-dir: /public_html/
+          server-dir: /domains/onetask.1pixel.vn/
           exclude: |
             **/.git*
             **/.git*/**
