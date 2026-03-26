@@ -1,0 +1,260 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeX - 1Pixel Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">1P</span>
+                    <div class="logo-text">
+                        <h2>1Pixel</h2>
+                        <p>Quản lý công việc tập trung</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="ph ph-squares-four"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="hostings.html" class="nav-item">
+                    <i class="ph ph-hard-drives"></i>
+                    <span>Hostings</span>
+                </a>
+                <a href="projects.html" class="nav-item">
+                    <i class="ph ph-kanban"></i>
+                    <span>Projects</span>
+                </a>
+                <a href="reports.html" class="nav-item">
+                    <i class="ph ph-chart-bar"></i>
+                    <span>BÃ¡o CÃ¡o</span>
+                </a>
+                <a href="passwords.html" class="nav-item">
+                    <i class="ph ph-key"></i>
+                    <span>Passwords</span>
+                </a>
+                <a href="codex.html" class="nav-item active">
+                    <i class="ph ph-code"></i>
+                    <span>CodeX</span>
+                </a>
+                <a href="logs.html" class="nav-item">
+                    <i class="ph ph-file-text"></i>
+                    <span>Logs</span>
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <i class="ph ph-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="support-box">
+                    <h4>Cần hỗ trợ?</h4>
+                    <p>Liên hệ với chúng tôi để được hỗ trợ</p>
+                    <button class="btn-primary">Liên Hệ</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content cx-main">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>CodeX</h1>
+                    <p>Quản lý các đoạn code hay dùng</p>
+                </div>
+                <div class="header-right">
+                    <button class="btn-icon">
+                        <i class="ph ph-bell"></i>
+                        <span class="badge">1</span>
+                    </button>
+                    <div class="user-profile">
+                        <div class="avatar">QD</div>
+                        <div class="user-info">
+                            <span class="user-name">Quy Dev</span>
+                            <span class="user-role">Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-body codex-body">
+                <div class="codex-layout">
+                    
+                    <!-- Left Panel: Filters -->
+                    <div class="cx-panel cx-sidebar">
+                        <div class="cx-sidebar-header">
+                            <h3><i class="ph ph-funnel"></i> Bộ Lọc</h3>
+                            <button class="btn-primary btn-block"><i class="ph ph-plus"></i> Thêm Snippet</button>
+                        </div>
+                        <div class="cx-sidebar-nav">
+                            <div class="cx-nav-item active">
+                                <span>Tất cả ngôn ngữ</span>
+                                <div class="cx-badge-right">
+                                    <span class="cx-count">5</span>
+                                    <i class="ph ph-caret-right"></i>
+                                </div>
+                            </div>
+                            <div class="cx-nav-item">
+                                <span>JavaScript</span>
+                                <span class="cx-count">0</span>
+                            </div>
+                            <div class="cx-nav-item">
+                                <span>TypeScript</span>
+                                <span class="cx-count">0</span>
+                            </div>
+                            <div class="cx-nav-item">
+                                <span>HTML</span>
+                                <span class="cx-count">0</span>
+                            </div>
+                            <div class="cx-nav-item">
+                                <span>CSS</span>
+                                <span class="cx-count">1</span>
+                            </div>
+                            <div class="cx-nav-item">
+                                <span>PHP</span>
+                                <span class="cx-count">2</span>
+                            </div>
+                            <div class="cx-nav-item">
+                                <span>Python</span>
+                                <span class="cx-count">0</span>
+                            </div>
+                            <div class="cx-nav-item">
+                                <span>SQL</span>
+                                <span class="cx-count">0</span>
+                            </div>
+                            <div class="cx-nav-item">
+                                <span>JSON</span>
+                                <span class="cx-count">0</span>
+                            </div>
+                            <div class="cx-nav-item">
+                                <span>Khác</span>
+                                <span class="cx-count">2</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Middle Panel: Snippet List -->
+                    <div class="cx-panel cx-list">
+                        <div class="cx-list-header">
+                            <div class="cx-search">
+                                <i class="ph ph-magnifying-glass"></i>
+                                <input type="text" placeholder="Tìm kiếm snippet...">
+                            </div>
+                            <p class="cx-subtitle">5 snippets</p>
+                        </div>
+                        <div class="cx-list-body">
+                            <!-- Active Item -->
+                            <div class="cx-snippet-item active">
+                                <div class="cx-snippet-top">
+                                    <h4 class="cx-snippet-title">Kích hoạt win bản quyền</h4>
+                                    <span class="cx-tag tag-gray">Khác</span>
+                                </div>
+                                <p class="cx-snippet-desc">Mở power shell để tiến hành</p>
+                                <div class="cx-snippet-meta">
+                                    <i class="ph ph-hash"></i> 5 dòng <span class="cx-dot">•</span> 83 ký tự
+                                </div>
+                            </div>
+
+                            <!-- Item 2 -->
+                            <div class="cx-snippet-item">
+                                <div class="cx-snippet-top">
+                                    <h4 class="cx-snippet-title">Hạn chế text theo dòng</h4>
+                                    <span class="cx-tag tag-purple">CSS</span>
+                                </div>
+                                <p class="cx-snippet-desc"></p>
+                                <div class="cx-snippet-meta">
+                                    <i class="ph ph-hash"></i> 8 dòng <span class="cx-dot">•</span> 193 ký tự
+                                </div>
+                            </div>
+
+                            <!-- Item 3 -->
+                            <div class="cx-snippet-item">
+                                <div class="cx-snippet-top">
+                                    <h4 class="cx-snippet-title">Install license and Setting Import Wordfence</h4>
+                                    <span class="cx-tag tag-gray">Khác</span>
+                                </div>
+                                <p class="cx-snippet-desc"></p>
+                                <div class="cx-snippet-meta">
+                                    <i class="ph ph-hash"></i> 8 dòng <span class="cx-dot">•</span> 376 ký tự
+                                </div>
+                            </div>
+
+                            <!-- Item 4 -->
+                            <div class="cx-snippet-item">
+                                <div class="cx-snippet-top">
+                                    <h4 class="cx-snippet-title">Tắt cập nhật plugin</h4>
+                                    <span class="cx-tag tag-blue">PHP</span>
+                                </div>
+                                <p class="cx-snippet-desc">Add vào function</p>
+                                <div class="cx-snippet-meta">
+                                    <i class="ph ph-hash"></i> 3 dòng <span class="cx-dot">•</span> 160 ký tự
+                                </div>
+                            </div>
+
+                            <!-- Item 5 -->
+                            <div class="cx-snippet-item">
+                                <div class="cx-snippet-top">
+                                    <h4 class="cx-snippet-title">Ẩn 1 menu trong admin WP</h4>
+                                    <span class="cx-tag tag-blue">PHP</span>
+                                </div>
+                                <p class="cx-snippet-desc">Thêm trong function</p>
+                                <div class="cx-snippet-meta">
+                                    <i class="ph ph-hash"></i> 3 dòng <span class="cx-dot">•</span> 83 ký tự
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel: Preview -->
+                    <div class="cx-panel cx-preview">
+                        <div class="cx-preview-header">
+                            <div class="cx-preview-title-row">
+                                <div class="cx-preview-title">
+                                    <h2>Kích hoạt win bản quyền</h2>
+                                    <span class="cx-tag tag-gray">Khác</span>
+                                </div>
+                                <div class="cx-preview-actions">
+                                    <button class="btn-icon-nm"><i class="ph ph-pencil-simple"></i></button>
+                                    <button class="btn-icon-nm"><i class="ph ph-trash"></i></button>
+                                </div>
+                            </div>
+                            <p class="cx-preview-desc">Mở power shell để tiến hành</p>
+                            <div class="cx-snippet-meta">
+                                <i class="ph ph-hash"></i> 5 dòng <span class="cx-dot">•</span> 83 ký tự
+                            </div>
+                        </div>
+
+                        <div class="cx-preview-body">
+                            <div class="cx-code-toolbar">
+                                <span class="cx-code-label"><i class="ph ph-code"></i> Code Preview</span>
+                                <button class="btn-dark"><i class="ph ph-copy"></i> Copy Code</button>
+                            </div>
+                            <!-- Mockup code editor/preview container -->
+                            <div class="cx-code-container">
+                                <pre><code>// 01
+irm https://massgrave.dev/get | iex
+
+// 02
+irm https://get.activated.win | ie</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
