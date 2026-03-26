@@ -146,7 +146,7 @@
                                     </td>
                                     <td>
                                         <div class="customer-info">
-                                            <i class="ph ph-user-circle"></i> Khánh Linh
+                                            <div class="customer-name-row"><i class="ph ph-user-circle"></i> Khánh Linh</div>
                                             <div class="customer-phone"><i class="ph ph-phone"></i></div>
                                         </div>
                                     </td>
@@ -171,7 +171,7 @@
                                     </td>
                                     <td>
                                         <div class="customer-info">
-                                            <i class="ph ph-user-circle"></i> Onelaw
+                                            <div class="customer-name-row"><i class="ph ph-user-circle"></i> Onelaw</div>
                                             <div class="customer-phone"><i class="ph ph-phone"></i></div>
                                         </div>
                                     </td>
@@ -196,7 +196,7 @@
                                     </td>
                                     <td>
                                         <div class="customer-info">
-                                            <i class="ph ph-user-circle"></i> Anh Nguyễn Sư
+                                            <div class="customer-name-row"><i class="ph ph-user-circle"></i> Anh Nguyễn Sư</div>
                                             <div class="customer-phone"><i class="ph ph-phone"></i></div>
                                         </div>
                                     </td>
@@ -222,7 +222,7 @@
                                     </td>
                                     <td>
                                         <div class="customer-info">
-                                            <i class="ph ph-user-circle"></i> Phú Thành
+                                            <div class="customer-name-row"><i class="ph ph-user-circle"></i> Phú Thành</div>
                                             <div class="customer-phone"><i class="ph ph-phone"></i></div>
                                         </div>
                                     </td>
@@ -248,7 +248,7 @@
                                     </td>
                                     <td>
                                         <div class="customer-info">
-                                            <i class="ph ph-user-circle"></i> Sayoung
+                                            <div class="customer-name-row"><i class="ph ph-user-circle"></i> Sayoung</div>
                                             <div class="customer-phone"><i class="ph ph-phone"></i> 0383797541</div>
                                         </div>
                                     </td>
@@ -274,7 +274,7 @@
                                     </td>
                                     <td>
                                         <div class="customer-info">
-                                            <i class="ph ph-user-circle"></i> A Hùng
+                                            <div class="customer-name-row"><i class="ph ph-user-circle"></i> A Hùng</div>
                                             <div class="customer-phone"><i class="ph ph-phone"></i> 0383797541</div>
                                         </div>
                                     </td>
@@ -300,7 +300,7 @@
                                     </td>
                                     <td>
                                         <div class="customer-info">
-                                            <i class="ph ph-user-circle"></i> A Hùng
+                                            <div class="customer-name-row"><i class="ph ph-user-circle"></i> A Hùng</div>
                                             <div class="customer-phone"><i class="ph ph-phone"></i> 0383797541</div>
                                         </div>
                                     </td>
@@ -319,15 +319,13 @@
 
                 <!-- Pagination -->
                 <div class="logs-pagination-row" style="padding: 0 0 8px 0;">
-                    <span class="logs-count">Hiển thị: 1 - 7 / 154 projects</span>
+                    <span class="logs-count">Hiển thị: 1 - 1 / 1 trong tổng số 27 kết quả</span>
                     <div class="logs-pagination">
-                        <button class="pg-btn">Trước</button>
+                        <button class="pg-btn"><i class="ph ph-caret-left"></i></button>
                         <button class="pg-btn active">1</button>
                         <button class="pg-btn">2</button>
                         <button class="pg-btn">3</button>
-                        <button class="pg-btn">4</button>
-                        <button class="pg-btn">5</button>
-                        <button class="pg-btn">Sau</button>
+                        <button class="pg-btn"><i class="ph ph-caret-right"></i></button>
                     </div>
                 </div>
         </main>
