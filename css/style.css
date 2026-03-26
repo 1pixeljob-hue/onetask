@@ -2607,3 +2607,52 @@ body {
     transition: all 0.2s;
 }
 .modal-btn-submit:hover { background: #0b8a7e; }
+
+/* ===== Row Action Menu ===== */
+.row-action-menu {
+    position: absolute;
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(15,23,42,0.14);
+    min-width: 160px;
+    padding: 6px;
+    z-index: 999;
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    animation: ramIn 0.15s ease;
+}
+.row-action-menu.open { display: flex; }
+@keyframes ramIn {
+    from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+.ram-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border: none;
+    background: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    color: var(--text-main);
+    transition: background 0.15s;
+}
+.ram-item i { font-size: 16px; }
+.ram-view         { color: #2563eb; }
+.ram-view:hover   { background: #eff6ff; }
+.ram-edit:hover   { background: #f8fafc; }
+.ram-delete       { color: #dc2626; }
+.ram-delete:hover { background: #fef2f2; }
+.ram-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 3px 4px;
+}
