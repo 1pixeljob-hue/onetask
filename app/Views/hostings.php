@@ -772,6 +772,14 @@ function closeConfirmDelete(e) {
 
 function confirmDeleteAction() {
     closeConfirmDeleteBtn();
+    const hostingName = document.getElementById('cdmHostingName').textContent;
+    
+    showActionToast('Đang xóa hosting...', `Đã xóa hosting "${hostingName}"`, () => {
+        if (rowToDelete) rowToDelete.remove();
+    });
+}
+
+function showActionToast(loadingMsg, successMsg, callback) {
     const toast = document.getElementById('deleteToast');
     const msg = document.getElementById('dtMessage');
     const spinner = document.getElementById('dtSpinner');
@@ -780,19 +788,17 @@ function confirmDeleteAction() {
     // Reset state
     spinner.style.display = 'block';
     successIcon.style.display = 'none';
-    msg.textContent = 'Đang xóa hosting...';
+    msg.textContent = loadingMsg;
     toast.classList.add('show');
-    
-    const hostingName = document.getElementById('cdmHostingName').textContent;
     
     // Simulate delay
     setTimeout(() => {
-        if (rowToDelete) rowToDelete.remove();
+        if (callback) callback();
         
         // Success state
         spinner.style.display = 'none';
         successIcon.style.display = 'block';
-        msg.textContent = `Đã xóa hosting "${hostingName}"`;
+        msg.textContent = successMsg;
         
         // Hide toast
         setTimeout(() => {
@@ -849,10 +855,11 @@ function addHosting() {
     const tr = document.createElement('tr');
     tr.innerHTML = generateRowHTML(name, domain, provider, expDate, status);
     
-    const tbody = document.querySelector('.data-table tbody');
-    tbody.insertBefore(tr, tbody.firstChild);
-
     closeHostingModalBtn();
+    showActionToast('Đang thêm hosting...', `Đã thêm hosting "${name}"`, () => {
+        const tbody = document.querySelector('.data-table tbody');
+        tbody.insertBefore(tr, tbody.firstChild);
+    });
 }
 
 function updateHosting() {
@@ -869,9 +876,11 @@ function updateHosting() {
     }
 
     const status = getStatusFromDate(expDate);
-    currentRowToEdit.innerHTML = generateRowHTML(name, domain, provider, expDate, status);
-    
     closeHostingModalBtn();
+    
+    showActionToast('Đang cập nhật hosting...', `Đã cập nhật hosting "${name}"`, () => {
+        currentRowToEdit.innerHTML = generateRowHTML(name, domain, provider, expDate, status);
+    });
 }
 
 function generateRowHTML(name, domain, provider, expDate, status) {
