@@ -301,7 +301,7 @@
 <div class="modal-overlay" id="addProjectModal" onclick="closeAddProjectModalOverlay(event)">
     <div class="modal-box scrollable">
         <div class="modal-header">
-            <h3 class="modal-title"><i class="ph ph-folders" style="margin-right: 8px; font-size: 20px; color: var(--primary-color);"></i>Thêm Project Mới</h3>
+            <h3 class="modal-title" id="modalTitle"><i class="ph ph-folders"></i> Thêm Project Mới</h3>
             <button class="modal-close" onclick="closeAddProjectModal()"><i class="ph ph-x"></i></button>
         </div>
         <div class="modal-body">
