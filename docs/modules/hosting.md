@@ -24,6 +24,7 @@
 - **[Mới hoàn thành]** Hoàn thiện **Modal Chi Tiết Hosting** với giao diện header gradient, card thông tin dạng Grid, tích hợp nút "Chỉnh Sửa/Xóa" bám sát thao tác.
 - **[Mới hoàn thành]** Nâng cấp UX bằng **Custom Delete Modal** (Giao diện "Xác nhận xóa hosting").
 - **[Mới hoàn thành]** Xây dựng module **Toast Action**: Trượt từ Bottom-Right, hiển thị thông báo Loading Spinner và tự động chuyển sang trạng thái Success (Checkmark) áp dụng nhất quán cho Thêm, Cập nhật, và Xóa.
+- **[Mới hoàn thành]** Tích hợp tính năng **Bulk Action Bar**: Cho phép chọn nhiều hosting cùng lúc (Multi-select) và thực hiện xóa hàng loạt (Bulk Delete) với UI thanh trạng thái nổi bám sát mockup.
 
 ## 4. Gợi ý Tối ưu (Future Optimizations)
 1. **Chuyển hóa DB & API**: Xây dựng backend kiến trúc MVC (Controller & Model kết nối MySQL) và chuyển toàn bộ các hàm JS như `addHosting()`, `updateHosting()`, `deleteAction()` sang dạng FETCH API thay đổi số liệu thực.

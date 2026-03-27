@@ -88,6 +88,21 @@
                     </div>
                 </div>
             </header>
+            
+            <!-- Bulk Action Bar -->
+            <div class="bulk-action-bar" id="bulkActionBar">
+                <div class="bab-left">
+                    <i class="ph-fill ph-check-circle"></i>
+                    <span id="selectedCountText">Đã chọn 0 hosting</span>
+                </div>
+                <div class="bab-right">
+                    <button class="btn-deselect" onclick="deselectAllHostings()">Bỏ chọn</button>
+                    <button class="btn-bulk-delete" onclick="promptBulkDelete()">
+                        <i class="ph ph-trash"></i>
+                        <span id="bulkDeleteBtnText">Xóa 0</span>
+                    </button>
+                </div>
+            </div>
 
             <div class="content-body">
                 <!-- Toolbar -->
@@ -122,7 +137,7 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th width="40"><input type="checkbox" class="cb-custom"></th>
+                                <th width="40"><input type="checkbox" class="cb-custom" id="selectAllHostings" onclick="toggleSelectAll(this)"></th>
                                 <th>TÊN HOSTING</th>
                                 <th>DOMAIN</th>
                                 <th>NHÀ CUNG CẤP</th>
@@ -134,7 +149,7 @@
                         <tbody>
                             <!-- Row 1 -->
                             <tr>
-                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
                                 <td>
                                     <div class="cell-main">Photoeditor 24h</div>
                                     <div class="cell-sub">Sử dụng 1 năm</div>
@@ -172,7 +187,7 @@
                             
                             <!-- Row 2 -->
                             <tr>
-                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
                                 <td>
                                     <div class="cell-main">Hosting Sơn TREX</div>
                                     <div class="cell-sub">Sử dụng 1 năm</div>
@@ -210,7 +225,7 @@
 
                             <!-- Row 3 -->
                             <tr>
-                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
                                 <td>
                                     <div class="cell-main">Sayoung</div>
                                     <div class="cell-sub">Sử dụng 5 năm</div>
@@ -248,7 +263,7 @@
 
                             <!-- Row 4 -->
                             <tr>
-                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
                                 <td>
                                     <div class="cell-main">BĐS Yên Thủy</div>
                                     <div class="cell-sub">Sử dụng 1 năm</div>
@@ -286,7 +301,7 @@
 
                             <!-- Row 5 -->
                             <tr>
-                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
                                 <td>
                                     <div class="cell-main">Giấy Sao Mai</div>
                                     <div class="cell-sub">Sử dụng 1 năm</div>
@@ -324,7 +339,7 @@
                             
                             <!-- Row 6 -->
                             <tr>
-                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
                                 <td>
                                     <div class="cell-main">Sơn KAZUKI</div>
                                     <div class="cell-sub">Sử dụng 1 năm</div>
@@ -362,7 +377,7 @@
 
                             <!-- Row 7 -->
                             <tr>
-                                <td><input type="checkbox" class="cb-custom"></td>
+                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
                                 <td>
                                     <div class="cell-main">Pomaxx</div>
                                     <div class="cell-sub">Sử dụng 2 năm</div>
@@ -439,6 +454,68 @@ let currentActionMode = 'add';
 let currentRowToEdit = null;
 let currentSearchTerm = '';
 let currentStatusFilter = '';
+let selectedHostings = new Set();
+
+function updateBulkActionBar() {
+    const bar = document.getElementById('bulkActionBar');
+    const countText = document.getElementById('selectedCountText');
+    const deleteBtnText = document.getElementById('bulkDeleteBtnText');
+    const count = selectedHostings.size;
+
+    if (count > 0) {
+        countText.textContent = `Đã chọn ${count} hosting`;
+        deleteBtnText.textContent = `Xóa ${count}`;
+        bar.classList.add('show');
+    } else {
+        bar.classList.remove('show');
+    }
+}
+
+function toggleSelectAll(masterCb) {
+    const checkboxes = document.querySelectorAll('.data-table tbody .cb-custom');
+    selectedHostings.clear();
+    
+    checkboxes.forEach(cb => {
+        const row = cb.closest('tr');
+        if (row.style.display !== 'none') {
+            cb.checked = masterCb.checked;
+            if (cb.checked) {
+                const id = row.getAttribute('data-id') || row.rowIndex;
+                selectedHostings.add(row);
+            }
+        } else {
+            cb.checked = false;
+        }
+    });
+    updateBulkActionBar();
+}
+
+function handleRowSelection(cb) {
+    const row = cb.closest('tr');
+    if (cb.checked) {
+        selectedHostings.add(row);
+    } else {
+        selectedHostings.delete(row);
+        document.getElementById('selectAllHostings').checked = false;
+    }
+    updateBulkActionBar();
+}
+
+function deselectAllHostings() {
+    document.getElementById('selectAllHostings').checked = false;
+    document.querySelectorAll('.data-table .cb-custom').forEach(cb => cb.checked = false);
+    selectedHostings.clear();
+    updateBulkActionBar();
+}
+
+function promptBulkDelete() {
+    const count = selectedHostings.size;
+    if (count === 0) return;
+    
+    const confirmModal = document.getElementById('confirmDeleteModal');
+    document.getElementById('cdmHostingName').innerHTML = `<strong>${count} bản ghi đã chọn</strong>`;
+    confirmModal.classList.add('active');
+}
 
 function toggleHostingFilter() {
     document.getElementById('hostingFilterDropdown').classList.toggle('open');
@@ -804,11 +881,21 @@ function closeConfirmDelete(e) {
 
 function confirmDeleteAction() {
     closeConfirmDeleteBtn();
-    const hostingName = document.getElementById('cdmHostingName').textContent;
     
-    showActionToast('Đang xóa hosting...', `Đã xóa hosting "${hostingName}"`, () => {
-        if (rowToDelete) rowToDelete.remove();
-    });
+    if (selectedHostings.size > 0) {
+        const count = selectedHostings.size;
+        showActionToast(`Đang xóa ${count} hosting...`, `Đã xóa ${count} hosting thành công`, () => {
+            selectedHostings.forEach(row => row.remove());
+            selectedHostings.clear();
+            updateBulkActionBar();
+            document.getElementById('selectAllHostings').checked = false;
+        });
+    } else {
+        const hostingName = document.getElementById('cdmHostingName').textContent;
+        showActionToast('Đang xóa hosting...', `Đã xóa hosting "${hostingName}"`, () => {
+            if (rowToDelete) rowToDelete.remove();
+        });
+    }
 }
 
 function showActionToast(loadingMsg, successMsg, callback) {
@@ -921,7 +1008,7 @@ function generateRowHTML(name, domain, provider, expDate, status) {
         : `<div class="date-sub error-text"><i class="ph ph-clock"></i> Đã hết hạn</div>`;
 
     return `
-        <td><input type="checkbox" class="cb-custom"></td>
+        <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
         <td>
             <div class="cell-main">${name}</div>
             <div class="cell-sub">Sử dụng 1 năm</div>

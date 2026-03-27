@@ -779,6 +779,88 @@ body {
     border-color: var(--primary-light);
 }
 
+/* Bulk Action Bar */
+.bulk-action-bar {
+    position: fixed;
+    top: 24px;
+    left: 292px; /* sidebar (260) + space (32) */
+    right: 32px;
+    background: linear-gradient(135deg, #2fab91 0%, #289982 100%);
+    border-radius: 12px;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    box-shadow: 0 10px 30px -10px rgba(47, 171, 145, 0.4);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bulk-action-bar.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.bab-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+}
+
+.bab-left i {
+    font-size: 20px;
+}
+
+.bab-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-deselect {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-deselect:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.btn-bulk-delete {
+    background-color: #fe2c2c;
+    border: none;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(254, 44, 44, 0.3);
+    transition: all 0.2s;
+}
+
+.btn-bulk-delete:hover {
+    background-color: #e52525;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(254, 44, 44, 0.4);
+}
+
 .text-center {
     text-align: center;
 }
