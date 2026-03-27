@@ -133,7 +133,13 @@
                         </thead>
                         <tbody>
                             <!-- Row 1 -->
-                            <tr data-status="doing">
+                            <tr data-status="doing" 
+                                data-desc="Đã thanh toán 50%. Link drive: https://docs.google.com/spreadsheets/d/1x3m5-iiqPx-CJDO6vue004HKsBld5z_mLPtObNHhOYA/edit?pli=1&gid=1832823340#gid=1832823340"
+                                data-phone="0354777188"
+                                data-admin-url="https://lamthanhhimex.mysapo.net/admin"
+                                data-admin-user="0354777188"
+                                data-admin-pass="D@ngminhlong1512"
+                                data-value-raw="3500000">
                                 <td><input type="checkbox" class="cb-custom"></td>
                                 <td>
                                     <div class="cell-main">Thêm sản phẩm cho web Trái Cây Lâm Thành</div>
@@ -154,7 +160,13 @@
                             </tr>
 
                             <!-- Row 2 -->
-                            <tr data-status="testing">
+                            <tr data-status="testing"
+                                data-desc="Thêm section tài liệu và iframe view..."
+                                data-phone="N/A"
+                                data-admin-url="https://onelawvn.com/adminxxxx"
+                                data-admin-user="admin"
+                                data-admin-pass="password123"
+                                data-value-raw="1500000">
                                 <td><input type="checkbox" class="cb-custom"></td>
                                 <td>
                                     <div class="cell-main">Onelaw Code section tài liệu kèm iframe view</div>
@@ -402,6 +414,111 @@
 </div>
 
 <!-- Shared Row Action Dropdown -->
+<!-- Modal Chi Tiết Project -->
+<div class="modal-overlay" id="detailProjectModal" onclick="closeDetailProjectModal(event)">
+    <div class="modal-box scrollable">
+        <div class="modal-header-gradient">
+            <h3 class="modal-title-light"><i class="ph ph-folders"></i> Chi Tiết Project</h3>
+            <button class="modal-close-light" onclick="closeDetailProjectModalBtn()"><i class="ph ph-x"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="detail-top-row" style="margin-bottom: 24px;">
+                <div id="dpStatusBadge">
+                    <!-- Dynamic Status -->
+                </div>
+                <div class="modal-value-large">
+                    <i class="ph ph-currency-circle-dollar"></i>
+                    <span id="dpValue">0 VNĐ</span>
+                </div>
+            </div>
+
+            <!-- Section 1: Thông Tin Chung (Gray Card) -->
+            <div class="detail-gray-card">
+                <div class="detail-group">
+                    <span class="detail-label">Tên Project</span>
+                    <span class="detail-val" id="dpName" style="font-size: 16px;">Tên dự án...</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Mô Tả</span>
+                    <div class="detail-desc-box" id="dpDesc">
+                        Không có mô tả.
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="detail-group">
+                        <span class="detail-label-flex"><i class="ph ph-user"></i> Khách Hàng</span>
+                        <span class="dgc-val" id="dpCustomer">Khách hàng...</span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label-flex"><i class="ph ph-phone"></i> Số Điện Thoại</span>
+                        <span class="dgc-val" id="dpPhone">N/A</span>
+                    </div>
+                </div>
+
+                <div class="detail-group">
+                    <span class="detail-label-flex"><i class="ph ph-calendar-blank"></i> Ngày Tạo</span>
+                    <span class="dgc-val" id="dpDate">--/--/----</span>
+                </div>
+            </div>
+
+            <!-- Section 2: Quản Trị (White Card) -->
+            <div class="modal-section-header with-border" style="margin-top: 24px;">
+                <span class="modal-section-title"><i class="ph ph-lock" style="margin-right: 6px;"></i> Thông Tin Quản Trị</span>
+            </div>
+
+            <div class="detail-copy-group">
+                <div class="detail-group">
+                    <span class="detail-label">URL</span>
+                    <div class="detail-copy-row">
+                        <div class="detail-copy-field">
+                            <i class="ph ph-link"></i>
+                            <span id="dpAdminUrl">https://...</span>
+                        </div>
+                        <button class="btn-copy-small" onclick="copyTextFrom('dpAdminUrl')">
+                            <i class="ph ph-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="detail-group">
+                    <span class="detail-label">Tài Khoản</span>
+                    <div class="detail-copy-row">
+                        <div class="detail-copy-field">
+                            <span id="dpAdminUser">admin</span>
+                        </div>
+                        <button class="btn-copy-small" onclick="copyTextFrom('dpAdminUser')">
+                            <i class="ph ph-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="detail-group">
+                    <span class="detail-label">Mật Khẩu</span>
+                    <div class="detail-copy-row">
+                        <div class="detail-copy-field" style="color: #64748b;">
+                            <span id="dpAdminPass">********</span>
+                        </div>
+                        <button class="btn-copy-small" onclick="copyTextFrom('dpAdminPass')">
+                            <i class="ph ph-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="detail-footer">
+            <button class="btn-edit-full" onclick="openEditProjectFromDetail()">
+                <i class="ph ph-pencil-simple"></i> Chỉnh Sửa
+            </button>
+            <button class="btn-delete-outline" onclick="deleteProjectFromDetail()">
+                <i class="ph ph-trash"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="copyToast" class="toast-message" style="z-index: 9999;">Đã sao chép vào bộ nhớ tạm!</div>
+
 <div class="row-action-menu" id="rowActionMenu">
     <button class="ram-item ram-view">
         <i class="ph ph-eye"></i> Xem Chi Tiết
@@ -522,14 +639,16 @@ document.addEventListener('click', function(e) {
         menu.classList.remove('open');
 
         if (tr) {
-            if (item.classList.contains('ram-delete')) {
+            if (item.classList.contains('ram-view')) {
+                openProjectDetail(tr);
+            } else if (item.classList.contains('ram-delete')) {
                 rowToDelete = tr;
                 const name = tr.querySelector('.cell-main').textContent.trim();
                 document.getElementById('cdmProjectName').textContent = name;
                 document.getElementById('confirmDeleteModal').classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
-            // Add view/edit logic if needed later
+            // Add edit logic if needed later
         }
         return;
     }
@@ -564,10 +683,14 @@ function updateProjectValueDisplay(input) {
 function submitProjectForm() {
     const name = document.getElementById('mProjectName').value.trim();
     const status = document.getElementById('mProjectStatus').value;
+    const desc = document.getElementById('mProjectDesc').value.trim();
     const date = document.getElementById('mProjectDate').value;
     const customer = document.getElementById('mCustomerName').value.trim();
+    const phone = document.getElementById('mCustomerPhone').value.trim();
+    const adminLink = document.getElementById('mAdminLink').value.trim();
+    const adminUser = document.getElementById('mAdminUser').value.trim();
+    const adminPass = document.getElementById('adminPassword').value;
     const valRaw = parseInt(document.getElementById('projectValue').value) || 0;
-    const link = document.getElementById('mAdminLink').value.trim() || 'N/A';
 
     if (!name || !date || !customer) {
         alert('Vui lòng điền đầy đủ các thông tin bắt buộc (*)');
@@ -583,11 +706,9 @@ function submitProjectForm() {
     };
     const s = statusInfo[status];
 
-    // Format Date (YYYY-MM-DD to DD/MM/YYYY)
     const [y, m, d] = date.split('-');
     const formattedDate = `${d}/${m}/${y}`;
 
-    // Format Value (e.g. 3,500,000 -> 3.5M)
     let formattedVal = '0';
     if (valRaw >= 1000000) {
         formattedVal = (valRaw / 1000000).toFixed(1).replace('.0', '') + 'M';
@@ -599,12 +720,21 @@ function submitProjectForm() {
 
     const tbody = document.querySelector('.data-table tbody');
     const newRow = document.createElement('tr');
+    
+    // Store all data in attributes
     newRow.setAttribute('data-status', status);
+    newRow.setAttribute('data-desc', desc);
+    newRow.setAttribute('data-phone', phone);
+    newRow.setAttribute('data-admin-url', adminLink);
+    newRow.setAttribute('data-admin-user', adminUser);
+    newRow.setAttribute('data-admin-pass', adminPass);
+    newRow.setAttribute('data-value-raw', valRaw);
+
     newRow.innerHTML = `
         <td><input type="checkbox" class="cb-custom"></td>
         <td>
             <div class="cell-main">${name}</div>
-            <div class="cell-sub"><i class="ph ph-link"></i> ${link}</div>
+            <div class="cell-sub"><i class="ph ph-link"></i> ${adminLink || 'N/A'}</div>
         </td>
         <td>
             <div class="provider-info">
@@ -628,6 +758,73 @@ function submitProjectForm() {
     tbody.prepend(newRow);
     closeAddProjectModal();
     resetProjectForm();
+}
+
+function openProjectDetail(tr) {
+    const name = tr.querySelector('.cell-main').textContent.trim();
+    const customer = tr.querySelector('.provider-info span').textContent.trim();
+    const date = tr.querySelector('.date-info').textContent.trim();
+    const statusBadge = tr.querySelector('.status-badge');
+    const valueRaw = parseInt(tr.getAttribute('data-value-raw')) || 0;
+    
+    const desc = tr.getAttribute('data-desc') || 'Không có mô tả.';
+    const phone = tr.getAttribute('data-phone') || 'N/A';
+    const adminUrl = tr.getAttribute('data-admin-url') || 'N/A';
+    const adminUser = tr.getAttribute('data-admin-user') || 'N/A';
+    const adminPass = tr.getAttribute('data-admin-pass') || 'N/A';
+
+    // Populate
+    document.getElementById('dpName').textContent = name;
+    document.getElementById('dpCustomer').textContent = customer;
+    document.getElementById('dpDate').textContent = date;
+    document.getElementById('dpValue').textContent = valueRaw.toLocaleString('vi-VN') + ' VNĐ';
+    document.getElementById('dpDesc').textContent = desc;
+    document.getElementById('dpPhone').textContent = phone;
+    document.getElementById('dpAdminUrl').textContent = adminUrl;
+    document.getElementById('dpAdminUser').textContent = adminUser;
+    document.getElementById('dpAdminPass').textContent = adminPass;
+
+    // Status
+    const statusContainer = document.getElementById('dpStatusBadge');
+    statusContainer.innerHTML = `<span class="${statusBadge.className}">${statusBadge.innerHTML}</span>`;
+
+    currentRowToEdit = tr;
+    document.getElementById('detailProjectModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDetailProjectModalBtn() {
+    document.getElementById('detailProjectModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function closeDetailProjectModal(e) {
+    if (e.target === document.getElementById('detailProjectModal')) closeDetailProjectModalBtn();
+}
+
+function copyTextFrom(elementId) {
+    const text = document.getElementById(elementId).textContent;
+    if (text === 'N/A') return;
+    
+    navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('copyToast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    });
+}
+
+function openEditProjectFromDetail() {
+    closeDetailProjectModalBtn();
+    // Logic for editing can be added here
+}
+
+function deleteProjectFromDetail() {
+    closeDetailProjectModalBtn();
+    rowToDelete = currentRowToEdit;
+    const name = rowToDelete.querySelector('.cell-main').textContent.trim();
+    document.getElementById('cdmProjectName').textContent = name;
+    document.getElementById('confirmDeleteModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
 function resetProjectForm() {

@@ -2849,6 +2849,102 @@ body {
     transition: opacity 0.2s;
 }
 .btn-edit-full:hover { opacity: 0.9; }
+
+.btn-delete-outline {
+    width: 48px;
+    height: 48px;
+    border: 1px solid #fee2e2;
+    background: #fff;
+    color: #ef4444;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-delete-outline:hover { background: #fef2f2; border-color: #fecaca; }
+
+/* New Project Detail Specifics */
+.detail-desc-box {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--text-main);
+    line-height: 1.6;
+    margin-top: 4px;
+}
+
+.detail-copy-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.detail-copy-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.detail-copy-field {
+    flex: 1;
+    height: 44px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    background: #fff;
+    font-size: 13px;
+    color: #2563eb;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.detail-copy-field i { margin-right: 8px; font-size: 16px; }
+
+.btn-copy-small {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: var(--text-muted);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-copy-small:hover { border-color: var(--primary-color); color: var(--primary-color); background: #f0fdfa; }
+
+.modal-value-large {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-label-flex {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.btn-edit-full:hover { opacity: 0.9; }
 .btn-delete-outline {
     width: 44px;
     height: 44px;
