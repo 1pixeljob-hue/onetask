@@ -389,8 +389,9 @@
                 <label class="modal-label">Giá Trị Dự Án (VNĐ)</label>
                 <div class="modal-input-group">
                     <i class="ph ph-currency-circle-dollar modal-input-prefix"></i>
-                    <input type="number" class="modal-input with-prefix" value="0">
+                    <input type="number" class="modal-input with-prefix" id="projectValue" value="0" oninput="updateProjectValueDisplay(this)">
                 </div>
+                <div id="projectValueDisplay" class="modal-value-hint">0 VNĐ</div>
             </div>
         </div>
         <div class="modal-footer">
@@ -450,6 +451,12 @@ function togglePasswordVisibility(inputId, btn) {
         input.type = 'password';
         icon.classList.replace('ph-eye-slash', 'ph-eye');
     }
+}
+
+function updateProjectValueDisplay(input) {
+    const display = document.getElementById('projectValueDisplay');
+    const val = parseInt(input.value) || 0;
+    display.textContent = val.toLocaleString('vi-VN') + ' VNĐ';
 }
 </script>
 </body>

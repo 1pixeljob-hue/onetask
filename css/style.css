@@ -2999,3 +2999,10 @@ body {
     background-position: right 14px center;
     padding-right: 40px;
 }
+
+.modal-value-hint {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2563eb;
+    margin-top: 8px;
+}
