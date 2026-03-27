@@ -2929,12 +2929,12 @@ body {
 }
 
 .modal-section-header {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     padding-bottom: 8px;
 }
 .modal-section-header.with-border {
-    margin-top: 24px;
-    padding-top: 24px;
+    margin-top: 12px;
+    padding-top: 12px;
     border-top: 1px solid #edf2f7;
 }
 
