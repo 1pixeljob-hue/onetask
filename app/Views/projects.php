@@ -401,6 +401,41 @@
     </div>
 </div>
 
+<!-- Shared Row Action Dropdown -->
+<div class="row-action-menu" id="rowActionMenu">
+    <button class="ram-item ram-view">
+        <i class="ph ph-eye"></i> Xem Chi Tiết
+    </button>
+    <button class="ram-item ram-edit">
+        <i class="ph ph-pencil-simple"></i> Chỉnh Sửa
+    </button>
+    <div class="ram-divider"></div>
+    <button class="ram-item ram-delete">
+        <i class="ph ph-trash"></i> Xóa
+    </button>
+</div>
+
+<!-- Modal Xác nhận Xóa -->
+<div class="modal-overlay" id="confirmDeleteModal" onclick="closeConfirmDelete(event)">
+    <div class="modal-box" style="max-width: 420px; padding: 24px; border-radius: 16px;">
+        <button class="modal-close" style="position: absolute; right: 20px; top: 20px;" onclick="closeConfirmDeleteBtn()"><i class="ph ph-x"></i></button>
+        
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+            <div style="color: #ef4444; font-size: 24px; display: flex; align-items: center;"><i class="ph ph-warning"></i></div>
+            <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--text-main);">Xác nhận xóa project</h3>
+        </div>
+        
+        <p style="margin: 0 0 24px 0; color: #4b5563; font-size: 14px; line-height: 1.5;">
+            Bạn có chắc chắn muốn xóa project "<strong id="cdmProjectName"></strong>"?<br> Hành động này không thể hoàn tác.
+        </p>
+        
+        <div style="display: flex; gap: 12px;">
+            <button class="modal-btn-cancel" style="flex: 1; justify-content: center; border-radius: 8px; font-weight: 600; padding: 10px;" onclick="closeConfirmDeleteBtn()">Cancel</button>
+            <button class="modal-btn-submit" style="flex: 1; background: #fe2c2c; justify-content: center; border-radius: 8px; font-weight: 600; padding: 10px;" onclick="confirmDeleteAction()">OK</button>
+        </div>
+    </div>
+</div>
+
 <script>
 function toggleFilterDropdown() {
     document.getElementById('filterDropdown').classList.toggle('open');
@@ -431,12 +466,79 @@ document.getElementById('projectSearch').addEventListener('input', function() {
 // Modal Controls
 function openAddProjectModal() {
     document.getElementById('addProjectModal').classList.add('active');
+    document.querySelectorAll('.pj-filter-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('addProjectModal').classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 function closeAddProjectModal() {
     document.getElementById('addProjectModal').classList.remove('active');
     document.body.style.overflow = '';
 }
+
+function closeConfirmDeleteBtn() {
+    document.getElementById('confirmDeleteModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+function closeConfirmDelete(e) {
+    if (e.target === document.getElementById('confirmDeleteModal')) closeConfirmDeleteBtn();
+}
+
+let rowToDelete = null;
+function confirmDeleteAction() {
+    if (rowToDelete) {
+        rowToDelete.remove();
+        closeConfirmDeleteBtn();
+    }
+}
+
+document.addEventListener('click', function(e) {
+    const menu = document.getElementById('rowActionMenu');
+
+    // Toggle row action menu
+    if (e.target.closest('.btn-action')) {
+        const btn = e.target.closest('.btn-action');
+        const isOpen = menu.classList.contains('open') && menu._trigger === btn;
+        menu.classList.remove('open');
+        if (!isOpen) {
+            const rect = btn.getBoundingClientRect();
+            menu.style.top  = (rect.bottom + window.scrollY + 6) + 'px';
+            
+            // Replicate logic from hosting
+            const menuWidth = 160;
+            let leftPos = rect.right + window.scrollX - menuWidth - 4;
+            menu.style.left = Math.max(4, leftPos) + 'px';
+            
+            menu.classList.add('open');
+            menu._trigger = btn;
+        }
+        e.stopPropagation();
+        return;
+    }
+
+    // Click logic for menu items
+    if (e.target.closest('.ram-item')) {
+        const item = e.target.closest('.ram-item');
+        const tr = menu._trigger ? menu._trigger.closest('tr') : null;
+        menu.classList.remove('open');
+
+        if (tr) {
+            if (item.classList.contains('ram-delete')) {
+                rowToDelete = tr;
+                const name = tr.querySelector('.cell-main').textContent.trim();
+                document.getElementById('cdmProjectName').textContent = name;
+                document.getElementById('confirmDeleteModal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            // Add view/edit logic if needed later
+        }
+        return;
+    }
+
+    // Close on outside click
+    if (!e.target.closest('#rowActionMenu')) {
+        menu.classList.remove('open');
+    }
+});
 function closeAddProjectModalOverlay(e) {
     if (e.target === document.getElementById('addProjectModal')) closeAddProjectModal();
 }
