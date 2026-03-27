@@ -403,7 +403,7 @@
                     <i class="ph ph-currency-circle-dollar modal-input-prefix"></i>
                     <input type="number" class="modal-input with-prefix" id="projectValue" value="0" oninput="updateProjectValueDisplay(this)">
                 </div>
-                <div id="projectValueDisplay" class="modal-value-hint">0 VNĐ</div>
+                <div id="projectValueDisplay" class="modal-price-hint">0 VNĐ</div>
             </div>
         </div>
         <div class="modal-footer">
@@ -463,7 +463,7 @@
             </div>
 
             <!-- Section 2: Quản Trị (White Card) -->
-            <div class="modal-section-header with-border" style="margin-top: 24px;">
+            <div class="modal-section-header with-border" style="margin-top: 20px;">
                 <span class="modal-section-title"><i class="ph ph-lock" style="margin-right: 6px;"></i> Thông Tin Quản Trị</span>
             </div>
 
@@ -580,10 +580,60 @@ document.getElementById('projectSearch').addEventListener('input', function() {
     });
 });
 
-// Modal Controls
+let currentActionMode = 'add';
+let currentRowToEdit = null;
+
 function openAddProjectModal() {
+    currentActionMode = 'add';
+    currentRowToEdit = null;
+    resetProjectForm();
+    
+    document.getElementById('modalTitle').innerHTML = '<i class="ph ph-folders"></i> Thêm Project Mới';
+    document.querySelector('#addProjectModal .modal-btn-submit').textContent = 'Thêm Mới';
+    
     document.getElementById('addProjectModal').classList.add('active');
     document.querySelectorAll('.pj-filter-btn').forEach(b => b.classList.remove('active'));
+    document.body.style.overflow = 'hidden';
+}
+
+function openEditProjectModal(tr) {
+    currentActionMode = 'edit';
+    currentRowToEdit = tr;
+    
+    // Extract data
+    const name = tr.querySelector('.cell-main').textContent.trim();
+    const customer = tr.querySelector('.provider-info span').textContent.trim();
+    const status = tr.getAttribute('data-status');
+    const desc = tr.getAttribute('data-desc') || '';
+    const phone = tr.getAttribute('data-phone') || '';
+    const adminUrl = tr.getAttribute('data-admin-url') || '';
+    const adminUser = tr.getAttribute('data-admin-user') || '';
+    const adminPass = tr.getAttribute('data-admin-pass') || '';
+    const valueRaw = tr.getAttribute('data-value-raw') || 0;
+    
+    // Get raw date (DD/MM/YYYY -> YYYY-MM-DD)
+    const dateStr = tr.querySelector('.date-info').textContent.trim();
+    const [d, m, y] = dateStr.split('/');
+    const rawDate = `${y}-${m}-${d}`;
+
+    // Fill form
+    document.getElementById('mProjectName').value = name;
+    document.getElementById('mProjectStatus').value = status;
+    document.getElementById('mProjectDesc').value = desc;
+    document.getElementById('mProjectDate').value = rawDate;
+    document.getElementById('mCustomerName').value = customer;
+    document.getElementById('mCustomerPhone').value = phone;
+    document.getElementById('mAdminLink').value = adminUrl;
+    document.getElementById('mAdminUser').value = adminUser;
+    document.getElementById('adminPassword').value = adminPass;
+    document.getElementById('projectValue').value = valueRaw;
+    
+    updateProjectValueDisplay(document.getElementById('projectValue'));
+
+    // Update Modal UI
+    document.getElementById('modalTitle').innerHTML = '<i class="ph ph-pencil-simple"></i> Chỉnh Sửa Project';
+    document.querySelector('#addProjectModal .modal-btn-submit').textContent = 'Cập Nhật';
+    
     document.getElementById('addProjectModal').classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -620,7 +670,6 @@ document.addEventListener('click', function(e) {
             const rect = btn.getBoundingClientRect();
             menu.style.top  = (rect.bottom + window.scrollY + 6) + 'px';
             
-            // Replicate logic from hosting
             const menuWidth = 160;
             let leftPos = rect.right + window.scrollX - menuWidth - 4;
             menu.style.left = Math.max(4, leftPos) + 'px';
@@ -632,7 +681,6 @@ document.addEventListener('click', function(e) {
         return;
     }
 
-    // Click logic for menu items
     if (e.target.closest('.ram-item')) {
         const item = e.target.closest('.ram-item');
         const tr = menu._trigger ? menu._trigger.closest('tr') : null;
@@ -641,6 +689,8 @@ document.addEventListener('click', function(e) {
         if (tr) {
             if (item.classList.contains('ram-view')) {
                 openProjectDetail(tr);
+            } else if (item.classList.contains('ram-edit')) {
+                openEditProjectModal(tr);
             } else if (item.classList.contains('ram-delete')) {
                 rowToDelete = tr;
                 const name = tr.querySelector('.cell-main').textContent.trim();
@@ -648,12 +698,10 @@ document.addEventListener('click', function(e) {
                 document.getElementById('confirmDeleteModal').classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
-            // Add edit logic if needed later
         }
         return;
     }
 
-    // Close on outside click
     if (!e.target.closest('#rowActionMenu')) {
         menu.classList.remove('open');
     }
@@ -681,6 +729,40 @@ function updateProjectValueDisplay(input) {
 }
 
 function submitProjectForm() {
+    if (currentActionMode === 'add') {
+        addProject();
+    } else {
+        updateProject();
+    }
+}
+
+function addProject() {
+    const data = getFormData();
+    if (!data) return;
+
+    const tbody = document.querySelector('.data-table tbody');
+    const newRow = document.createElement('tr');
+    populateRow(newRow, data);
+
+    tbody.prepend(newRow);
+    closeAddProjectModal();
+    resetProjectForm();
+}
+
+function updateProject() {
+    const data = getFormData();
+    if (!data || !currentRowToEdit) return;
+
+    populateRow(currentRowToEdit, data);
+    closeAddProjectModal();
+    
+    // Refresh detail modal if open
+    if (document.getElementById('detailProjectModal').classList.contains('active')) {
+        openProjectDetail(currentRowToEdit);
+    }
+}
+
+function getFormData() {
     const name = document.getElementById('mProjectName').value.trim();
     const status = document.getElementById('mProjectStatus').value;
     const desc = document.getElementById('mProjectDesc').value.trim();
@@ -694,52 +776,52 @@ function submitProjectForm() {
 
     if (!name || !date || !customer) {
         alert('Vui lòng điền đầy đủ các thông tin bắt buộc (*)');
-        return;
+        return null;
     }
 
-    // Status Mapping
+    return { name, status, desc, date, customer, phone, adminLink, adminUser, adminPass, valRaw };
+}
+
+function populateRow(row, data) {
     const statusInfo = {
         'planning': { cls: 'warning', icon: 'ph-calendar-plus', label: 'Lên Kế Hoạch' },
         'doing': { cls: 'doing', icon: 'ph-clock', label: 'Đang Thực Hiện' },
         'testing': { cls: 'testing', icon: 'ph-flask', label: 'Chờ Nghiệm Thu' },
         'done': { cls: 'done', icon: 'ph-check-circle', label: 'Hoàn Thành' }
     };
-    const s = statusInfo[status];
+    const s = statusInfo[data.status];
 
-    const [y, m, d] = date.split('-');
+    const [y, m, d] = data.date.split('-');
     const formattedDate = `${d}/${m}/${y}`;
 
     let formattedVal = '0';
-    if (valRaw >= 1000000) {
-        formattedVal = (valRaw / 1000000).toFixed(1).replace('.0', '') + 'M';
-    } else if (valRaw >= 1000) {
-        formattedVal = (valRaw / 1000).toFixed(0) + 'K';
+    if (data.valRaw >= 1000000) {
+        formattedVal = (data.valRaw / 1000000).toFixed(1).replace('.0', '') + 'M';
+    } else if (data.valRaw >= 1000) {
+        formattedVal = (data.valRaw / 1000).toFixed(0) + 'K';
     } else {
-        formattedVal = valRaw.toString();
+        formattedVal = data.valRaw.toString();
     }
 
-    const tbody = document.querySelector('.data-table tbody');
-    const newRow = document.createElement('tr');
-    
-    // Store all data in attributes
-    newRow.setAttribute('data-status', status);
-    newRow.setAttribute('data-desc', desc);
-    newRow.setAttribute('data-phone', phone);
-    newRow.setAttribute('data-admin-url', adminLink);
-    newRow.setAttribute('data-admin-user', adminUser);
-    newRow.setAttribute('data-admin-pass', adminPass);
-    newRow.setAttribute('data-value-raw', valRaw);
+    // Store attributes
+    row.setAttribute('data-status', data.status);
+    row.setAttribute('data-desc', data.desc);
+    row.setAttribute('data-phone', data.phone);
+    row.setAttribute('data-admin-url', data.adminLink);
+    row.setAttribute('data-admin-user', data.adminUser);
+    row.setAttribute('data-admin-pass', data.adminPass);
+    row.setAttribute('data-value-raw', data.valRaw);
 
-    newRow.innerHTML = `
+    row.innerHTML = `
         <td><input type="checkbox" class="cb-custom"></td>
         <td>
-            <div class="cell-main">${name}</div>
-            <div class="cell-sub"><i class="ph ph-link"></i> ${adminLink || 'N/A'}</div>
+            <div class="cell-main">${data.name}</div>
+            <div class="cell-sub"><i class="ph ph-link"></i> ${data.adminLink || 'N/A'}</div>
         </td>
         <td>
             <div class="provider-info">
                 <i class="ph ph-user-circle color-gray"></i>
-                <span>${customer}</span>
+                <span>${data.customer}</span>
             </div>
         </td>
         <td><span class="val-badge"><i class="ph ph-currency-circle-dollar"></i> ${formattedVal}</span></td>
@@ -754,13 +836,10 @@ function submitProjectForm() {
         </td>
         <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
     `;
-
-    tbody.prepend(newRow);
-    closeAddProjectModal();
-    resetProjectForm();
 }
 
 function openProjectDetail(tr) {
+    currentRowToEdit = tr;
     const name = tr.querySelector('.cell-main').textContent.trim();
     const customer = tr.querySelector('.provider-info span').textContent.trim();
     const date = tr.querySelector('.date-info').textContent.trim();
@@ -788,7 +867,6 @@ function openProjectDetail(tr) {
     const statusContainer = document.getElementById('dpStatusBadge');
     statusContainer.innerHTML = `<span class="${statusBadge.className}">${statusBadge.innerHTML}</span>`;
 
-    currentRowToEdit = tr;
     document.getElementById('detailProjectModal').classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -815,7 +893,9 @@ function copyTextFrom(elementId) {
 
 function openEditProjectFromDetail() {
     closeDetailProjectModalBtn();
-    // Logic for editing can be added here
+    if (currentRowToEdit) {
+        openEditProjectModal(currentRowToEdit);
+    }
 }
 
 function deleteProjectFromDetail() {
@@ -839,6 +919,34 @@ function resetProjectForm() {
     document.getElementById('adminPassword').value = '';
     document.getElementById('projectValue').value = 0;
     document.getElementById('projectValueDisplay').textContent = '0 VNĐ';
+    
+    // Reset password field type
+    const passInput = document.getElementById('adminPassword');
+    passInput.type = 'password';
+    const icon = passInput.nextElementSibling.querySelector('i');
+    if (icon) {
+        icon.classList.remove('ph-eye-slash');
+        icon.classList.add('ph-eye');
+    }
+}
+
+function updateProjectValueDisplay(input) {
+    const val = parseInt(input.value) || 0;
+    document.getElementById('projectValueDisplay').textContent = val.toLocaleString('vi-VN') + ' VNĐ';
+}
+
+function togglePasswordVisibility(id, btn) {
+    const input = document.getElementById(id);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('ph-eye');
+        icon.classList.add('ph-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('ph-eye-slash');
+        icon.classList.add('ph-eye');
+    }
 }
 </script>
 </body>
