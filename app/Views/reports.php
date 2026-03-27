@@ -101,12 +101,17 @@
                         </div>
                     </div>
                     <div class="banner-right">
-                        <div class="year-filter">
-                            <i class="ph ph-funnel"></i> Năm: 
-                            <select class="year-select">
-                                <option>2026</option>
-                                <option>2025</option>
-                            </select>
+                        <div class="pj-filter-wrapper">
+                            <button class="pj-filter-btn" onclick="toggleYearFilter()">
+                                <i class="ph ph-calendar-blank"></i>
+                                <span id="yearFilterLabel">Năm 2026</span>
+                                <i class="ph ph-caret-down"></i>
+                            </button>
+                            <div class="pj-dropdown" id="yearFilterDropdown">
+                                <div class="pj-dropdown-item active" onclick="setYearFilter('2026', this)">Năm 2026</div>
+                                <div class="pj-dropdown-item" onclick="setYearFilter('2025', this)">Năm 2025</div>
+                                <div class="pj-dropdown-item" onclick="setYearFilter('2024', this)">Năm 2024</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -390,6 +395,34 @@
         // Init Charts
         const textColor = '#64748b';
         const gridColor = '#e2e8f0';
+
+        // Year Filter Logic
+        function toggleYearFilter() {
+            document.getElementById('yearFilterDropdown').classList.toggle('open');
+        }
+
+        function setYearFilter(year, el) {
+            document.getElementById('yearFilterLabel').textContent = 'Năm ' + year;
+            
+            // Update active state
+            document.querySelectorAll('#yearFilterDropdown .pj-dropdown-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            el.classList.add('active');
+            
+            // Close dropdown
+            document.getElementById('yearFilterDropdown').classList.remove('open');
+            
+            // Logic to filter data can be added here
+            console.log('Filtering by year:', year);
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function(e) {
+            if (!e.target.closest('.pj-filter-wrapper')) {
+                document.getElementById('yearFilterDropdown').classList.remove('open');
+            }
+        });
         
         // Donut Chart
         const ctxDonut = document.getElementById('donutChart').getContext('2d');
