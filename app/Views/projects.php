@@ -312,15 +312,15 @@
             
             <div class="modal-field full">
                 <label class="modal-label">Tên Project <span class="req">*</span></label>
-                <input type="text" class="modal-input" placeholder="VD: Website Thương Mại Điện Tử">
+                <input type="text" class="modal-input" id="mProjectName" placeholder="VD: Website Thương Mại Điện Tử">
             </div>
 
             <div class="modal-field full">
                 <label class="modal-label">Trạng Thái <span class="req">*</span></label>
                 <div class="modal-select-wrapper">
-                    <select class="modal-input modal-select-status">
+                    <select class="modal-input modal-select-status" id="mProjectStatus">
                         <option value="planning">Lên Kế Hoạch</option>
-                        <option value="doing">Đang Thực Hiện</option>
+                        <option value="doing" selected>Đang Thực Hiện</option>
                         <option value="testing">Chờ Nghiệm Thu</option>
                         <option value="done">Hoàn Thành</option>
                     </select>
@@ -329,12 +329,12 @@
 
             <div class="modal-field full">
                 <label class="modal-label">Mô Tả</label>
-                <textarea class="modal-textarea" placeholder="Mô tả chi tiết về project..."></textarea>
+                <textarea class="modal-textarea" id="mProjectDesc" placeholder="Mô tả chi tiết về project..."></textarea>
             </div>
 
             <div class="modal-field full">
                 <label class="modal-label">Ngày Tạo <span class="req">*</span></label>
-                <input type="date" class="modal-input">
+                <input type="date" class="modal-input" id="mProjectDate">
                 <p class="modal-field-hint">Ngày bắt đầu thực hiện dự án</p>
             </div>
 
@@ -346,11 +346,11 @@
             <div class="modal-row">
                 <div class="modal-field">
                     <label class="modal-label">Tên Khách Hàng <span class="req">*</span></label>
-                    <input type="text" class="modal-input" placeholder="VD: Nguyễn Văn A">
+                    <input type="text" class="modal-input" id="mCustomerName" placeholder="VD: Nguyễn Văn A">
                 </div>
                 <div class="modal-field">
                     <label class="modal-label">Số Điện Thoại</label>
-                    <input type="text" class="modal-input" placeholder="VD: 0912345678">
+                    <input type="text" class="modal-input" id="mCustomerPhone" placeholder="VD: 0912345678">
                 </div>
             </div>
 
@@ -361,13 +361,13 @@
             
             <div class="modal-field full">
                 <label class="modal-label">Đường Dẫn Admin</label>
-                <input type="text" class="modal-input" placeholder="VD: https://example.com/admin">
+                <input type="text" class="modal-input" id="mAdminLink" placeholder="VD: https://example.com/admin">
             </div>
 
             <div class="modal-row">
                 <div class="modal-field">
                     <label class="modal-label">Tài Khoản Admin</label>
-                    <input type="text" class="modal-input" placeholder="VD: admin">
+                    <input type="text" class="modal-input" id="mAdminUser" placeholder="VD: admin">
                 </div>
                 <div class="modal-field">
                     <label class="modal-label">Mật Khẩu Admin</label>
@@ -396,7 +396,7 @@
         </div>
         <div class="modal-footer">
             <button class="modal-btn-cancel" onclick="closeAddProjectModal()">Hủy</button>
-            <button class="modal-btn-submit">Thêm Mới</button>
+            <button class="modal-btn-submit" onclick="submitProjectForm()">Thêm Mới</button>
         </div>
     </div>
 </div>
@@ -457,6 +457,89 @@ function updateProjectValueDisplay(input) {
     const display = document.getElementById('projectValueDisplay');
     const val = parseInt(input.value) || 0;
     display.textContent = val.toLocaleString('vi-VN') + ' VNĐ';
+}
+
+function submitProjectForm() {
+    const name = document.getElementById('mProjectName').value.trim();
+    const status = document.getElementById('mProjectStatus').value;
+    const date = document.getElementById('mProjectDate').value;
+    const customer = document.getElementById('mCustomerName').value.trim();
+    const valRaw = parseInt(document.getElementById('projectValue').value) || 0;
+    const link = document.getElementById('mAdminLink').value.trim() || 'N/A';
+
+    if (!name || !date || !customer) {
+        alert('Vui lòng điền đầy đủ các thông tin bắt buộc (*)');
+        return;
+    }
+
+    // Status Mapping
+    const statusInfo = {
+        'planning': { cls: 'warning', icon: 'ph-calendar-plus', label: 'Lên Kế Hoạch' },
+        'doing': { cls: 'doing', icon: 'ph-clock', label: 'Đang Thực Hiện' },
+        'testing': { cls: 'testing', icon: 'ph-flask', label: 'Chờ Nghiệm Thu' },
+        'done': { cls: 'done', icon: 'ph-check-circle', label: 'Hoàn Thành' }
+    };
+    const s = statusInfo[status];
+
+    // Format Date (YYYY-MM-DD to DD/MM/YYYY)
+    const [y, m, d] = date.split('-');
+    const formattedDate = `${d}/${m}/${y}`;
+
+    // Format Value (e.g. 3,500,000 -> 3.5M)
+    let formattedVal = '0';
+    if (valRaw >= 1000000) {
+        formattedVal = (valRaw / 1000000).toFixed(1).replace('.0', '') + 'M';
+    } else if (valRaw >= 1000) {
+        formattedVal = (valRaw / 1000).toFixed(0) + 'K';
+    } else {
+        formattedVal = valRaw.toString();
+    }
+
+    const tbody = document.querySelector('.data-table tbody');
+    const newRow = document.createElement('tr');
+    newRow.setAttribute('data-status', status);
+    newRow.innerHTML = `
+        <td><input type="checkbox" class="cb-custom"></td>
+        <td>
+            <div class="cell-main">${name}</div>
+            <div class="cell-sub"><i class="ph ph-link"></i> ${link}</div>
+        </td>
+        <td>
+            <div class="provider-info">
+                <i class="ph ph-user-circle color-gray"></i>
+                <span>${customer}</span>
+            </div>
+        </td>
+        <td><span class="val-badge"><i class="ph ph-currency-circle-dollar"></i> ${formattedVal}</span></td>
+        <td>
+            <div class="date-info text-main"><i class="ph ph-calendar-blank"></i> ${formattedDate}</div>
+        </td>
+        <td>
+            <span class="status-badge ${s.cls}">
+                <i class="ph ${s.icon}"></i>
+                ${s.label}
+            </span>
+        </td>
+        <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
+    `;
+
+    tbody.prepend(newRow);
+    closeAddProjectModal();
+    resetProjectForm();
+}
+
+function resetProjectForm() {
+    document.getElementById('mProjectName').value = '';
+    document.getElementById('mProjectStatus').value = 'doing';
+    document.getElementById('mProjectDesc').value = '';
+    document.getElementById('mProjectDate').value = '';
+    document.getElementById('mCustomerName').value = '';
+    document.getElementById('mCustomerPhone').value = '';
+    document.getElementById('mAdminLink').value = '';
+    document.getElementById('mAdminUser').value = '';
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('projectValue').value = 0;
+    document.getElementById('projectValueDisplay').textContent = '0 VNĐ';
 }
 </script>
 </body>
