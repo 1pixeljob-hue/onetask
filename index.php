@@ -28,8 +28,11 @@ spl_autoload_register(function($class) {
     }
 });
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Load the Router
-require_once CORE_DIR . '/Router.php';
+require_once 'app/Core/Router.php';
 
 // Bootstrap the application
 $router = new Router();
