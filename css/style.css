@@ -2786,7 +2786,7 @@ body {
     gap: 6px;
 }
 
-.detail-group { display: flex; flex-direction: column; gap: 4px; }
+.detail-group { display: flex; flex-direction: column; gap: 8px; }
 .detail-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; }
 .detail-val { font-size: 18px; font-weight: 700; color: var(--text-main); }
 .detail-val-norm { font-size: 14px; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
@@ -2794,16 +2794,16 @@ body {
 .detail-info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 20px;
 }
 
 .detail-gray-card {
     background: #f8fafc;
     border-radius: 12px;
-    padding: 16px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 24px;
     border: 1px solid var(--border-color);
 }
 .dgc-title {
@@ -2881,8 +2881,8 @@ body {
 .detail-copy-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-top: 12px;
+    gap: 20px;
+    margin-top: 20px;
 }
 
 .detail-copy-row {
