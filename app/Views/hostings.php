@@ -412,21 +412,68 @@
                                     <button class="btn-action"><i class="ph ph-dots-three"></i></button>
                                 </td>
                             </tr>
+                            <!-- Dummy Row 8 -->
+                            <tr>
+                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
+                                <td>
+                                    <div class="cell-main">VinaLink</div>
+                                    <div class="cell-sub">Sử dụng 1 năm</div>
+                                </td>
+                                <td><div class="domain-info"><i class="ph ph-globe color-gray"></i><span>https://vinalink.com/</span></div></td>
+                                <td><div class="provider-info"><i class="ph ph-hard-drives color-gray"></i><span>Mắt Bão</span></div></td>
+                                <td><div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 10/08/2026</div><div class="date-sub success-text"><i class="ph ph-clock"></i> Còn 136 ngày</div></td>
+                                <td><span class="status-badge success"><i class="ph ph-check-circle"></i>Hoạt động</span></td>
+                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
+                            </tr>
+                            <!-- Dummy Row 9 -->
+                            <tr>
+                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
+                                <td><div class="cell-main">TechBase</div><div class="cell-sub">Sử dụng 2 năm</div></td>
+                                <td><div class="domain-info"><i class="ph ph-globe color-gray"></i><span>https://techbase.vn/</span></div></td>
+                                <td><div class="provider-info"><i class="ph ph-hard-drives color-gray"></i><span>PA Việt Nam</span></div></td>
+                                <td><div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 15/09/2026</div><div class="date-sub success-text"><i class="ph ph-clock"></i> Còn 172 ngày</div></td>
+                                <td><span class="status-badge success"><i class="ph ph-check-circle"></i>Hoạt động</span></td>
+                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
+                            </tr>
+                            <!-- Dummy Row 10 -->
+                            <tr>
+                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
+                                <td><div class="cell-main">GreenWeb</div><div class="cell-sub">Sử dụng 1 năm</div></td>
+                                <td><div class="domain-info"><i class="ph ph-globe color-gray"></i><span>https://greenweb.io/</span></div></td>
+                                <td><div class="provider-info"><i class="ph ph-hard-drives color-gray"></i><span>iNet</span></div></td>
+                                <td><div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 20/10/2026</div><div class="date-sub success-text"><i class="ph ph-clock"></i> Còn 207 ngày</div></td>
+                                <td><span class="status-badge success"><i class="ph ph-check-circle"></i>Hoạt động</span></td>
+                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
+                            </tr>
+                            <!-- Dummy Row 11 -->
+                            <tr>
+                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
+                                <td><div class="cell-main">FastDev</div><div class="cell-sub">Sử dụng 3 năm</div></td>
+                                <td><div class="domain-info"><i class="ph ph-globe color-gray"></i><span>https://fastdev.com.vn/</span></div></td>
+                                <td><div class="provider-info"><i class="ph ph-hard-drives color-gray"></i><span>Azdigi</span></div></td>
+                                <td><div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 05/11/2026</div><div class="date-sub success-text"><i class="ph ph-clock"></i> Còn 223 ngày</div></td>
+                                <td><span class="status-badge success"><i class="ph ph-check-circle"></i>Hoạt động</span></td>
+                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
+                            </tr>
+                            <!-- Dummy Row 12 (Expired Example) -->
+                            <tr>
+                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
+                                <td><div class="cell-main">Old Project</div><div class="cell-sub">Sử dụng 1 năm</div></td>
+                                <td><div class="domain-info"><i class="ph ph-globe color-gray"></i><span>https://oldproject.com/</span></div></td>
+                                <td><div class="provider-info"><i class="ph ph-hard-drives color-gray"></i><span>iNet</span></div></td>
+                                <td><div class="date-info error-text"><i class="ph ph-calendar-blank"></i> 01/01/2026</div><div class="date-sub error-text"><i class="ph ph-clock"></i> Đã hết hạn</div></td>
+                                <td><span class="status-badge expired"><i class="ph ph-x-circle"></i>Hết hạn</span></td>
+                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
 
                 <!-- Pagination -->
-                <div class="logs-pagination-row">
-                    <span class="logs-count">Hiển thị: 1 - 7 / 42 hostings</span>
-                    <div class="logs-pagination">
-                        <button class="pg-btn">Trước</button>
-                        <button class="pg-btn active">1</button>
-                        <button class="pg-btn">2</button>
-                        <button class="pg-btn">3</button>
-                        <button class="pg-btn">4</button>
-                        <button class="pg-btn">5</button>
-                        <button class="pg-btn">Sau</button>
+                <div class="logs-pagination-row" id="paginationRow" style="display: none;">
+                    <span class="logs-count" id="paginationCount">Hiển thị: 0 - 0 / 0 hostings</span>
+                    <div class="logs-pagination" id="paginationButtons">
+                        <!-- Buttons added by JS -->
                     </div>
                 </div>
 
@@ -455,6 +502,8 @@ let currentRowToEdit = null;
 let currentSearchTerm = '';
 let currentStatusFilter = '';
 let selectedHostings = new Set();
+let currentPage = 1;
+const itemsPerPage = 10;
 
 function updateBulkActionBar() {
     const bar = document.getElementById('bulkActionBar');
@@ -522,7 +571,9 @@ function toggleHostingFilter() {
 }
 
 function applyFilters() {
-    const rows = document.querySelectorAll('.data-table tbody tr');
+    const rows = Array.from(document.querySelectorAll('.data-table tbody tr'));
+    let filteredRows = [];
+
     rows.forEach(row => {
         let showSearch = true;
         let showStatus = true;
@@ -542,9 +593,87 @@ function applyFilters() {
             }
         }
         
-        row.style.display = (showSearch && showStatus) ? '' : 'none';
+        if (showSearch && showStatus) {
+            filteredRows.push(row);
+        } else {
+            row.style.display = 'none';
+        }
     });
+
+    const totalItems = filteredRows.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    // Reset to page 1 if current page is out of bounds
+    if (currentPage > totalPages && totalPages > 0) currentPage = 1;
+
+    // Handle pagination visibility
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const endIdx = startIdx + itemsPerPage;
+
+    filteredRows.forEach((row, idx) => {
+        if (idx >= startIdx && idx < endIdx) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    renderPagination(totalItems, totalPages);
 }
+
+function renderPagination(totalItems, totalPages) {
+    const row = document.getElementById('paginationRow');
+    const countText = document.getElementById('paginationCount');
+    const buttonsContainer = document.getElementById('paginationButtons');
+
+    if (totalItems <= itemsPerPage) {
+        row.style.display = 'none';
+        return;
+    }
+
+    row.style.display = 'flex';
+    
+    const start = (currentPage - 1) * itemsPerPage + 1;
+    const end = Math.min(currentPage * itemsPerPage, totalItems);
+    countText.textContent = `Hiển thị: ${start} - ${end} / ${totalItems} hostings`;
+
+    let html = `<button class="pg-btn ${currentPage === 1 ? 'disabled' : ''}" onclick="changePage(${currentPage - 1})">Trước</button>`;
+    
+    for (let i = 1; i <= totalPages; i++) {
+        html += `<button class="pg-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+    }
+    
+    html += `<button class="pg-btn ${currentPage === totalPages ? 'disabled' : ''}" onclick="changePage(${currentPage + 1})">Sau</button>`;
+    
+    buttonsContainer.innerHTML = html;
+}
+
+function changePage(page) {
+    const rows = Array.from(document.querySelectorAll('.data-table tbody tr'));
+    const totalItems = rows.filter(r => {
+         // Re-run basic filter check to know total pages correctly
+         let showS = true, showSt = true;
+         if (currentSearchTerm) {
+            const name = r.querySelector('.cell-main').textContent.toLowerCase();
+            const domain = r.querySelector('.domain-info span').textContent.toLowerCase();
+            if (!name.includes(currentSearchTerm) && !domain.includes(currentSearchTerm)) showS = false;
+         }
+         if (currentStatusFilter) {
+            const badge = r.querySelector('.status-badge');
+            if (!badge || !badge.classList.contains(currentStatusFilter)) showSt = false;
+         }
+         return showS && showSt;
+    }).length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    if (page < 1 || page > totalPages) return;
+    currentPage = page;
+    applyFilters();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Initial call
+window.addEventListener('DOMContentLoaded', applyFilters);
 
 function setHostingFilter(val, label, el) {
     document.getElementById('hostingFilterLabel').textContent = label;
@@ -885,15 +1014,19 @@ function confirmDeleteAction() {
     if (selectedHostings.size > 0) {
         const count = selectedHostings.size;
         showActionToast(`Đang xóa ${count} hosting...`, `Đã xóa ${count} hosting thành công`, () => {
-            selectedHostings.forEach(row => row.remove());
+            Array.from(selectedHostings).forEach(row => row.remove());
             selectedHostings.clear();
             updateBulkActionBar();
             document.getElementById('selectAllHostings').checked = false;
+            applyFilters();
         });
     } else {
         const hostingName = document.getElementById('cdmHostingName').textContent;
         showActionToast('Đang xóa hosting...', `Đã xóa hosting "${hostingName}"`, () => {
-            if (rowToDelete) rowToDelete.remove();
+            if (rowToDelete) {
+                rowToDelete.remove();
+                applyFilters();
+            }
         });
     }
 }
@@ -978,6 +1111,7 @@ function addHosting() {
     showActionToast('Đang thêm hosting...', `Đã thêm hosting "${name}"`, () => {
         const tbody = document.querySelector('.data-table tbody');
         tbody.insertBefore(tr, tbody.firstChild);
+        applyFilters();
     });
 }
 
@@ -999,6 +1133,7 @@ function updateHosting() {
     
     showActionToast('Đang cập nhật hosting...', `Đã cập nhật hosting "${name}"`, () => {
         currentRowToEdit.innerHTML = generateRowHTML(name, domain, provider, expDate, status);
+        applyFilters();
     });
 }
 
