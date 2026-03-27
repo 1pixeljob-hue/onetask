@@ -281,14 +281,16 @@ function formatVNDFull(value) {
  * Lấy năm từ chuỗi date (YYYY-MM-DD)
  */
 function getYear(dateStr) {
-    return parseInt(dateStr.split('-')[0]);
+    if (!dateStr || typeof dateStr !== 'string') return NaN;
+    return parseInt(dateStr.split('-')[0]) || NaN;
 }
 
 /**
  * Lấy tháng từ chuỗi date (YYYY-MM-DD), 1-indexed
  */
 function getMonth(dateStr) {
-    return parseInt(dateStr.split('-')[1]);
+    if (!dateStr || typeof dateStr !== 'string') return NaN;
+    return parseInt(dateStr.split('-')[1]) || NaN;
 }
 
 /**
@@ -296,9 +298,13 @@ function getMonth(dateStr) {
  */
 function getAllYears() {
     const years = new Set();
-    PROJECTS.forEach(p => years.add(getYear(p.date)));
+    PROJECTS.forEach(p => {
+        const y = getYear(p.date);
+        if (!isNaN(y)) years.add(y);
+    });
     HOSTINGS.forEach(h => {
-        years.add(getYear(h.regDate));
+        const y = getYear(h.expDate);
+        if (!isNaN(y)) years.add(y);
     });
     return Array.from(years).sort((a, b) => b - a);
 }

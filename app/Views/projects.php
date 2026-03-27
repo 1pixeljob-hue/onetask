@@ -702,7 +702,7 @@ function getFormData() {
         return null;
     }
 
-    return { name, status, desc, date, customer, phone, adminUrl, adminUser, adminPass, value };
+    return { name, link: adminUrl, status, desc, date, customer, phone, adminUrl, adminUser, adminPass, value };
 }
 
 function populateRow(row, data) {
@@ -712,18 +712,24 @@ function populateRow(row, data) {
         'testing': { cls: 'testing', icon: 'ph-flask', label: 'Chờ Nghiệm Thu' },
         'done': { cls: 'done', icon: 'ph-check-circle', label: 'Hoàn Thành' }
     };
-    const s = statusInfo[data.status];
-
-    const [y, m, d] = data.date.split('-');
-    const formattedDate = `${d}/${m}/${y}`;
+    const s = statusInfo[data.status] || { cls: 'doing', icon: 'ph-clock', label: data.status || 'Đang Thực Hiện' };
+    
+    let formattedDate = 'N/A';
+    if (data.date) {
+        const parts = data.date.split('-');
+        if (parts.length === 3) {
+            formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+    }
 
     let formattedVal = '0';
-    if (data.valRaw >= 1000000) {
-        formattedVal = (data.valRaw / 1000000).toFixed(1).replace('.0', '') + 'M';
-    } else if (data.valRaw >= 1000) {
-        formattedVal = (data.valRaw / 1000).toFixed(0) + 'K';
+    const valObj = parseFloat(data.value) || 0;
+    if (valObj >= 1000000) {
+        formattedVal = (valObj / 1000000).toFixed(1).replace('.0', '') + 'M';
+    } else if (valObj >= 1000) {
+        formattedVal = (valObj / 1000).toFixed(0) + 'K';
     } else {
-        formattedVal = data.valRaw.toString();
+        formattedVal = valObj.toLocaleString('vi-VN');
     }
 
     // Store attributes

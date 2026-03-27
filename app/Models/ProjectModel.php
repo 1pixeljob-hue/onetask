@@ -56,11 +56,12 @@ class ProjectModel {
      * Thêm dự án mới
      */
     public function create($data) {
-        $sql = "INSERT INTO projects (name, status, description, date, customer, phone, admin_url, admin_user, admin_pass, value) 
-                VALUES (:name, :status, :description, :date, :customer, :phone, :admin_url, :admin_user, :admin_pass, :value)";
+        $sql = "INSERT INTO projects (name, link, status, description, date, customer, phone, admin_url, admin_user, admin_pass, value) 
+                VALUES (:name, :link, :status, :description, :date, :customer, :phone, :admin_url, :admin_user, :admin_pass, :value)";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             ':name' => $data['name'],
+            ':link' => $data['link'] ?? '',
             ':status' => $data['status'],
             ':description' => $data['desc'] ?? '',
             ':date' => $data['date'],
@@ -79,6 +80,7 @@ class ProjectModel {
     public function update($id, $data) {
         $sql = "UPDATE projects SET 
                 name = :name, 
+                link = :link,
                 status = :status, 
                 description = :description, 
                 date = :date, 
@@ -93,6 +95,7 @@ class ProjectModel {
         return $stmt->execute([
             ':id' => $id,
             ':name' => $data['name'],
+            ':link' => $data['link'] ?? '',
             ':status' => $data['status'],
             ':description' => $data['desc'] ?? '',
             ':date' => $data['date'],
