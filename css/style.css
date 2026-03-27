@@ -2924,7 +2924,7 @@ body {
     border-radius: 10px;
 }
 .modal-box.scrollable .modal-body::-webkit-scrollbar-thumb {
-    background: #0ea5e9; /* Teal color from mockup */
+    background: #94a3b8; /* Muted slate gray */
     border-radius: 10px;
 }
 
