@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        // Data injected from PHP Models
+        const PHP_DATA = {
+            projects: <?php echo json_encode($projects ?? []); ?>,
+            hostings: <?php echo json_encode($hostings ?? []); ?>
+        };
+    </script>
+    <script src="/js/shared-data.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -131,103 +139,6 @@
                                 <th width="80" class="text-center">THAO TÁC</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- Row 1 -->
-                            <tr data-status="doing" 
-                                data-desc="Đã thanh toán 50%. Link drive: https://docs.google.com/spreadsheets/d/1x3m5-iiqPx-CJDO6vue004HKsBld5z_mLPtObNHhOYA/edit?pli=1&gid=1832823340#gid=1832823340"
-                                data-phone="0354777188"
-                                data-admin-url="https://lamthanhhimex.mysapo.net/admin"
-                                data-admin-user="0354777188"
-                                data-admin-pass="D@ngminhlong1512"
-                                data-value-raw="3500000">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td>
-                                    <div class="cell-main">Thêm sản phẩm cho web Trái Cây Lâm Thành</div>
-                                    <div class="cell-sub"><i class="ph ph-link"></i> https://lamthanhfruit.myshopify.com/a...</div>
-                                </td>
-                                <td>
-                                    <div class="provider-info">
-                                        <i class="ph ph-user-circle color-gray"></i>
-                                        <span>Khánh Linh</span>
-                                    </div>
-                                </td>
-                                <td><span class="val-badge"><i class="ph ph-currency-circle-dollar"></i> 3.5M</span></td>
-                                <td>
-                                    <div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 10/03/2026</div>
-                                </td>
-                                <td><span class="status-badge doing"><i class="ph ph-circle-notch"></i> Đang Thực Hiện</span></td>
-                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
-                            </tr>
-
-                            <!-- Row 2 -->
-                            <tr data-status="testing"
-                                data-desc="Thêm section tài liệu và iframe view..."
-                                data-phone="N/A"
-                                data-admin-url="https://onelawvn.com/adminxxxx"
-                                data-admin-user="admin"
-                                data-admin-pass="password123"
-                                data-value-raw="1500000">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td>
-                                    <div class="cell-main">Onelaw Code section tài liệu kèm iframe view</div>
-                                    <div class="cell-sub"><i class="ph ph-link"></i> https://onelawvn.com/adminxxxx</div>
-                                </td>
-                                <td>
-                                    <div class="provider-info">
-                                        <i class="ph ph-user-circle color-gray"></i>
-                                        <span>Onelaw</span>
-                                    </div>
-                                </td>
-                                <td><span class="val-badge"><i class="ph ph-currency-circle-dollar"></i> 1.5M</span></td>
-                                <td>
-                                    <div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 05/03/2026</div>
-                                </td>
-                                <td><span class="status-badge testing"><i class="ph ph-clock"></i> Chờ Nghiệm Thu</span></td>
-                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
-                            </tr>
-
-                            <!-- Row 3 -->
-                            <tr data-status="testing">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td>
-                                    <div class="cell-main">Thiết kế web Nam Việt Food Land</div>
-                                    <div class="cell-sub"><i class="ph ph-link"></i> https://namviethoodland.com/nam-l...</div>
-                                </td>
-                                <td>
-                                    <div class="provider-info">
-                                        <i class="ph ph-user-circle color-gray"></i>
-                                        <span>Anh Nguyễn Sư</span>
-                                    </div>
-                                </td>
-                                <td><span class="val-badge"><i class="ph ph-currency-circle-dollar"></i> 4.0M</span></td>
-                                <td>
-                                    <div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 03/03/2026</div>
-                                </td>
-                                <td><span class="status-badge testing"><i class="ph ph-clock"></i> Chờ Nghiệm Thu</span></td>
-                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
-                            </tr>
-
-                            <!-- Row 4 -->
-                            <tr data-status="done">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td>
-                                    <div class="cell-main">Hỗ trợ chị Hạnh xử lý web Phú Thành</div>
-                                    <div class="cell-sub"><i class="ph ph-link"></i> https://phuthanh.net/phu-admin</div>
-                                </td>
-                                <td>
-                                    <div class="provider-info">
-                                        <i class="ph ph-user-circle color-gray"></i>
-                                        <span>Phú Thành</span>
-                                    </div>
-                                </td>
-                                <td><span class="val-badge"><i class="ph ph-currency-circle-dollar"></i> 1.0M</span></td>
-                                <td>
-                                    <div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 05/03/2026</div>
-                                </td>
-                                <td><span class="status-badge success"><i class="ph ph-check-circle"></i> Hoàn Thành</span></td>
-                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
-                            </tr>
-
                             <!-- Row 5 -->
                             <tr data-status="done">
                                 <td><input type="checkbox" class="cb-custom"></td>
@@ -572,6 +483,25 @@ function setFilter(val, label, el) {
         row.style.display = row.dataset.status === val ? '' : 'none';
     });
 }
+document.addEventListener('DOMContentLoaded', initProjectsTable);
+
+function initProjectsTable() {
+    const tbody = document.getElementById('projectTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    
+    PROJECTS.forEach(p => {
+        const tr = document.createElement('tr');
+        populateRow(tr, p);
+        tr.onclick = (e) => {
+            if (!e.target.closest('input') && !e.target.closest('button')) {
+                openProjectDetail(tr);
+            }
+        };
+        tbody.appendChild(tr);
+    });
+}
+
 document.addEventListener('click', function(e) {
     if (!e.target.closest('.pj-filter-wrapper')) {
         const dd = document.getElementById('filterDropdown');

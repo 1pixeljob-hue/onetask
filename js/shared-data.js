@@ -3,7 +3,8 @@
  * Tất cả module (Dashboard, Reports, Projects, Hostings) đều đọc từ file này.
  */
 
-const PROJECTS = [
+// --- Dữ liệu thô từ Database (nếu có) hoặc dùng dữ liệu tĩnh làm fallback ---
+const RAW_PROJECTS = (typeof PHP_DATA !== 'undefined' && PHP_DATA.projects) ? PHP_DATA.projects : [
     {
         name: 'Thêm sản phẩm cho web Trái Cây Lâm Thành',
         link: 'https://lamthanhfruit.myshopify.com/admin',
@@ -137,7 +138,7 @@ const PROJECTS = [
     }
 ];
 
-const HOSTINGS = [
+const RAW_HOSTINGS = (typeof PHP_DATA !== 'undefined' && PHP_DATA.hostings) ? PHP_DATA.hostings : [
     {
         name: 'Photoeditor 24h',
         domain: 'https://photoeditor24h.com/',
@@ -247,6 +248,10 @@ const HOSTINGS = [
         usage: '1 năm'
     }
 ];
+
+// Định dạng lại giá trị số vì PHP json_encode có thể trả về string cho DECIMAL
+const PROJECTS = RAW_PROJECTS.map(p => ({ ...p, value: parseFloat(p.value) || 0 }));
+const HOSTINGS = RAW_HOSTINGS.map(h => ({ ...h, price: parseFloat(h.price) || 0 }));
 
 // ===================== HELPER FUNCTIONS =====================
 

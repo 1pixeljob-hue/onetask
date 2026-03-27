@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        // Data injected from PHP Models
+        const PHP_DATA = {
+            projects: <?php echo json_encode($projects ?? []); ?>,
+            hostings: <?php echo json_encode($hostings ?? []); ?>
+        };
+    </script>
+    <script src="/js/shared-data.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -146,325 +154,8 @@
                                 <th width="80" class="text-center">THAO TÁC</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- Row 1 -->
-                            <tr>
-                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
-                                <td>
-                                    <div class="cell-main">Photoeditor 24h</div>
-                                    <div class="cell-sub">Sử dụng 1 năm</div>
-                                </td>
-                                <td>
-                                    <div class="domain-info">
-                                        <i class="ph ph-globe color-gray"></i>
-                                        <span>https://photoeditor24h.com/</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="provider-info">
-                                        <i class="ph ph-hard-drives color-gray"></i>
-                                        <span>iNet</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="date-info error-text">
-                                        <i class="ph ph-calendar-blank"></i> 12/04/2026
-                                    </div>
-                                    <div class="date-sub error-text">
-                                        <i class="ph ph-clock"></i> Còn 17 ngày
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="status-badge warning">
-                                        <i class="ph ph-warning-circle"></i>
-                                        Sắp hết hạn
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn-action"><i class="ph ph-dots-three"></i></button>
-                                </td>
-                            </tr>
-                            
-                            <!-- Row 2 -->
-                            <tr>
-                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
-                                <td>
-                                    <div class="cell-main">Hosting Sơn TREX</div>
-                                    <div class="cell-sub">Sử dụng 1 năm</div>
-                                </td>
-                                <td>
-                                    <div class="domain-info">
-                                        <i class="ph ph-globe color-gray"></i>
-                                        <span>https://sontrex.vn/</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="provider-info">
-                                        <i class="ph ph-hard-drives color-gray"></i>
-                                        <span>iNet</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="date-info text-main">
-                                        <i class="ph ph-calendar-blank"></i> 07/05/2026
-                                    </div>
-                                    <div class="date-sub success-text">
-                                        <i class="ph ph-clock"></i> Còn 42 ngày
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="status-badge success">
-                                        <i class="ph ph-check-circle"></i>
-                                        Hoạt động
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn-action"><i class="ph ph-dots-three"></i></button>
-                                </td>
-                            </tr>
-
-                            <!-- Row 3 -->
-                            <tr>
-                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
-                                <td>
-                                    <div class="cell-main">Sayoung</div>
-                                    <div class="cell-sub">Sử dụng 5 năm</div>
-                                </td>
-                                <td>
-                                    <div class="domain-info">
-                                        <i class="ph ph-globe color-gray"></i>
-                                        <span>https://sayoung.vn/</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="provider-info">
-                                        <i class="ph ph-hard-drives color-gray"></i>
-                                        <span>iNet</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="date-info text-main">
-                                        <i class="ph ph-calendar-blank"></i> 20/05/2026
-                                    </div>
-                                    <div class="date-sub success-text">
-                                        <i class="ph ph-clock"></i> Còn 55 ngày
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="status-badge success">
-                                        <i class="ph ph-check-circle"></i>
-                                        Hoạt động
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn-action"><i class="ph ph-dots-three"></i></button>
-                                </td>
-                            </tr>
-
-                            <!-- Row 4 -->
-                            <tr>
-                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
-                                <td>
-                                    <div class="cell-main">BĐS Yên Thủy</div>
-                                    <div class="cell-sub">Sử dụng 1 năm</div>
-                                </td>
-                                <td>
-                                    <div class="domain-info">
-                                        <i class="ph ph-globe color-gray"></i>
-                                        <span>https://vietnamrussia.com.vn/</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="provider-info">
-                                        <i class="ph ph-hard-drives color-gray"></i>
-                                        <span>iNet</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="date-info text-main">
-                                        <i class="ph ph-calendar-blank"></i> 14/06/2026
-                                    </div>
-                                    <div class="date-sub success-text">
-                                        <i class="ph ph-clock"></i> Còn 80 ngày
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="status-badge success">
-                                        <i class="ph ph-check-circle"></i>
-                                        Hoạt động
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn-action"><i class="ph ph-dots-three"></i></button>
-                                </td>
-                            </tr>
-
-                            <!-- Row 5 -->
-                            <tr>
-                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
-                                <td>
-                                    <div class="cell-main">Giấy Sao Mai</div>
-                                    <div class="cell-sub">Sử dụng 1 năm</div>
-                                </td>
-                                <td>
-                                    <div class="domain-info">
-                                        <i class="ph ph-globe color-gray"></i>
-                                        <span>http://thesaomaigroup.com/</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="provider-info">
-                                        <i class="ph ph-hard-drives color-gray"></i>
-                                        <span>iNet</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="date-info text-main">
-                                        <i class="ph ph-calendar-blank"></i> 11/07/2026
-                                    </div>
-                                    <div class="date-sub success-text">
-                                        <i class="ph ph-clock"></i> Còn 107 ngày
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="status-badge success">
-                                        <i class="ph ph-check-circle"></i>
-                                        Hoạt động
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn-action"><i class="ph ph-dots-three"></i></button>
-                                </td>
-                            </tr>
-                            
-                            <!-- Row 6 -->
-                            <tr>
-                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
-                                <td>
-                                    <div class="cell-main">Sơn KAZUKI</div>
-                                    <div class="cell-sub">Sử dụng 1 năm</div>
-                                </td>
-                                <td>
-                                    <div class="domain-info">
-                                        <i class="ph ph-globe color-gray"></i>
-                                        <span>https://sonkazuki.com/</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="provider-info">
-                                        <i class="ph ph-hard-drives color-gray"></i>
-                                        <span>iNet</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="date-info text-main">
-                                        <i class="ph ph-calendar-blank"></i> 18/07/2026
-                                    </div>
-                                    <div class="date-sub success-text">
-                                        <i class="ph ph-clock"></i> Còn 114 ngày
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="status-badge success">
-                                        <i class="ph ph-check-circle"></i>
-                                        Hoạt động
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn-action"><i class="ph ph-dots-three"></i></button>
-                                </td>
-                            </tr>
-
-                            <!-- Row 7 -->
-                            <tr>
-                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
-                                <td>
-                                    <div class="cell-main">Pomaxx</div>
-                                    <div class="cell-sub">Sử dụng 2 năm</div>
-                                </td>
-                                <td>
-                                    <div class="domain-info">
-                                        <i class="ph ph-globe color-gray"></i>
-                                        <span>https://pomaxx.vn/</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="provider-info">
-                                        <i class="ph ph-hard-drives color-gray"></i>
-                                        <span>iNet</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="date-info text-main">
-                                        <i class="ph ph-calendar-blank"></i> 24/07/2026
-                                    </div>
-                                    <div class="date-sub success-text">
-                                        <i class="ph ph-clock"></i> Còn 120 ngày
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="status-badge success">
-                                        <i class="ph ph-check-circle"></i>
-                                        Hoạt động
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn-action"><i class="ph ph-dots-three"></i></button>
-                                </td>
-                            </tr>
-                            <!-- Dummy Row 8 -->
-                            <tr>
-                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
-                                <td>
-                                    <div class="cell-main">VinaLink</div>
-                                    <div class="cell-sub">Sử dụng 1 năm</div>
-                                </td>
-                                <td><div class="domain-info"><i class="ph ph-globe color-gray"></i><span>https://vinalink.com/</span></div></td>
-                                <td><div class="provider-info"><i class="ph ph-hard-drives color-gray"></i><span>Mắt Bão</span></div></td>
-                                <td><div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 10/08/2026</div><div class="date-sub success-text"><i class="ph ph-clock"></i> Còn 136 ngày</div></td>
-                                <td><span class="status-badge success"><i class="ph ph-check-circle"></i>Hoạt động</span></td>
-                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
-                            </tr>
-                            <!-- Dummy Row 9 -->
-                            <tr>
-                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
-                                <td><div class="cell-main">TechBase</div><div class="cell-sub">Sử dụng 2 năm</div></td>
-                                <td><div class="domain-info"><i class="ph ph-globe color-gray"></i><span>https://techbase.vn/</span></div></td>
-                                <td><div class="provider-info"><i class="ph ph-hard-drives color-gray"></i><span>PA Việt Nam</span></div></td>
-                                <td><div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 15/09/2026</div><div class="date-sub success-text"><i class="ph ph-clock"></i> Còn 172 ngày</div></td>
-                                <td><span class="status-badge success"><i class="ph ph-check-circle"></i>Hoạt động</span></td>
-                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
-                            </tr>
-                            <!-- Dummy Row 10 -->
-                            <tr>
-                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
-                                <td><div class="cell-main">GreenWeb</div><div class="cell-sub">Sử dụng 1 năm</div></td>
-                                <td><div class="domain-info"><i class="ph ph-globe color-gray"></i><span>https://greenweb.io/</span></div></td>
-                                <td><div class="provider-info"><i class="ph ph-hard-drives color-gray"></i><span>iNet</span></div></td>
-                                <td><div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 20/10/2026</div><div class="date-sub success-text"><i class="ph ph-clock"></i> Còn 207 ngày</div></td>
-                                <td><span class="status-badge success"><i class="ph ph-check-circle"></i>Hoạt động</span></td>
-                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
-                            </tr>
-                            <!-- Dummy Row 11 -->
-                            <tr>
-                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
-                                <td><div class="cell-main">FastDev</div><div class="cell-sub">Sử dụng 3 năm</div></td>
-                                <td><div class="domain-info"><i class="ph ph-globe color-gray"></i><span>https://fastdev.com.vn/</span></div></td>
-                                <td><div class="provider-info"><i class="ph ph-hard-drives color-gray"></i><span>Azdigi</span></div></td>
-                                <td><div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 05/11/2026</div><div class="date-sub success-text"><i class="ph ph-clock"></i> Còn 223 ngày</div></td>
-                                <td><span class="status-badge success"><i class="ph ph-check-circle"></i>Hoạt động</span></td>
-                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
-                            </tr>
-                            <!-- Dummy Row 12 (Expired Example) -->
-                            <tr>
-                                <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
-                                <td><div class="cell-main">Old Project</div><div class="cell-sub">Sử dụng 1 năm</div></td>
-                                <td><div class="domain-info"><i class="ph ph-globe color-gray"></i><span>https://oldproject.com/</span></div></td>
-                                <td><div class="provider-info"><i class="ph ph-hard-drives color-gray"></i><span>iNet</span></div></td>
-                                <td><div class="date-info error-text"><i class="ph ph-calendar-blank"></i> 01/01/2026</div><div class="date-sub error-text"><i class="ph ph-clock"></i> Đã hết hạn</div></td>
-                                <td><span class="status-badge expired"><i class="ph ph-x-circle"></i>Hết hạn</span></td>
-                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
-                            </tr>
+                        <tbody id="hostingTableBody">
+                            <!-- Populated by JS -->
                         </tbody>
                     </table>
                 </div>
@@ -568,6 +259,28 @@ function promptBulkDelete() {
 
 function toggleHostingFilter() {
     document.getElementById('hostingFilterDropdown').classList.toggle('open');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initHostingsTable();
+    
+    // Search input event
+    document.getElementById('hostingSearchInput').addEventListener('input', (e) => {
+        currentSearchTerm = e.target.value.toLowerCase().trim();
+        applyFilters();
+    });
+});
+
+function initHostingsTable() {
+    const tbody = document.getElementById('hostingTableBody');
+    tbody.innerHTML = '';
+    
+    HOSTINGS.forEach(h => {
+        const row = document.createElement('tr');
+        const status = getStatusFromDate(h.expDate);
+        row.innerHTML = generateRowHTML(h.name, h.domain, h.provider, h.expDate, status, h.usage);
+        tbody.appendChild(row);
+    });
 }
 
 function applyFilters() {

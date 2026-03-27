@@ -8,6 +8,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Data injected from PHP Models
+        const PHP_DATA = {
+            projects: <?php echo json_encode($projects); ?>,
+            hostings: <?php echo json_encode($hostings); ?>
+        };
+    </script>
     <script src="/js/shared-data.js"></script>
 </head>
 <body>
