@@ -2902,3 +2902,100 @@ body {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* --- Add Project Modal Specific Styles --- */
+.modal-box.scrollable {
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-box.scrollable .modal-body {
+    overflow-y: auto;
+    padding-right: 12px; /* space for custom scrollbar */
+}
+
+/* Custom Scrollbar for Modal Body */
+.modal-box.scrollable .modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+.modal-box.scrollable .modal-body::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+.modal-box.scrollable .modal-body::-webkit-scrollbar-thumb {
+    background: #0ea5e9; /* Teal color from mockup */
+    border-radius: 10px;
+}
+
+.modal-section-header {
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+}
+.modal-section-header.with-border {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #edf2f7;
+}
+
+.modal-section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.modal-field-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.modal-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.modal-input-prefix {
+    position: absolute;
+    left: 14px;
+    color: var(--text-muted);
+    font-size: 18px;
+}
+
+.modal-input.with-prefix {
+    padding-left: 40px;
+}
+
+.modal-input-icon-btn {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.modal-input-icon-btn:hover {
+    color: var(--primary-color);
+    background-color: #f1f5f9;
+}
+
+.modal-select-wrapper {
+    position: relative;
+}
+
+.modal-select-status {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 256 256'%3E%3Cpath d='M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+}

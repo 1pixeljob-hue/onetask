@@ -110,7 +110,7 @@
                                 <div class="pj-dropdown-item" onclick="setFilter('done', 'Hoàn Thành', this)">Hoàn Thành</div>
                             </div>
                         </div>
-                        <button class="pj-add-btn">
+                        <button class="pj-add-btn" onclick="openAddProjectModal()">
                             <i class="ph ph-plus"></i>
                             Thêm Mới
                         </button>
@@ -297,6 +297,109 @@
         </main>
     </div>
 
+<!-- Modal Thêm Project Mới -->
+<div class="modal-overlay" id="addProjectModal" onclick="closeAddProjectModalOverlay(event)">
+    <div class="modal-box scrollable">
+        <div class="modal-header">
+            <h3 class="modal-title">Thêm Project Mới</h3>
+            <button class="modal-close" onclick="closeAddProjectModal()"><i class="ph ph-x"></i></button>
+        </div>
+        <div class="modal-body">
+            <!-- Section 1: Thông Tin Project -->
+            <div class="modal-section-header">
+                <span class="modal-section-title">Thông Tin Project</span>
+            </div>
+            
+            <div class="modal-field full">
+                <label class="modal-label">Tên Project <span class="req">*</span></label>
+                <input type="text" class="modal-input" placeholder="VD: Website Thương Mại Điện Tử">
+            </div>
+
+            <div class="modal-field full">
+                <label class="modal-label">Trạng Thái <span class="req">*</span></label>
+                <div class="modal-select-wrapper">
+                    <select class="modal-input modal-select-status">
+                        <option value="planning">Lên Kế Hoạch</option>
+                        <option value="doing">Đang Thực Hiện</option>
+                        <option value="testing">Chờ Nghiệm Thu</option>
+                        <option value="done">Hoàn Thành</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-field full">
+                <label class="modal-label">Mô Tả</label>
+                <textarea class="modal-textarea" placeholder="Mô tả chi tiết về project..."></textarea>
+            </div>
+
+            <div class="modal-field full">
+                <label class="modal-label">Ngày Tạo <span class="req">*</span></label>
+                <input type="date" class="modal-input">
+                <p class="modal-field-hint">Ngày bắt đầu thực hiện dự án</p>
+            </div>
+
+            <!-- Section 2: Thông Tin Khách Hàng -->
+            <div class="modal-section-header with-border">
+                <span class="modal-section-title">Thông Tin Khách Hàng</span>
+            </div>
+            
+            <div class="modal-row">
+                <div class="modal-field">
+                    <label class="modal-label">Tên Khách Hàng <span class="req">*</span></label>
+                    <input type="text" class="modal-input" placeholder="VD: Nguyễn Văn A">
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Số Điện Thoại</label>
+                    <input type="text" class="modal-input" placeholder="VD: 0912345678">
+                </div>
+            </div>
+
+            <!-- Section 3: Thông Tin Quản Trị -->
+            <div class="modal-section-header with-border">
+                <span class="modal-section-title">Thông Tin Quản Trị</span>
+            </div>
+            
+            <div class="modal-field full">
+                <label class="modal-label">Đường Dẫn Admin</label>
+                <input type="text" class="modal-input" placeholder="VD: https://example.com/admin">
+            </div>
+
+            <div class="modal-row">
+                <div class="modal-field">
+                    <label class="modal-label">Tài Khoản Admin</label>
+                    <input type="text" class="modal-input" placeholder="VD: admin">
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Mật Khẩu Admin</label>
+                    <div class="modal-input-group">
+                        <input type="password" class="modal-input" id="adminPassword" placeholder="********">
+                        <button type="button" class="modal-input-icon-btn" onclick="togglePasswordVisibility('adminPassword', this)">
+                            <i class="ph ph-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Thông Tin Tài Chính -->
+            <div class="modal-section-header with-border">
+                <span class="modal-section-title">Thông Tin Tài Chính</span>
+            </div>
+            
+            <div class="modal-field full">
+                <label class="modal-label">Giá Trị Dự Án (VNĐ)</label>
+                <div class="modal-input-group">
+                    <i class="ph ph-currency-circle-dollar modal-input-prefix"></i>
+                    <input type="number" class="modal-input with-prefix" value="0">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn-cancel" onclick="closeAddProjectModal()">Hủy</button>
+            <button class="modal-btn-submit">Thêm Mới</button>
+        </div>
+    </div>
+</div>
+
 <script>
 function toggleFilterDropdown() {
     document.getElementById('filterDropdown').classList.toggle('open');
@@ -323,6 +426,31 @@ document.getElementById('projectSearch').addEventListener('input', function() {
         row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
     });
 });
+
+// Modal Controls
+function openAddProjectModal() {
+    document.getElementById('addProjectModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+function closeAddProjectModal() {
+    document.getElementById('addProjectModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+function closeAddProjectModalOverlay(e) {
+    if (e.target === document.getElementById('addProjectModal')) closeAddProjectModal();
+}
+
+function togglePasswordVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('ph-eye', 'ph-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.replace('ph-eye-slash', 'ph-eye');
+    }
+}
 </script>
 </body>
 </html>
