@@ -94,7 +94,7 @@
                 <div class="pj-toolbar">
                     <div class="pj-search-wrap">
                         <i class="ph ph-magnifying-glass pj-search-icon"></i>
-                        <input type="text" class="pj-search-input" placeholder="Tìm kiếm theo tên, domain, nhà cung cấp...">
+                        <input type="text" id="hostingSearchInput" class="pj-search-input" placeholder="Tìm kiếm theo tên, domain, nhà cung cấp...">
                     </div>
                     <div class="pj-toolbar-right">
                         <div class="pj-filter-wrapper">
@@ -437,21 +437,53 @@
 <script>
 let currentActionMode = 'add';
 let currentRowToEdit = null;
+let currentSearchTerm = '';
+let currentStatusFilter = '';
 
 function toggleHostingFilter() {
     document.getElementById('hostingFilterDropdown').classList.toggle('open');
 }
+
+function applyFilters() {
+    const rows = document.querySelectorAll('.data-table tbody tr');
+    rows.forEach(row => {
+        let showSearch = true;
+        let showStatus = true;
+        
+        if (currentSearchTerm) {
+            const name = row.querySelector('.cell-main').textContent.toLowerCase();
+            const domain = row.querySelector('.domain-info span').textContent.toLowerCase();
+            if (!name.includes(currentSearchTerm) && !domain.includes(currentSearchTerm)) {
+                showSearch = false;
+            }
+        }
+        
+        if (currentStatusFilter) {
+            const badge = row.querySelector('.status-badge');
+            if (!badge || !badge.classList.contains(currentStatusFilter)) {
+                showStatus = false;
+            }
+        }
+        
+        row.style.display = (showSearch && showStatus) ? '' : 'none';
+    });
+}
+
 function setHostingFilter(val, label, el) {
     document.getElementById('hostingFilterLabel').textContent = label;
     document.querySelectorAll('#hostingFilterDropdown .pj-dropdown-item').forEach(i => i.classList.remove('active'));
     el.classList.add('active');
     document.getElementById('hostingFilterDropdown').classList.remove('open');
-    document.querySelectorAll('.data-table tbody tr').forEach(row => {
-        if (!val) { row.style.display = ''; return; }
-        const badge = row.querySelector('.status-badge');
-        row.style.display = (badge && badge.classList.contains(val)) ? '' : 'none';
-    });
+    
+    currentStatusFilter = val;
+    applyFilters();
 }
+
+document.getElementById('hostingSearchInput').addEventListener('input', function(e) {
+    currentSearchTerm = e.target.value.toLowerCase().trim();
+    applyFilters();
+});
+
 document.addEventListener('click', function(e) {
     const menu = document.getElementById('rowActionMenu');
 
