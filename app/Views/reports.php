@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Báo Cáo & Thống Kê - 1Pixel Dashboard</title>
+    <title>Báo Cáo &amp; Thống Kê - 1Pixel Dashboard</title>
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/shared-data.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -72,7 +73,7 @@
             <!-- Header -->
             <header class="header">
                 <div class="header-left">
-                    <h1>Báo Cáo & Thống Kê</h1>
+                    <h1>Báo Cáo &amp; Thống Kê</h1>
                     <p>Xem báo cáo và thống kê chi tiết</p>
                 </div>
                 <div class="header-right">
@@ -96,7 +97,7 @@
                     <div class="banner-left">
                         <div class="banner-icon"><i class="ph ph-chart-bar"></i></div>
                         <div>
-                            <h2>Báo Cáo & Thống Kê</h2>
+                            <h2>Báo Cáo &amp; Thống Kê</h2>
                             <p>Phân tích doanh thu và hiệu suất kinh doanh</p>
                         </div>
                     </div>
@@ -108,9 +109,7 @@
                                 <i class="ph ph-caret-down"></i>
                             </button>
                             <div class="pj-dropdown" id="yearFilterDropdown">
-                                <div class="pj-dropdown-item active" onclick="setYearFilter('2026', this)">Năm 2026</div>
-                                <div class="pj-dropdown-item" onclick="setYearFilter('2025', this)">Năm 2025</div>
-                                <div class="pj-dropdown-item" onclick="setYearFilter('2024', this)">Năm 2024</div>
+                                <!-- Populated by JS -->
                             </div>
                         </div>
                     </div>
@@ -118,69 +117,69 @@
 
                 <!-- 4 Report Cards -->
                 <div class="report-cards-grid">
-                    <!-- Card 1 -->
+                    <!-- Card 1: Tổng Doanh Thu -->
                     <div class="report-card">
                         <div class="rc-header">
                             <div class="rc-icon green"><i class="ph ph-currency-dollar"></i></div>
-                            <div class="rc-trend up"><i class="ph ph-arrow-up-right"></i> 337.3%</div>
+                            <div class="rc-trend up" id="rcTrend1"><i class="ph ph-arrow-up-right"></i> <span id="rcTrendVal1">0%</span></div>
                         </div>
                         <div class="rc-title">Tổng Doanh Thu</div>
-                        <div class="rc-value color-green">98.4M VNĐ</div>
-                        <div class="rc-sub">Năm 2026</div>
+                        <div class="rc-value color-green" id="rcTotalRevenue">0</div>
+                        <div class="rc-sub" id="rcTotalSub">Năm 2026</div>
                     </div>
 
-                    <!-- Card 2 -->
+                    <!-- Card 2: Doanh Thu Projects -->
                     <div class="report-card">
                         <div class="rc-header">
                             <div class="rc-icon teal"><i class="ph ph-folder"></i></div>
-                            <div class="rc-trend up"><i class="ph ph-arrow-up-right"></i> 600.0%</div>
+                            <div class="rc-trend up" id="rcTrend2"><i class="ph ph-arrow-up-right"></i> <span id="rcTrendVal2">0%</span></div>
                         </div>
                         <div class="rc-title">Doanh Thu Projects</div>
-                        <div class="rc-value color-teal">98.0M VNĐ</div>
-                        <div class="rc-sub">21 projects hoàn thành</div>
+                        <div class="rc-value color-teal" id="rcProjectRevenue">0</div>
+                        <div class="rc-sub" id="rcProjectSub">0 projects</div>
                         <div class="rc-progress-container">
                             <div class="rc-progress-labels">
                                 <span>Tỷ trọng</span>
-                                <span>99.6%</span>
+                                <span id="rcProjectPercent">0%</span>
                             </div>
-                            <div class="rc-progress-bar"><div class="rc-progress-fill bg-teal" style="width: 99.6%"></div></div>
+                            <div class="rc-progress-bar"><div class="rc-progress-fill bg-teal" id="rcProjectBar" style="width: 0%"></div></div>
                         </div>
                     </div>
 
-                    <!-- Card 3 -->
+                    <!-- Card 3: Doanh Thu Hosting -->
                     <div class="report-card">
                         <div class="rc-header">
                             <div class="rc-icon blue"><i class="ph ph-hard-drives"></i></div>
-                            <div class="rc-trend down"><i class="ph ph-arrow-down-right"></i> 81.8%</div>
+                            <div class="rc-trend" id="rcTrend3"><i class="ph ph-arrow-up-right"></i> <span id="rcTrendVal3">0%</span></div>
                         </div>
                         <div class="rc-title">Doanh Thu Hosting</div>
-                        <div class="rc-value color-blue">400K VNĐ</div>
-                        <div class="rc-sub">2 hosting đang quản lý</div>
+                        <div class="rc-value color-blue" id="rcHostingRevenue">0</div>
+                        <div class="rc-sub" id="rcHostingSub">0 hosting</div>
                         <div class="rc-progress-container">
                             <div class="rc-progress-labels">
                                 <span>Tỷ trọng</span>
-                                <span>0.4%</span>
+                                <span id="rcHostingPercent">0%</span>
                             </div>
-                            <div class="rc-progress-bar"><div class="rc-progress-fill bg-blue" style="width: 5%"></div></div>
+                            <div class="rc-progress-bar"><div class="rc-progress-fill bg-blue" id="rcHostingBar" style="width: 0%"></div></div>
                         </div>
                     </div>
 
-                    <!-- Card 4 -->
+                    <!-- Card 4: TB Doanh Thu/Đơn -->
                     <div class="report-card">
                         <div class="rc-header">
                             <div class="rc-icon purple"><i class="ph ph-percent"></i></div>
                         </div>
                         <div class="rc-title">TB Doanh Thu/Đơn</div>
-                        <div class="rc-value color-purple">4.3M VNĐ</div>
-                        <div class="rc-sub">Trên 23 đơn</div>
+                        <div class="rc-value color-purple" id="rcAvgOrder">0</div>
+                        <div class="rc-sub" id="rcAvgSub">Trên 0 đơn</div>
                         <div class="rc-breakdown">
                             <div class="rc-b-row">
                                 <span class="rc-b-label">TB/Project:</span>
-                                <span class="rc-b-val color-teal">4.7M VNĐ</span>
+                                <span class="rc-b-val color-teal" id="rcAvgProject">0</span>
                             </div>
                             <div class="rc-b-row">
                                 <span class="rc-b-label">TB/Hosting:</span>
-                                <span class="rc-b-val color-blue">200K VNĐ</span>
+                                <span class="rc-b-val color-blue" id="rcAvgHosting">0</span>
                             </div>
                         </div>
                     </div>
@@ -200,27 +199,8 @@
                             <div class="donut-chart-wrapper">
                                 <canvas id="donutChart"></canvas>
                             </div>
-                            <div class="donut-legend">
-                                <div class="dl-item">
-                                    <div class="dl-left">
-                                        <div class="dot color-teal"></div>
-                                        <span>Projects</span>
-                                    </div>
-                                    <div class="dl-right">
-                                        <strong>98.0M VNĐ</strong>
-                                        <small>99.6%</small>
-                                    </div>
-                                </div>
-                                <div class="dl-item">
-                                    <div class="dl-left">
-                                        <div class="dot color-blue"></div>
-                                        <span>Hosting</span>
-                                    </div>
-                                    <div class="dl-right">
-                                        <strong>400K VNĐ</strong>
-                                        <small>0.4%</small>
-                                    </div>
-                                </div>
+                            <div class="donut-legend" id="donutLegend">
+                                <!-- Rendered by JS -->
                             </div>
                         </div>
                     </div>
@@ -244,7 +224,7 @@
                     <div class="chart-header">
                         <div class="ch-icon"><i class="ph ph-calendar-blank"></i></div>
                         <div>
-                            <h3>Xu Hướng Tháng - 2026</h3>
+                            <h3 id="lineChartTitle">Xu Hướng Tháng - 2026</h3>
                             <p>Doanh thu theo từng tháng</p>
                         </div>
                     </div>
@@ -258,7 +238,7 @@
                     <div class="chart-header">
                         <div class="ch-icon"><i class="ph ph-eye"></i></div>
                         <div>
-                            <h3>Chi Tiết Tháng - 2026</h3>
+                            <h3 id="monthlyTableTitle">Chi Tiết Tháng - 2026</h3>
                             <p>Click để xem chi tiết</p>
                         </div>
                     </div>
@@ -273,42 +253,8 @@
                                     <th class="text-center">HÀNH ĐỘNG</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="td-month"><i class="ph ph-calendar-blank"></i> Tháng 1</td>
-                                    <td><div class="cell-main color-teal">97.0M VNĐ</div><div class="cell-sub">20 projects</div></td>
-                                    <td><div class="cell-main color-blue">400K VNĐ</div><div class="cell-sub">2 hosting</div></td>
-                                    <td><strong class="color-green">97.4M VNĐ</strong></td>
-                                    <td class="text-center"><button class="btn-sm btn-teal"><i class="ph ph-eye"></i> Xem Chi Tiết</button></td>
-                                </tr>
-                                <tr>
-                                    <td class="td-month"><i class="ph ph-calendar-blank"></i> Tháng 2</td>
-                                    <td><div class="cell-sub text-muted">0 VNĐ<br>0 projects</div></td>
-                                    <td><div class="cell-sub text-muted">0 VNĐ<br>0 hosting</div></td>
-                                    <td><strong class="text-muted">0 VNĐ</strong></td>
-                                    <td class="text-center"><span class="text-muted text-sm">Không có dữ liệu</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="td-month"><i class="ph ph-calendar-blank"></i> Tháng 3</td>
-                                    <td><div class="cell-main color-teal">1.0M VNĐ</div><div class="cell-sub">1 projects</div></td>
-                                    <td><div class="cell-sub text-muted">0 VNĐ<br>0 hosting</div></td>
-                                    <td><strong class="color-green">1.0M VNĐ</strong></td>
-                                    <td class="text-center"><button class="btn-sm btn-teal"><i class="ph ph-eye"></i> Xem Chi Tiết</button></td>
-                                </tr>
-                                <tr>
-                                    <td class="td-month"><i class="ph ph-calendar-blank"></i> Tháng 4</td>
-                                    <td><div class="cell-sub text-muted">0 VNĐ<br>0 projects</div></td>
-                                    <td><div class="cell-sub text-muted">0 VNĐ<br>0 hosting</div></td>
-                                    <td><strong class="text-green">0 VNĐ</strong></td>
-                                    <td class="text-center"><span class="text-muted text-sm">Không có dữ liệu</span></td>
-                                </tr>
-                                <tr class="table-summary-row">
-                                    <td>TỔNG NĂM 2026</td>
-                                    <td><div class="cell-main color-teal">98.0M VNĐ</div><div class="cell-sub">21 projects</div></td>
-                                    <td><div class="cell-main color-blue">400K VNĐ</div><div class="cell-sub">2 hosting</div></td>
-                                    <td><strong class="color-green">98.4M VNĐ</strong></td>
-                                    <td></td>
-                                </tr>
+                            <tbody id="monthlyTableBody">
+                                <!-- Rendered by JS -->
                             </tbody>
                         </table>
                     </div>
@@ -338,50 +284,8 @@
                                     <th>TĂNG TRƯỞNG</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="td-year">
-                                        <i class="ph ph-calendar-blank"></i> 2026 
-                                        <span class="status-badge teal-badge">Đang xem</span>
-                                    </td>
-                                    <td><div class="cell-main color-teal">98.0M VNĐ</div><div class="cell-sub">21 projects</div></td>
-                                    <td><div class="cell-main color-blue">400K VNĐ</div><div class="cell-sub">2 hosting</div></td>
-                                    <td><strong class="color-green">98.4M VNĐ</strong></td>
-                                    <td><strong>4.3M VNĐ</strong></td>
-                                    <td class="color-green"><i class="ph ph-arrow-up-right"></i> 337.3%</td>
-                                </tr>
-                                <tr>
-                                    <td class="td-year"><i class="ph ph-calendar-blank"></i> 2025</td>
-                                    <td><div class="cell-main color-teal">14.0M VNĐ</div><div class="cell-sub">3 projects</div></td>
-                                    <td><div class="cell-main color-blue">8.5M VNĐ</div><div class="cell-sub">11 hosting</div></td>
-                                    <td><strong class="color-green">22.5M VNĐ</strong></td>
-                                    <td><strong>1.6M VNĐ</strong></td>
-                                    <td class="color-green"><i class="ph ph-arrow-up-right"></i> 1150.0%</td>
-                                </tr>
-                                <tr>
-                                    <td class="td-year"><i class="ph ph-calendar-blank"></i> 2024</td>
-                                    <td><div class="cell-sub text-muted">0 VNĐ<br>0 projects</div></td>
-                                    <td><div class="cell-main color-blue">1.8M VNĐ</div><div class="cell-sub">9 hosting</div></td>
-                                    <td><strong class="color-green">1.8M VNĐ</strong></td>
-                                    <td><strong>200K VNĐ</strong></td>
-                                    <td class="color-green"><i class="ph ph-arrow-up-right"></i> 63.6%</td>
-                                </tr>
-                                <tr>
-                                    <td class="td-year"><i class="ph ph-calendar-blank"></i> 2023</td>
-                                    <td><div class="cell-sub text-muted">0 VNĐ<br>0 projects</div></td>
-                                    <td><div class="cell-main color-blue">1.1M VNĐ</div><div class="cell-sub">1 hosting</div></td>
-                                    <td><strong class="color-green">1.1M VNĐ</strong></td>
-                                    <td><strong>1.1M VNĐ</strong></td>
-                                    <td class="text-muted">N/A</td>
-                                </tr>
-                                <tr class="table-summary-row">
-                                    <td>TỔNG CỘNG</td>
-                                    <td><div class="cell-main color-teal">112.0M VNĐ</div><div class="cell-sub">24 projects</div></td>
-                                    <td><div class="cell-main color-blue">11.8M VNĐ</div><div class="cell-sub">23 hosting</div></td>
-                                    <td><strong class="color-green">123.8M VNĐ</strong></td>
-                                    <td></td>
-                                    <td><span class="text-muted text-sm">4 năm hoạt động</span></td>
-                                </tr>
+                            <tbody id="yearlyTableBody">
+                                <!-- Rendered by JS -->
                             </tbody>
                         </table>
                     </div>
@@ -392,129 +296,316 @@
     </div>
 
     <script>
-        // Init Charts
+        let currentYear = 2026;
+        let donutChartInstance = null;
+        let barChartInstance = null;
+        let lineChartInstance = null;
         const textColor = '#64748b';
         const gridColor = '#e2e8f0';
 
-        // Year Filter Logic
+        // ===== Year Filter Logic =====
         function toggleYearFilter() {
             document.getElementById('yearFilterDropdown').classList.toggle('open');
         }
 
         function setYearFilter(year, el) {
+            currentYear = parseInt(year);
             document.getElementById('yearFilterLabel').textContent = 'Năm ' + year;
             
-            // Update active state
             document.querySelectorAll('#yearFilterDropdown .pj-dropdown-item').forEach(item => {
                 item.classList.remove('active');
             });
             el.classList.add('active');
-            
-            // Close dropdown
             document.getElementById('yearFilterDropdown').classList.remove('open');
             
-            // Logic to filter data can be added here
-            console.log('Filtering by year:', year);
+            renderAll();
         }
 
-        // Close dropdown when clicking outside
         window.addEventListener('click', function(e) {
             if (!e.target.closest('.pj-filter-wrapper')) {
                 document.getElementById('yearFilterDropdown').classList.remove('open');
             }
         });
-        
-        // Donut Chart
-        const ctxDonut = document.getElementById('donutChart').getContext('2d');
-        new Chart(ctxDonut, {
-            type: 'doughnut',
-            data: {
-                labels: ['Projects', 'Hosting'],
-                datasets: [{
-                    data: [99.6, 0.4],
-                    backgroundColor: ['#2ab89c', '#3b82f6'],
-                    borderWidth: 0,
-                    cutout: '75%'
-                }]
-            },
-            options: {
-                plugins: { legend: { display: false } },
-                maintainAspectRatio: false
-            }
-        });
 
-        // Bar Chart
-        const ctxBar = document.getElementById('barChart').getContext('2d');
-        new Chart(ctxBar, {
-            type: 'bar',
-            data: {
-                labels: ['2026', '2025', '2024', '2023'],
-                datasets: [
-                    {
-                        label: 'Projects',
-                        data: [98, 14, 0, 0],
-                        backgroundColor: '#2ab89c',
-                        borderRadius: 4
-                    },
-                    {
-                        label: 'Hosting',
-                        data: [0.4, 8.5, 1.8, 1.1],
-                        backgroundColor: '#3b82f6',
-                        borderRadius: 4
-                    }
-                ]
-            },
-            options: {
-                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } },
-                maintainAspectRatio: false,
-                scales: {
-                    x: { grid: { display: false } },
-                    y: { border: { dash: [4, 4] }, grid: { color: gridColor, drawBorder: false }, ticks: { callback: function(value) { return value + 'M'; } } }
-                }
-            }
-        });
+        // ===== Populate Year Filter Dropdown =====
+        function populateYearFilter() {
+            const dropdown = document.getElementById('yearFilterDropdown');
+            const years = getAllYears();
+            dropdown.innerHTML = '';
+            years.forEach(y => {
+                const active = y === currentYear ? ' active' : '';
+                dropdown.innerHTML += `<div class="pj-dropdown-item${active}" onclick="setYearFilter('${y}', this)">Năm ${y}</div>`;
+            });
+        }
 
-        // Line Chart
-        const ctxLine = document.getElementById('lineChart').getContext('2d');
-        new Chart(ctxLine, {
-            type: 'line',
-            data: {
-                labels: ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'],
-                datasets: [
-                    {
-                        label: 'Projects',
-                        data: [97, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        borderColor: '#2ab89c',
-                        backgroundColor: '#2ab89c',
-                        tension: 0.4
-                    },
-                    {
-                        label: 'Hosting',
-                        data: [0.4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        borderColor: '#3b82f6',
-                        backgroundColor: '#3b82f6',
-                        tension: 0.4
-                    },
-                    {
-                        label: 'Tổng',
-                        data: [97.4, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        borderDash: [5, 5],
-                        fill: true,
-                        tension: 0.4
-                    }
-                ]
-            },
-            options: {
-                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } },
-                maintainAspectRatio: false,
-                scales: {
-                    x: { grid: { borderDash: [4, 4], color: gridColor } },
-                    y: { grid: { borderDash: [4, 4], color: gridColor }, ticks: { callback: function(value) { return value + 'M'; }} }
-                }
+        // ===== Render All =====
+        function renderAll() {
+            renderCards();
+            renderDonutChart();
+            renderBarChart();
+            renderLineChart();
+            renderMonthlyTable();
+            renderYearlyTable();
+        }
+
+        // ===== Render 4 Cards =====
+        function renderCards() {
+            const ps = getProjectStats(currentYear);
+            const hs = getHostingStats(currentYear);
+            const total = ps.totalValue + hs.totalPrice;
+            const totalOrders = ps.count + hs.count;
+            const pPercent = total > 0 ? (ps.totalValue / total * 100).toFixed(1) : 0;
+            const hPercent = total > 0 ? (hs.totalPrice / total * 100).toFixed(1) : 0;
+            const avgOrder = totalOrders > 0 ? total / totalOrders : 0;
+            const avgProject = ps.count > 0 ? ps.totalValue / ps.count : 0;
+            const avgHosting = hs.count > 0 ? hs.totalPrice / hs.count : 0;
+
+            // Growth
+            const growth = getGrowthPercent(currentYear);
+
+            document.getElementById('rcTotalRevenue').textContent = formatVNDShort(total);
+            document.getElementById('rcTotalSub').textContent = 'Năm ' + currentYear;
+            
+            if (growth !== null) {
+                document.getElementById('rcTrendVal1').textContent = growth + '%';
+                document.getElementById('rcTrend1').className = 'rc-trend ' + (parseFloat(growth) >= 0 ? 'up' : 'down');
+                document.getElementById('rcTrend1').querySelector('i').className = 'ph ' + (parseFloat(growth) >= 0 ? 'ph-arrow-up-right' : 'ph-arrow-down-right');
+            } else {
+                document.getElementById('rcTrendVal1').textContent = 'N/A';
             }
-        });
+
+            // Projects
+            document.getElementById('rcProjectRevenue').textContent = formatVNDShort(ps.totalValue);
+            document.getElementById('rcProjectSub').textContent = ps.count + ' projects';
+            document.getElementById('rcProjectPercent').textContent = pPercent + '%';
+            document.getElementById('rcProjectBar').style.width = Math.max(parseFloat(pPercent), 2) + '%';
+
+            // Hosting
+            document.getElementById('rcHostingRevenue').textContent = formatVNDShort(hs.totalPrice);
+            document.getElementById('rcHostingSub').textContent = hs.count + ' hosting';
+            document.getElementById('rcHostingPercent').textContent = hPercent + '%';
+            document.getElementById('rcHostingBar').style.width = Math.max(parseFloat(hPercent), 2) + '%';
+
+            // Average
+            document.getElementById('rcAvgOrder').textContent = formatVNDShort(avgOrder);
+            document.getElementById('rcAvgSub').textContent = 'Trên ' + totalOrders + ' đơn';
+            document.getElementById('rcAvgProject').textContent = formatVNDShort(avgProject);
+            document.getElementById('rcAvgHosting').textContent = formatVNDShort(avgHosting);
+        }
+
+        // ===== Donut Chart =====
+        function renderDonutChart() {
+            const ps = getProjectStats(currentYear);
+            const hs = getHostingStats(currentYear);
+            const total = ps.totalValue + hs.totalPrice;
+            const pPercent = total > 0 ? (ps.totalValue / total * 100).toFixed(1) : 0;
+            const hPercent = total > 0 ? (hs.totalPrice / total * 100).toFixed(1) : 0;
+
+            if (donutChartInstance) donutChartInstance.destroy();
+            const ctx = document.getElementById('donutChart').getContext('2d');
+            donutChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Projects', 'Hosting'],
+                    datasets: [{
+                        data: [parseFloat(pPercent), parseFloat(hPercent)],
+                        backgroundColor: ['#2ab89c', '#3b82f6'],
+                        borderWidth: 0,
+                        cutout: '75%'
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    maintainAspectRatio: false
+                }
+            });
+
+            document.getElementById('donutLegend').innerHTML = `
+                <div class="dl-item">
+                    <div class="dl-left"><div class="dot color-teal"></div><span>Projects</span></div>
+                    <div class="dl-right"><strong>${formatVNDShort(ps.totalValue)}</strong><small>${pPercent}%</small></div>
+                </div>
+                <div class="dl-item">
+                    <div class="dl-left"><div class="dot color-blue"></div><span>Hosting</span></div>
+                    <div class="dl-right"><strong>${formatVNDShort(hs.totalPrice)}</strong><small>${hPercent}%</small></div>
+                </div>
+            `;
+        }
+
+        // ===== Bar Chart =====
+        function renderBarChart() {
+            const years = getAllYears();
+            const projectData = years.map(y => getProjectStats(y).totalValue / 1000000);
+            const hostingData = years.map(y => getHostingStats(y).totalPrice / 1000000);
+
+            if (barChartInstance) barChartInstance.destroy();
+            const ctx = document.getElementById('barChart').getContext('2d');
+            barChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: years.map(String),
+                    datasets: [
+                        { label: 'Projects', data: projectData, backgroundColor: '#2ab89c', borderRadius: 4 },
+                        { label: 'Hosting', data: hostingData, backgroundColor: '#3b82f6', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } },
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { border: { dash: [4, 4] }, grid: { color: gridColor, drawBorder: false }, ticks: { callback: v => v + 'M' } }
+                    }
+                }
+            });
+        }
+
+        // ===== Line Chart =====
+        function renderLineChart() {
+            const monthly = getMonthlyBreakdown(currentYear);
+            const labels = monthly.map(m => 'Tháng ' + m.month);
+            const projData = monthly.map(m => m.projectValue / 1000000);
+            const hostData = monthly.map(m => m.hostingValue / 1000000);
+            const totalData = monthly.map(m => m.total / 1000000);
+
+            document.getElementById('lineChartTitle').textContent = 'Xu Hướng Tháng - ' + currentYear;
+
+            if (lineChartInstance) lineChartInstance.destroy();
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            lineChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: 'Projects', data: projData, borderColor: '#2ab89c', backgroundColor: '#2ab89c', tension: 0.4 },
+                        { label: 'Hosting', data: hostData, borderColor: '#3b82f6', backgroundColor: '#3b82f6', tension: 0.4 },
+                        { label: 'Tổng', data: totalData, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', borderDash: [5,5], fill: true, tension: 0.4 }
+                    ]
+                },
+                options: {
+                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } },
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { borderDash: [4,4], color: gridColor } },
+                        y: { grid: { borderDash: [4,4], color: gridColor }, ticks: { callback: v => v + 'M' } }
+                    }
+                }
+            });
+        }
+
+        // ===== Monthly Table =====
+        function renderMonthlyTable() {
+            document.getElementById('monthlyTableTitle').textContent = 'Chi Tiết Tháng - ' + currentYear;
+            const monthly = getMonthlyBreakdown(currentYear);
+            const tbody = document.getElementById('monthlyTableBody');
+            let html = '';
+            let totalProjVal = 0, totalHostVal = 0, totalProjCount = 0, totalHostCount = 0;
+
+            monthly.forEach(m => {
+                totalProjVal += m.projectValue;
+                totalHostVal += m.hostingValue;
+                totalProjCount += m.projectCount;
+                totalHostCount += m.hostingCount;
+
+                if (m.total === 0) {
+                    html += `<tr>
+                        <td class="td-month"><i class="ph ph-calendar-blank"></i> Tháng ${m.month}</td>
+                        <td><div class="cell-sub text-muted">0 VNĐ<br>0 projects</div></td>
+                        <td><div class="cell-sub text-muted">0 VNĐ<br>0 hosting</div></td>
+                        <td><strong class="text-muted">0 VNĐ</strong></td>
+                        <td class="text-center"><span class="text-muted text-sm">Không có dữ liệu</span></td>
+                    </tr>`;
+                } else {
+                    const projCell = m.projectValue > 0
+                        ? `<div class="cell-main color-teal">${formatVNDShort(m.projectValue)}</div><div class="cell-sub">${m.projectCount} projects</div>`
+                        : `<div class="cell-sub text-muted">0 VNĐ<br>0 projects</div>`;
+                    const hostCell = m.hostingValue > 0
+                        ? `<div class="cell-main color-blue">${formatVNDShort(m.hostingValue)}</div><div class="cell-sub">${m.hostingCount} hosting</div>`
+                        : `<div class="cell-sub text-muted">0 VNĐ<br>0 hosting</div>`;
+                    html += `<tr>
+                        <td class="td-month"><i class="ph ph-calendar-blank"></i> Tháng ${m.month}</td>
+                        <td>${projCell}</td>
+                        <td>${hostCell}</td>
+                        <td><strong class="color-green">${formatVNDShort(m.total)}</strong></td>
+                        <td class="text-center"><button class="btn-sm btn-teal"><i class="ph ph-eye"></i> Xem Chi Tiết</button></td>
+                    </tr>`;
+                }
+            });
+
+            // Summary row
+            const grandTotal = totalProjVal + totalHostVal;
+            html += `<tr class="table-summary-row">
+                <td>TỔNG NĂM ${currentYear}</td>
+                <td><div class="cell-main color-teal">${formatVNDShort(totalProjVal)}</div><div class="cell-sub">${totalProjCount} projects</div></td>
+                <td><div class="cell-main color-blue">${formatVNDShort(totalHostVal)}</div><div class="cell-sub">${totalHostCount} hosting</div></td>
+                <td><strong class="color-green">${formatVNDShort(grandTotal)}</strong></td>
+                <td></td>
+            </tr>`;
+
+            tbody.innerHTML = html;
+        }
+
+        // ===== Yearly Table =====
+        function renderYearlyTable() {
+            const years = getAllYears();
+            const tbody = document.getElementById('yearlyTableBody');
+            let html = '';
+            let grandProjVal = 0, grandHostVal = 0, grandProjCount = 0, grandHostCount = 0;
+
+            years.forEach(y => {
+                const ps = getProjectStats(y);
+                const hs = getHostingStats(y);
+                const total = ps.totalValue + hs.totalPrice;
+                const orders = ps.count + hs.count;
+                const avg = orders > 0 ? total / orders : 0;
+                const growth = getGrowthPercent(y);
+
+                grandProjVal += ps.totalValue;
+                grandHostVal += hs.totalPrice;
+                grandProjCount += ps.count;
+                grandHostCount += hs.count;
+
+                const isViewing = y === currentYear;
+                const yearBadge = isViewing ? ` <span class="status-badge teal-badge">Đang xem</span>` : '';
+                
+                const growthCell = growth !== null
+                    ? `<td class="color-green"><i class="ph ph-arrow-up-right"></i> ${growth}%</td>`
+                    : `<td class="text-muted">N/A</td>`;
+
+                const projCell = ps.totalValue > 0
+                    ? `<div class="cell-main color-teal">${formatVNDShort(ps.totalValue)}</div><div class="cell-sub">${ps.count} projects</div>`
+                    : `<div class="cell-sub text-muted">0 VNĐ<br>0 projects</div>`;
+                const hostCell = hs.totalPrice > 0
+                    ? `<div class="cell-main color-blue">${formatVNDShort(hs.totalPrice)}</div><div class="cell-sub">${hs.count} hosting</div>`
+                    : `<div class="cell-sub text-muted">0 VNĐ<br>0 hosting</div>`;
+
+                html += `<tr>
+                    <td class="td-year"><i class="ph ph-calendar-blank"></i> ${y}${yearBadge}</td>
+                    <td>${projCell}</td>
+                    <td>${hostCell}</td>
+                    <td><strong class="color-green">${formatVNDShort(total)}</strong></td>
+                    <td><strong>${formatVNDShort(avg)}</strong></td>
+                    ${growthCell}
+                </tr>`;
+            });
+
+            // Summary
+            const grandTotal = grandProjVal + grandHostVal;
+            html += `<tr class="table-summary-row">
+                <td>TỔNG CỘNG</td>
+                <td><div class="cell-main color-teal">${formatVNDShort(grandProjVal)}</div><div class="cell-sub">${grandProjCount} projects</div></td>
+                <td><div class="cell-main color-blue">${formatVNDShort(grandHostVal)}</div><div class="cell-sub">${grandHostCount} hosting</div></td>
+                <td><strong class="color-green">${formatVNDShort(grandTotal)}</strong></td>
+                <td></td>
+                <td><span class="text-muted text-sm">${years.length} năm hoạt động</span></td>
+            </tr>`;
+
+            tbody.innerHTML = html;
+        }
+
+        // ===== INIT =====
+        populateYearFilter();
+        renderAll();
     </script>
 </body>
 </html>

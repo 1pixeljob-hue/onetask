@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="/js/shared-data.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -103,15 +104,15 @@
                             <span class="stat-title">Tổng Hosting</span>
                             <i class="ph ph-cards color-gray"></i>
                         </div>
-                        <div class="stat-value">23</div>
-                        <div class="stat-desc">22 đang hoạt động</div>
+                        <div class="stat-value" id="statTotalHosting">0</div>
+                        <div class="stat-desc" id="statActiveHosting">0 đang hoạt động</div>
                     </div>
                     <div class="stat-card warning-card">
                         <div class="stat-header">
                             <span class="stat-title">Sắp Hết Hạn</span>
                             <i class="ph ph-warning-circle color-orange"></i>
                         </div>
-                        <div class="stat-value">1</div>
+                        <div class="stat-value" id="statExpiring">0</div>
                         <div class="stat-desc">hosting cần gia hạn</div>
                     </div>
                     <div class="stat-card">
@@ -119,7 +120,7 @@
                             <span class="stat-title">Đang Thực Hiện</span>
                             <i class="ph ph-folder color-blue"></i>
                         </div>
-                        <div class="stat-value">1</div>
+                        <div class="stat-value" id="statDoing">0</div>
                         <div class="stat-desc">đang triển khai</div>
                     </div>
                     <div class="stat-card">
@@ -127,15 +128,15 @@
                             <span class="stat-title">Chờ Nghiệm Thu</span>
                             <i class="ph ph-check-circle color-purple"></i>
                         </div>
-                        <div class="stat-value">2</div>
-                        <div class="stat-desc">5.5M VNĐ</div>
+                        <div class="stat-value" id="statTesting">0</div>
+                        <div class="stat-desc" id="statTestingValue">0 VNĐ</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
                             <span class="stat-title">Doanh Thu</span>
                             <i class="ph ph-trend-up color-green"></i>
                         </div>
-                        <div class="stat-value">112.0M</div>
+                        <div class="stat-value" id="statRevenue">0</div>
                         <div class="stat-desc">VNĐ hoàn thành</div>
                     </div>
                 </div>
@@ -162,37 +163,8 @@
                     <!-- Column 2 -->
                     <div class="board-column">
                         <h3 class="section-title">Tiến Độ Dự Án</h3>
-                        <div class="card-list">
-                            <div class="list-item">
-                                <div class="item-icon color-purple"><i class="ph ph-check-circle"></i></div>
-                                <div class="item-content">
-                                    <h4>Onelaw Code section tài liệu kèm iframe view</h4>
-                                    <p>Onelaw</p>
-                                </div>
-                                <div class="item-meta purple-text">
-                                    Chờ nghiệm thu
-                                </div>
-                            </div>
-                            <div class="list-item">
-                                <div class="item-icon color-purple"><i class="ph ph-check-circle"></i></div>
-                                <div class="item-content">
-                                    <h4>Thiết kế web Nam Việt Food Land</h4>
-                                    <p>Anh Nguyễn Sư</p>
-                                </div>
-                                <div class="item-meta purple-text">
-                                    Chờ nghiệm thu
-                                </div>
-                            </div>
-                            <div class="list-item">
-                                <div class="item-icon color-blue"><i class="ph ph-folder"></i></div>
-                                <div class="item-content">
-                                    <h4>Thêm sản phẩm cho web Trái Cây Lâm Thành</h4>
-                                    <p>Khánh Linh</p>
-                                </div>
-                                <div class="item-meta blue-text">
-                                    Đang thực hiện
-                                </div>
-                            </div>
+                        <div class="card-list" id="dashProjectList">
+                            <!-- Rendered by JS -->
                         </div>
                     </div>
 
@@ -265,4 +237,46 @@
         </main>
     </div>
 </body>
+<script>
+// Dashboard Stats Renderer
+(function() {
+    const stats = getDashboardStats();
+    
+    // Stat cards
+    document.getElementById('statTotalHosting').textContent = stats.totalHostings;
+    document.getElementById('statActiveHosting').textContent = stats.activeHostings + ' đang hoạt động';
+    document.getElementById('statExpiring').textContent = stats.expiringSoon;
+    document.getElementById('statDoing').textContent = stats.doingProjects.length;
+    document.getElementById('statTesting').textContent = stats.testingProjects.length;
+    document.getElementById('statTestingValue').textContent = formatVNDShort(stats.testingValue);
+    document.getElementById('statRevenue').textContent = formatVNDShort(stats.totalRevenue).replace(' VNĐ', '');
+    
+    // Project Progress List
+    const listContainer = document.getElementById('dashProjectList');
+    const activeProjects = PROJECTS.filter(p => p.status === 'doing' || p.status === 'testing');
+    
+    activeProjects.forEach(p => {
+        const isTest = p.status === 'testing';
+        const iconColor = isTest ? 'color-purple' : 'color-blue';
+        const iconClass = isTest ? 'ph-check-circle' : 'ph-folder';
+        const metaColor = isTest ? 'purple-text' : 'blue-text';
+        const metaLabel = isTest ? 'Chờ nghiệm thu' : 'Đang thực hiện';
+        
+        listContainer.innerHTML += `
+            <div class="list-item">
+                <div class="item-icon ${iconColor}"><i class="ph ${iconClass}"></i></div>
+                <div class="item-content">
+                    <h4>${p.name}</h4>
+                    <p>${p.customer}</p>
+                </div>
+                <div class="item-meta ${metaColor}">${metaLabel}</div>
+            </div>
+        `;
+    });
+    
+    if (activeProjects.length === 0) {
+        listContainer.innerHTML = '<div class="list-item"><div class="item-content"><p class="text-muted">Không có dự án nào đang thực hiện</p></div></div>';
+    }
+})();
+</script>
 </html>
