@@ -422,20 +422,35 @@ function setFilter(val, label, el) {
 document.addEventListener('DOMContentLoaded', initProjectsTable);
 
 function initProjectsTable() {
+    console.log('initProjectsTable: Start');
     const tbody = document.getElementById('projectTableBody');
-    if (!tbody) return;
+    if (!tbody) {
+        console.error('initProjectsTable: tbody not found');
+        return;
+    }
     tbody.innerHTML = '';
     
-    PROJECTS.forEach(p => {
-        const tr = document.createElement('tr');
-        populateRow(tr, p);
-        tr.onclick = (e) => {
-            if (!e.target.closest('input') && !e.target.closest('button')) {
-                openProjectDetail(tr);
-            }
-        };
-        tbody.appendChild(tr);
+    console.log('initProjectsTable: Processing PROJECTS', PROJECTS);
+    if (!PROJECTS || PROJECTS.length === 0) {
+        console.warn('initProjectsTable: No projects found in PROJECTS variable');
+    }
+
+    PROJECTS.forEach((p, idx) => {
+        try {
+            const tr = document.createElement('tr');
+            populateRow(tr, p);
+            tr.onclick = (e) => {
+                if (!e.target.closest('input') && !e.target.closest('button')) {
+                    openProjectDetail(tr);
+                }
+            };
+            tbody.appendChild(tr);
+            console.log(`initProjectsTable: Added row ${idx} for project ${p.id}`);
+        } catch (err) {
+            console.error(`initProjectsTable: Error adding row ${idx}`, err, p);
+        }
     });
+    console.log('initProjectsTable: End');
 }
 
 document.addEventListener('click', function(e) {
