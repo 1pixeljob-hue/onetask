@@ -517,7 +517,12 @@
     </div>
 </div>
 
-<div id="copyToast" class="toast-message" style="z-index: 9999;">Đã sao chép vào bộ nhớ tạm!</div>
+<!-- Toast Thông báo (Giống Hosting) -->
+<div class="delete-toast" id="deleteToast">
+    <div class="toast-spinner" id="dtSpinner"></div>
+    <div id="dtSuccessIcon" style="display:none; color: #10b981; font-size: 20px; display: flex; align-items: center;"><i class="ph-fill ph-check-circle"></i></div>
+    <span id="dtMessage">Đang xử lý...</span>
+</div>
 
 <div class="row-action-menu" id="rowActionMenu">
     <button class="ram-item ram-view">
@@ -652,9 +657,13 @@ function closeConfirmDelete(e) {
 
 let rowToDelete = null;
 function confirmDeleteAction() {
+    closeConfirmDeleteBtn();
     if (rowToDelete) {
-        rowToDelete.remove();
-        closeConfirmDeleteBtn();
+        const name = document.getElementById('cdmProjectName').textContent;
+        showActionToast('Đang xóa project...', `Đã xóa project "${name}"`, () => {
+            rowToDelete.remove();
+            rowToDelete = null;
+        });
     }
 }
 
@@ -744,22 +753,24 @@ function addProject() {
     const newRow = document.createElement('tr');
     populateRow(newRow, data);
 
-    tbody.prepend(newRow);
     closeAddProjectModal();
-    resetProjectForm();
+    showActionToast('Đang thêm project...', `Đã thêm project "${data.name}"`, () => {
+        tbody.prepend(newRow);
+        resetProjectForm();
+    });
 }
 
 function updateProject() {
     const data = getFormData();
     if (!data || !currentRowToEdit) return;
 
-    populateRow(currentRowToEdit, data);
     closeAddProjectModal();
-    
-    // Refresh detail modal if open
-    if (document.getElementById('detailProjectModal').classList.contains('active')) {
-        openProjectDetail(currentRowToEdit);
-    }
+    showActionToast('Đang cập nhật project...', `Đã cập nhật project "${data.name}"`, () => {
+        populateRow(currentRowToEdit, data);
+        if (document.getElementById('detailProjectModal').classList.contains('active')) {
+            openProjectDetail(currentRowToEdit);
+        }
+    });
 }
 
 function getFormData() {
@@ -885,10 +896,46 @@ function copyTextFrom(elementId) {
     if (text === 'N/A') return;
     
     navigator.clipboard.writeText(text).then(() => {
-        const toast = document.getElementById('copyToast');
+        showActionToast(null, 'Đã sao chép vào bộ nhớ tạm!', null, true);
+    });
+}
+
+function showActionToast(loadingMsg, successMsg, callback, immediateSuccess = false) {
+    const toast = document.getElementById('deleteToast');
+    const msg = document.getElementById('dtMessage');
+    const spinner = document.getElementById('dtSpinner');
+    const successIcon = document.getElementById('dtSuccessIcon');
+    
+    if (immediateSuccess) {
+        spinner.style.display = 'none';
+        successIcon.style.display = 'block';
+        msg.textContent = successMsg;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 2000);
-    });
+        return;
+    }
+
+    // Reset state
+    spinner.style.display = 'block';
+    successIcon.style.display = 'none';
+    msg.textContent = loadingMsg;
+    toast.classList.add('show');
+    
+    // Simulate delay
+    setTimeout(() => {
+        if (callback) callback();
+        
+        // Success state
+        spinner.style.display = 'none';
+        successIcon.style.display = 'block';
+        msg.textContent = successMsg;
+        
+        // Hide toast
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2000);
+        
+    }, 800);
 }
 
 function openEditProjectFromDetail() {
