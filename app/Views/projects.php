@@ -422,20 +422,13 @@ function setFilter(val, label, el) {
 document.addEventListener('DOMContentLoaded', initProjectsTable);
 
 function initProjectsTable() {
-    console.log('initProjectsTable: Start');
     const tbody = document.getElementById('projectTableBody');
-    if (!tbody) {
-        console.error('initProjectsTable: tbody not found');
-        return;
-    }
+    if (!tbody) return;
     tbody.innerHTML = '';
     
-    console.log('initProjectsTable: Processing PROJECTS', PROJECTS);
-    if (!PROJECTS || PROJECTS.length === 0) {
-        console.warn('initProjectsTable: No projects found in PROJECTS variable');
-    }
+    if (!PROJECTS) return;
 
-    PROJECTS.forEach((p, idx) => {
+    PROJECTS.forEach((p) => {
         try {
             const tr = document.createElement('tr');
             populateRow(tr, p);
@@ -445,12 +438,10 @@ function initProjectsTable() {
                 }
             };
             tbody.appendChild(tr);
-            console.log(`initProjectsTable: Added row ${idx} for project ${p.id}`);
         } catch (err) {
-            console.error(`initProjectsTable: Error adding row ${idx}`, err, p);
+            console.error('Error rendering project row:', err, p);
         }
     });
-    console.log('initProjectsTable: End');
 }
 
 document.addEventListener('click', function(e) {
