@@ -7,24 +7,27 @@ define('CORE_DIR', APP_DIR . '/Core');
 // Simple Autoloader for Controllers and Core
 // Simple Autoloader for App namespace
 spl_autoload_register(function($class) {
+    // 1. Check for App\ namespace
     $prefix = 'App\\';
-    $base_dir = APP_DIR . '/';
+    if (strncmp($prefix, $class, strlen($prefix)) === 0) {
+        $relative_class = substr($class, strlen($prefix));
+        $file = APP_DIR . '/' . str_replace('\\', '/', $relative_class) . '.php';
+        if (file_exists($file)) {
+            require_once $file;
+            return;
+        }
+    }
 
-    $len = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) {
+    // 2. Fallback for non-namespaced Controllers
+    if (file_exists(APP_DIR . '/Controllers/' . $class . '.php')) {
+        require_once APP_DIR . '/Controllers/' . $class . '.php';
         return;
     }
 
-    $relative_class = substr($class, $len);
-    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-
-    if (file_exists($file)) {
-        require_once $file;
-    } else {
-        // Fallback for non-namespaced core classes if any
-        if (file_exists(CORE_DIR . '/' . $class . '.php')) {
-            require_once CORE_DIR . '/' . $class . '.php';
-        }
+    // 3. Fallback for non-namespaced Core classes
+    if (file_exists(CORE_DIR . '/' . $class . '.php')) {
+        require_once CORE_DIR . '/' . $class . '.php';
+        return;
     }
 });
 
