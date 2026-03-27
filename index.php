@@ -31,10 +31,7 @@ spl_autoload_register(function($class) {
     }
 });
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Load the Router
+// Bootstrap the application
 require_once 'app/Core/Router.php';
 
 // Bootstrap the application

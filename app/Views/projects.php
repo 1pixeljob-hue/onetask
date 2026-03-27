@@ -139,81 +139,17 @@
                                 <th width="80" class="text-center">THAO TÁC</th>
                             </tr>
                         </thead>
-                            <!-- Row 5 -->
-                            <tr data-status="done">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td>
-                                    <div class="cell-main">Sayoung - Đăng ký website với Bộ Công Thương</div>
-                                    <div class="cell-sub"><i class="ph ph-link"></i> https://dichvucong.moit.gov.vn/Log...</div>
-                                </td>
-                                <td>
-                                    <div class="provider-info">
-                                        <i class="ph ph-user-circle color-gray"></i>
-                                        <span>Sayoung</span>
-                                    </div>
-                                </td>
-                                <td><span class="val-badge"><i class="ph ph-currency-circle-dollar"></i> 2.5M</span></td>
-                                <td>
-                                    <div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 25/01/2026</div>
-                                </td>
-                                <td><span class="status-badge success"><i class="ph ph-check-circle"></i> Hoàn Thành</span></td>
-                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
-                            </tr>
-
-                            <!-- Row 6 -->
-                            <tr data-status="done">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td>
-                                    <div class="cell-main">Thiết kế Landing cho Onelaw.vn</div>
-                                    <div class="cell-sub"><i class="ph ph-link"></i> https://onelaw.vn/adminxxxx</div>
-                                </td>
-                                <td>
-                                    <div class="provider-info">
-                                        <i class="ph ph-user-circle color-gray"></i>
-                                        <span>A Hùng</span>
-                                    </div>
-                                </td>
-                                <td><span class="val-badge"><i class="ph ph-currency-circle-dollar"></i> 1.0M</span></td>
-                                <td>
-                                    <div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 24/01/2026</div>
-                                </td>
-                                <td><span class="status-badge success"><i class="ph ph-check-circle"></i> Hoàn Thành</span></td>
-                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
-                            </tr>
-
-                            <!-- Row 7 -->
-                            <tr data-status="done">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td>
-                                    <div class="cell-main">Thiết kế web Pearlcenter</div>
-                                    <div class="cell-sub"><i class="ph ph-link"></i> https://pearlcenter.vn/pro-login</div>
-                                </td>
-                                <td>
-                                    <div class="provider-info">
-                                        <i class="ph ph-user-circle color-gray"></i>
-                                        <span>A Hùng</span>
-                                    </div>
-                                </td>
-                                <td><span class="val-badge"><i class="ph ph-currency-circle-dollar"></i> 5.0M</span></td>
-                                <td>
-                                    <div class="date-info text-main"><i class="ph ph-calendar-blank"></i> 22/01/2026</div>
-                                </td>
-                                <td><span class="status-badge success"><i class="ph ph-check-circle"></i> Hoàn Thành</span></td>
-                                <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
-                            </tr>
+                        <tbody id="projectTableBody">
+                            <!-- Populated by JS -->
                         </tbody>
                     </table>
                 </div>
 
                 <!-- Pagination -->
-                <div class="logs-pagination-row">
-                    <span class="logs-count">Hiển thị: 1 - 7 / 42 hostings</span>
-                    <div class="logs-pagination">
-                        <button class="pg-btn"><i class="ph ph-caret-left"></i></button>
-                        <button class="pg-btn active">1</button>
-                        <button class="pg-btn">2</button>
-                        <button class="pg-btn">3</button>
-                        <button class="pg-btn"><i class="ph ph-caret-right"></i></button>
+                <div class="logs-pagination-row" id="paginationRow" style="display: none;">
+                    <span class="logs-count" id="paginationCount">Hiển thị: 0 - 0 / 0 projects</span>
+                    <div class="logs-pagination" id="paginationButtons">
+                        <!-- Buttons added by JS -->
                     </div>
                 </div>
             </div>
