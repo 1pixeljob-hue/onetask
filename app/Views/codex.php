@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -32,7 +32,7 @@
                     <span>Hostings</span>
                 </a>
                 <a href="/projects" class="nav-item">
-                    <i class="ph ph-kanban"></i>
+                    <i class="ph ph-folders"></i>
                     <span>Projects</span>
                 </a>
                 <a href="/reports" class="nav-item">
