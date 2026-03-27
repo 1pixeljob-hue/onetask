@@ -18,10 +18,10 @@ class ProjectModel {
     public function getAll() {
         $stmt = $this->db->query("SELECT 
             id, name, link, customer, phone, 
-            value as valRaw, 
+            value, 
             date, status, 
             description as `desc`, 
-            admin_url as adminLink, 
+            admin_url as adminUrl, 
             admin_user as adminUser, 
             admin_pass as adminPass 
             FROM projects ORDER BY date DESC");
@@ -50,5 +50,66 @@ class ProjectModel {
         }
 
         return $stats;
+    }
+
+    /**
+     * Thêm dự án mới
+     */
+    public function create($data) {
+        $sql = "INSERT INTO projects (name, status, description, date, customer, phone, admin_url, admin_user, admin_pass, value) 
+                VALUES (:name, :status, :description, :date, :customer, :phone, :admin_url, :admin_user, :admin_pass, :value)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':name' => $data['name'],
+            ':status' => $data['status'],
+            ':description' => $data['desc'] ?? '',
+            ':date' => $data['date'],
+            ':customer' => $data['customer'],
+            ':phone' => $data['phone'] ?? '',
+            ':admin_url' => $data['adminUrl'] ?? '',
+            ':admin_user' => $data['adminUser'] ?? '',
+            ':admin_pass' => $data['adminPass'] ?? '',
+            ':value' => $data['value'] ?? 0
+        ]);
+    }
+
+    /**
+     * Cập nhật dự án
+     */
+    public function update($id, $data) {
+        $sql = "UPDATE projects SET 
+                name = :name, 
+                status = :status, 
+                description = :description, 
+                date = :date, 
+                customer = :customer, 
+                phone = :phone, 
+                admin_url = :admin_url, 
+                admin_user = :admin_user, 
+                admin_pass = :admin_pass, 
+                value = :value 
+                WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id' => $id,
+            ':name' => $data['name'],
+            ':status' => $data['status'],
+            ':description' => $data['desc'] ?? '',
+            ':date' => $data['date'],
+            ':customer' => $data['customer'],
+            ':phone' => $data['phone'] ?? '',
+            ':admin_url' => $data['adminUrl'] ?? '',
+            ':admin_user' => $data['adminUser'] ?? '',
+            ':admin_pass' => $data['adminPass'] ?? '',
+            ':value' => $data['value'] ?? 0
+        ]);
+    }
+
+    /**
+     * Xóa dự án
+     */
+    public function delete($id) {
+        $stmt = $this->db->prepare("DELETE FROM projects WHERE id = :id");
+        return $stmt->execute([':id' => $id]);
     }
 }

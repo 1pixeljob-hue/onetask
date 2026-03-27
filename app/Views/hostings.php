@@ -277,6 +277,7 @@ function initHostingsTable() {
     
     HOSTINGS.forEach(h => {
         const row = document.createElement('tr');
+        row.setAttribute('data-id', h.id);
         const status = getStatusFromDate(h.expDate);
         row.innerHTML = generateRowHTML(h.name, h.domain, h.provider, h.expDate, status, h.usage);
         tbody.appendChild(row);
@@ -725,20 +726,31 @@ function confirmDeleteAction() {
     closeConfirmDeleteBtn();
     
     if (selectedHostings.size > 0) {
-        const count = selectedHostings.size;
-        showActionToast(`Đang xóa ${count} hosting...`, `Đã xóa ${count} hosting thành công`, () => {
-            Array.from(selectedHostings).forEach(row => row.remove());
-            selectedHostings.clear();
-            updateBulkActionBar();
-            document.getElementById('selectAllHostings').checked = false;
-            applyFilters();
-        });
+        // Xử lý xóa nhiều (chưa triển khai API xóa nhiều, tạm thời xóa từng cái hoặc báo lỗi)
+        alert('Tính năng xóa hàng loạt đang được phát triển.');
     } else {
+        const id = rowToDelete.getAttribute('data-id');
         const hostingName = document.getElementById('cdmHostingName').textContent;
-        showActionToast('Đang xóa hosting...', `Đã xóa hosting "${hostingName}"`, () => {
-            if (rowToDelete) {
-                rowToDelete.remove();
-                applyFilters();
+        
+        showActionToast('Đang xóa hosting...', `Đã xóa hosting "${hostingName}"`, async () => {
+            try {
+                const response = await fetch('/hostings/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    if (rowToDelete) {
+                        rowToDelete.remove();
+                        applyFilters();
+                    }
+                } else {
+                    alert('Lỗi khi xóa: ' + (result.message || 'Không xác định'));
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Có lỗi xảy ra khi kết nối với máy chủ.');
             }
         });
     }
@@ -810,43 +822,92 @@ function addHosting() {
     const domain   = document.getElementById('mDomain').value.trim();
     const provider = document.getElementById('mProvider').value.trim();
     const expDate  = document.getElementById('mExpDate').value;
+    const regDate  = document.getElementById('mRegDate').value;
+    const price    = document.getElementById('hostingPrice').value;
 
     if (!name || !domain || !provider || !expDate) {
         alert('Vui lòng điền đầy đủ các trường bắt buộc (*).');
         return;
     }
 
-    const status = getStatusFromDate(expDate);
-    const tr = document.createElement('tr');
-    tr.innerHTML = generateRowHTML(name, domain, provider, expDate, status);
-    
-    closeHostingModalBtn();
-    showActionToast('Đang thêm hosting...', `Đã thêm hosting "${name}"`, () => {
-        const tbody = document.querySelector('.data-table tbody');
-        tbody.insertBefore(tr, tbody.firstChild);
-        applyFilters();
+    const data = { 
+        name, 
+        domain, 
+        provider, 
+        expDate, 
+        regDate, 
+        price,
+        usage: '1 năm' // Mặc định
+    };
+
+    showActionToast('Đang thêm hosting...', `Đã thêm hosting "${name}"`, async () => {
+        try {
+            const response = await fetch('/hostings/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (result.success) {
+                closeHostingModalBtn();
+                window.location.reload();
+            } else {
+                alert('Lỗi khi thêm: ' + (result.message || 'Không xác định'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Có lỗi xảy ra khi kết nối với máy chủ.');
+        }
     });
 }
 
 function updateHosting() {
     if (!currentRowToEdit) return;
     
+    const id       = currentRowToEdit.getAttribute('data-id');
     const name     = document.getElementById('mHostingName').value.trim();
     const domain   = document.getElementById('mDomain').value.trim();
     const provider = document.getElementById('mProvider').value.trim();
     const expDate  = document.getElementById('mExpDate').value;
+    const regDate  = document.getElementById('mRegDate').value;
+    const price    = document.getElementById('hostingPrice').value;
 
     if (!name || !domain || !provider || !expDate) {
         alert('Vui lòng điền đầy đủ các trường bắt buộc (*).');
         return;
     }
 
-    const status = getStatusFromDate(expDate);
-    closeHostingModalBtn();
-    
-    showActionToast('Đang cập nhật hosting...', `Đã cập nhật hosting "${name}"`, () => {
-        currentRowToEdit.innerHTML = generateRowHTML(name, domain, provider, expDate, status);
-        applyFilters();
+    const data = { 
+        id,
+        name, 
+        domain, 
+        provider, 
+        expDate, 
+        regDate, 
+        price,
+        usage: '1 năm' 
+    };
+
+    showActionToast('Đang cập nhật hosting...', `Đã cập nhật hosting "${name}"`, async () => {
+        try {
+            const response = await fetch('/hostings/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (result.success) {
+                const status = getStatusFromDate(expDate);
+                currentRowToEdit.innerHTML = generateRowHTML(name, domain, provider, expDate, status, data.usage);
+                closeHostingModalBtn();
+                applyFilters();
+            } else {
+                alert('Lỗi khi cập nhật: ' + (result.message || 'Không xác định'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Có lỗi xảy ra khi kết nối với máy chủ.');
+        }
     });
 }
 

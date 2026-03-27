@@ -32,4 +32,56 @@ class HostingModel {
         $stmt = $this->db->query("SELECT COUNT(*) as count, SUM(price) as total_val FROM hostings");
         return $stmt->fetch();
     }
+
+    /**
+     * Thêm hosting mới
+     */
+    public function create($data) {
+        $sql = "INSERT INTO hostings (name, domain, provider, price, reg_date, exp_date, usage_period) 
+                VALUES (:name, :domain, :provider, :price, :reg_date, :exp_date, :usage_period)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':name' => $data['name'],
+            ':domain' => $data['domain'] ?? '',
+            ':provider' => $data['provider'] ?? '',
+            ':price' => $data['price'] ?? 0,
+            ':reg_date' => $data['regDate'] ?? null,
+            ':exp_date' => $data['expDate'] ?? null,
+            ':usage_period' => $data['usage'] ?? ''
+        ]);
+    }
+
+    /**
+     * Cập nhật hosting
+     */
+    public function update($id, $data) {
+        $sql = "UPDATE hostings SET 
+                name = :name, 
+                domain = :domain, 
+                provider = :provider, 
+                price = :price, 
+                reg_date = :reg_date, 
+                exp_date = :exp_date, 
+                usage_period = :usage_period 
+                WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id' => $id,
+            ':name' => $data['name'],
+            ':domain' => $data['domain'] ?? '',
+            ':provider' => $data['provider'] ?? '',
+            ':price' => $data['price'] ?? 0,
+            ':reg_date' => $data['regDate'] ?? null,
+            ':exp_date' => $data['expDate'] ?? null,
+            ':usage_period' => $data['usage'] ?? ''
+        ]);
+    }
+
+    /**
+     * Xóa hosting
+     */
+    public function delete($id) {
+        $stmt = $this->db->prepare("DELETE FROM hostings WHERE id = :id");
+        return $stmt->execute([':id' => $id]);
+    }
 }

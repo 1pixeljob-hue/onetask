@@ -11,3 +11,9 @@ $router->add('/passwords', 'MainController', 'passwords');
 $router->add('/codex', 'MainController', 'codex');
 $router->add('/logs', 'MainController', 'logs');
 $router->add('/settings', 'MainController', 'settings');
+
+// API/Action Routes
+$router->add('/projects/save', 'MainController', 'saveProject');
+$router->add('/projects/delete', 'MainController', 'deleteProject');
+$router->add('/hostings/save', 'MainController', 'saveHosting');
+$router->add('/hostings/delete', 'MainController', 'deleteHosting');

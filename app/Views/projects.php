@@ -480,7 +480,7 @@ function openEditProjectModal(tr) {
     const adminUrl = tr.getAttribute('data-admin-url') || '';
     const adminUser = tr.getAttribute('data-admin-user') || '';
     const adminPass = tr.getAttribute('data-admin-pass') || '';
-    const valueRaw = tr.getAttribute('data-value-raw') || 0;
+    const value = tr.getAttribute('data-value') || 0;
     
     // Get raw date (DD/MM/YYYY -> YYYY-MM-DD)
     const dateStr = tr.querySelector('.date-info').textContent.trim();
@@ -497,7 +497,7 @@ function openEditProjectModal(tr) {
     document.getElementById('mAdminLink').value = adminUrl;
     document.getElementById('mAdminUser').value = adminUser;
     document.getElementById('adminPassword').value = adminPass;
-    document.getElementById('projectValue').value = valueRaw;
+    document.getElementById('projectValue').value = value;
     
     updateProjectValueDisplay(document.getElementById('projectValue'));
 
@@ -525,10 +525,27 @@ let rowToDelete = null;
 function confirmDeleteAction() {
     closeConfirmDeleteBtn();
     if (rowToDelete) {
+        const id = rowToDelete.getAttribute('data-id');
         const name = document.getElementById('cdmProjectName').textContent;
-        showActionToast('Đang xóa project...', `Đã xóa project "${name}"`, () => {
-            rowToDelete.remove();
-            rowToDelete = null;
+        
+        showActionToast('Đang xóa dự án...', `Đã xóa dự án "${name}"`, async () => {
+            try {
+                const response = await fetch('/projects/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    rowToDelete.remove();
+                    rowToDelete = null;
+                } else {
+                    alert('Lỗi khi xóa: ' + (result.message || 'Không xác định'));
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Có lỗi xảy ra khi kết nối với máy chủ.');
+            }
         });
     }
 }
@@ -615,26 +632,55 @@ function addProject() {
     const data = getFormData();
     if (!data) return;
 
-    const tbody = document.querySelector('.data-table tbody');
-    const newRow = document.createElement('tr');
-    populateRow(newRow, data);
-
-    closeAddProjectModal();
-    showActionToast('Đang thêm project...', `Đã thêm project "${data.name}"`, () => {
-        tbody.prepend(newRow);
-        resetProjectForm();
+    showActionToast('Đang thêm dự án...', `Đã thêm dự án "${data.name}"`, async () => {
+        try {
+            const response = await fetch('/projects/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (result.success) {
+                closeAddProjectModal();
+                // Reload page to get the new ID from DB and fresh list
+                window.location.reload();
+            } else {
+                alert('Lỗi khi thêm: ' + (result.message || 'Không xác định'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Có lỗi xảy ra khi kết nối với máy chủ.');
+        }
     });
 }
 
 function updateProject() {
     const data = getFormData();
     if (!data || !currentRowToEdit) return;
+    
+    // Thêm ID vào data để backend biết là cập nhật
+    data.id = currentRowToEdit.getAttribute('data-id');
 
-    closeAddProjectModal();
-    showActionToast('Đang cập nhật project...', `Đã cập nhật project "${data.name}"`, () => {
-        populateRow(currentRowToEdit, data);
-        if (document.getElementById('detailProjectModal').classList.contains('active')) {
-            openProjectDetail(currentRowToEdit);
+    showActionToast('Đang cập nhật dự án...', `Đã cập nhật dự án "${data.name}"`, async () => {
+        try {
+            const response = await fetch('/projects/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (result.success) {
+                populateRow(currentRowToEdit, data);
+                closeAddProjectModal();
+                if (document.getElementById('detailProjectModal').classList.contains('active')) {
+                    openProjectDetail(currentRowToEdit);
+                }
+            } else {
+                alert('Lỗi khi cập nhật: ' + (result.message || 'Không xác định'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Có lỗi xảy ra khi kết nối với máy chủ.');
         }
     });
 }
@@ -646,17 +692,17 @@ function getFormData() {
     const date = document.getElementById('mProjectDate').value;
     const customer = document.getElementById('mCustomerName').value.trim();
     const phone = document.getElementById('mCustomerPhone').value.trim();
-    const adminLink = document.getElementById('mAdminLink').value.trim();
+    const adminUrl = document.getElementById('mAdminLink').value.trim();
     const adminUser = document.getElementById('mAdminUser').value.trim();
     const adminPass = document.getElementById('adminPassword').value;
-    const valRaw = parseInt(document.getElementById('projectValue').value) || 0;
+    const value = parseInt(document.getElementById('projectValue').value) || 0;
 
     if (!name || !date || !customer) {
         alert('Vui lòng điền đầy đủ các thông tin bắt buộc (*)');
         return null;
     }
 
-    return { name, status, desc, date, customer, phone, adminLink, adminUser, adminPass, valRaw };
+    return { name, status, desc, date, customer, phone, adminUrl, adminUser, adminPass, value };
 }
 
 function populateRow(row, data) {
@@ -681,19 +727,20 @@ function populateRow(row, data) {
     }
 
     // Store attributes
+    row.setAttribute('data-id', data.id || '');
     row.setAttribute('data-status', data.status);
     row.setAttribute('data-desc', data.desc);
     row.setAttribute('data-phone', data.phone);
-    row.setAttribute('data-admin-url', data.adminLink);
+    row.setAttribute('data-admin-url', data.adminUrl);
     row.setAttribute('data-admin-user', data.adminUser);
     row.setAttribute('data-admin-pass', data.adminPass);
-    row.setAttribute('data-value-raw', data.valRaw);
+    row.setAttribute('data-value', data.value);
 
     row.innerHTML = `
         <td><input type="checkbox" class="cb-custom"></td>
         <td>
             <div class="cell-main">${data.name}</div>
-            <div class="cell-sub"><i class="ph ph-link"></i> ${data.adminLink || 'N/A'}</div>
+            <div class="cell-sub"><i class="ph ph-link"></i> ${data.adminUrl || 'N/A'}</div>
         </td>
         <td>
             <div class="provider-info">
@@ -721,7 +768,7 @@ function openProjectDetail(tr) {
     const customer = tr.querySelector('.provider-info span').textContent.trim();
     const date = tr.querySelector('.date-info').textContent.trim();
     const statusBadge = tr.querySelector('.status-badge');
-    const valueRaw = parseInt(tr.getAttribute('data-value-raw')) || 0;
+    const value = parseInt(tr.getAttribute('data-value')) || 0;
     
     const desc = tr.getAttribute('data-desc') || 'Không có mô tả.';
     const phone = tr.getAttribute('data-phone') || 'N/A';
@@ -733,7 +780,7 @@ function openProjectDetail(tr) {
     document.getElementById('dpName').textContent = name;
     document.getElementById('dpCustomer').textContent = customer;
     document.getElementById('dpDate').textContent = date;
-    document.getElementById('dpValue').textContent = valueRaw.toLocaleString('vi-VN') + ' VNĐ';
+    document.getElementById('dpValue').textContent = value.toLocaleString('vi-VN') + ' VNĐ';
     document.getElementById('dpDesc').textContent = desc;
     document.getElementById('dpPhone').textContent = phone;
     document.getElementById('dpAdminUrl').textContent = adminUrl;
