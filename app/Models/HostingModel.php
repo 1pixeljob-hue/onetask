@@ -84,4 +84,14 @@ class HostingModel {
         $stmt = $this->db->prepare("DELETE FROM hostings WHERE id = :id");
         return $stmt->execute([':id' => $id]);
     }
+
+    /**
+     * Xóa nhiều hosting cùng lúc
+     */
+    public function deleteBulk($ids) {
+        if (empty($ids)) return true;
+        $placeholders = str_repeat('?,', count($ids) - 1) . '?';
+        $stmt = $this->db->prepare("DELETE FROM hostings WHERE id IN ($placeholders)");
+        return $stmt->execute(array_values($ids));
+    }
 }

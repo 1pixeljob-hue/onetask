@@ -220,8 +220,8 @@ function toggleSelectAll(masterCb) {
         if (row.style.display !== 'none') {
             cb.checked = masterCb.checked;
             if (cb.checked) {
-                const id = row.getAttribute('data-id') || row.rowIndex;
-                selectedHostings.add(row);
+                const id = row.getAttribute('data-id');
+                if (id) selectedHostings.add(id);
             }
         } else {
             cb.checked = false;
@@ -232,10 +232,11 @@ function toggleSelectAll(masterCb) {
 
 function handleRowSelection(cb) {
     const row = cb.closest('tr');
+    const id = row.getAttribute('data-id');
     if (cb.checked) {
-        selectedHostings.add(row);
+        if (id) selectedHostings.add(id);
     } else {
-        selectedHostings.delete(row);
+        if (id) selectedHostings.delete(id);
         document.getElementById('selectAllHostings').checked = false;
     }
     updateBulkActionBar();
@@ -726,9 +727,33 @@ function confirmDeleteAction() {
     closeConfirmDeleteBtn();
     
     if (selectedHostings.size > 0) {
-        // Xử lý xóa nhiều (chưa triển khai API xóa nhiều, tạm thời xóa từng cái hoặc báo lỗi)
-        alert('Tính năng xóa hàng loạt đang được phát triển.');
-    } else {
+        const ids = Array.from(selectedHostings);
+        showActionToast('Đang xóa các bản ghi...', `Đã xóa ${ids.length} hosting`, async () => {
+            try {
+                const response = await fetch('/hostings/bulk-delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: ids })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    ids.forEach(id => {
+                        const tr = document.querySelector(`.data-table tbody tr[data-id="${id}"]`);
+                        if (tr) tr.remove();
+                    });
+                    selectedHostings.clear();
+                    updateBulkActionBar();
+                    document.getElementById('selectAllHostings').checked = false;
+                    applyFilters();
+                } else {
+                    alert('Lỗi khi xóa: ' + (result.message || 'Không xác định'));
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Có lỗi xảy ra khi kết nối với máy chủ.');
+            }
+        });
+    } else if (rowToDelete) {
         const id = rowToDelete.getAttribute('data-id');
         const hostingName = document.getElementById('cdmHostingName').textContent;
         

@@ -15,5 +15,7 @@ $router->add('/settings', 'MainController', 'settings');
 // API/Action Routes
 $router->add('/projects/save', 'MainController', 'saveProject');
 $router->add('/projects/delete', 'MainController', 'deleteProject');
+$router->add('/projects/bulk-delete', 'MainController', 'deleteProjectsBulk');
 $router->add('/hostings/save', 'MainController', 'saveHosting');
 $router->add('/hostings/delete', 'MainController', 'deleteHosting');
+$router->add('/hostings/bulk-delete', 'MainController', 'deleteHostingsBulk');

@@ -115,4 +115,14 @@ class ProjectModel {
         $stmt = $this->db->prepare("DELETE FROM projects WHERE id = :id");
         return $stmt->execute([':id' => $id]);
     }
+
+    /**
+     * Xóa nhiều dự án cùng lúc
+     */
+    public function deleteBulk($ids) {
+        if (empty($ids)) return true;
+        $placeholders = str_repeat('?,', count($ids) - 1) . '?';
+        $stmt = $this->db->prepare("DELETE FROM projects WHERE id IN ($placeholders)");
+        return $stmt->execute(array_values($ids));
+    }
 }

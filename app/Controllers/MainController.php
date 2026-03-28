@@ -130,4 +130,36 @@ class MainController extends BaseController {
         $success = $this->hostingModel->delete($input['id']);
         echo json_encode(['success' => $success]);
     }
+
+    /**
+     * API: Xóa nhiều Project cùng lúc
+     */
+    public function deleteProjectsBulk() {
+        header('Content-Type: application/json');
+        $input = json_decode(file_get_contents('php://input'), true);
+        
+        if (!$input || !isset($input['ids']) || !is_array($input['ids'])) {
+            echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);
+            return;
+        }
+
+        $success = $this->projectModel->deleteBulk($input['ids']);
+        echo json_encode(['success' => $success]);
+    }
+
+    /**
+     * API: Xóa nhiều Hosting cùng lúc
+     */
+    public function deleteHostingsBulk() {
+        header('Content-Type: application/json');
+        $input = json_decode(file_get_contents('php://input'), true);
+        
+        if (!$input || !isset($input['ids']) || !is_array($input['ids'])) {
+            echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);
+            return;
+        }
+
+        $success = $this->hostingModel->deleteBulk($input['ids']);
+        echo json_encode(['success' => $success]);
+    }
 }

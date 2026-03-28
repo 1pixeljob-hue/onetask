@@ -97,6 +97,21 @@
                 </div>
             </header>
 
+            <!-- Bulk Action Bar -->
+            <div class="bulk-action-bar" id="bulkActionBar">
+                <div class="bab-left">
+                    <i class="ph-fill ph-check-circle"></i>
+                    <span id="selectedCountText">Đã chọn 0 project</span>
+                </div>
+                <div class="bab-right">
+                    <button class="btn-deselect" onclick="deselectAllProjects()">Bỏ chọn</button>
+                    <button class="btn-bulk-delete" onclick="promptBulkDelete()">
+                        <i class="ph ph-trash"></i>
+                        <span id="bulkDeleteBtnText">Xóa 0</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="content-body">
                 <!-- Toolbar -->
                 <div class="pj-toolbar">
@@ -130,7 +145,7 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th width="40"><input type="checkbox" class="cb-custom"></th>
+                                <th width="40"><input type="checkbox" class="cb-custom" id="selectAllProjects" onclick="toggleSelectAll(this)"></th>
                                 <th>TÊN PROJECT</th>
                                 <th>KHÁCH HÀNG</th>
                                 <th>GIÁ TRỊ</th>
@@ -400,12 +415,76 @@
         
         <div style="display: flex; gap: 12px;">
             <button class="modal-btn-cancel" style="flex: 1; justify-content: center; border-radius: 8px; font-weight: 600; padding: 10px;" onclick="closeConfirmDeleteBtn()">Cancel</button>
-            <button class="modal-btn-submit" style="flex: 1; background: #fe2c2c; justify-content: center; border-radius: 8px; font-weight: 600; padding: 10px;" onclick="confirmDeleteAction()">OK</button>
+            <button class="modal-btn-submit" id="cdmConfirmBtn" style="flex: 1; background: #fe2c2c; justify-content: center; border-radius: 8px; font-weight: 600; padding: 10px;" onclick="confirmDeleteAction()">OK</button>
         </div>
     </div>
 </div>
 
 <script>
+let selectedProjects = new Set();
+
+function updateBulkActionBar() {
+    const bar = document.getElementById('bulkActionBar');
+    const countText = document.getElementById('selectedCountText');
+    const deleteBtnText = document.getElementById('bulkDeleteBtnText');
+    const count = selectedProjects.size;
+
+    if (count > 0) {
+        countText.textContent = `Đã chọn ${count} project`;
+        deleteBtnText.textContent = `Xóa ${count}`;
+        bar.classList.add('show');
+    } else {
+        bar.classList.remove('show');
+    }
+}
+
+function toggleSelectAll(masterCb) {
+    const checkboxes = document.querySelectorAll('.data-table tbody .cb-custom');
+    selectedProjects.clear();
+    
+    checkboxes.forEach(cb => {
+        const row = cb.closest('tr');
+        if (row.style.display !== 'none') {
+            cb.checked = masterCb.checked;
+            if (cb.checked) {
+                const id = row.getAttribute('data-id');
+                if (id) selectedProjects.add(id);
+            }
+        } else {
+            cb.checked = false;
+        }
+    });
+    updateBulkActionBar();
+}
+
+function handleRowSelection(cb) {
+    const row = cb.closest('tr');
+    const id = row.getAttribute('data-id');
+    if (cb.checked) {
+        if (id) selectedProjects.add(id);
+    } else {
+        if (id) selectedProjects.delete(id);
+        document.getElementById('selectAllProjects').checked = false;
+    }
+    updateBulkActionBar();
+}
+
+function deselectAllProjects() {
+    document.getElementById('selectAllProjects').checked = false;
+    document.querySelectorAll('.data-table .cb-custom').forEach(cb => cb.checked = false);
+    selectedProjects.clear();
+    updateBulkActionBar();
+}
+
+function promptBulkDelete() {
+    const count = selectedProjects.size;
+    if (count === 0) return;
+    
+    const confirmModal = document.getElementById('confirmDeleteModal');
+    document.getElementById('cdmProjectName').innerHTML = `<strong>${count} bản ghi đã chọn</strong>`;
+    confirmModal.classList.add('active');
+}
+
 function toggleFilterDropdown() {
     document.getElementById('filterDropdown').classList.toggle('open');
 }
@@ -545,6 +624,32 @@ function confirmDeleteAction() {
                 if (result.success) {
                     rowToDelete.remove();
                     rowToDelete = null;
+                } else {
+                    alert('Lỗi khi xóa: ' + (result.message || 'Không xác định'));
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Có lỗi xảy ra khi kết nối với máy chủ.');
+            }
+        });
+    } else if (selectedProjects.size > 0) {
+        const ids = Array.from(selectedProjects);
+        showActionToast('Đang xóa các dự án...', `Đã xóa ${ids.length} dự án`, async () => {
+            try {
+                const response = await fetch('/projects/bulk-delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: ids })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    ids.forEach(id => {
+                        const tr = document.querySelector(`.data-table tbody tr[data-id="${id}"]`);
+                        if (tr) tr.remove();
+                    });
+                    selectedProjects.clear();
+                    updateBulkActionBar();
+                    document.getElementById('selectAllProjects').checked = false;
                 } else {
                     alert('Lỗi khi xóa: ' + (result.message || 'Không xác định'));
                 }
@@ -749,7 +854,7 @@ function populateRow(row, data) {
     row.setAttribute('data-value', data.value);
 
     row.innerHTML = `
-        <td><input type="checkbox" class="cb-custom"></td>
+        <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
         <td>
             <div class="cell-main">${data.name}</div>
             <div class="cell-sub"><i class="ph ph-link"></i> ${data.adminUrl || 'N/A'}</div>
