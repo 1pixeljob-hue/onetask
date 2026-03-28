@@ -126,10 +126,10 @@
                 }
                 updateGreeting();
                 </script>
-                </div>
 
                 <!-- Layer 1: Stats Grid V2 -->
                 <div class="stats-grid-v2">
+
                     <!-- Stat 1: Hosting -->
                     <div class="stat-card-v2">
                         <span class="badge-v2 badge-active">Hoạt động</span>
