@@ -23,6 +23,7 @@
 - **[Mới hoàn thành]** Tích hợp lời chào động (Chào buổi sáng/trưa/chiều/tối) dựa trên giờ hệ thống.
 - **[Mới hoàn thành]** Tích hợp biểu đồ **Revenue Trend (Chart.js)** hiển thị trực quan biến động tài chính.
 - **[Mới hoàn thành]** Cải tiến layout 3 tầng: Stats (4 thẻ), Analytics & Progress, Activity & Quick Actions.
+- **[Mới hoàn thành]** Sửa lỗi tràn giao diện (horizontal overflow) bằng cách áp dụng Responsive Grid (`auto-fit`) và khóa tràn toàn hệ thống.
 - **[Mới hoàn thành]** Nâng cấp logic hiển thị **Hoạt động gần đây** với thời gian tương đối (2 giờ trước, Hôm qua...).
 
 ## 4. Gợi ý Tối ưu (Future Optimizations)
