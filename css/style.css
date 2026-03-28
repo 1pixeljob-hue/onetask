@@ -22,7 +22,7 @@
 /* Global Page Loader */
 .global-loader {
     position: fixed;
-    bottom: 24px; left: 24px;
+    bottom: 24px; right: 24px;
     background: white;
     padding: 12px;
     border-radius: 12px;
