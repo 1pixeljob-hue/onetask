@@ -430,3 +430,36 @@ function formatDateVN(dateStr) {
     const [y, m, d] = dateStr.split('-');
     return `${d}/${m}/${y}`;
 }
+/**
+ * Page Loader & Transition Management
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const loader = document.getElementById('global-loader');
+    
+    // 1. Hide loader when everything is ready (including images and data rendering)
+    window.addEventListener('load', () => {
+        if (loader) {
+            setTimeout(() => {
+                loader.classList.add('hide');
+                document.body.style.overflow = '';
+            }, 300); // Small delay for visual comfort
+        }
+    });
+
+    // 2. Intercept sidebar navigation to show loader immediately
+    // This provides instant feedback before the browser starts fetching the next page
+    document.querySelectorAll('.nav-item, .logo, .pj-add-btn, .action-btn').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            // Only for internal links (starts with / or is relative, not #)
+            if (href && href !== '#' && !href.startsWith('http') && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
+                if (loader) {
+                    loader.classList.remove('hide');
+                    // Ensure it stays visible while navigating
+                    loader.style.opacity = '1';
+                    loader.style.visibility = 'visible';
+                }
+            }
+        });
+    });
+});

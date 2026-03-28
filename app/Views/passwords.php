@@ -12,6 +12,7 @@
         const PASSWORDS = <?php echo json_encode($passwords ?? []); ?>;
         const CATEGORIES = <?php echo json_encode($categories ?? []); ?>;
     </script>
+    <script src="/js/shared-data.js"></script>
     <style>
         /* Modal & Toast Styles for Passwords */
         .modal-icon-brand {
@@ -285,6 +286,12 @@
 </style>
 </head>
 <body>
+    <!-- Global Loader -->
+    <div id="global-loader" class="global-loader">
+        <div class="loader-1p">1P</div>
+        <div class="loader-text">Đang tải dữ liệu...</div>
+    </div>
+
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar">

@@ -7,8 +7,15 @@
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="/js/shared-data.js"></script>
 </head>
 <body>
+    <!-- Global Loader -->
+    <div id="global-loader" class="global-loader">
+        <div class="loader-1p">1P</div>
+        <div class="loader-text">Đang tải dữ liệu...</div>
+    </div>
+
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar">
