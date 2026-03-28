@@ -19,3 +19,5 @@ $router->add('/projects/bulk-delete', 'MainController', 'deleteProjectsBulk');
 $router->add('/hostings/save', 'MainController', 'saveHosting');
 $router->add('/hostings/delete', 'MainController', 'deleteHosting');
 $router->add('/hostings/bulk-delete', 'MainController', 'deleteHostingsBulk');
+$router->add('/passwords/save', 'MainController', 'savePassword');
+$router->add('/passwords/delete', 'MainController', 'deletePassword');

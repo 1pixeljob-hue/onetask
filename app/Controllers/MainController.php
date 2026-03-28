@@ -1,14 +1,17 @@
 <?php
 use App\Models\ProjectModel;
 use App\Models\HostingModel;
+use App\Models\PasswordModel;
 
 class MainController extends BaseController {
     private $projectModel;
     private $hostingModel;
+    private $passwordModel;
 
     public function __construct() {
         $this->projectModel = new ProjectModel();
         $this->hostingModel = new HostingModel();
+        $this->passwordModel = new PasswordModel();
     }
 
     public function dashboard() {
@@ -42,7 +45,10 @@ class MainController extends BaseController {
     }
 
     public function passwords() {
-        $this->view('passwords');
+        $data = [
+            'passwords' => $this->passwordModel->getAll()
+        ];
+        $this->view('passwords', $data);
     }
 
     public function codex() {
@@ -160,6 +166,43 @@ class MainController extends BaseController {
         }
 
         $success = $this->hostingModel->deleteBulk($input['ids']);
+        echo json_encode(['success' => $success]);
+    }
+
+    /**
+     * API: Lưu Mật khẩu (Thêm mới hoặc Cập nhật)
+     */
+    public function savePassword() {
+        header('Content-Type: application/json');
+        $input = json_decode(file_get_contents('php://input'), true);
+        
+        if (!$input || !isset($input['title'])) {
+            echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);
+            return;
+        }
+
+        if (isset($input['id']) && $input['id']) {
+            $success = $this->passwordModel->update($input['id'], $input);
+        } else {
+            $success = $this->passwordModel->create($input);
+        }
+
+        echo json_encode(['success' => $success]);
+    }
+
+    /**
+     * API: Xóa Mật khẩu
+     */
+    public function deletePassword() {
+        header('Content-Type: application/json');
+        $input = json_decode(file_get_contents('php://input'), true);
+        
+        if (!$input || !isset($input['id'])) {
+            echo json_encode(['success' => false, 'message' => 'ID không hợp lệ']);
+            return;
+        }
+
+        $success = $this->passwordModel->delete($input['id']);
         echo json_encode(['success' => $success]);
     }
 }
