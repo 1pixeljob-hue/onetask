@@ -396,13 +396,23 @@ function getDashboardStats() {
     const testingProjects = PROJECTS.filter(p => p.status === 'testing');
     const doneProjects = PROJECTS.filter(p => p.status === 'done');
     
-    // Total revenue
-    const totalProjectRevenue = PROJECTS.reduce((s, p) => s + p.value, 0);
-    const totalHostingRevenue = HOSTINGS.reduce((s, h) => s + h.price, 0);
+    // Total revenue (Refined Logic)
+    // 1. Only include completed projects
+    const totalProjectRevenue = doneProjects.reduce((s, p) => s + p.value, 0);
+    
+    // 2. Only include hostings that haven't expired
+    const activeAndExpiringHostings = HOSTINGS.filter(h => {
+        const exp = new Date(h.expDate);
+        exp.setHours(0, 0, 0, 0);
+        return exp >= today;
+    });
+    const totalHostingRevenue = activeAndExpiringHostings.reduce((s, h) => s + h.price, 0);
+    
     const totalRevenue = totalProjectRevenue + totalHostingRevenue;
 
     // Testing projects value
     const testingValue = testingProjects.reduce((s, p) => s + p.value, 0);
+
 
     return {
         totalHostings,
