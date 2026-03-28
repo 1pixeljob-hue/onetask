@@ -438,9 +438,13 @@
                         <label class="modal-label"><i class="ph ph-tag"></i> Danh Mục <span class="req">*</span></label>
                         <div class="custom-select-wrapper">
                             <select class="modal-input" id="mPwdCategory" required>
-                                <option value="Email" data-icon="ph-envelope">Email</option>
-                                <option value="Tài khoản" data-icon="ph-user-circle">Tài khoản</option>
-                                <option value="Khác" data-icon="ph-dots-three-circle">Khác</option>
+                                <?php if (empty($categories)): ?>
+                                    <option value="Khác">Khác</option>
+                                <?php else: ?>
+                                    <?php foreach ($categories as $cat): ?>
+                                        <option value="<?php echo htmlspecialchars($cat['name']); ?>"><?php echo htmlspecialchars($cat['name']); ?></option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </select>
                         </div>
                     </div>
@@ -869,6 +873,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPasswords(term);
     });
     renderPasswords();
+    renderCategories(); // Ensure category dropdowns are populated on load
 });
 
 function renderPasswords(searchTerm = '', page = 1) {
