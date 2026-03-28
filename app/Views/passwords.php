@@ -381,9 +381,11 @@
                             </button>
                             <div class="pj-dropdown" id="pwdFilterDropdown">
                                 <div class="pj-dropdown-item active" onclick="setPwdFilter('', 'Lọc bởi loại', this)">Tất cả</div>
-                                <div class="pj-dropdown-item" onclick="setPwdFilter('outline-blue', 'Email', this)">Email</div>
-                                <div class="pj-dropdown-item" onclick="setPwdFilter('outline-red', 'Tài khoản', this)">Tài khoản</div>
-                                <div class="pj-dropdown-item" onclick="setPwdFilter('outline-purple', 'Khác', this)">Khác</div>
+                                <?php foreach ($categories as $cat): ?>
+                                    <div class="pj-dropdown-item" onclick="setPwdFilter('<?php echo htmlspecialchars($cat['name']); ?>', '<?php echo htmlspecialchars($cat['name']); ?>', this)">
+                                        <?php echo htmlspecialchars($cat['name']); ?>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
                         </div>
                         <button class="pj-filter-btn" style="border-color: #8b5cf6; color: #8b5cf6;" onclick="openCategoryModal()">
@@ -602,21 +604,20 @@
 function togglePwdFilter() {
     document.getElementById('pwdFilterDropdown').classList.toggle('open');
 }
-function setPwdFilter(tagClass, label, el) {
+function setPwdFilter(catName, label, el) {
+    currentCategoryFilter = catName;
     document.getElementById('pwdFilterLabel').textContent = label;
     document.querySelectorAll('#pwdFilterDropdown .pj-dropdown-item').forEach(i => i.classList.remove('active'));
     el.classList.add('active');
-    document.getElementById('pwdFilterLabel').parentElement.classList.remove('open');
-    document.querySelectorAll('.pwd-card').forEach(card => {
-        if (!tagClass) { card.style.display = ''; return; }
-        const tag = card.querySelector('.badge-tag.' + tagClass);
-        card.style.display = tag ? '' : 'none';
-    });
+    document.getElementById('pwdFilterDropdown').classList.remove('open');
+    renderPasswords(currentSearchTerm);
 }
 
 let currentActionMode = 'add';
 let currentEditId = null;
-let pwdToDeleteId = null; // Store ID for deletion confirmation
+let pwdToDeleteId = null;
+let currentSearchTerm = '';
+let currentCategoryFilter = '';
 
 // Modal Password Functions
 function openAddPwdModal() {
@@ -936,8 +937,8 @@ function showPwdToast(message, type = 'loading') {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('pwdSearchInput').addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase().trim();
-        renderPasswords(term);
+        currentSearchTerm = e.target.value.toLowerCase().trim();
+        renderPasswords(currentSearchTerm);
     });
     renderPasswords();
     renderCategories(); // Ensure category dropdowns are populated on load
@@ -952,16 +953,21 @@ function renderPasswords(searchTerm = '', page = 1) {
     grid.appendChild(emptyState);
 
     const filtered = PASSWORDS.filter(p => {
+        // Search Filter
         const matchesSearch = !searchTerm || 
             p.title.toLowerCase().includes(searchTerm) || 
             (p.username && p.username.toLowerCase().includes(searchTerm)) ||
             (p.url && p.url.toLowerCase().includes(searchTerm));
-        return matchesSearch;
+        
+        // Category Filter
+        const matchesCategory = !currentCategoryFilter || p.category === currentCategoryFilter;
+
+        return matchesSearch && matchesCategory;
     });
 
     if (filtered.length === 0) {
         emptyState.style.display = 'block';
-        updatePagination(0, 0, 1);
+        updatePagination(0, 0, 1, itemsPerPage);
     } else {
         emptyState.style.display = 'none';
         
