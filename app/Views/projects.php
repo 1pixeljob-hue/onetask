@@ -202,13 +202,28 @@
 
             <div class="modal-field full">
                 <label class="modal-label">Trạng Thái <span class="req">*</span></label>
-                <div class="modal-select-wrapper">
-                    <select class="modal-input modal-select-status" id="mProjectStatus">
-                        <option value="planning">Lên Kế Hoạch</option>
-                        <option value="doing" selected>Đang Thực Hiện</option>
-                        <option value="testing">Chờ Nghiệm Thu</option>
-                        <option value="done">Hoàn Thành</option>
-                    </select>
+                <div class="pj-modal-select" id="mProjectStatusSelect" data-input-id="mProjectStatus">
+                    <div class="pj-modal-select-trigger">
+                        <i class="ph ph-clock"></i>
+                        <span>Đang Thực Hiện</span>
+                        <i class="ph ph-caret-down trigger-chevron"></i>
+                    </div>
+                    <div class="pj-modal-select-menu pj-dropdown" style="width: 100%; right: auto; left: 0;">
+                        <div class="pj-dropdown-item" data-value="planning">
+                            Lên Kế Hoạch
+                        </div>
+                        <div class="pj-dropdown-item active" data-value="doing">
+                            Đang Thực Hiện
+                        </div>
+                        <div class="pj-dropdown-item" data-value="testing">
+                            Chờ Nghiệm Thu
+                        </div>
+                        <div class="pj-dropdown-item" data-value="done">
+                            Hoàn Thành
+                        </div>
+                    </div>
+                    <!-- Actual hidden input for form data -->
+                    <input type="hidden" id="mProjectStatus" value="doing">
                 </div>
             </div>
 
@@ -594,6 +609,21 @@ function openEditProjectModal(tr) {
     document.getElementById('mAdminUser').value = adminUser;
     document.getElementById('adminPassword').value = adminPass;
     document.getElementById('projectValue').value = value;
+    
+    // Update Custom Select UI
+    const customSelect = document.getElementById('mProjectStatusSelect');
+    const option = customSelect.querySelector(`.pj-modal-select-item[data-value="${status}"]`);
+    if (option) {
+        // This will trigger the shared-data handle if we clicked, 
+        // but here we just manually sync for the edit modal open.
+        const trigger = customSelect.querySelector('.pj-modal-select-trigger');
+        trigger.querySelector('span').textContent = option.textContent.trim();
+        const icon = option.querySelector('i');
+        if (icon) trigger.querySelector('i:first-child').className = icon.className;
+        
+        customSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
+        option.classList.add('active');
+    }
     
     updateProjectValueDisplay(document.getElementById('projectValue'));
 
@@ -997,15 +1027,19 @@ function deleteProjectFromDetail() {
 
 function resetProjectForm() {
     document.getElementById('mProjectName').value = '';
-    document.getElementById('mProjectStatus').value = 'doing';
-    document.getElementById('mProjectDesc').value = '';
-    document.getElementById('mProjectDate').value = '';
-    document.getElementById('mCustomerName').value = '';
-    document.getElementById('mCustomerPhone').value = '';
-    document.getElementById('mAdminLink').value = '';
-    document.getElementById('mAdminUser').value = '';
-    document.getElementById('adminPassword').value = '';
-    document.getElementById('projectValue').value = 0;
+    // Reset Custom Select
+    const customSelect = document.getElementById('mProjectStatusSelect');
+    const defaultOption = customSelect.querySelector('.pj-dropdown-item[data-value="doing"]');
+    if (defaultOption) {
+        const trigger = customSelect.querySelector('.pj-modal-select-trigger');
+        trigger.querySelector('span').textContent = defaultOption.textContent.trim();
+        const icon = defaultOption.querySelector('i');
+        if (icon) trigger.querySelector('i:first-child').className = icon.className;
+        customSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
+        defaultOption.classList.add('active');
+        document.getElementById('mProjectStatus').value = 'doing';
+    }
+
     document.getElementById('projectValueDisplay').textContent = '0 VNĐ';
     
     // Reset password field type

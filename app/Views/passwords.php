@@ -460,16 +460,27 @@
                     
                     <div class="modal-field full">
                         <label class="modal-label"><i class="ph ph-tag"></i> Danh Mục <span class="req">*</span></label>
-                        <div class="custom-select-wrapper">
-                            <select class="modal-input" id="mPwdCategory" required>
+                        <div class="pj-modal-select" id="mPwdCategorySelect" data-input-id="mPwdCategory">
+                            <div class="pj-modal-select-trigger">
+                                <i class="ph ph-tag"></i>
+                                <span>Khác</span>
+                                <i class="ph ph-caret-down trigger-chevron"></i>
+                            </div>
+                            <div class="pj-modal-select-menu pj-dropdown" style="width: 100%; right: auto; left: 0;">
                                 <?php if (empty($categories)): ?>
-                                    <option value="Khác">Khác</option>
+                                    <div class="pj-dropdown-item active" data-value="Khác">
+                                        Khác
+                                    </div>
                                 <?php else: ?>
-                                    <?php foreach ($categories as $cat): ?>
-                                        <option value="<?php echo htmlspecialchars($cat['name']); ?>"><?php echo htmlspecialchars($cat['name']); ?></option>
+                                    <?php foreach ($categories as $index => $cat): ?>
+                                        <div class="pj-dropdown-item <?php echo $index === 0 ? 'active' : ''; ?>" data-value="<?php echo htmlspecialchars($cat['name']); ?>">
+                                            <?php echo htmlspecialchars($cat['name']); ?>
+                                        </div>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
-                            </select>
+                            </div>
+                            <!-- Actual hidden input for form data -->
+                            <input type="hidden" id="mPwdCategory" value="<?php echo !empty($categories) ? htmlspecialchars($categories[0]['name']) : 'Khác'; ?>" required>
                         </div>
                     </div>
                     
@@ -638,6 +649,20 @@ function openAddPwdModal() {
     document.querySelector('.modal-title').textContent = 'Thêm Mật Khẩu Mới';
     document.querySelector('.modal-btn-submit').textContent = 'Thêm Mới';
     document.getElementById('addPasswordForm').reset();
+    
+    // Reset Custom Select UI
+    const customSelect = document.getElementById('mPwdCategorySelect');
+    const firstOption = customSelect.querySelector('.pj-dropdown-item');
+    if (firstOption) {
+        const trigger = customSelect.querySelector('.pj-modal-select-trigger');
+        trigger.querySelector('span').textContent = firstOption.textContent.trim();
+        const icon = firstOption.querySelector('i');
+        if (icon) trigger.querySelector('i:first-child').style.color = icon.style.color;
+        customSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
+        firstOption.classList.add('active');
+        document.getElementById('mPwdCategory').value = firstOption.dataset.value;
+    }
+
     document.getElementById('addPasswordModal').classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -653,10 +678,23 @@ function openEditPwdModal(id) {
     
     document.getElementById('mPwdTitle').value = pwd.title;
     document.getElementById('mPwdUrl').value = pwd.url || '';
-    document.getElementById('mPwdCategory').value = pwd.category || 'Khác';
-    document.getElementById('mPwdUser').value = pwd.username || '';
     document.getElementById('mPwdPass').value = pwd.password || '';
     document.getElementById('mPwdNotes').value = pwd.notes || '';
+
+    // Sync Custom Select UI for Category
+    const customSelect = document.getElementById('mPwdCategorySelect');
+    const category = pwd.category || 'Khác';
+    const option = customSelect.querySelector(`.pj-dropdown-item[data-value="${category}"]`);
+    if (option) {
+        const trigger = customSelect.querySelector('.pj-modal-select-trigger');
+        trigger.querySelector('span').textContent = option.textContent.trim();
+        const icon = option.querySelector('i');
+        if (icon) trigger.querySelector('i:first-child').style.color = icon.style.color;
+        
+        customSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
+        option.classList.add('active');
+    }
+    document.getElementById('mPwdCategory').value = category;
     
     document.getElementById('addPasswordModal').classList.add('active');
     document.body.style.overflow = 'hidden';

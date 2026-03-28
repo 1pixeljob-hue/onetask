@@ -502,4 +502,76 @@ document.addEventListener('DOMContentLoaded', () => {
             clearSearchInputs();
         }
     });
+
+    // 4. Universal Modal Select (Dropdown) Logic (Synchronized)
+    document.addEventListener('click', (e) => {
+        // Toggle Dropdown
+        const trigger = e.target.closest('.pj-modal-select-trigger');
+        if (trigger) {
+            const dropdown = trigger.closest('.pj-modal-select');
+            const isOpen = dropdown.classList.contains('open');
+            
+            // Close all other open modal selects first
+            document.querySelectorAll('.pj-modal-select.open').forEach(d => d.classList.remove('open'));
+            
+            if (!isOpen) {
+                dropdown.classList.add('open');
+            }
+            e.stopPropagation();
+            return;
+        }
+
+        // Handle Option Selection (Supports both old and new synchronized classes)
+        const option = e.target.closest('.pj-modal-select-item') || e.target.closest('.pj-dropdown-item');
+        if (option && option.closest('.pj-modal-select')) {
+            const dropdown = option.closest('.pj-modal-select');
+            const trigger = dropdown.querySelector('.pj-modal-select-trigger');
+            const hiddenInputId = dropdown.dataset.inputId;
+            const value = option.dataset.value;
+            
+            // Extract label and icon
+            const span = option.querySelector('span');
+            const labelText = span ? span.textContent : option.textContent.trim();
+            const icon = option.querySelector('i');
+
+            // Update Trigger UI
+            const triggerLabel = trigger.querySelector('span');
+            if (triggerLabel) triggerLabel.textContent = labelText;
+            
+            const triggerIcon = trigger.querySelector('i:first-child');
+            if (triggerIcon && icon) {
+                triggerIcon.className = icon.className;
+                if (icon.style.color) triggerIcon.style.color = icon.style.color;
+            }
+
+            // Update Active State
+            dropdown.querySelectorAll('.pj-modal-select-item, .pj-dropdown-item').forEach(i => i.classList.remove('active'));
+            option.classList.add('active');
+
+            // Update Hidden Input
+            if (hiddenInputId) {
+                const input = document.getElementById(hiddenInputId);
+                if (input) {
+                    input.value = value;
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            }
+
+            // Custom Callback if defined
+            const callbackName = dropdown.dataset.callback;
+            if (callbackName && typeof window[callbackName] === 'function') {
+                window[callbackName](value, labelText, option);
+            }
+
+            dropdown.classList.remove('open');
+            e.stopPropagation();
+            return;
+        }
+
+        // Close on Click Outside
+        if (!e.target.closest('.pj-modal-select')) {
+            document.querySelectorAll('.pj-modal-select.open').forEach(d => d.classList.remove('open'));
+        }
+    });
 });
