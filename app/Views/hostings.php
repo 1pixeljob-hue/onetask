@@ -119,11 +119,16 @@
             </div>
 
             <div class="content-body">
+                <!-- Browser Honeypot for anti-autofill -->
+                <div style="display: none;">
+                    <input type="text" name="username">
+                    <input type="password" name="password">
+                </div>
                 <!-- Toolbar -->
                 <div class="pj-toolbar">
                     <div class="pj-search-wrap">
                         <i class="ph ph-magnifying-glass pj-search-icon"></i>
-                        <input type="text" id="hostingSearchInput" class="pj-search-input" placeholder="Tìm kiếm theo tên, domain, nhà cung cấp..." autocomplete="off">
+                        <input type="text" id="h_search_v2" name="q_search_field" class="pj-search-input" placeholder="Tìm kiếm theo tên, domain, nhà cung cấp..." autocomplete="chrome-off">
                     </div>
                     <div class="pj-toolbar-right">
                         <div class="pj-filter-wrapper">
@@ -406,7 +411,7 @@ function setHostingFilter(val, label, el) {
     applyFilters();
 }
 
-document.getElementById('hostingSearchInput').addEventListener('input', function(e) {
+document.getElementById('h_search_v2').addEventListener('input', function(e) {
     currentSearchTerm = e.target.value.toLowerCase().trim();
     applyFilters();
 });

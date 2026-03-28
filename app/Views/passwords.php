@@ -373,11 +373,16 @@
             </header>
 
             <div class="content-body">
+                <!-- Browser Honeypot for anti-autofill -->
+                <div style="display: none;">
+                    <input type="text" name="username">
+                    <input type="password" name="password">
+                </div>
                 <!-- Toolbar -->
                 <div class="pj-toolbar">
                     <div class="pj-search-wrap">
                         <i class="ph ph-magnifying-glass pj-search-icon"></i>
-                        <input type="text" class="pj-search-input" id="pwdSearchInput" placeholder="Tìm kiếm theo tiêu đề, tên đăng nhập, website..." autocomplete="off">
+                        <input type="text" class="pj-search-input" id="pwd_search_v2" name="q_search_field" placeholder="Tìm kiếm theo tiêu đề, tên đăng nhập, website..." autocomplete="chrome-off">
                     </div>
                     <div class="pj-toolbar-right">
                         <div class="pj-filter-wrapper">
@@ -943,7 +948,7 @@ function showPwdToast(message, type = 'loading') {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('pwdSearchInput').addEventListener('input', (e) => {
+    document.getElementById('pwd_search_v2').addEventListener('input', (e) => {
         currentSearchTerm = e.target.value.toLowerCase().trim();
         renderPasswords(currentSearchTerm);
     });

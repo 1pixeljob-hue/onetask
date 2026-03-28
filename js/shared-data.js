@@ -468,17 +468,34 @@ document.addEventListener('DOMContentLoaded', () => {
         if (inputs.length === 0) return;
 
         inputs.forEach(input => {
-            input.value = '';
-            // Manually trigger input event to reset filters mapped to this input
-            input.dispatchEvent(new Event('input'));
+            // Force clear if it contains typical autofill patterns or the specific "quy"
+            if (input.value.toLowerCase().includes('quy') || input.value.length > 0) {
+                input.value = '';
+                input.dispatchEvent(new Event('input'));
+            }
         });
     };
 
-    // Run on DOM ready
+    // Run multiple times to catch late browser-side injections
     clearSearchInputs();
+    let clearAttempts = 0;
+    const clearLoop = setInterval(() => {
+        clearSearchInputs();
+        if (++clearAttempts > 10) clearInterval(clearLoop);
+    }, 200);
     
-    // Run on window load with small delay to beat browser autocomplete/restore
-    window.addEventListener('load', () => setTimeout(clearSearchInputs, 100));
+    // Extra guard on first focus
+    document.addEventListener('focusin', (e) => {
+        if (e.target.classList.contains('pj-search-input')) {
+            if (e.target.dataset.firstFocus !== 'true') {
+                if (e.target.value.toLowerCase().includes('quy')) {
+                    e.target.value = '';
+                    e.target.dispatchEvent(new Event('input'));
+                }
+                e.target.dataset.firstFocus = 'true';
+            }
+        }
+    });
 
     window.addEventListener('pageshow', (event) => {
         if (event.persisted) {

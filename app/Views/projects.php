@@ -119,11 +119,16 @@
             </div>
 
             <div class="content-body">
+                <!-- Browser Honeypot for anti-autofill -->
+                <div style="display: none;">
+                    <input type="text" name="username">
+                    <input type="password" name="password">
+                </div>
                 <!-- Toolbar -->
                 <div class="pj-toolbar">
                     <div class="pj-search-wrap">
                         <i class="ph ph-magnifying-glass pj-search-icon"></i>
-                        <input type="text" class="pj-search-input" id="projectSearch" placeholder="Tìm kiếm theo tên, khách hàng, mô tả..." autocomplete="off">
+                        <input type="text" class="pj-search-input" id="p_search_v2" name="q_search_field" placeholder="Tìm kiếm theo tên, khách hàng, mô tả..." autocomplete="chrome-off">
                     </div>
                     <div class="pj-toolbar-right">
                         <div class="pj-filter-wrapper">
@@ -535,7 +540,7 @@ document.addEventListener('click', function(e) {
         if (dd) dd.classList.remove('open');
     }
 });
-document.getElementById('projectSearch').addEventListener('input', function() {
+document.getElementById('p_search_v2').addEventListener('input', function() {
     const q = this.value.toLowerCase();
     document.querySelectorAll('.data-table tbody tr').forEach(row => {
         row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
