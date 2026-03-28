@@ -325,26 +325,24 @@ body {
 
 /* Content Body */
 .content-body {
-    padding: 32px;
+    padding: 24px 32px 40px;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 32px;
 }
 
-.welcome-section h2 {
-    font-size: 24px;
-    font-weight: 700;
+.welcome-section {
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f1f5f9;
     margin-bottom: 8px;
 }
 
-.highlight {
-    color: var(--primary-color);
-}
-
-.welcome-section p {
-    font-size: 14px;
-    color: var(--text-muted);
+.welcome-section h2 {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: #0f172a;
 }
 
 /* Stats Grid */
@@ -3297,9 +3295,9 @@ body {
 /* Stats Grid V2 */
 .stats-grid-v2 {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-    margin-bottom: 32px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    margin-bottom: 8px;
 }
 
 .stat-card-v2 {
@@ -3379,9 +3377,8 @@ body {
 /* Revenue Chart Section */
 .middle-section-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
     gap: 24px;
-    margin-bottom: 32px;
 }
 
 .middle-section-grid > div {

@@ -25,6 +25,7 @@
 - **[Mới hoàn thành]** Cải tiến layout 3 tầng: Stats (4 thẻ), Analytics & Progress, Activity & Quick Actions.
 - **[Mới hoàn thành]** Nâng cấp logic hiển thị **Hoạt động gần đây** với thời gian tương đối (2 giờ trước, Hôm qua...).
 - **[Mới hoàn thành]** Sửa lỗi **Tràn giao diện (Horizontal Overflow)**: Chuyển đổi các Grid sang cơ chế `auto-fit` và khóa `overflow-x` cho container chính.
+- **[Mới hoàn thành]** Đồng bộ **Padding & Spacing**: Điều chỉnh khoảng cách lề và khoảng cách giữa các khối (gap) đồng bộ với module Reports (24px - 32px).
 
 ## 4. Gợi ý Tối ưu (Future Optimizations)
 1. **Dynamic Activity Feed**: Chuyển "Hoạt Động Gần Đây" từ mockup sang dữ liệu thực từ bảng `logs`.
