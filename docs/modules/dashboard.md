@@ -20,7 +20,8 @@
 ## 3. Lịch sử thay đổi (Changelog)
 - **[Mới hoàn thành]** Tích hợp logic tính toán Stats từ `PHP_DATA` (dữ liệu thực từ MySQL).
 - **[Mới hoàn thành]** Chuyển đổi Column 1 "Tình Trạng Hosting" từ mockup sang dữ liệu thực.
-- **[Mới hoàn thành]** Tối ưu logic tính toán **Doanh Thu**: Chỉ tính từ dự án đã hoàn thành (`done`) và hosting chưa hết hạn.
+- **[Mới hoàn thành]** Nâng cấp Stats Grid lên layout 6 thẻ (3x2) để hiển thị báo cáo tài chính đầy đủ hơn.
+- **[Mới hoàn thành]** Tối ưu logic tính toán **Doanh Thu**: Tách biệt "Doanh Thu Hoàn Thành" (Thực tế) và "Tổng Doanh Thu" (Hệ thống).
 - **[Mới hoàn thành]** Hiển thị danh sách dự án đang thực hiện động dựa trên trạng thái thực tế.
 
 ## 4. Gợi ý Tối ưu (Future Optimizations)

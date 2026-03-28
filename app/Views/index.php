@@ -146,13 +146,22 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
-                            <span class="stat-title">Doanh Thu</span>
+                            <span class="stat-title">Doanh Thu Hoàn Thành</span>
                             <i class="ph ph-trend-up color-green"></i>
                         </div>
                         <div class="stat-value" id="statRevenue">0</div>
-                        <div class="stat-desc">VNĐ hoàn thành</div>
+                        <div class="stat-desc">VNĐ hiện tại</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Tổng Doanh Thu</span>
+                            <i class="ph ph-chart-line-up color-blue"></i>
+                        </div>
+                        <div class="stat-value" id="statTotalRevenue">0</div>
+                        <div class="stat-desc">toàn hệ thống</div>
                     </div>
                 </div>
+
 
                 <!-- Three Columns Section -->
                 <div class="dashboard-columns">
@@ -254,6 +263,8 @@
     document.getElementById('statTesting').textContent = stats.testingProjects.length;
     document.getElementById('statTestingValue').textContent = formatVNDShort(stats.testingValue);
     document.getElementById('statRevenue').textContent = formatVNDShort(stats.totalRevenue).replace(' VNĐ', '');
+    document.getElementById('statTotalRevenue').textContent = formatVNDShort(stats.totalPotentialRevenue).replace(' VNĐ', '');
+
     
     // Hosting Status List (Column 1)
     const hostListContainer = document.getElementById('dashHostingList');

@@ -413,6 +413,8 @@ function getDashboardStats() {
     // Testing projects value
     const testingValue = testingProjects.reduce((s, p) => s + p.value, 0);
 
+    // Total Potential Revenue (Global)
+    const totalPotentialRevenue = PROJECTS.reduce((s, p) => s + p.value, 0) + HOSTINGS.reduce((s, h) => s + h.price, 0);
 
     return {
         totalHostings,
@@ -427,9 +429,11 @@ function getDashboardStats() {
         totalRevenue,
         totalProjectRevenue,
         totalHostingRevenue,
-        testingValue
+        testingValue,
+        totalPotentialRevenue
     };
 }
+
 
 
 /**
