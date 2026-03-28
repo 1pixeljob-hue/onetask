@@ -556,6 +556,7 @@
         <div class="toast-content">
             <div id="toastSpinner" class="spinner"></div>
             <i id="toastSuccessIcon" class="ph-fill ph-check-circle" style="display:none; color: #10b981; font-size: 24px;"></i>
+            <i id="toastErrorIcon" class="ph-fill ph-x-circle" style="display:none; color: #ef4444; font-size: 24px;"></i>
             <span id="toastMsg">Đang xử lý...</span>
         </div>
     </div>
@@ -658,7 +659,7 @@ async function submitAddPwdForm(e) {
     const loadingMsg = currentActionMode === 'add' ? 'Đang thêm mật khẩu...' : 'Đang cập nhật...';
     const successMsg = currentActionMode === 'add' ? 'Đã thêm mật khẩu thành công!' : 'Đã cập nhật thành công!';
     
-    showPwdToast(loadingMsg, successMsg);
+    showPwdToast(loadingMsg, 'loading');
 
     try {
         const response = await fetch('/passwords/save', {
@@ -670,23 +671,24 @@ async function submitAddPwdForm(e) {
         if (result.success) {
             // Update local data and UI immediately
             if (currentActionMode === 'add') {
-                data.id = result.id || Date.now(); // Use ID from response if available
+                data.id = result.id || Date.now();
                 PASSWORDS.unshift(data);
             } else {
                 const index = PASSWORDS.findIndex(p => p.id == currentEditId);
                 if (index !== -1) PASSWORDS[index] = { ...data, id: currentEditId };
             }
             
+            showPwdToast(successMsg, 'success');
             setTimeout(() => {
                 closeAddPwdModal();
                 renderPasswords();
-            }, 1000);
+            }, 500);
         } else {
-            alert('Lỗi: ' + (result.message || 'Không thể lưu mật khẩu'));
+            showPwdToast(result.message || 'Không thể lưu mật khẩu', 'error');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Lỗi kết nối máy chủ');
+        showPwdToast('Lỗi kết nối máy chủ', 'error');
     }
 }
 
@@ -812,6 +814,8 @@ async function saveCategory() {
 
     if (!data.name) return alert('Vui lòng nhập tên danh mục');
 
+    showPwdToast(currentCatEditId ? 'Đang cập nhật danh mục...' : 'Đang thêm danh mục...', 'loading');
+
     try {
         const response = await fetch('/passwords/categories/save', {
             method: 'POST',
@@ -826,13 +830,20 @@ async function saveCategory() {
             } else {
                 CATEGORIES.push({ ...data, id: result.id || Date.now() });
             }
+            showPwdToast(currentCatEditId ? 'Đã cập nhật danh mục!' : 'Đã thêm danh mục thành công!', 'success');
             showCategoryList();
+        } else {
+            showPwdToast(result.message || 'Không thể lưu danh mục', 'error');
         }
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+        console.error(e); 
+        showPwdToast('Lỗi kết nối máy chủ', 'error');
+    }
 }
 
 async function deleteCategory(id) {
     if (!confirm('Bạn có chắc muốn xóa danh mục này?')) return;
+    showPwdToast('Đang xóa danh mục...', 'loading');
     try {
         const response = await fetch('/passwords/categories/delete', {
             method: 'POST',
@@ -842,29 +853,48 @@ async function deleteCategory(id) {
         const result = await response.json();
         if (result.success) {
             const idx = CATEGORIES.findIndex(c => c.id == id);
-            CATEGORIES.splice(idx, 1);
+            if (idx !== -1) CATEGORIES.splice(idx, 1);
+            showPwdToast('Đã xóa danh mục thành công!', 'success');
             renderCategories();
+        } else {
+            showPwdToast(result.message || 'Không thể xóa danh mục', 'error');
         }
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+        console.error(e); 
+        showPwdToast('Lỗi kết nối máy chủ', 'error');
+    }
 }
 
-function showPwdToast(loadingMsg, successMsg) {
+function showPwdToast(message, type = 'loading') {
     const toast = document.getElementById('pwdToast');
     const msg = document.getElementById('toastMsg');
     const spinner = document.getElementById('toastSpinner');
     const successIcon = document.getElementById('toastSuccessIcon');
+    const errorIcon = document.getElementById('toastErrorIcon');
     
-    spinner.style.display = 'block';
+    // Reset
+    spinner.style.display = 'none';
     successIcon.style.display = 'none';
-    msg.textContent = loadingMsg;
+    errorIcon.style.display = 'none';
+    toast.style.borderLeftColor = '#2fab91';
+
+    msg.textContent = message;
+    
+    if (type === 'loading') {
+        spinner.style.display = 'block';
+    } else if (type === 'success') {
+        successIcon.style.display = 'block';
+        toast.style.borderLeftColor = '#10b981';
+    } else if (type === 'error') {
+        errorIcon.style.display = 'block';
+        toast.style.borderLeftColor = '#ef4444';
+    }
+    
     toast.classList.add('show');
     
-    setTimeout(() => {
-        spinner.style.display = 'none';
-        successIcon.style.display = 'block';
-        msg.textContent = successMsg;
-        setTimeout(() => toast.classList.remove('show'), 2000);
-    }, 1000);
+    if (type !== 'loading') {
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1030,6 +1060,7 @@ function toggleCardPwd(btn) {
 
 async function promptDeletePwd(id, title) {
     if (confirm(`Bạn có chắc muốn xóa mật khẩu "${title}" không?`)) {
+        showPwdToast('Đang xóa mật khẩu...', 'loading');
         try {
             const response = await fetch('/passwords/delete', {
                 method: 'POST',
@@ -1038,13 +1069,19 @@ async function promptDeletePwd(id, title) {
             });
             const result = await response.json();
             if (result.success) {
-                window.location.reload();
+                // Update local state without reload to avoid UI glitches
+                const index = PASSWORDS.findIndex(p => p.id == id);
+                if (index !== -1) {
+                    PASSWORDS.splice(index, 1);
+                }
+                showPwdToast('Đã xóa mật khẩu thành công!', 'success');
+                renderPasswords();
             } else {
-                alert('Lỗi: ' + (result.message || 'Không thể xóa mật khẩu'));
+                showPwdToast(result.message || 'Không thể xóa mật khẩu', 'error');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Lỗi kết nối máy chủ');
+            showPwdToast('Lỗi kết nối máy chủ', 'error');
         }
     }
 }
