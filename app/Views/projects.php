@@ -19,8 +19,8 @@
 <body>
     <!-- Global Loader -->
     <div id="global-loader" class="global-loader">
-        <div class="loader-1p">1P</div>
-        <div class="loader-text">Đang tải dữ liệu...</div>
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Đang tải...</div>
     </div>
 
     <div class="app-container">
