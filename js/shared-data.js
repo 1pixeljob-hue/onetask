@@ -464,14 +464,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // 3. Clear all search inputs on every module change (including Back/Forward cache)
     const clearSearchInputs = () => {
-        document.querySelectorAll('.pj-search-input').forEach(input => {
+        const inputs = document.querySelectorAll('.pj-search-input');
+        if (inputs.length === 0) return;
+
+        inputs.forEach(input => {
             input.value = '';
             // Manually trigger input event to reset filters mapped to this input
             input.dispatchEvent(new Event('input'));
         });
     };
 
+    // Run on DOM ready
     clearSearchInputs();
+    
+    // Run on window load with small delay to beat browser autocomplete/restore
+    window.addEventListener('load', () => setTimeout(clearSearchInputs, 100));
+
     window.addEventListener('pageshow', (event) => {
         if (event.persisted) {
             clearSearchInputs();

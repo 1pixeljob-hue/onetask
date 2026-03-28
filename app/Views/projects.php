@@ -123,7 +123,7 @@
                 <div class="pj-toolbar">
                     <div class="pj-search-wrap">
                         <i class="ph ph-magnifying-glass pj-search-icon"></i>
-                        <input type="text" class="pj-search-input" id="projectSearch" placeholder="Tìm kiếm theo tên, khách hàng, mô tả...">
+                        <input type="text" class="pj-search-input" id="projectSearch" placeholder="Tìm kiếm theo tên, khách hàng, mô tả..." autocomplete="off">
                     </div>
                     <div class="pj-toolbar-right">
                         <div class="pj-filter-wrapper">
