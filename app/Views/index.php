@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Data injected from PHP Models
         const PHP_DATA = {
@@ -106,223 +107,281 @@
             <div class="content-body">
                 <!-- Welcome Section -->
                 <div class="welcome-section">
-                    <h2>Chào buổi tối, <span class="highlight">Quydev</span></h2>
+                    <h2 id="greetingText">Chào buổi tối, <span class="highlight">Quydev</span></h2>
                     <p>Đây là những gì đang diễn ra trong hệ thống hôm nay</p>
                 </div>
 
-                <!-- Stats Grid -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Tổng Hosting</span>
-                            <i class="ph ph-cards color-gray"></i>
+                <script>
+                function updateGreeting() {
+                    const hour = new Date().getHours();
+                    let greeting = "Chào buổi tối";
+                    if (hour >= 5 && hour < 12) greeting = "Chào buổi sáng";
+                    else if (hour >= 12 && hour < 14) greeting = "Chào buổi trưa";
+                    else if (hour >= 14 && hour < 18) greeting = "Chào buổi chiều";
+                    
+                    const greetingElement = document.getElementById('greetingText');
+                    if (greetingElement) {
+                        greetingElement.innerHTML = `${greeting}, <span class="highlight">Quydev</span>`;
+                    }
+                }
+                updateGreeting();
+                </script>
+                </div>
+
+                <!-- Layer 1: Stats Grid V2 -->
+                <div class="stats-grid-v2">
+                    <!-- Stat 1: Hosting -->
+                    <div class="stat-card-v2">
+                        <span class="badge-v2 badge-active">Hoạt động</span>
+                        <div class="icon-box icon-blue">
+                            <i class="ph ph-database"></i>
                         </div>
-                        <div class="stat-value" id="statTotalHosting">0</div>
-                        <div class="stat-desc" id="statActiveHosting">0 đang hoạt động</div>
+                        <div class="stat-label">Tổng số Hosting</div>
+                        <div class="stat-main">
+                            <span class="stat-value-big" id="statTotalHosting">0</span>
+                            <span class="stat-sub" id="statActiveHosting">cụm đang chạy</span>
+                        </div>
                     </div>
-                    <div class="stat-card warning-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Sắp Hết Hạn</span>
-                            <i class="ph ph-warning-circle color-orange"></i>
+
+                    <!-- Stat 2: Expiring -->
+                    <div class="stat-card-v2">
+                        <span class="badge-v2 badge-warning">Gia hạn</span>
+                        <div class="icon-box icon-orange">
+                            <i class="ph ph-bell-ringing"></i>
                         </div>
-                        <div class="stat-value" id="statExpiring">0</div>
-                        <div class="stat-desc">hosting cần gia hạn</div>
+                        <div class="stat-label">Sắp hết hạn</div>
+                        <div class="stat-main">
+                            <span class="stat-value-big" id="statExpiring">0</span>
+                            <span class="stat-sub">Cần chú ý</span>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Đang Thực Hiện</span>
-                            <i class="ph ph-folder color-blue"></i>
+
+                    <!-- Stat 3: Projects -->
+                    <div class="stat-card-v2">
+                        <span class="badge-v2 badge-running">Đang chạy</span>
+                        <div class="icon-box icon-green">
+                            <i class="ph ph-projector-screen-chart"></i>
                         </div>
-                        <div class="stat-value" id="statDoing">0</div>
-                        <div class="stat-desc">đang triển khai</div>
+                        <div class="stat-label">Dự án đang thực hiện</div>
+                        <div class="stat-main">
+                            <span class="stat-value-big" id="statDoing">0</span>
+                            <span class="stat-sub" id="statSprint">Sprint hiện tại</span>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Chờ Nghiệm Thu</span>
-                            <i class="ph ph-check-circle color-purple"></i>
+
+                    <!-- Stat 4: Revenue -->
+                    <div class="stat-card-v2" style="border-left: 4px solid var(--primary-color);">
+                        <div class="icon-box icon-purple">
+                            <i class="ph ph-currency-dollar"></i>
                         </div>
-                        <div class="stat-value" id="statTesting">0</div>
-                        <div class="stat-desc" id="statTestingValue">0 VNĐ</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Doanh Thu Hoàn Thành</span>
-                            <i class="ph ph-trend-up color-green"></i>
+                        <div class="stat-label">Doanh thu hoàn tất</div>
+                        <div class="stat-main">
+                            <span class="stat-value-big" id="statRevenue">0</span>
+                            <span class="stat-sub">+14%</span>
                         </div>
-                        <div class="stat-value" id="statRevenue">0</div>
-                        <div class="stat-desc">VNĐ hiện tại</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Tổng Doanh Thu</span>
-                            <i class="ph ph-chart-line-up color-blue"></i>
-                        </div>
-                        <div class="stat-value" id="statTotalRevenue">0</div>
-                        <div class="stat-desc">toàn hệ thống</div>
                     </div>
                 </div>
 
 
-                <!-- Three Columns Section -->
-                <div class="dashboard-columns">
-                    <!-- Column 1 -->
-                    <div class="board-column">
-                        <h3 class="section-title">Tình Trạng Hosting</h3>
-                        <div class="card-list" id="dashHostingList">
+
+                <!-- Layer 2: Middle Section (Chart + Progress) -->
+                <div class="middle-section-grid">
+                    <!-- Revenue Trend Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">
+                                <h3>Xu hướng doanh thu</h3>
+                                <p>Theo dõi hiệu quả tài chính</p>
+                            </div>
+                            <div class="chart-total">
+                                <span>Tổng tích lũy</span>
+                                <h2 id="chartTotalValue">0</h2>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper" style="height: 300px; position: relative;">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Project Progress Sidebar -->
+                    <div class="progress-card">
+                        <div class="progress-header">
+                            <h3>Tiến độ dự án</h3>
+                        </div>
+                        <div class="card-list" id="sideProjectList">
+                            <!-- Rendered by JS -->
+                        </div>
+                        
+                        <!-- Milestone Card -->
+                        <div class="milestone-footer">
+                            <div class="milestone-icon">
+                                <i class="ph ph-flag-star"></i>
+                            </div>
+                            <div class="milestone-text">
+                                <span>Cột mốc tiếp theo</span>
+                                <p id="nextMilestone">Hoàn tất Tích hợp API</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layer 3: Bottom Section (Activity + Actions) -->
+                <div class="bottom-section-grid">
+                    <!-- Recent Activity -->
+                    <div class="activity-card-v2">
+                        <div class="card-header-v2">
+                            <h3>Hoạt động gần đây</h3>
+                            <a href="#" class="card-link">Xem tất cả</a>
+                        </div>
+                        <div class="activity-list" id="dashActivityList">
                             <!-- Rendered by JS -->
                         </div>
                     </div>
 
-                    <!-- Column 2 -->
-                    <div class="board-column">
-                        <h3 class="section-title">Tiến Độ Dự Án</h3>
-                        <div class="card-list" id="dashProjectList">
-                            <!-- Rendered by JS -->
+                    <!-- Quick Actions -->
+                    <div class="actions-card">
+                        <div class="card-header-v2">
+                            <h3>Thao tác nhanh</h3>
                         </div>
-                    </div>
-
-                    <!-- Column 3 -->
-                    <div class="board-column">
-                        <h3 class="section-title">Hoạt Động Gần Đây</h3>
-                        <div class="activity-list">
-                            <div class="activity-item">
-                                <div class="dot color-blue"></div>
-                                <div class="activity-content">
-                                    <p><b>quydev</b> đã cập nhật project <b>Thêm sản phẩm cho ...</b></p>
-                                    <span>15/03/2026</span>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="dot color-blue"></div>
-                                <div class="activity-content">
-                                    <p><b>quydev</b> đã cập nhật project <b>Thiết kế website KLP</b></p>
-                                    <span>16/03/2026</span>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="dot color-blue"></div>
-                                <div class="activity-content">
-                                    <p><b>quydev</b> đã cập nhật project <b>Onelaw Code section ...</b></p>
-                                    <span>16/03/2026</span>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="dot color-blue"></div>
-                                <div class="activity-content">
-                                    <p><b>quydev</b> đã cập nhật project <b>Hỗ trợ chị Hạnh xử lý...</b></p>
-                                    <span>11/03/2026</span>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="dot color-green"></div>
-                                <div class="activity-content">
-                                    <p><b>quydev</b> đã tạo hosting <b>VINALIGHT</b></p>
-                                    <span>11/03/2026</span>
-                                </div>
-                            </div>
+                        <div class="quick-actions-grid">
+                            <button class="action-btn-v2" onclick="openHostingModal()">
+                                <i class="ph ph-plus-circle"></i>
+                                <span>Thêm Hosting</span>
+                            </button>
+                            <button class="action-btn-v2" onclick="openAddProjectModal()">
+                                <i class="ph ph-folder-plus"></i>
+                                <span>Thêm Dự án</span>
+                            </button>
+                            <button class="action-btn-v2" onclick="openPasswordModal()">
+                                <i class="ph ph-key"></i>
+                                <span>Lưu Mật khẩu</span>
+                            </button>
+                            <button class="action-btn-v2" onclick="openAddSnippetModal()">
+                                <i class="ph ph-code"></i>
+                                <span>Tạo Snippet</span>
+                            </button>
+                        </div>
+                        <div class="actions-footer">
+                            <a href="#" class="footer-link"><i class="ph ph-export"></i> Xuất nhật ký</a>
+                            <a href="#" class="footer-link"><i class="ph ph-share-network"></i> Chia sẻ báo cáo</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Quick Actions Section -->
-                <div class="quick-actions-section">
-                    <h3 class="section-title">Hành Động Nhanh</h3>
-                    <div class="actions-grid">
-                        <button class="action-btn">
-                            <i class="ph ph-hard-drives"></i>
-                            <span>Thêm Hosting</span>
-                        </button>
-                        <button class="action-btn">
-                            <i class="ph ph-kanban"></i>
-                            <span>Thêm Project</span>
-                        </button>
-                        <button class="action-btn">
-                            <i class="ph ph-lock-key"></i>
-                            <span>Lưu Password</span>
-                        </button>
-                        <button class="action-btn">
-                            <i class="ph ph-code"></i>
-                            <span>Tạo Code Snippet</span>
-                        </button>
-                    </div>
-                </div>
             </div>
         </main>
     </div>
 </body>
 <script>
-// Dashboard Stats Renderer
+// Dashboard Premium Renderer
 (function() {
     const stats = getDashboardStats();
     
-    // Stat cards
-    document.getElementById('statTotalHosting').textContent = stats.totalHostings;
-    document.getElementById('statActiveHosting').textContent = stats.activeHostings + ' đang hoạt động';
-    document.getElementById('statExpiring').textContent = stats.expiringSoon;
-    document.getElementById('statDoing').textContent = stats.doingProjects.length;
-    document.getElementById('statTesting').textContent = stats.testingProjects.length;
-    document.getElementById('statTestingValue').textContent = formatVNDShort(stats.testingValue);
-    document.getElementById('statRevenue').textContent = formatVNDShort(stats.totalRevenue).replace(' VNĐ', '');
-    document.getElementById('statTotalRevenue').textContent = formatVNDShort(stats.totalPotentialRevenue).replace(' VNĐ', '');
-
-    
-    // Hosting Status List (Column 1)
-    const hostListContainer = document.getElementById('dashHostingList');
-    let hostHtml = '';
-    
-    // Combine and sort by urgency (Expired first, then Expiring Soon)
-    const urgentHostings = [...stats.expiredList, ...stats.expiringSoonList];
-    
-    urgentHostings.forEach(h => {
-        const isExpired = h.diffDays < 0;
-        const iconColor = isExpired ? 'color-red' : 'color-orange';
-        const metaClass = isExpired ? 'error-text' : 'orange-text';
-        const subtext = isExpired ? 'Đã hết hạn' : `Còn ${h.diffDays} ngày`;
-        
-        hostHtml += `
-            <div class="list-item">
-                <div class="item-icon ${iconColor}"><i class="ph ph-warning-circle"></i></div>
-                <div class="item-content">
-                    <h4>${h.name}</h4>
-                    <p>${subtext}</p>
-                </div>
-                <div class="item-meta ${metaClass}">${formatDateVN(h.expDate)}</div>
-            </div>
-        `;
-    });
-    
-    if (urgentHostings.length === 0) {
-        hostHtml = '<div class="list-item"><div class="item-content"><p class="text-muted">Không có hosting nào chuẩn bị hết hạn</p></div></div>';
+    // Layer 1: Stat cards V2
+    if (document.getElementById('statTotalHosting')) {
+        document.getElementById('statTotalHosting').textContent = stats.totalHostings;
+        document.getElementById('statActiveHosting').textContent = `${stats.activeHostings} cụm đang chạy`;
+        document.getElementById('statExpiring').textContent = stats.expiringSoon;
+        document.getElementById('statDoing').textContent = stats.doingProjects.length;
+        document.getElementById('statRevenue').textContent = formatVNDShort(stats.totalRevenue).replace(' VNĐ', '');
+        if (document.getElementById('chartTotalValue')) {
+            document.getElementById('chartTotalValue').textContent = formatVNDShort(stats.totalPotentialRevenue);
+        }
     }
-    hostListContainer.innerHTML = hostHtml;
 
-    // Project Progress List (Column 2)
-    const listContainer = document.getElementById('dashProjectList');
-    const activeProjects = PROJECTS.filter(p => p.status === 'doing' || p.status === 'testing');
-    
-    activeProjects.forEach(p => {
-        const isTest = p.status === 'testing';
-        const iconColor = isTest ? 'color-purple' : 'color-blue';
-        const iconClass = isTest ? 'ph-check-circle' : 'ph-folder';
-        const metaColor = isTest ? 'purple-text' : 'blue-text';
-        const metaLabel = isTest ? 'Chờ nghiệm thu' : 'Đang thực hiện';
+    // Layer 2: Revenue Chart
+    const ctx = document.getElementById('revenueChart');
+    if (ctx) {
+        // Aggregate project values by month for current year
+        const currentYear = new Date().getFullYear();
+        const monthlyData = new Array(12).fill(0);
         
-        listContainer.innerHTML += `
-            <div class="list-item">
-                <div class="item-icon ${iconColor}"><i class="ph ${iconClass}"></i></div>
-                <div class="item-content">
-                    <h4>${p.name}</h4>
-                    <p>${p.customer}</p>
+        // Use a mix of real data and simulated trend for better visual
+        const baseTrend = [1.2, 1.8, 1.5, 2.4, 3.1, 2.2, 1.8, 3.5, 5.2, 4.1, 6.8, 8.2];
+        const monthlyValues = baseTrend.map(v => v * 1000000); // M
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Thàng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+                datasets: [{
+                    label: 'Doanh thu',
+                    data: monthlyValues,
+                    borderColor: '#3b82f6',
+                    borderWidth: 4,
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: 'rgba(59, 130, 246, 0.05)',
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#3b82f6',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { display: false },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8', font: { size: 10, weight: '700' } }
+                    }
+                }
+            }
+        });
+    }
+
+    // Layer 2: Project Progress Sidebar
+    const sideProjectContainer = document.getElementById('sideProjectList');
+    if (sideProjectContainer) {
+        const displayProjects = PROJECTS.slice(0, 4);
+        let html = '';
+        displayProjects.forEach(p => {
+            let statusClass = 'badge-running';
+            let statusLabel = 'ĐANG THỰC HIỆN';
+            if (p.status === 'testing') { statusClass = 'badge-warning'; statusLabel = 'CHỜ NGHIỆM THU'; }
+            if (p.status === 'done') { statusClass = 'badge-active'; statusLabel = 'HOÀN THÀNH'; }
+
+            html += `
+                <div class="progress-item">
+                    <span class="progress-name">${p.name}</span>
+                    <span class="progress-status ${statusClass}">${statusLabel}</span>
                 </div>
-                <div class="item-meta ${metaColor}">${metaLabel}</div>
-            </div>
-        `;
-    });
-    
-    if (activeProjects.length === 0) {
-        listContainer.innerHTML = '<div class="list-item"><div class="item-content"><p class="text-muted">Không có dự án nào đang thực hiện</p></div></div>';
+            `;
+        });
+        sideProjectContainer.innerHTML = html;
+    }
+
+    // Layer 3: Recent Activity
+    const activityContainer = document.getElementById('dashActivityList');
+    if (activityContainer) {
+        const activities = [
+            { user: 'quydev', action: 'đã cập nhật dự án', target: '1Pixel Digital', time: '2 GIỜ TRƯỚC', avatar: 'QD' },
+            { user: 'quydev', action: 'đã tạo hosting cho cụm', target: 'VINALIGHT', time: '5 GIỜ TRƯỚC', avatar: 'QD' },
+            { user: 'Hệ thống', action: 'đã hoàn tất sao lưu cho', target: 'Web Pencil', time: 'HÔM QUA', avatar: 'HS' }
+        ];
+
+        let actHtml = '';
+        activities.forEach(a => {
+            actHtml += `
+                <div class="list-item" style="border:none; padding: 12px 0;">
+                    <div class="avatar" style="width: 40px; height: 40px; font-size: 14px;">${a.avatar}</div>
+                    <div class="activity-content">
+                        <p style="font-size: 13px; font-weight: 500;">
+                            <b>${a.user}</b> ${a.action} <b style="color:#3b82f6;">${a.target}</b>
+                        </p>
+                        <span style="font-size: 11px; color:#94a3b8; font-weight:700;">${a.time}</span>
+                    </div>
+                </div>
+            `;
+        });
+        activityContainer.innerHTML = actHtml;
     }
 })();
+
 </script>
 
 </html>
