@@ -522,7 +522,12 @@ document.addEventListener('click', function(e) {
 <div class="modal-overlay" id="hostingModal" onclick="closeHostingModal(event)">
     <div class="modal-box">
         <div class="modal-header">
-            <h3 class="modal-title" id="modalTitle"><i class="ph ph-hard-drives"></i> Thêm Hosting Mới</h3>
+            <div class="modal-title-wrap">
+                <div class="modal-icon-brand">
+                    <i id="modalBrandIcon" class="ph-fill ph-hard-drives"></i>
+                </div>
+                <h3 class="modal-title" id="modalTitle">Thêm Hosting Mới</h3>
+            </div>
             <button class="modal-close" onclick="closeHostingModalBtn()"><i class="ph ph-x"></i></button>
         </div>
         <div class="modal-body">
@@ -660,7 +665,8 @@ document.addEventListener('click', function(e) {
 <script>
 function openHostingModal() {
     currentActionMode = 'add';
-    document.getElementById('modalTitle').innerHTML = '<i class="ph ph-hard-drives"></i> Thêm Hosting Mới';
+    document.getElementById('modalTitle').textContent = 'Thêm Hosting Mới';
+    document.getElementById('modalBrandIcon').className = 'ph-fill ph-hard-drives';
     const btn = document.getElementById('modalSubmitBtn');
     btn.innerHTML = '<i class="ph ph-plus"></i> Thêm Mới';
     btn.className = 'modal-btn-submit';
@@ -673,7 +679,8 @@ function openEditModal(tr) {
     currentActionMode = 'edit';
     currentRowToEdit = tr;
     
-    document.getElementById('modalTitle').innerHTML = 'Chỉnh Sửa Hosting';
+    document.getElementById('modalTitle').textContent = 'Chỉnh Sửa Hosting';
+    document.getElementById('modalBrandIcon').className = 'ph-fill ph-pencil-simple';
     const btn = document.getElementById('modalSubmitBtn');
     btn.innerHTML = 'Cập Nhật';
     btn.className = 'modal-btn-submit toggle-edit-blue';

@@ -186,7 +186,12 @@
 <div class="modal-overlay" id="addProjectModal" onclick="closeAddProjectModalOverlay(event)">
     <div class="modal-box scrollable">
         <div class="modal-header">
-            <h3 class="modal-title" id="modalTitle"><i class="ph ph-folders"></i> Thêm Project Mới</h3>
+            <div class="modal-title-wrap">
+                <div class="modal-icon-brand">
+                    <i id="modalBrandIcon" class="ph-fill ph-folders"></i>
+                </div>
+                <h3 class="modal-title" id="modalTitle">Thêm Project Mới</h3>
+            </div>
             <button class="modal-close" onclick="closeAddProjectModal()"><i class="ph ph-x"></i></button>
         </div>
         <div class="modal-body">
@@ -570,7 +575,8 @@ function openAddProjectModal() {
     currentRowToEdit = null;
     resetProjectForm();
     
-    document.getElementById('modalTitle').innerHTML = '<i class="ph ph-folders"></i> Thêm Project Mới';
+    document.getElementById('modalTitle').textContent = 'Thêm Project Mới';
+    document.getElementById('modalBrandIcon').className = 'ph-fill ph-folders';
     document.querySelector('#addProjectModal .modal-btn-submit').textContent = 'Thêm Mới';
     
     document.getElementById('addProjectModal').classList.add('active');
@@ -628,7 +634,8 @@ function openEditProjectModal(tr) {
     updateProjectValueDisplay(document.getElementById('projectValue'));
 
     // Update Modal UI
-    document.getElementById('modalTitle').innerHTML = '<i class="ph ph-pencil-simple"></i> Chỉnh Sửa Project';
+    document.getElementById('modalTitle').textContent = 'Chỉnh Sửa Project';
+    document.getElementById('modalBrandIcon').className = 'ph-fill ph-pencil-simple';
     document.querySelector('#addProjectModal .modal-btn-submit').textContent = 'Cập Nhật';
     
     document.getElementById('addProjectModal').classList.add('active');

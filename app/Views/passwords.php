@@ -15,22 +15,7 @@
     <script src="/js/shared-data.js"></script>
     <style>
         /* Modal & Toast Styles for Passwords */
-        .modal-icon-brand {
-            width: 48px;
-            height: 48px;
-            background: rgba(47, 171, 145, 0.1);
-            color: #2fab91;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-        .modal-title-wrap {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
+
         .label-with-action {
             display: flex;
             justify-content: space-between;
