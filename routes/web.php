@@ -21,3 +21,5 @@ $router->add('/hostings/delete', 'MainController', 'deleteHosting');
 $router->add('/hostings/bulk-delete', 'MainController', 'deleteHostingsBulk');
 $router->add('/passwords/save', 'MainController', 'savePassword');
 $router->add('/passwords/delete', 'MainController', 'deletePassword');
+$router->add('/passwords/categories/save', 'MainController', 'saveCategory');
+$router->add('/passwords/categories/delete', 'MainController', 'deleteCategory');

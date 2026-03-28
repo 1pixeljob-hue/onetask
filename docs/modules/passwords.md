@@ -11,20 +11,17 @@
 
 ## 2. Business Logic (Chức năng cốt lõi)
 - **Quản lý CREDENTIALS**: Lưu trữ thông tin đăng nhập bao gồm Tiêu đề, Website, Username, Password và Ghi chú.
-- **Phân loại (Category)**: Hỗ trợ 3 nhóm chính: `Email` (Blue), `Tài khoản` (Red), `Khác` (Purple) để dễ nhận diện trực quan.
-- **Tạo Mật Khẩu Mạnh (Secure Generator)**: Tích hợp trình tạo chuỗi ngẫu nhiên 16 ký tự (bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt) ngay trong Modal thêm mới.
-- **Bảo mật Hiển thị**: Mặc định mật khẩu trong Grid được ẩn (`type="password"`). Người dùng có thể nhấn icon Eye để xem nhanh hoặc Copy vào Clipboard.
-- **Tìm kiếm & Phân trang**:
-  - Tìm kiếm theo thời gian thực (Real-time Search) qua Tiêu đề, Username hoặc Website.
-  - Phân trang tự động (8 items/page) để đảm bảo hiệu suất khi danh sách mật khẩu lớn.
+- **Quản lý Danh Mục (Category Manager)**: Hệ thống quản lý danh mục động (CRUD) cho phép người dùng tự định nghĩa tên và màu sắc (Hex) cho từng loại mật khẩu. Tích hợp bộ chọn màu (Color Picker) và xem trước (Preview) trực quan.
+- **Tạo Mật Khẩu Mạnh (Secure Generator)**: Tích hợp trình tạo chuỗi ngẫu nhiên 16 ký tự ngay trong Modal thêm mới.
+- **Bảo mật Hiển thị**: Mặc định mật khẩu được ẩn, hỗ trợ xem nhanh hoặc Copy vào Clipboard với hiệu ứng xác nhận.
+- **Tìm kiếm & Phân trang**: Hỗ trợ tìm kiếm real-time và phân trang tự động (8 items/page).
 
 ## 3. Lịch sử thay đổi (Changelog)
-- **[Mới hoàn thành]** Xây dựng **PasswordModel** chuẩn MVC, thực hiện các thao tác CRUD an toàn bằng PDO Prepared Statements.
-- **[Mới hoàn thành]** Triển khai API Endpoints đồng bộ dữ liệu giữa Frontend và Backend qua Fetch API.
-- **[Mới hoàn thành]** Hoàn thiện **Modal Thêm Mật Khẩu Mới** theo mockup, tích hợp logic "Tạo mật khẩu mạnh" và Validate dữ liệu Client-side.
-- **[Mới hoàn thành]** Chuyển đổi Grid hiển thị từ HTML tĩnh sang **Dynamic Rendering** bằng JavaScript, giúp việc cập nhật/xóa dữ liệu diễn ra mượt mà không cần tải lại trang.
-- **[Mới hoàn thành]** Tích hợp hệ thống **Toast Notifications** (Loading/Success/Error) bám sát các hành động Lưu và Xóa.
-- **[Mới hoàn thành]** Nâng cấp UX với tính năng **Copy to Clipboard** có hiệu ứng Checkmark xác nhận tại từng trường thông tin.
+- **[Mới hoàn thành]** Xây dựng **PasswordModel** và **CategoryModel** chuẩn MVC, thực hiện CRUD an toàn bằng PDO.
+- **[Mới hoàn thành]** Triển khai API Endpoints đồng bộ dữ liệu qua Fetch API cho cả Mật khẩu và Danh mục.
+- **[Mới hoàn thành]** Hoàn thiện **Modal Quản Lý Danh Mục** với tính năng chọn màu sắc tùy biến và xem trước Tag trực quan bám sát thiết kế.
+- **[Mới hoàn thành]** Chuyển đổi Grid hiển thị sang cơ chế **State-based Rendering**: Tự động cập nhật giao diện ngay khi lưu/xóa dữ liệu mà không cần tải lại trang (Zero-reload UX).
+- **[Mới hoàn thành]** Tích hợp hệ thống **Toast Notifications** đồng bộ cho tất cả các thao tác dữ liệu.
 
 ## 4. Gợi ý Tối ưu (Future Optimizations)
 1. **Mã hóa Dữ liệu (Encryption)**: Hiện tại mật khẩu đang được lưu ở dạng bản rõ (plaintext) trong DB. Cần triển khai mã hóa đối xứng (Symmetric Encryption - ví dụ: AES-256) trước khi lưu để đảm bảo an toàn tuyệt đối nếu DB bị rò rỉ.

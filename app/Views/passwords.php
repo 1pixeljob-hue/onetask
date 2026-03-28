@@ -10,6 +10,7 @@
     <script>
         // Data injected from PHP Models
         const PASSWORDS = <?php echo json_encode($passwords ?? []); ?>;
+        const CATEGORIES = <?php echo json_encode($categories ?? []); ?>;
     </script>
     <style>
         /* Modal & Toast Styles for Passwords */
@@ -131,6 +132,146 @@
             color: #64748b;
             font-size: 15px;
         }
+
+        /* Category Management Styles */
+        .cat-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .cat-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+        .cat-item:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .cat-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .cat-color-preview {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+        }
+        .cat-name {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .cat-tag-preview {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+        .cat-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-add-cat-dashed {
+            width: 100%;
+            padding: 16px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            background: none;
+            color: #64748b;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-add-cat-dashed:hover {
+            border-color: #2fab91;
+            color: #2fab91;
+            background: rgba(47, 171, 145, 0.05);
+        }
+        
+        /* Color Picker Styles */
+        .color-presets {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin: 12px 0;
+        }
+        .color-tile {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+        .color-tile i {
+            display: none;
+            font-size: 14px;
+        }
+        .color-tile.active {
+            border-color: #1e293b;
+            transform: scale(1.1);
+        }
+        .color-tile.active i {
+            display: block;
+        }
+        .hex-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8fafc;
+            padding: 4px 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .hex-input-wrapper .color-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        .hex-input {
+            border: none;
+            background: none;
+            font-family: monospace;
+            font-weight: 600;
+            color: #475569;
+            flex: 1;
+            padding: 8px 0;
+            outline: none;
+        }
+        .cat-preview-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #e2e8f0;
+        }
+        .cat-preview-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -235,7 +376,7 @@
                                 <div class="pj-dropdown-item" onclick="setPwdFilter('outline-purple', 'Khác', this)">Khác</div>
                             </div>
                         </div>
-                        <button class="pj-filter-btn" style="border-color: #8b5cf6; color: #8b5cf6;">
+                        <button class="pj-filter-btn" style="border-color: #8b5cf6; color: #8b5cf6;" onclick="openCategoryModal()">
                             <i class="ph ph-tag"></i>
                             Danh Mục
                         </button>
@@ -333,6 +474,76 @@
                     <button type="submit" class="modal-btn-submit">Thêm Mới</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal Quản Lý Danh Mục -->
+    <div class="modal-overlay" id="categoryModal" onclick="if(event.target.id==='categoryModal') closeCategoryModal()">
+        <div class="modal-box" style="max-width: 550px;">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <div class="modal-icon-brand" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                        <i class="ph-fill ph-tag"></i>
+                    </div>
+                    <h3 class="modal-title">Quản Lý Danh Mục</h3>
+                </div>
+                <button class="modal-close" onclick="closeCategoryModal()"><i class="ph ph-x"></i></button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Chế độ Danh sách -->
+                <div id="catListView">
+                    <button class="btn-add-cat-dashed" onclick="showAddCategoryForm()">
+                        <i class="ph ph-plus"></i> Thêm Danh Mục Mới
+                    </button>
+                    
+                    <div class="label-with-action" style="margin-top: 24px;">
+                        <span class="modal-label" style="font-size: 14px; font-weight: 700;">Danh Sách Danh Mục (<span id="catCount">0</span>)</span>
+                    </div>
+                    
+                    <div class="cat-list" id="catListContainer">
+                        <!-- Categories dynamic render -->
+                    </div>
+                </div>
+
+                <!-- Chế độ Thêm/Sửa -->
+                <div id="catFormView" style="display: none;">
+                    <div class="cat-preview-section">
+                        <span class="cat-preview-label">Xem Trước</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span id="catPreviewTag" class="cat-tag-preview">Tên danh mục</span>
+                            <span id="catPreviewHex" style="font-family: monospace; font-size: 13px; color: #64748b;">#2fab91</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-field full">
+                        <label class="modal-label">Tên Danh Mục</label>
+                        <input type="text" class="modal-input" id="catNameInput" placeholder="VD: Email, Banking, Gaming..." oninput="updateCatPreview()">
+                    </div>
+
+                    <div class="modal-field full">
+                        <label class="modal-label">Màu Sắc</label>
+                        <div class="hex-input-wrapper">
+                            <div class="color-dot" id="catColorDot" style="background: #2fab91;"></div>
+                            <input type="text" class="hex-input" id="catHexInput" value="#2fab91" oninput="updateCatPreviewFromHex()">
+                        </div>
+                    </div>
+
+                    <div class="modal-label" style="margin-top: 16px;">Bộ màu gợi ý:</div>
+                    <div class="color-presets" id="colorPresets">
+                        <!-- Generated by JS -->
+                    </div>
+
+                    <div class="modal-footer" style="padding: 16px 0 0 0; margin-top: 24px; border-top: 1px solid #f1f5f9;">
+                        <button type="button" class="modal-btn-cancel" onclick="showCategoryList()">Hủy</button>
+                        <button type="button" class="modal-btn-submit" id="catSubmitBtn" onclick="saveCategory()">Thêm Mới</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer" id="catMainFooter">
+                <button class="modal-btn-submit" style="width: 100%; height: 48px;" onclick="closeCategoryModal()">Đóng</button>
+            </div>
         </div>
     </div>
 
@@ -453,9 +664,19 @@ async function submitAddPwdForm(e) {
         });
         const result = await response.json();
         if (result.success) {
+            // Update local data and UI immediately
+            if (currentActionMode === 'add') {
+                data.id = result.id || Date.now(); // Use ID from response if available
+                PASSWORDS.unshift(data);
+            } else {
+                const index = PASSWORDS.findIndex(p => p.id == currentEditId);
+                if (index !== -1) PASSWORDS[index] = { ...data, id: currentEditId };
+            }
+            
             setTimeout(() => {
-                window.location.reload();
-            }, 1500);
+                closeAddPwdModal();
+                renderPasswords();
+            }, 1000);
         } else {
             alert('Lỗi: ' + (result.message || 'Không thể lưu mật khẩu'));
         }
@@ -463,6 +684,164 @@ async function submitAddPwdForm(e) {
         console.error('Error:', error);
         alert('Lỗi kết nối máy chủ');
     }
+}
+
+// Category Management JS Logic
+let currentCatEditId = null;
+const COLOR_PRESETS = [
+    '#2fab91', '#2563eb', '#ef4444', '#f59e0b', '#f97316', '#059669',
+    '#38bdf8', '#6366f1', '#8b5cf6', '#d946ef', '#ec4899', '#475569'
+];
+
+function openCategoryModal() {
+    document.getElementById('categoryModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    showCategoryList();
+    renderColorPresets();
+}
+
+function closeCategoryModal() {
+    document.getElementById('categoryModal').classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+function showCategoryList() {
+    document.getElementById('catListView').style.display = 'block';
+    document.getElementById('catFormView').style.display = 'none';
+    document.getElementById('catMainFooter').style.display = 'block';
+    renderCategories();
+}
+
+function showAddCategoryForm(id = null) {
+    currentCatEditId = id;
+    document.getElementById('catListView').style.display = 'none';
+    document.getElementById('catFormView').style.display = 'block';
+    document.getElementById('catMainFooter').style.display = 'none';
+    
+    if (id) {
+        const cat = CATEGORIES.find(c => c.id == id);
+        document.getElementById('catNameInput').value = cat.name;
+        document.getElementById('catHexInput').value = cat.color;
+        document.getElementById('catSubmitBtn').textContent = 'Cập Nhật';
+    } else {
+        document.getElementById('catNameInput').value = '';
+        document.getElementById('catHexInput').value = '#2fab91';
+        document.getElementById('catSubmitBtn').textContent = 'Thêm Mới';
+    }
+    updateCatPreview();
+}
+
+function renderCategories() {
+    const container = document.getElementById('catListContainer');
+    document.getElementById('catCount').textContent = CATEGORIES.length;
+    
+    container.innerHTML = CATEGORIES.map(c => `
+        <div class="cat-item">
+            <div class="cat-info">
+                <div class="cat-color-preview" style="background: ${c.color}"></div>
+                <div class="cat-name">${c.name}</div>
+                <div class="cat-tag-preview" style="background: ${c.color}20; color: ${c.color}; border-color: ${c.color}">${c.name}</div>
+            </div>
+            <div class="cat-actions">
+                <button class="btn-icon-sm" onclick="showAddCategoryForm(${c.id})"><i class="ph ph-pencil-simple"></i></button>
+                <button class="btn-icon-sm" style="color: #ef4444;" onclick="deleteCategory(${c.id})"><i class="ph ph-trash"></i></button>
+            </div>
+        </div>
+    `).join('');
+    
+    // Update Password Modal Select options
+    const catSelect = document.getElementById('mPwdCategory');
+    const currentVal = catSelect.value;
+    catSelect.innerHTML = CATEGORIES.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+    if (CATEGORIES.length === 0) {
+        catSelect.innerHTML = '<option value="Khác">Khác</option>';
+    }
+}
+
+function renderColorPresets() {
+    const container = document.getElementById('colorPresets');
+    container.innerHTML = COLOR_PRESETS.map(c => `
+        <div class="color-tile" style="background: ${c}" onclick="selectPresetColor('${c}', this)">
+            <i class="ph ph-check"></i>
+        </div>
+    `).join('');
+    selectPresetColor(document.getElementById('catHexInput').value);
+}
+
+function selectPresetColor(color, el = null) {
+    document.getElementById('catHexInput').value = color;
+    document.querySelectorAll('.color-tile').forEach(t => t.classList.remove('active'));
+    if (el) el.classList.add('active');
+    else {
+        const active = [...document.querySelectorAll('.color-tile')].find(t => t.style.backgroundColor.includes(color.toLowerCase()));
+        if (active) active.classList.add('active');
+    }
+    updateCatPreview();
+}
+
+function updateCatPreview() {
+    const name = document.getElementById('catNameInput').value || 'Tên danh mục';
+    const color = document.getElementById('catHexInput').value;
+    const tag = document.getElementById('catPreviewTag');
+    
+    tag.textContent = name;
+    tag.style.background = color + '20';
+    tag.style.color = color;
+    tag.style.borderColor = color;
+    document.getElementById('catPreviewHex').textContent = color;
+    document.getElementById('catColorDot').style.background = color;
+}
+
+function updateCatPreviewFromHex() {
+    const hex = document.getElementById('catHexInput').value;
+    if (/^#[0-9A-F]{6}$/i.test(hex)) {
+        updateCatPreview();
+    }
+}
+
+async function saveCategory() {
+    const data = {
+        id: currentCatEditId,
+        name: document.getElementById('catNameInput').value,
+        color: document.getElementById('catHexInput').value
+    };
+
+    if (!data.name) return alert('Vui lòng nhập tên danh mục');
+
+    try {
+        const response = await fetch('/passwords/categories/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (result.success) {
+            if (currentCatEditId) {
+                const idx = CATEGORIES.findIndex(c => c.id == currentCatEditId);
+                CATEGORIES[idx] = { ...data, id: currentCatEditId };
+            } else {
+                CATEGORIES.push({ ...data, id: result.id || Date.now() });
+            }
+            showCategoryList();
+        }
+    } catch (e) { console.error(e); }
+}
+
+async function deleteCategory(id) {
+    if (!confirm('Bạn có chắc muốn xóa danh mục này?')) return;
+    try {
+        const response = await fetch('/passwords/categories/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        });
+        const result = await response.json();
+        if (result.success) {
+            const idx = CATEGORIES.findIndex(c => c.id == id);
+            CATEGORIES.splice(idx, 1);
+            renderCategories();
+        }
+    } catch (e) { console.error(e); }
 }
 
 function showPwdToast(loadingMsg, successMsg) {
@@ -553,14 +932,17 @@ function updatePagination(totalItems, totalPages, currentPage, itemsPerPage) {
 
 function createPasswordCard(p) {
     const card = document.createElement('div');
-    const borderClass = p.category === 'Tài khoản' ? 'border-top-red' : 'border-top-teal';
-    card.className = `pwd-card ${borderClass}`;
+    
+    // Find category for custom color
+    const cat = CATEGORIES.find(c => c.name === p.category);
+    const catColor = cat ? cat.color : '#64748b';
+    
+    card.className = `pwd-card`;
+    card.style.borderTop = `4px solid ${catColor}`;
     
     // Category Badge
-    let badgeClass = 'outline-purple';
-    let iconClass = 'ph-dots-three-circle';
-    if (p.category === 'Email') { badgeClass = 'outline-blue'; iconClass = 'ph-envelope'; }
-    if (p.category === 'Tài khoản') { badgeClass = 'outline-red'; iconClass = 'ph-user-circle'; }
+    const badgeStyle = `background: ${catColor}15; color: ${catColor}; border-color: ${catColor}`;
+    const iconClass = p.category === 'Email' ? 'ph-envelope' : (p.category === 'Tài khoản' ? 'ph-user-circle' : 'ph-dots-three-circle');
 
     const urlDisplay = p.url ? `
         <div class="pwd-link">
@@ -581,7 +963,7 @@ function createPasswordCard(p) {
         <div class="pwd-header">
             <h3>${p.title}</h3>
             <div class="pwd-tags">
-                <span class="badge-tag ${badgeClass}"><i class="ph ${iconClass}"></i> ${p.category}</span>
+                <span class="badge-tag" style="${badgeStyle}"><i class="ph ${iconClass}"></i> ${p.category}</span>
             </div>
             ${urlDisplay}
         </div>
