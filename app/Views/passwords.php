@@ -9,8 +9,8 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
         // Data injected from PHP Models
-        const PASSWORDS = <?php echo json_encode($passwords ?? []); ?>;
-        const CATEGORIES = <?php echo json_encode($categories ?? []); ?>;
+        const PASSWORDS = <?php echo json_encode($passwords ?? []); ?> || [];
+        const CATEGORIES = <?php echo json_encode($categories ?? []); ?> || [];
     </script>
     <script src="/js/shared-data.js"></script>
     <style>
@@ -377,7 +377,7 @@
                 <div class="pj-toolbar">
                     <div class="pj-search-wrap">
                         <i class="ph ph-magnifying-glass pj-search-icon"></i>
-                        <input type="text" class="pj-search-input" placeholder="Tìm kiếm theo tiêu đề, tên đăng nhập, website...">
+                        <input type="text" class="pj-search-input" id="pwdSearchInput" placeholder="Tìm kiếm theo tiêu đề, tên đăng nhập, website...">
                     </div>
                     <div class="pj-toolbar-right">
                         <div class="pj-filter-wrapper">
@@ -414,7 +414,7 @@
                         <p>Chưa có mật khẩu nào được lưu.</p>
                     </div>
                 </div>
-                </div>
+                
 
                 <!-- Pagination -->
                 <div class="logs-pagination-row" id="pwdPaginationRow" style="display: none;">
