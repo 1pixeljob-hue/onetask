@@ -215,7 +215,6 @@ body {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    width: calc(100% - 260px);
     overflow-x: hidden;
 }
 
@@ -325,24 +324,26 @@ body {
 
 /* Content Body */
 .content-body {
-    padding: 24px 32px 40px;
+    padding: 32px;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 32px;
-}
-
-.welcome-section {
-    padding-bottom: 8px;
-    border-bottom: 1px solid #f1f5f9;
-    margin-bottom: 8px;
+    gap: 24px;
 }
 
 .welcome-section h2 {
-    font-size: 26px;
-    font-weight: 800;
+    font-size: 24px;
+    font-weight: 700;
     margin-bottom: 8px;
-    color: #0f172a;
+}
+
+.highlight {
+    color: var(--primary-color);
+}
+
+.welcome-section p {
+    font-size: 14px;
+    color: var(--text-muted);
 }
 
 /* Stats Grid */
@@ -3295,9 +3296,9 @@ body {
 /* Stats Grid V2 */
 .stats-grid-v2 {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 24px;
-    margin-bottom: 8px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
 }
 
 .stat-card-v2 {
@@ -3377,11 +3378,12 @@ body {
 /* Revenue Chart Section */
 .middle-section-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 24px;
+    margin-bottom: 32px;
 }
 
-.middle-section-grid > div {
+.middle-section-grid > * {
     min-width: 0;
 }
 
@@ -3509,10 +3511,9 @@ body {
     gap: 24px;
 }
 
-.bottom-section-grid > div {
+.bottom-section-grid > * {
     min-width: 0;
 }
-
 
 .activity-card-v2 {
     background: #fff;
