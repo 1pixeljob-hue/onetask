@@ -159,17 +159,8 @@
                     <!-- Column 1 -->
                     <div class="board-column">
                         <h3 class="section-title">Tình Trạng Hosting</h3>
-                        <div class="card-list">
-                            <div class="list-item">
-                                <div class="item-icon color-orange"><i class="ph ph-warning-circle"></i></div>
-                                <div class="item-content">
-                                    <h4>Photoeditor 24h</h4>
-                                    <p>Còn 17 ngày</p>
-                                </div>
-                                <div class="item-meta error-text">
-                                    17/04/2026
-                                </div>
-                            </div>
+                        <div class="card-list" id="dashHostingList">
+                            <!-- Rendered by JS -->
                         </div>
                     </div>
 
@@ -264,7 +255,37 @@
     document.getElementById('statTestingValue').textContent = formatVNDShort(stats.testingValue);
     document.getElementById('statRevenue').textContent = formatVNDShort(stats.totalRevenue).replace(' VNĐ', '');
     
-    // Project Progress List
+    // Hosting Status List (Column 1)
+    const hostListContainer = document.getElementById('dashHostingList');
+    let hostHtml = '';
+    
+    // Combine and sort by urgency (Expired first, then Expiring Soon)
+    const urgentHostings = [...stats.expiredList, ...stats.expiringSoonList];
+    
+    urgentHostings.forEach(h => {
+        const isExpired = h.diffDays < 0;
+        const iconColor = isExpired ? 'color-red' : 'color-orange';
+        const metaClass = isExpired ? 'error-text' : 'orange-text';
+        const subtext = isExpired ? 'Đã hết hạn' : `Còn ${h.diffDays} ngày`;
+        
+        hostHtml += `
+            <div class="list-item">
+                <div class="item-icon ${iconColor}"><i class="ph ph-warning-circle"></i></div>
+                <div class="item-content">
+                    <h4>${h.name}</h4>
+                    <p>${subtext}</p>
+                </div>
+                <div class="item-meta ${metaClass}">${formatDateVN(h.expDate)}</div>
+            </div>
+        `;
+    });
+    
+    if (urgentHostings.length === 0) {
+        hostHtml = '<div class="list-item"><div class="item-content"><p class="text-muted">Không có hosting nào chuẩn bị hết hạn</p></div></div>';
+    }
+    hostListContainer.innerHTML = hostHtml;
+
+    // Project Progress List (Column 2)
     const listContainer = document.getElementById('dashProjectList');
     const activeProjects = PROJECTS.filter(p => p.status === 'doing' || p.status === 'testing');
     
@@ -292,4 +313,5 @@
     }
 })();
 </script>
+
 </html>

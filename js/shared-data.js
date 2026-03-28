@@ -368,15 +368,28 @@ function getDashboardStats() {
     let expiringSoon = 0;
     let activeHostings = 0;
     let expiredHostings = 0;
+    const expiringSoonList = [];
+    const expiredList = [];
 
     HOSTINGS.forEach(h => {
         const exp = new Date(h.expDate);
         exp.setHours(0, 0, 0, 0);
         const diffDays = Math.ceil((exp - today) / (1000 * 60 * 60 * 24));
-        if (diffDays < 0) expiredHostings++;
-        else if (diffDays <= 15) expiringSoon++;
-        else activeHostings++;
+        
+        if (diffDays < 0) {
+            expiredHostings++;
+            expiredList.push({ ...h, diffDays });
+        } else if (diffDays <= 30) {
+            expiringSoon++;
+            expiringSoonList.push({ ...h, diffDays });
+        } else {
+            activeHostings++;
+        }
     });
+
+    // Sort: expiredList by expDate (oldest first), expiringSoonList by diffDays (soonest first)
+    expiredList.sort((a, b) => new Date(a.expDate) - new Date(b.expDate));
+    expiringSoonList.sort((a, b) => a.diffDays - b.diffDays);
 
     // Project stats
     const doingProjects = PROJECTS.filter(p => p.status === 'doing');
@@ -396,6 +409,8 @@ function getDashboardStats() {
         activeHostings,
         expiringSoon,
         expiredHostings,
+        expiringSoonList,
+        expiredList,
         doingProjects,
         testingProjects,
         doneProjects,
@@ -405,6 +420,7 @@ function getDashboardStats() {
         testingValue
     };
 }
+
 
 /**
  * Tính % tăng trưởng so với năm trước

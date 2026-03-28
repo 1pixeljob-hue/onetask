@@ -20,6 +20,7 @@
 ## 3. Lịch sử thay đổi (Changelog)
 - **[Mới hoàn thành]** Xây dựng Layout Dashboard hiện đại với Sidebar và Stats Grid.
 - **[Mới hoàn thành]** Tích hợp logic tính toán Stats từ `PHP_DATA` (dữ liệu thực từ MySQL).
+- **[Mới hoàn thành]** Chuyển đổi Column 1 "Tình Trạng Hosting" từ mockup sang dữ liệu thực (Hiển thị Hosting hết hạn và sắp hết hạn trong 30 ngày).
 - **[Mới hoàn thành]** Hiển thị danh sách dự án đang thực hiện động dựa trên trạng thái thực tế.
 
 ## 4. Gợi ý Tối ưu (Future Optimizations)
