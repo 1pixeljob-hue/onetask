@@ -272,7 +272,17 @@
             margin-bottom: 12px;
             display: block;
         }
-    </style>
+        /* Delete Modal specific */
+    .modal-box.danger-modal { border-top: 5px solid #ef4444; }
+    .btn-danger-ok { background: #ef4444 !important; color: white !important; font-weight: 600; flex: 1; height: 44px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .btn-danger-ok:hover { background: #dc2626 !important; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+
+    /* Animation for modals */
+    .modal-overlay { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; opacity: 0; }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-overlay.active .modal-box { transform: scale(1); opacity: 1; }
+    .modal-box { transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); transform: scale(0.9); opacity: 0; }
+</style>
 </head>
 <body>
     <div class="app-container">
@@ -551,6 +561,32 @@
         </div>
     </div>
 
+    <!-- Modal Xác nhận Xóa Mật Khẩu -->
+    <div class="modal-overlay" id="confirmDeletePwdModal" onclick="closeConfirmDeletePwdModalOverlay(event)">
+        <div class="modal-box danger-modal" style="max-width: 420px; padding: 24px; border-radius: 16px; position: relative;">
+            <button class="modal-close" style="position: absolute; right: 20px; top: 20px;" onclick="closeConfirmDeletePwdModal()"><i class="ph ph-x"></i></button>
+            
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px;">
+                <div style="width: 48px; height: 48px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 12px; font-size: 24px; display: flex; align-items: center; justify-content: center;">
+                    <i class="ph-fill ph-warning"></i>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--text-main);">Xác nhận xóa mật khẩu</h3>
+                    <p style="margin: 4px 0 0 0; color: #64748b; font-size: 12px; font-weight: 500;">HÀNH ĐỘNG KHÔNG THỂ HOÀN TÁC</p>
+                </div>
+            </div>
+            
+            <p style="margin: 0 0 28px 0; color: #475569; font-size: 14px; line-height: 1.6;">
+                Bạn có chắc chắn muốn xóa mật khẩu "<strong id="cdmPwdTitle" style="color: #0f172a;"></strong>"? Toàn bộ dữ liệu của mục này sẽ bị xóa khỏi hệ thống.
+            </p>
+            
+            <div style="display: flex; gap: 12px;">
+                <button class="modal-btn-cancel" style="flex: 1; justify-content: center; height: 44px; border-radius: 10px; font-weight: 600;" onclick="closeConfirmDeletePwdModal()">Hủy Bỏ</button>
+                <button class="btn-danger-ok" onclick="confirmDeletePwdAction()">Xác Nhận Xóa</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification Toast -->
     <div id="pwdToast" class="toast">
         <div class="toast-content">
@@ -580,6 +616,7 @@ function setPwdFilter(tagClass, label, el) {
 
 let currentActionMode = 'add';
 let currentEditId = null;
+let pwdToDeleteId = null; // Store ID for deletion confirmation
 
 // Modal Password Functions
 function openAddPwdModal() {
@@ -1058,31 +1095,50 @@ function toggleCardPwd(btn) {
     }
 }
 
+function closeConfirmDeletePwdModal() {
+    document.getElementById('confirmDeletePwdModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function closeConfirmDeletePwdModalOverlay(e) {
+    if (e.target.id === 'confirmDeletePwdModal') closeConfirmDeletePwdModal();
+}
+
 async function promptDeletePwd(id, title) {
-    if (confirm(`Bạn có chắc muốn xóa mật khẩu "${title}" không?`)) {
-        showPwdToast('Đang xóa mật khẩu...', 'loading');
-        try {
-            const response = await fetch('/passwords/delete', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id })
-            });
-            const result = await response.json();
-            if (result.success) {
-                // Update local state without reload to avoid UI glitches
-                const index = PASSWORDS.findIndex(p => p.id == id);
-                if (index !== -1) {
-                    PASSWORDS.splice(index, 1);
-                }
-                showPwdToast('Đã xóa mật khẩu thành công!', 'success');
-                renderPasswords();
-            } else {
-                showPwdToast(result.message || 'Không thể xóa mật khẩu', 'error');
+    pwdToDeleteId = id;
+    document.getElementById('cdmPwdTitle').textContent = title;
+    document.getElementById('confirmDeletePwdModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+async function confirmDeletePwdAction() {
+    if (!pwdToDeleteId) return;
+    
+    closeConfirmDeletePwdModal();
+    showPwdToast('Đang xóa mật khẩu...', 'loading');
+    
+    try {
+        const response = await fetch('/passwords/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: pwdToDeleteId })
+        });
+        const result = await response.json();
+        if (result.success) {
+            // Update local state without reload to avoid UI glitches
+            const index = PASSWORDS.findIndex(p => p.id == pwdToDeleteId);
+            if (index !== -1) {
+                PASSWORDS.splice(index, 1);
             }
-        } catch (error) {
-            console.error('Error:', error);
-            showPwdToast('Lỗi kết nối máy chủ', 'error');
+            showPwdToast('Đã xóa mật khẩu thành công!', 'success');
+            renderPasswords();
+            pwdToDeleteId = null;
+        } else {
+            showPwdToast(result.message || 'Không thể xóa mật khẩu', 'error');
         }
+    } catch (error) {
+        console.error('Error:', error);
+        showPwdToast('Lỗi kết nối máy chủ', 'error');
     }
 }
 </script>
