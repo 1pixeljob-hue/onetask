@@ -21,10 +21,9 @@
 ## 3. Lịch sử thay đổi (Changelog)
 - **[Mới hoàn thành]** Xây dựng Layout giao diện quản lý dự án, search bar, và lọc trạng thái.
 - **[Mới hoàn thành]** Tích hợp Floating Action Menu (Xem chi tiết, Chỉnh sửa, Xóa đơn lẻ).
-- **[Mới hoàn thành]** Triển khai tính năng **Xóa Hàng Loạt (Bulk Delete)**:
-    - Thêm UI Bulk Action Bar.
-    - Thêm API deleteBulk trong Model và Controller.
-    - Tích hợp logic selection và AJAX Fetch API.
+- **[Mới hoàn thành]** Triển khai tính năng **Xóa Hàng Loạt (Bulk Delete)**.
+- **[Mới hoàn thành]** Chuẩn hóa giao diện **Modal Header**: Tích hợp Brand-boxed icon và đồng bộ hóa UI trên toàn module.
+- **[Mới hoàn thành]** Đồng bộ hệ thống **Dropdown Select**: Sử dụng `.pj-dropdown` cao cấp thay thế cho select mặc định.
 
 ## 4. Gợi ý Tối ưu (Future Optimizations)
 1. **Phân quyền**: Thêm kiểm tra quyền hạn trước khi thực hiện xóa (chỉ Admin mới được xóa).

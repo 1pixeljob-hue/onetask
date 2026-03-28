@@ -21,7 +21,9 @@
 - **[Mới hoàn thành]** Triển khai API Endpoints đồng bộ dữ liệu qua Fetch API cho cả Mật khẩu và Danh mục.
 - **[Mới hoàn thành]** Hoàn thiện **Modal Quản Lý Danh Mục** với tính năng chọn màu sắc tùy biến và xem trước Tag trực quan bám sát thiết kế.
 - **[Mới hoàn thành]** Chuyển đổi Grid hiển thị sang cơ chế **State-based Rendering**: Tự động cập nhật giao diện ngay khi lưu/xóa dữ liệu mà không cần tải lại trang (Zero-reload UX).
-- **[Mới hoàn thành]** Tích hợp hệ thống **Toast Notifications** đồng bộ cho tất cả các thao tác dữ liệu.
+- **[Mới hoàn thành]** Tích hợp hệ thống **Toast Notifications** đồng bộ.
+- **[Mới hoàn thành]** Chuẩn hóa giao diện **Modal Header**: Chuyển style cục bộ sang global cho toàn hệ thống.
+- **[Mới hoàn thành]** Đồng bộ hệ thống **Dropdown Select**: Cập nhật Danh mục Password bằng UI cao cấp mới.
 
 ## 4. Gợi ý Tối ưu (Future Optimizations)
 1. **Mã hóa Dữ liệu (Encryption)**: Hiện tại mật khẩu đang được lưu ở dạng bản rõ (plaintext) trong DB. Cần triển khai mã hóa đối xứng (Symmetric Encryption - ví dụ: AES-256) trước khi lưu để đảm bảo an toàn tuyệt đối nếu DB bị rò rỉ.
