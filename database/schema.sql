@@ -1,5 +1,5 @@
 -- 1Pixel Dashboard - Database Schema
--- Last Updated: 2026-03-27
+-- Last Updated: 2026-03-29
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -72,5 +72,36 @@ CREATE TABLE `activity_logs` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------
+-- Table structure for snippet_categories
+-- ----------------------------
+DROP TABLE IF EXISTS `snippet_categories`;
+CREATE TABLE `snippet_categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL UNIQUE,
+  `color` varchar(20) DEFAULT '#fef9c3',
+  `text_color` varchar(20) DEFAULT '#854d0e',
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------
+-- Table structure for snippets
+-- ----------------------------
+DROP TABLE IF EXISTS `snippets`;
+CREATE TABLE `snippets` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `language` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `code` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `line_count` int(11) DEFAULT 0,
+  `char_count` int(11) DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 
