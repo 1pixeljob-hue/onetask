@@ -53,6 +53,9 @@ class CodeCategoryModel {
     }
 
     public function create($data) {
+        if (is_string($data)) {
+            $data = ['name' => $data, 'color' => '#fef9c3', 'text_color' => '#854d0e'];
+        }
         try {
             $stmt = $this->db->prepare("INSERT INTO snippet_categories (name, color, text_color) VALUES (:name, :color, :text_color)");
             if ($stmt->execute([
@@ -84,11 +87,17 @@ class CodeCategoryModel {
 
     public function delete($id) {
         try {
-            $stmt = $this->db->prepare("DELETE FROM snippet_categories WHERE id = ?");
-            return $stmt->execute([$id]);
+            $stmt = $this->db->prepare("DELETE FROM snippet_categories WHERE id = :id");
+            return $stmt->execute([':id' => $id]);
         } catch (PDOException $e) {
             return false;
         }
+    }
+
+    public function find($id) {
+        $stmt = $this->db->prepare("SELECT * FROM snippet_categories WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function findByName($name) {

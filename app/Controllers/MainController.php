@@ -95,30 +95,49 @@ class MainController extends BaseController {
     }
 
     /**
-     * API: Lưu Danh mục Code (Thêm mới hoặc Cập nhật)
+     * API: Lưu Danh mục Code (Thêm mới)
      */
     public function saveCodeCategory() {
         header('Content-Type: application/json');
-        
         $input = json_decode(file_get_contents('php://input'), true);
-        if (!$input) $input = $_POST;
+        
+        $id = $input['id'] ?? ($_POST['id'] ?? null);
+        $name = $input['name'] ?? ($_POST['name'] ?? null);
 
-        if (!$input || !isset($input['name'])) {
-            echo json_encode(['success' => false, 'message' => 'Tên danh mục không hợp lệ']);
+        if (!$name && !$id) {
+            echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);
             return;
         }
 
-        if (isset($input['id']) && $input['id']) {
-            $success = $this->codeCategoryModel->update($input['id'], $input);
+        if ($id) {
+            $success = $this->codeCategoryModel->update($id, [
+                'name' => $name,
+                'color' => $input['color'] ?? '#fef9c3',
+                'text_color' => $input['text_color'] ?? '#854d0e'
+            ]);
+            $success_id = $id;
         } else {
-            $success = $this->codeCategoryModel->create($input);
+            // Check if exists first for simple "Add New" from dropdown
+            $existing = $this->codeCategoryModel->findByName($name);
+            if ($existing) {
+                echo json_encode(['success' => true, 'id' => $existing['id'], 'name' => $existing['name'], 'exists' => true]);
+                return;
+            }
+
+            $success_id = $this->codeCategoryModel->create($name);
+            $success = $success_id !== false;
         }
 
-        echo json_encode(['success' => (bool)$success]);
+        if ($success) {
+            $cat = $this->codeCategoryModel->find($success_id);
+            echo json_encode(['success' => true, 'id' => $success_id, 'name' => $cat['name'], 'color' => $cat['color'], 'text_color' => $cat['text_color']]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Lỗi khi lưu danh mục']);
+        }
     }
 
     /**
-     * API: Xóa Danh mục Code
+     * API: Xóa Danh mục Code (CodeX)
      */
     public function deleteCodeCategory() {
         header('Content-Type: application/json');

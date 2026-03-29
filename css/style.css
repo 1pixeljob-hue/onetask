@@ -3649,6 +3649,21 @@ body {
     font-size: 18px;
 }
 
+.cx-sidebar-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.cx-sidebar-actions .btn-primary, 
+.cx-sidebar-actions .btn-secondary {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    justify-content: center;
+}
+
 .cx-code-editor-wrapper {
     background-color: #0f172a;
     border-radius: 10px;
@@ -3823,139 +3838,81 @@ body {
     max-width: 800px; /* Wider for code editing */
 }
 
-/* Shared Category Management Styles */
-.label-with-action {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
+/* Add Category UI inside Dropdown */
+.cx-add-lang-wrapper {
+    padding: 8px 10px;
 }
-.cat-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 20px;
-    max-height: 400px;
-    overflow-y: auto;
-    padding-right: 4px;
-}
-.cat-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    transition: all 0.2s;
-}
-.cat-item:hover {
-    border-color: #cbd5e1;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-.cat-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.cat-color-preview {
-    width: 24px;
-    height: 24px;
-    border-radius: 6px;
-}
-.cat-name {
-    font-weight: 600;
-    color: #1e293b;
-}
-.cat-tag-preview {
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    border: 1px solid transparent;
-}
-.cat-actions {
-    display: flex;
-    gap: 8px;
-}
-.btn-add-cat-dashed {
+
+.cx-show-add-btn {
     width: 100%;
-    padding: 16px;
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    background: none;
-    color: #64748b;
-    font-weight: 600;
+    padding: 8px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
     transition: all 0.2s;
 }
-.btn-add-cat-dashed:hover {
-    border-color: var(--primary-color);
+
+.cx-show-add-btn:hover {
+    background: #f1f5f9;
     color: var(--primary-color);
-    background: rgba(47, 171, 145, 0.05);
+    border-color: var(--primary-color);
 }
-.color-presets {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 10px;
-    margin: 12px 0;
+
+.cx-add-lang-input-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
-.color-preset-item {
-    aspect-ratio: 1;
-    border-radius: 8px;
-    cursor: pointer;
+
+.cx-add-lang-input-group input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+}
+
+.cx-add-lang-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.cx-add-btn-small, .cx-cancel-btn-small {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
+    cursor: pointer;
+    border: none;
     transition: all 0.2s;
 }
-.color-preset-item:hover {
-    transform: scale(1.1);
+
+.cx-add-btn-small {
+    background: var(--primary-color);
+    color: white;
 }
-.hex-input-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: #f8fafc;
-    padding: 4px 12px;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
+
+.cx-add-btn-small:hover {
+    background: #17a892;
 }
-.hex-input-wrapper .color-dot {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
+
+.cx-cancel-btn-small {
+    background: #f1f5f9;
+    color: #64748b;
 }
-.hex-input {
-    border: none !important;
-    background: none !important;
-    font-family: monospace;
-    font-weight: 600;
-    color: #475569;
-    flex: 1;
-    padding: 8px 0;
-    outline: none !important;
-    box-shadow: none !important;
-}
-.cat-preview-section {
-    background: #f8fafc;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-    border: 1px solid #e2e8f0;
-}
-.cat-preview-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 12px;
-    display: block;
+
+.cx-cancel-btn-small:hover {
+    background: #e2e8f0;
+    color: #0f172a;
 }
