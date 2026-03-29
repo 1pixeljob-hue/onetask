@@ -105,7 +105,7 @@
                             <h3><i class="ph ph-funnel"></i> Bộ Lọc</h3>
                             <button class="btn-primary btn-block" onclick="openCxModal()"><i class="ph ph-plus"></i> Thêm Snippet</button>
                         </div>
-                        <div class="cx-sidebar-nav">
+                        <div class="cx-sidebar-nav" id="cxSidebarNav">
                             <div class="cx-nav-item active" onclick="filterByLang('all')">
                                 <span>Tất cả ngôn ngữ</span>
                                 <div class="cx-badge-right">
@@ -113,17 +113,11 @@
                                     <i class="ph ph-caret-right"></i>
                                 </div>
                             </div>
-                            <?php 
-                            $langs = [];
-                            foreach($snippets as $s) {
-                                if(!in_array($s['language'], $langs)) $langs[] = $s['language'];
-                            }
-                            sort($langs);
-                            foreach($langs as $lang): 
-                                $langCount = count(array_filter($snippets, function($s) use ($lang) { return $s['language'] == $lang; }));
+                            <?php foreach($categories as $cat): 
+                                $langCount = count(array_filter($snippets, function($s) use ($cat) { return $s['language'] == $cat['name']; }));
                             ?>
-                            <div class="cx-nav-item" onclick="filterByLang('<?php echo $lang; ?>')">
-                                <span><?php echo $lang; ?></span>
+                            <div class="cx-nav-item" data-lang-name="<?php echo $cat['name']; ?>" onclick="filterByLang('<?php echo $cat['name']; ?>')">
+                                <span><?php echo $cat['name']; ?></span>
                                 <span class="cx-count"><?php echo $langCount; ?></span>
                             </div>
                             <?php endforeach; ?>
@@ -230,20 +224,36 @@
                         </div>
                         <div class="modal-field">
                             <label class="modal-label"><i class="ph ph-tag"></i> Loại Code <span class="req">*</span></label>
-                            <div class="pj-modal-select" data-input-id="cxLangInput">
+                            <div class="pj-modal-select" data-input-id="cxLangInput" id="cxLangSelect">
                                 <div class="cx-badge-select-trigger pj-modal-select-trigger">
                                     <span class="cx-lang-badge" id="cxLangBadge">JavaScript</span>
                                     <i class="ph ph-caret-down"></i>
                                 </div>
                                 <div class="pj-dropdown">
-                                    <div class="pj-dropdown-item active" data-value="JavaScript"><span>JavaScript</span></div>
-                                    <div class="pj-dropdown-item" data-value="TypeScript"><span>TypeScript</span></div>
-                                    <div class="pj-dropdown-item" data-value="PHP"><span>PHP</span></div>
-                                    <div class="pj-dropdown-item" data-value="HTML"><span>HTML</span></div>
-                                    <div class="pj-dropdown-item" data-value="CSS"><span>CSS</span></div>
-                                    <div class="pj-dropdown-item" data-value="Python"><span>Python</span></div>
-                                    <div class="pj-dropdown-item" data-value="SQL"><span>SQL</span></div>
-                                    <div class="pj-dropdown-item" data-value="Khác"><span>Khác</span></div>
+                                    <div class="pj-dropdown-list" id="cxLangDropdownList">
+                                        <?php foreach($categories as $cat): ?>
+                                        <div class="pj-dropdown-item <?php echo $cat['name'] == 'JavaScript' ? 'active' : ''; ?>" data-value="<?php echo $cat['name']; ?>">
+                                            <span><?php echo $cat['name']; ?></span>
+                                        </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    <div class="pj-dropdown-divider"></div>
+                                    <div class="cx-add-lang-wrapper" onclick="event.stopPropagation()">
+                                        <button type="button" class="cx-show-add-btn" id="cxShowAddBtn" onclick="showAddLangInput(event)">
+                                            <i class="ph ph-plus-circle"></i> Thêm loại mới...
+                                        </button>
+                                        <div class="cx-add-lang-input-group" id="cxAddLangInputGroup" style="display: none;">
+                                            <input type="text" id="newLangInput" placeholder="Tên loại mới..." onkeyup="handleNewLangKey(event)">
+                                            <div class="cx-add-lang-actions">
+                                                <button type="button" class="cx-add-btn-small" onclick="saveNewLang(event)">
+                                                    <i class="ph ph-check"></i>
+                                                </button>
+                                                <button type="button" class="cx-cancel-btn-small" onclick="hideAddLangInput(event)">
+                                                    <i class="ph ph-x"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -394,11 +404,14 @@ function filterByLang(lang) {
     
     // Update active nav
     document.querySelectorAll('.cx-nav-item').forEach(nav => {
-        const span = nav.querySelector('span');
-        if (span.textContent === (lang === 'all' ? 'Tất cả ngôn ngữ' : lang)) {
-            nav.classList.add('active');
+        const langName = nav.getAttribute('data-lang-name');
+        if (lang === 'all') {
+            if (nav.classList.contains('active') && !langName) return; // Already "All"
+            if (!langName) nav.classList.add('active');
+            else nav.classList.remove('active');
         } else {
-            nav.classList.remove('active');
+            if (langName === lang) nav.classList.add('active');
+            else nav.classList.remove('active');
         }
     });
 }
@@ -417,6 +430,81 @@ function searchSnippets() {
         }
     });
     document.getElementById('visibleCount').textContent = visible + ' snippets';
+}
+
+// Category Management Functions
+function showAddLangInput(e) {
+    e.stopPropagation();
+    document.getElementById('cxShowAddBtn').style.display = 'none';
+    document.getElementById('cxAddLangInputGroup').style.display = 'flex';
+    document.getElementById('newLangInput').focus();
+}
+
+function hideAddLangInput(e) {
+    if (e) e.stopPropagation();
+    document.getElementById('cxShowAddBtn').style.display = 'flex';
+    document.getElementById('cxAddLangInputGroup').style.display = 'none';
+    document.getElementById('newLangInput').value = '';
+}
+
+function handleNewLangKey(e) {
+    if (e.key === 'Enter') saveNewLang(e);
+    if (e.key === 'Escape') hideAddLangInput(e);
+}
+
+function saveNewLang(e) {
+    e.stopPropagation();
+    const name = document.getElementById('newLangInput').value.trim();
+    if (!name) return;
+
+    fetch('/codex/categories/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Add to dropdown list if it doesn't exist
+            const list = document.getElementById('cxLangDropdownList');
+            const exists = Array.from(list.children).some(item => item.dataset.value === data.name);
+            
+            if (!exists) {
+                const newItem = document.createElement('div');
+                newItem.className = 'pj-dropdown-item';
+                newItem.dataset.value = data.name;
+                newItem.innerHTML = `<span>${data.name}</span>`;
+                list.appendChild(newItem);
+
+                // Add to sidebar nav if it doesn't exist
+                const sidebarNav = document.getElementById('cxSidebarNav');
+                const navExists = Array.from(sidebarNav.children).some(item => item.dataset.langName === data.name);
+                if (!navExists) {
+                    const newNavItem = document.createElement('div');
+                    newNavItem.className = 'cx-nav-item';
+                    newNavItem.dataset.langName = data.name;
+                    newNavItem.onclick = () => filterByLang(data.name);
+                    newNavItem.innerHTML = `<span>${data.name}</span> <span class="cx-count">0</span>`;
+                    sidebarNav.appendChild(newNavItem);
+                }
+            }
+
+            // Select it
+            document.getElementById('cxLangInput').value = data.name;
+            document.getElementById('cxLangBadge').textContent = data.name;
+            
+            // UI active state
+            Array.from(list.children).forEach(item => {
+                if (item.dataset.value === data.name) item.classList.add('active');
+                else item.classList.remove('active');
+            });
+
+            hideAddLangInput();
+        } else {
+            alert(data.message || 'Lỗi khi thêm loại code');
+        }
+    })
+    .catch(err => console.error('Error:', err));
 }
 
 function copySnippet() {

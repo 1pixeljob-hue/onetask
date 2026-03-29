@@ -27,3 +27,4 @@ $router->add('/passwords/categories/delete', 'MainController', 'deleteCategory')
 // Codex Snippet Routes
 $router->add('/codex/save', 'MainController', 'saveSnippet');
 $router->add('/codex/delete', 'MainController', 'deleteSnippet');
+$router->add('/codex/categories/save', 'MainController', 'saveCodeCategory');

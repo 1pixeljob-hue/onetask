@@ -4,6 +4,7 @@ use App\Models\HostingModel;
 use App\Models\PasswordModel;
 use App\Models\CategoryModel;
 use App\Models\SnippetModel;
+use App\Models\CodeCategoryModel;
 
 class MainController extends BaseController {
     private $projectModel;
@@ -11,6 +12,7 @@ class MainController extends BaseController {
     private $passwordModel;
     private $categoryModel;
     private $snippetModel;
+    private $codeCategoryModel;
 
     public function __construct() {
         $this->projectModel = new ProjectModel();
@@ -18,6 +20,7 @@ class MainController extends BaseController {
         $this->passwordModel = new PasswordModel();
         $this->categoryModel = new CategoryModel();
         $this->snippetModel = new SnippetModel();
+        $this->codeCategoryModel = new CodeCategoryModel();
     }
 
     public function dashboard() {
@@ -54,7 +57,10 @@ class MainController extends BaseController {
     }
 
     public function codex() {
-        $data = ['snippets' => $this->snippetModel->getAll()];
+        $data = [
+            'snippets' => $this->snippetModel->getAll(),
+            'categories' => $this->codeCategoryModel->getAll()
+        ];
         $this->view('codex', $data);
     }
 
@@ -85,6 +91,35 @@ class MainController extends BaseController {
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá snippet']);
             }
+        }
+    }
+
+    /**
+     * API: Lưu Danh mục Code (Thêm mới)
+     */
+    public function saveCodeCategory() {
+        header('Content-Type: application/json');
+        
+        // Handle both standard POST and JSON input
+        $input = json_decode(file_get_contents('php://input'), true);
+        $name = $input['name'] ?? ($_POST['name'] ?? null);
+
+        if (!$name) {
+            echo json_encode(['success' => false, 'message' => 'Tên danh mục không hợp lệ']);
+            return;
+        }
+
+        $existing = $this->codeCategoryModel->findByName($name);
+        if ($existing) {
+            echo json_encode(['success' => true, 'id' => $existing['id'], 'name' => $existing['name'], 'exists' => true]);
+            return;
+        }
+
+        $id = $this->codeCategoryModel->create($name);
+        if ($id) {
+            echo json_encode(['success' => true, 'id' => $id, 'name' => $name]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Lỗi khi tạo danh mục']);
         }
     }
 

@@ -3738,3 +3738,82 @@ body {
 .cx-modal-box {
     max-width: 800px; /* Wider for code editing */
 }
+
+/* Add Category UI inside Dropdown */
+.cx-add-lang-wrapper {
+    padding: 8px 10px;
+}
+
+.cx-show-add-btn {
+    width: 100%;
+    padding: 8px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.cx-show-add-btn:hover {
+    background: #f1f5f9;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.cx-add-lang-input-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cx-add-lang-input-group input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+}
+
+.cx-add-lang-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.cx-add-btn-small, .cx-cancel-btn-small {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.cx-add-btn-small {
+    background: var(--primary-color);
+    color: white;
+}
+
+.cx-add-btn-small:hover {
+    background: #17a892;
+}
+
+.cx-cancel-btn-small {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.cx-cancel-btn-small:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
