@@ -17,6 +17,7 @@
 - **[Mới hoàn thành]** Thiết kế giao diện 3 cột chuyên nghiệp dành cho quản lý code (Sidebar/List/Preview).
 - **[Mới hoàn thành]** Tích hợp font `Fira Code` cho khối mã nguồn.
 - **[Mới hoàn thành]** Triển khai giao diện các bộ lọc ngôn ngữ và bộ đếm số lượng snippet.
+- **[Sửa lỗi]** Đồng bộ hóa class `.open` cho dropdown "Loại Code" đảm bảo hoạt động chính xác tương thích với global JS.
 
 ## 4. Gợi ý Tối ưu (Future Optimizations)
 1. **Highlight Syntax**: Tích hợp thư viện `Prism.js` hoặc `Highlight.js` để tô màu code.

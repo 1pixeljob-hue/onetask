@@ -760,7 +760,7 @@ async function saveNewLang(e) {
             badge.style.color = data.text_color;
 
             hideAddLangInput();
-            document.getElementById('cxLangSelect').classList.remove('active');
+            document.getElementById('cxLangSelect').classList.remove('open');
         } else {
             alert(data.message || 'Lỗi khi thêm loại code');
         }

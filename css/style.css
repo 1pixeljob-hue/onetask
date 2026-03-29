@@ -3798,7 +3798,8 @@ body {
     border-color: var(--primary-color);
 }
 
-.pj-modal-select.active .pj-modal-select-trigger {
+.pj-modal-select.active .pj-modal-select-trigger,
+.pj-modal-select.open .pj-modal-select-trigger {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(42, 184, 156, 0.1);
 }
@@ -3821,6 +3822,7 @@ body {
 }
 
 .pj-modal-select.active .pj-dropdown,
+.pj-modal-select.open .pj-dropdown,
 .pj-dropdown.open {
     opacity: 1;
     visibility: visible;
