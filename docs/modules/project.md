@@ -19,6 +19,10 @@
     - Một modal xác nhận sẽ xuất hiện trước khi thực hiện xóa qua API.
 
 ## 3. Lịch sử thay đổi (Changelog)
+- **[2026-03-29]** Đồng bộ hệ thống **Màu sắc trạng thái (Status Colors)**: Tương thích với Dashboard V2.
+- **[2026-03-29]** Cập nhật **Badge Chờ Nghiệm Thu**: Chuyển từ màu Tím sang màu Cam (Orange) rực rỡ và chuyên nghiệp.
+- **[2026-03-29]** Chuẩn hóa **Badge Hoàn Thành**: Thiết kế lại với màu Xanh lá (Green) nền nhạt chữ đậm.
+- **[2026-03-29]** Đồng bộ bộ class `.st-` tiền tố dùng trong Modal Detail cho nhất quán với Table List.
 - **[Mới hoàn thành]** Xây dựng Layout giao diện quản lý dự án, search bar, và lọc trạng thái.
 - **[Mới hoàn thành]** Tích hợp Floating Action Menu (Xem chi tiết, Chỉnh sửa, Xóa đơn lẻ).
 - **[Mới hoàn thành]** Triển khai tính năng **Xóa Hàng Loạt (Bulk Delete)**.
