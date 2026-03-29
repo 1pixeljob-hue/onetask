@@ -103,52 +103,30 @@
                     <div class="cx-panel cx-sidebar">
                         <div class="cx-sidebar-header">
                             <h3><i class="ph ph-funnel"></i> Bộ Lọc</h3>
-                            <button class="btn-primary btn-block"><i class="ph ph-plus"></i> Thêm Snippet</button>
+                            <button class="btn-primary btn-block" onclick="openCxModal()"><i class="ph ph-plus"></i> Thêm Snippet</button>
                         </div>
                         <div class="cx-sidebar-nav">
-                            <div class="cx-nav-item active">
+                            <div class="cx-nav-item active" onclick="filterByLang('all')">
                                 <span>Tất cả ngôn ngữ</span>
                                 <div class="cx-badge-right">
-                                    <span class="cx-count">5</span>
+                                    <span class="cx-count" id="totalSnippetCount"><?php echo count($snippets); ?></span>
                                     <i class="ph ph-caret-right"></i>
                                 </div>
                             </div>
-                            <div class="cx-nav-item">
-                                <span>JavaScript</span>
-                                <span class="cx-count">0</span>
+                            <?php 
+                            $langs = [];
+                            foreach($snippets as $s) {
+                                if(!in_array($s['language'], $langs)) $langs[] = $s['language'];
+                            }
+                            sort($langs);
+                            foreach($langs as $lang): 
+                                $langCount = count(array_filter($snippets, function($s) use ($lang) { return $s['language'] == $lang; }));
+                            ?>
+                            <div class="cx-nav-item" onclick="filterByLang('<?php echo $lang; ?>')">
+                                <span><?php echo $lang; ?></span>
+                                <span class="cx-count"><?php echo $langCount; ?></span>
                             </div>
-                            <div class="cx-nav-item">
-                                <span>TypeScript</span>
-                                <span class="cx-count">0</span>
-                            </div>
-                            <div class="cx-nav-item">
-                                <span>HTML</span>
-                                <span class="cx-count">0</span>
-                            </div>
-                            <div class="cx-nav-item">
-                                <span>CSS</span>
-                                <span class="cx-count">1</span>
-                            </div>
-                            <div class="cx-nav-item">
-                                <span>PHP</span>
-                                <span class="cx-count">2</span>
-                            </div>
-                            <div class="cx-nav-item">
-                                <span>Python</span>
-                                <span class="cx-count">0</span>
-                            </div>
-                            <div class="cx-nav-item">
-                                <span>SQL</span>
-                                <span class="cx-count">0</span>
-                            </div>
-                            <div class="cx-nav-item">
-                                <span>JSON</span>
-                                <span class="cx-count">0</span>
-                            </div>
-                            <div class="cx-nav-item">
-                                <span>Khác</span>
-                                <span class="cx-count">2</span>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
 
@@ -157,111 +135,296 @@
                         <div class="cx-list-header">
                             <div class="cx-search">
                                 <i class="ph ph-magnifying-glass"></i>
-                                <input type="text" placeholder="Tìm kiếm snippet...">
+                                <input type="text" id="cxSearchInput" placeholder="Tìm kiếm snippet..." oninput="searchSnippets()">
                             </div>
-                            <p class="cx-subtitle">5 snippets</p>
+                            <p class="cx-subtitle" id="visibleCount"><?php echo count($snippets); ?> snippets</p>
                         </div>
-                        <div class="cx-list-body">
-                            <!-- Active Item -->
-                            <div class="cx-snippet-item active">
+                        <div class="cx-list-body" id="cxListBody">
+                            <?php foreach($snippets as $index => $snippet): ?>
+                            <div class="cx-snippet-item <?php echo $index === 0 ? 'active' : ''; ?>" 
+                                 onclick="selectSnippet(<?php echo htmlspecialchars(json_encode($snippet)); ?>, this)"
+                                 data-lang="<?php echo $snippet['language']; ?>"
+                                 data-title="<?php echo strtolower($snippet['title']); ?>">
                                 <div class="cx-snippet-top">
-                                    <h4 class="cx-snippet-title">Kích hoạt win bản quyền</h4>
-                                    <span class="cx-tag tag-gray">Khác</span>
+                                    <h4 class="cx-snippet-title"><?php echo $snippet['title']; ?></h4>
+                                    <span class="cx-tag <?php 
+                                        echo match($snippet['language']) {
+                                            'PHP' => 'tag-blue',
+                                            'CSS' => 'tag-purple',
+                                            'JS', 'JavaScript' => 'tag-yellow',
+                                            default => 'tag-gray'
+                                        };
+                                    ?>"><?php echo $snippet['language']; ?></span>
                                 </div>
-                                <p class="cx-snippet-desc">Mở power shell để tiến hành</p>
+                                <p class="cx-snippet-desc"><?php echo $snippet['description']; ?></p>
                                 <div class="cx-snippet-meta">
-                                    <i class="ph ph-hash"></i> 5 dòng <span class="cx-dot">•</span> 83 ký tự
+                                    <i class="ph ph-hash"></i> <?php echo $snippet['line_count']; ?> dòng <span class="cx-dot">•</span> <?php echo $snippet['char_count']; ?> ký tự
                                 </div>
                             </div>
-
-                            <!-- Item 2 -->
-                            <div class="cx-snippet-item">
-                                <div class="cx-snippet-top">
-                                    <h4 class="cx-snippet-title">Hạn chế text theo dòng</h4>
-                                    <span class="cx-tag tag-purple">CSS</span>
-                                </div>
-                                <p class="cx-snippet-desc"></p>
-                                <div class="cx-snippet-meta">
-                                    <i class="ph ph-hash"></i> 8 dòng <span class="cx-dot">•</span> 193 ký tự
-                                </div>
-                            </div>
-
-                            <!-- Item 3 -->
-                            <div class="cx-snippet-item">
-                                <div class="cx-snippet-top">
-                                    <h4 class="cx-snippet-title">Install license and Setting Import Wordfence</h4>
-                                    <span class="cx-tag tag-gray">Khác</span>
-                                </div>
-                                <p class="cx-snippet-desc"></p>
-                                <div class="cx-snippet-meta">
-                                    <i class="ph ph-hash"></i> 8 dòng <span class="cx-dot">•</span> 376 ký tự
-                                </div>
-                            </div>
-
-                            <!-- Item 4 -->
-                            <div class="cx-snippet-item">
-                                <div class="cx-snippet-top">
-                                    <h4 class="cx-snippet-title">Tắt cập nhật plugin</h4>
-                                    <span class="cx-tag tag-blue">PHP</span>
-                                </div>
-                                <p class="cx-snippet-desc">Add vào function</p>
-                                <div class="cx-snippet-meta">
-                                    <i class="ph ph-hash"></i> 3 dòng <span class="cx-dot">•</span> 160 ký tự
-                                </div>
-                            </div>
-
-                            <!-- Item 5 -->
-                            <div class="cx-snippet-item">
-                                <div class="cx-snippet-top">
-                                    <h4 class="cx-snippet-title">Ẩn 1 menu trong admin WP</h4>
-                                    <span class="cx-tag tag-blue">PHP</span>
-                                </div>
-                                <p class="cx-snippet-desc">Thêm trong function</p>
-                                <div class="cx-snippet-meta">
-                                    <i class="ph ph-hash"></i> 3 dòng <span class="cx-dot">•</span> 83 ký tự
-                                </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
 
                     <!-- Right Panel: Preview -->
-                    <div class="cx-panel cx-preview">
+                    <div class="cx-panel cx-preview" id="cxPreview">
+                        <?php if(!empty($snippets)): $first = $snippets[0]; ?>
                         <div class="cx-preview-header">
                             <div class="cx-preview-title-row">
                                 <div class="cx-preview-title">
-                                    <h2>Kích hoạt win bản quyền</h2>
-                                    <span class="cx-tag tag-gray">Khác</span>
+                                    <h2 id="pTitle"><?php echo $first['title']; ?></h2>
+                                    <span class="cx-tag tag-gray" id="pLang"><?php echo $first['language']; ?></span>
                                 </div>
                                 <div class="cx-preview-actions">
-                                    <button class="btn-icon-nm"><i class="ph ph-pencil-simple"></i></button>
-                                    <button class="btn-icon-nm"><i class="ph ph-trash"></i></button>
+                                    <button class="btn-icon-nm" onclick="editSnippet(<?php echo htmlspecialchars(json_encode($first)); ?>)"><i class="ph ph-pencil-simple"></i></button>
+                                    <button class="btn-icon-nm" onclick="deleteSnippet(<?php echo $first['id']; ?>)"><i class="ph ph-trash"></i></button>
                                 </div>
                             </div>
-                            <p class="cx-preview-desc">Mở power shell để tiến hành</p>
+                            <p class="cx-preview-desc" id="pDesc"><?php echo $first['description']; ?></p>
                             <div class="cx-snippet-meta">
-                                <i class="ph ph-hash"></i> 5 dòng <span class="cx-dot">•</span> 83 ký tự
+                                <i class="ph ph-hash"></i> <span id="pLines"><?php echo $first['line_count']; ?></span> dòng <span class="cx-dot">•</span> <span id="pChars"><?php echo $first['char_count']; ?></span> ký tự
                             </div>
                         </div>
 
                         <div class="cx-preview-body">
                             <div class="cx-code-toolbar">
                                 <span class="cx-code-label"><i class="ph ph-code"></i> Code Preview</span>
-                                <button class="btn-dark"><i class="ph ph-copy"></i> Copy Code</button>
+                                <button class="btn-dark" onclick="copySnippet()"><i class="ph ph-copy"></i> Copy Code</button>
                             </div>
-                            <!-- Mockup code editor/preview container -->
                             <div class="cx-code-container">
-                                <pre><code>// 01
-irm https://massgrave.dev/get | iex
-
-// 02
-irm https://get.activated.win | ie</code></pre>
+                                <pre><code id="pCode"><?php echo htmlspecialchars($first['code']); ?></code></pre>
                             </div>
                         </div>
+                        <?php else: ?>
+                            <div class="cx-empty">Chọn một snippet để xem nội dung</div>
+                        <?php endif; ?>
                     </div>
 
                 </div>
             </div>
         </main>
     </div>
+
+    <!-- Modal: Thêm/Sửa Code Snippet -->
+    <div id="cxModal" class="modal-overlay">
+        <div class="modal-box cx-modal-box">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <div class="cx-modal-icon">
+                        <i class="ph ph-code-simple"></i>
+                    </div>
+                    <span>Thêm Code Mới</span>
+                </div>
+                <button class="modal-close" onclick="closeCxModal()">&times;</button>
+            </div>
+            <form id="cxForm">
+                <input type="hidden" name="id" id="cxId">
+                <input type="hidden" name="language" id="cxLangInput" value="JavaScript">
+                <input type="hidden" name="line_count" id="cxLineCount" value="1">
+                <input type="hidden" name="char_count" id="cxCharCount" value="0">
+
+                <div class="modal-body">
+                    <div class="modal-row">
+                        <div class="modal-field">
+                            <label class="modal-label"><i class="ph ph-notebook"></i> Tên Code <span class="req">*</span></label>
+                            <input type="text" name="title" id="cxTitle" class="modal-input" placeholder="VD: React useEffect Hook" required>
+                        </div>
+                        <div class="modal-field">
+                            <label class="modal-label"><i class="ph ph-tag"></i> Loại Code <span class="req">*</span></label>
+                            <div class="pj-modal-select" data-input-id="cxLangInput">
+                                <div class="cx-badge-select-trigger pj-modal-select-trigger">
+                                    <span class="cx-lang-badge" id="cxLangBadge">JavaScript</span>
+                                    <i class="ph ph-caret-down"></i>
+                                </div>
+                                <div class="pj-dropdown">
+                                    <div class="pj-dropdown-item active" data-value="JavaScript"><span>JavaScript</span></div>
+                                    <div class="pj-dropdown-item" data-value="TypeScript"><span>TypeScript</span></div>
+                                    <div class="pj-dropdown-item" data-value="PHP"><span>PHP</span></div>
+                                    <div class="pj-dropdown-item" data-value="HTML"><span>HTML</span></div>
+                                    <div class="pj-dropdown-item" data-value="CSS"><span>CSS</span></div>
+                                    <div class="pj-dropdown-item" data-value="Python"><span>Python</span></div>
+                                    <div class="pj-dropdown-item" data-value="SQL"><span>SQL</span></div>
+                                    <div class="pj-dropdown-item" data-value="Khác"><span>Khác</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-field full">
+                        <label class="modal-label"><i class="ph ph-text-align-left"></i> Mô Tả</label>
+                        <input type="text" name="description" id="cxDesc" class="modal-input" placeholder="VD: Hook để xử lý side effects trong React">
+                    </div>
+                    <div class="modal-field full">
+                        <label class="modal-label"><i class="ph ph-code"></i> Nội Dung Code <span class="req">*</span></label>
+                        <div class="cx-code-editor-wrapper">
+                            <textarea name="code" id="cxCodeArea" class="cx-code-textarea" placeholder="// Nhập code của bạn tại đây..." oninput="updateStats()" required></textarea>
+                            <div class="cx-code-status-bar">
+                                <span id="statLines">1 dòng</span>
+                                <span class="cx-dot">•</span>
+                                <span id="statChars">0 ký tự</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cx-cancel" onclick="closeCxModal()">Hủy</button>
+                    <button type="submit" class="btn-cx-submit">Thêm Mới</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script>
+function openCxModal() {
+    document.getElementById('cxId').value = '';
+    document.getElementById('cxForm').reset();
+    document.querySelector('#cxModal .modal-title span').textContent = 'Thêm Code Mới';
+    document.querySelector('#cxModal .btn-cx-submit').textContent = 'Thêm Mới';
+    document.getElementById('cxLangBadge').textContent = 'JavaScript';
+    document.getElementById('cxLangInput').value = 'JavaScript';
+    document.getElementById('cxModal').classList.add('active');
+    updateStats();
+}
+
+function closeCxModal() {
+    document.getElementById('cxModal').classList.remove('active');
+}
+
+function updateStats() {
+    const code = document.getElementById('cxCodeArea').value;
+    const lines = code ? code.split('\n').length : 0;
+    const chars = code.length;
+    
+    document.getElementById('statLines').textContent = lines + ' dòng';
+    document.getElementById('statChars').textContent = chars + ' ký tự';
+    document.getElementById('cxLineCount').value = lines;
+    document.getElementById('cxCharCount').value = chars;
+}
+
+// Custom select handle for badge
+document.addEventListener('change', function(e) {
+    if (e.target.id === 'cxLangInput') {
+        document.getElementById('cxLangBadge').textContent = e.target.value;
+    }
+});
+
+document.getElementById('cxForm').onsubmit = function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    fetch('/codex/save', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+    });
+};
+
+function selectSnippet(snippet, element) {
+    // UI update for list
+    document.querySelectorAll('.cx-snippet-item').forEach(i => i.classList.remove('active'));
+    element.classList.add('active');
+    
+    // UI update for preview
+    document.getElementById('pTitle').textContent = snippet.title;
+    document.getElementById('pLang').textContent = snippet.language;
+    document.getElementById('pDesc').textContent = snippet.description;
+    document.getElementById('pLines').textContent = snippet.line_count;
+    document.getElementById('pChars').textContent = snippet.char_count;
+    document.getElementById('pCode').textContent = snippet.code;
+    
+    // Update preview buttons to use current snippet data
+    const actionContainer = document.querySelector('.cx-preview-actions');
+    actionContainer.innerHTML = `
+        <button class="btn-icon-nm" onclick='editSnippet(${JSON.stringify(snippet)})'><i class="ph ph-pencil-simple"></i></button>
+        <button class="btn-icon-nm" onclick="deleteSnippet(${snippet.id})"><i class="ph ph-trash"></i></button>
+    `;
+}
+
+function editSnippet(snippet) {
+    document.getElementById('cxId').value = snippet.id;
+    document.getElementById('cxTitle').value = snippet.title;
+    document.getElementById('cxDesc').value = snippet.description;
+    document.getElementById('cxCodeArea').value = snippet.code;
+    document.getElementById('cxLangInput').value = snippet.language;
+    document.getElementById('cxLangBadge').textContent = snippet.language;
+    
+    document.querySelector('#cxModal .modal-title span').textContent = 'Chỉnh sửa Snippet';
+    document.querySelector('#cxModal .btn-cx-submit').textContent = 'Cập nhật';
+    document.getElementById('cxModal').classList.add('active');
+    updateStats();
+}
+
+function deleteSnippet(id) {
+    if (confirm('Bạn có chắc chắn muốn xoá snippet này?')) {
+        const formData = new FormData();
+        formData.append('id', id);
+        
+        fetch('/codex/delete', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        });
+    }
+}
+
+function filterByLang(lang) {
+    const items = document.querySelectorAll('.cx-snippet-item');
+    let visible = 0;
+    items.forEach(item => {
+        if (lang === 'all' || item.dataset.lang === lang) {
+            item.style.display = 'block';
+            visible++;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    document.getElementById('visibleCount').textContent = visible + ' snippets';
+    
+    // Update active nav
+    document.querySelectorAll('.cx-nav-item').forEach(nav => {
+        const span = nav.querySelector('span');
+        if (span.textContent === (lang === 'all' ? 'Tất cả ngôn ngữ' : lang)) {
+            nav.classList.add('active');
+        } else {
+            nav.classList.remove('active');
+        }
+    });
+}
+
+function searchSnippets() {
+    const query = document.getElementById('cxSearchInput').value.toLowerCase();
+    const items = document.querySelectorAll('.cx-snippet-item');
+    let visible = 0;
+    items.forEach(item => {
+        const title = item.dataset.title;
+        if (title.includes(query)) {
+            item.style.display = 'block';
+            visible++;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    document.getElementById('visibleCount').textContent = visible + ' snippets';
+}
+
+function copySnippet() {
+    const code = document.getElementById('pCode').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        alert('Đã copy vào clipboard!');
+    });
+}
+</script>
 </body>
 </html>

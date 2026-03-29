@@ -3,18 +3,21 @@ use App\Models\ProjectModel;
 use App\Models\HostingModel;
 use App\Models\PasswordModel;
 use App\Models\CategoryModel;
+use App\Models\SnippetModel;
 
 class MainController extends BaseController {
     private $projectModel;
     private $hostingModel;
     private $passwordModel;
     private $categoryModel;
+    private $snippetModel;
 
     public function __construct() {
         $this->projectModel = new ProjectModel();
         $this->hostingModel = new HostingModel();
         $this->passwordModel = new PasswordModel();
         $this->categoryModel = new CategoryModel();
+        $this->snippetModel = new SnippetModel();
     }
 
     public function dashboard() {
@@ -28,37 +31,61 @@ class MainController extends BaseController {
     }
 
     public function hostings() {
-        $data = [
-            'hostings' => $this->hostingModel->getAll()
-        ];
+        $data = ['hostings' => $this->hostingModel->getAll()];
         $this->view('hostings', $data);
     }
 
     public function projects() {
-        $data = [
-            'projects' => $this->projectModel->getAll()
-        ];
+        $data = ['projects' => $this->projectModel->getAll()];
         $this->view('projects', $data);
     }
 
     public function reports() {
         $data = [
             'projects' => $this->projectModel->getAll(),
-            'hostings' => $this->hostingModel->getAll()
+            'hostings' => $this->hostingModel->getAll(),
         ];
         $this->view('reports', $data);
     }
 
     public function passwords() {
-        $data = [
-            'passwords' => $this->passwordModel->getAll(),
-            'categories' => $this->categoryModel->getAll()
-        ];
+        $data = ['passwords' => $this->passwordModel->getAll()];
         $this->view('passwords', $data);
     }
 
     public function codex() {
-        $this->view('codex');
+        $data = ['snippets' => $this->snippetModel->getAll()];
+        $this->view('codex', $data);
+    }
+
+    public function saveSnippet() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'id' => $_POST['id'] ?? null,
+                'title' => $_POST['title'] ?? '',
+                'language' => $_POST['language'] ?? 'Khác',
+                'description' => $_POST['description'] ?? '',
+                'code' => $_POST['code'] ?? '',
+                'line_count' => (int)($_POST['line_count'] ?? 0),
+                'char_count' => (int)($_POST['char_count'] ?? 0)
+            ];
+
+            if ($this->snippetModel->save($data)) {
+                echo json_encode(['status' => 'success', 'message' => 'Lưu snippet thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu snippet']);
+            }
+        }
+    }
+
+    public function deleteSnippet() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
+            if ($this->snippetModel->delete($_POST['id'])) {
+                echo json_encode(['status' => 'success', 'message' => 'Xoá snippet thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá snippet']);
+            }
+        }
     }
 
     public function logs() {

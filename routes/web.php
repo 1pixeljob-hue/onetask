@@ -23,3 +23,7 @@ $router->add('/passwords/save', 'MainController', 'savePassword');
 $router->add('/passwords/delete', 'MainController', 'deletePassword');
 $router->add('/passwords/categories/save', 'MainController', 'saveCategory');
 $router->add('/passwords/categories/delete', 'MainController', 'deleteCategory');
+
+// Codex Snippet Routes
+$router->add('/codex/save', 'MainController', 'saveSnippet');
+$router->add('/codex/delete', 'MainController', 'deleteSnippet');
