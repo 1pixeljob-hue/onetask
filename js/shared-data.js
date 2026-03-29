@@ -594,7 +594,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 window[callbackName](value, labelText, option);
             }
 
+            // Close dropdown (Support both class names)
             dropdown.classList.remove('open');
+            dropdown.classList.remove('active');
+            
+            e.preventDefault();
             e.stopPropagation();
             return;
         }

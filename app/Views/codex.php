@@ -292,7 +292,7 @@
                         </div>
                         <div class="modal-field">
                             <label class="modal-label"><i class="ph ph-tag"></i> Loại Code <span class="req">*</span></label>
-                            <div class="pj-modal-select" data-input-id="cxLangInput" id="cxLangSelect">
+                            <div class="pj-modal-select" data-input-id="cxLangInput" data-callback="onCxLangSelect" id="cxLangSelect">
                                 <div class="cx-badge-select-trigger pj-modal-select-trigger">
                                     <span class="cx-lang-badge" id="cxLangBadge">JavaScript</span>
                                     <i class="ph ph-caret-down"></i>
@@ -504,8 +504,10 @@ function selectCodePresetColor(color, el = null) {
     if (el) el.classList.add('active');
     else {
         const tiles = [...document.querySelectorAll('#codeCatColorPresets .color-tile')];
-        const active = tiles.find(t => t.style.backgroundColor.includes(color.toLowerCase()) || 
-                                     rgbToHex(t.style.backgroundColor) === color.toLowerCase());
+        const active = tiles.find(t => {
+            const tileBg = t.style.backgroundColor;
+            return tileBg.includes(color.toLowerCase()) || rgbToHex(tileBg) === color.toLowerCase();
+        });
         if (active) active.classList.add('active');
     }
     updateCodeCatPreview();
@@ -766,6 +768,25 @@ async function saveNewLang(e) {
         }
     } catch (err) {
         console.error('Error:', err);
+    }
+}
+// Callback khi chọn loại code từ dropdown
+function onCxLangSelect(value, label, option) {
+    const badge = document.getElementById('cxLangBadge');
+    if (!badge || !value) return;
+    
+    // Tìm danh mục từ dữ liệu CODE_CATEGORIES
+    const cat = CODE_CATEGORIES.find(c => c.name === value);
+    if (cat) {
+        // Cập nhật phong cách badge theo danh mục
+        badge.style.backgroundColor = cat.color + '20'; 
+        badge.style.color = cat.color;
+        badge.style.borderColor = cat.color;
+    } else {
+        // Màu mặc định nếu không tìm thấy
+        badge.style.backgroundColor = '#f1f5f9';
+        badge.style.color = '#64748b';
+        badge.style.borderColor = '#e2e8f0';
     }
 }
 </script>
