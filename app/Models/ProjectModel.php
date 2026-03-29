@@ -125,4 +125,25 @@ class ProjectModel {
         $stmt = $this->db->prepare("DELETE FROM projects WHERE id IN ($placeholders)");
         return $stmt->execute(array_values($ids));
     }
+
+    /**
+     * Lấy doanh thu theo từng tháng trong năm
+     */
+    public function getMonthlyRevenue(int $year) {
+        $monthlyData = array_fill(1, 12, 0);
+
+        $sql = "SELECT MONTH(date) as month, SUM(value) as total 
+                FROM projects 
+                WHERE YEAR(date) = :year 
+                GROUP BY month 
+                ORDER BY month ASC";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':year' => $year]);
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $monthlyData[(int)$row['month']] = (float)$row['total'];
+        }
+
+        return array_values($monthlyData); // Trả về mảng 12 phần tử (index 0-11)
+    }
 }

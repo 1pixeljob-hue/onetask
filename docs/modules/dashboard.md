@@ -18,13 +18,13 @@
 - **Hành Động Nhanh (Quick Actions)**: Các phím tắt để mở Modal thêm mới ở bất kỳ đâu.
 
 ## 3. Lịch sử thay đổi (Changelog)
-- **[Mới hoàn thành]** Tích hợp logic tính toán Stats từ `PHP_DATA` (dữ liệu thực từ MySQL).
-- **[Mới hoàn thành]** Đại tu toàn bộ giao diện Dashboard sang giao diện **Premium V2** (Dựa trên bản thiết kế hiện đại).
+- **[2026-03-29]** Tích hợp dữ liệu thật 12 tháng từ Database vào biểu đồ **Xu hướng Doanh thu (Bar Chart)**.
+- **[2026-03-29]** Nâng cấp phần **Tiến độ Dự án** với giao diện sạch và Badge trạng thái mới (Refined Badges).
+- **[2026-03-29]** Thêm thẻ **Milestone Footer cao cấp** trang trí góc dưới màn hình tiến độ.
+- **[2026-03-29]** Tối ưu hóa layout Dashboard với tỉ lệ vàng (biểu đồ doanh thu rộng nhỉnh hơn 2 lần danh sách tiến độ).
+- **[2026-03-29]** Chuẩn hóa định dạng giá trị tài chính sang định dạng rút gọn ($1.2M, $0.5B) trong biểu đồ.
 - **[Mới hoàn thành]** Tích hợp lời chào động (Chào buổi sáng/trưa/chiều/tối) dựa trên giờ hệ thống.
-- **[Mới hoàn thành]** Tích hợp biểu đồ **Revenue Trend (Chart.js)** hiển thị trực quan biến động tài chính.
-- **[Mới hoàn thành]** Cải tiến layout 3 tầng: Stats (4 thẻ), Analytics & Progress, Activity & Quick Actions.
 - **[Mới hoàn thành]** Sửa lỗi tràn giao diện (horizontal overflow) bằng cách áp dụng Responsive Grid (`auto-fit`) và khóa tràn toàn hệ thống.
-- **[Mới hoàn thành]** Nâng cấp logic hiển thị **Hoạt động gần đây** với thời gian tương đối (2 giờ trước, Hôm qua...).
 
 ## 4. Gợi ý Tối ưu (Future Optimizations)
 1. **Dynamic Activity Feed**: Chuyển "Hoạt Động Gần Đây" từ mockup sang dữ liệu thực từ bảng `logs`.

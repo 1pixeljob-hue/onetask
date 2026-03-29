@@ -12,7 +12,8 @@
         // Data injected from PHP Models
         const PHP_DATA = {
             projects: <?php echo json_encode($projects); ?>,
-            hostings: <?php echo json_encode($hostings); ?>
+            hostings: <?php echo json_encode($hostings); ?>,
+            monthlyRevenue: <?php echo json_encode($monthlyRevenue); ?>
         };
     </script>
     <script src="/js/shared-data.js"></script>
@@ -194,11 +195,11 @@
                                 <p>Theo dõi hiệu quả tài chính</p>
                             </div>
                             <div class="chart-total">
-                                <span>Tổng tích lũy</span>
-                                <h2 id="chartTotalValue">0</h2>
+                                <span>TỔNG TÍCH LŨY</span>
+                                <h2 id="chartTotalValue" style="color: #2563eb;">$0</h2>
                             </div>
                         </div>
-                        <div class="chart-wrapper" style="height: 300px; position: relative;">
+                        <div class="chart-wrapper" style="height: 320px; position: relative;">
                             <canvas id="revenueChart"></canvas>
                         </div>
                     </div>
@@ -292,42 +293,59 @@
     // Layer 2: Revenue Chart
     const ctx = document.getElementById('revenueChart');
     if (ctx) {
-        // Aggregate project values by month for current year
-        const currentYear = new Date().getFullYear();
-        const monthlyData = new Array(12).fill(0);
+        const monthlyValues = PHP_DATA.monthlyRevenue || new Array(12).fill(0);
+        const currentMonthIdx = new Date().getMonth(); // 0-11
         
-        // Use a mix of real data and simulated trend for better visual
-        const baseTrend = [1.2, 1.8, 1.5, 2.4, 3.1, 2.2, 1.8, 3.5, 5.2, 4.1, 6.8, 8.2];
-        const monthlyValues = baseTrend.map(v => v * 1000000); // M
-        
+        // Formatter for Y axis / Totals
+        const formatM = (val) => {
+            if (val >= 1000000000) return '$' + (val / 1000000000).toFixed(1) + 'B';
+            if (val >= 1000000) return '$' + (val / 1000000).toFixed(1) + 'M';
+            return '$' + (val / 1000).toFixed(0) + 'K';
+        };
+
+        // Update Total Display in header
+        const totalRev = monthlyValues.reduce((a, b) => a + b, 0);
+        if (document.getElementById('chartTotalValue')) {
+            document.getElementById('chartTotalValue').textContent = formatM(totalRev);
+        }
+
         new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
-                labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Thàng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+                labels: ['THÁNG 1', 'THÁNG 2', 'THÁNG 3', 'THÁNG 4', 'THÁNG 5', 'THÁNG 6', 'THÁNG 7', 'THÁNG 8', 'THÁNG 9', 'THÁNG 10', 'THÁNG 11', 'THÁNG 12'],
                 datasets: [{
                     label: 'Doanh thu',
                     data: monthlyValues,
-                    borderColor: '#3b82f6',
-                    borderWidth: 4,
-                    tension: 0.4,
-                    fill: true,
-                    backgroundColor: 'rgba(59, 130, 246, 0.05)',
-                    pointRadius: 0,
-                    pointHoverRadius: 6,
-                    pointHoverBackgroundColor: '#3b82f6',
-                    pointHoverBorderColor: '#fff',
-                    pointHoverBorderWidth: 3
+                    backgroundColor: monthlyValues.map((_, i) => i === currentMonthIdx ? '#2563eb' : '#dbeafe'),
+                    borderRadius: 8,
+                    borderSkipped: false,
+                    hoverBackgroundColor: '#2563eb',
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ' Doanh thu: ' + formatM(context.raw);
+                            }
+                        }
+                    }
+                },
                 scales: {
-                    y: { display: false },
+                    y: { 
+                        display: false,
+                        beginAtZero: true 
+                    },
                     x: {
                         grid: { display: false },
-                        ticks: { color: '#94a3b8', font: { size: 10, weight: '700' } }
+                        ticks: { 
+                            color: '#94a3b8', 
+                            font: { size: 10, weight: '700' }
+                        }
                     }
                 }
             }
@@ -337,18 +355,18 @@
     // Layer 2: Project Progress Sidebar
     const sideProjectContainer = document.getElementById('sideProjectList');
     if (sideProjectContainer) {
-        const displayProjects = PROJECTS.slice(0, 4);
+        const displayProjects = PROJECTS.slice(0, 3);
         let html = '';
         displayProjects.forEach(p => {
-            let statusClass = 'badge-running';
-            let statusLabel = 'ĐANG THỰC HIỆN';
-            if (p.status === 'testing') { statusClass = 'badge-warning'; statusLabel = 'CHỜ NGHIỆM THU'; }
-            if (p.status === 'done') { statusClass = 'badge-active'; statusLabel = 'HOÀN THÀNH'; }
+            let badgeClass = 'status-badge-v3-running';
+            let label = 'ĐANG THỰC HIỆN';
+            if (p.status === 'testing') { badgeClass = 'status-badge-v3-warning'; label = 'CHỜ NGHIỆM THU'; }
+            if (p.status === 'done') { badgeClass = 'status-badge-v3-active'; label = 'HOÀN THÀNH'; }
 
             html += `
                 <div class="progress-item">
                     <span class="progress-name">${p.name}</span>
-                    <span class="progress-status ${statusClass}">${statusLabel}</span>
+                    <span class="status-badge-v3 ${badgeClass}">${label}</span>
                 </div>
             `;
         });

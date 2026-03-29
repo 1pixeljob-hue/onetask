@@ -18,9 +18,11 @@ class MainController extends BaseController {
     }
 
     public function dashboard() {
+        $currentYear = date('Y');
         $data = [
             'projects' => $this->projectModel->getAll(),
-            'hostings' => $this->hostingModel->getAll()
+            'hostings' => $this->hostingModel->getAll(),
+            'monthlyRevenue' => $this->projectModel->getMonthlyRevenue($currentYear)
         ];
         $this->view('index', $data);
     }
