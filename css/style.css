@@ -3772,7 +3772,8 @@ body {
     overflow: hidden;
 }
 
-.pj-modal-select.active .pj-dropdown {
+.pj-modal-select.active .pj-dropdown,
+.pj-dropdown.open {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);

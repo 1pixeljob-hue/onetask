@@ -15,7 +15,7 @@ class CategoryModel {
     private function checkAndCreateTable() {
         if (!$this->db) return;
         try {
-            $sql = "CREATE TABLE IF NOT EXISTS categories (
+            $sql = "CREATE TABLE IF NOT EXISTS password_categories (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(100) NOT NULL UNIQUE,
                 color VARCHAR(20) DEFAULT '#2fab91',
@@ -30,7 +30,7 @@ class CategoryModel {
     public function getAll() {
         if (!$this->db) return [];
         try {
-            $stmt = $this->db->query("SELECT * FROM categories ORDER BY name ASC");
+            $stmt = $this->db->query("SELECT * FROM password_categories ORDER BY name ASC");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             return [];
@@ -40,7 +40,7 @@ class CategoryModel {
     public function create($data) {
         if (!$this->db) return false;
         try {
-            $stmt = $this->db->prepare("INSERT INTO categories (name, color) VALUES (:name, :color)");
+            $stmt = $this->db->prepare("INSERT INTO password_categories (name, color) VALUES (:name, :color)");
             return $stmt->execute([
                 ':name' => $data['name'],
                 ':color' => $data['color']
@@ -53,7 +53,7 @@ class CategoryModel {
     public function update($id, $data) {
         if (!$this->db) return false;
         try {
-            $stmt = $this->db->prepare("UPDATE categories SET name = :name, color = :color WHERE id = :id");
+            $stmt = $this->db->prepare("UPDATE password_categories SET name = :name, color = :color WHERE id = :id");
             return $stmt->execute([
                 ':name' => $data['name'],
                 ':color' => $data['color'],
@@ -67,7 +67,7 @@ class CategoryModel {
     public function delete($id) {
         if (!$this->db) return false;
         try {
-            $stmt = $this->db->prepare("DELETE FROM categories WHERE id = :id");
+            $stmt = $this->db->prepare("DELETE FROM password_categories WHERE id = :id");
             return $stmt->execute([':id' => $id]);
         } catch (PDOException $e) {
             return false;
@@ -77,7 +77,7 @@ class CategoryModel {
     public function find($id) {
         if (!$this->db) return null;
         try {
-            $stmt = $this->db->prepare("SELECT * FROM categories WHERE id = :id");
+            $stmt = $this->db->prepare("SELECT * FROM password_categories WHERE id = :id");
             $stmt->execute([':id' => $id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {

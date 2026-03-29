@@ -627,6 +627,46 @@ let pwdToDeleteId = null;
 let currentSearchTerm = '';
 let currentCategoryFilter = '';
 
+// Custom Dropdown Logic
+document.addEventListener('click', function(e) {
+    const isSelect = e.target.closest('.pj-modal-select');
+    const allSelects = document.querySelectorAll('.pj-modal-select');
+    
+    if (isSelect) {
+        const trigger = e.target.closest('.pj-modal-select-trigger');
+        if (trigger) {
+            const currentActive = isSelect.classList.contains('active');
+            allSelects.forEach(s => s.classList.remove('active'));
+            if (!currentActive) isSelect.classList.add('active');
+        }
+        
+        const item = e.target.closest('.pj-dropdown-item');
+        if (item) {
+            const value = item.dataset.value;
+            const select = item.closest('.pj-modal-select');
+            const inputId = select.dataset.inputId;
+            const input = document.getElementById(inputId);
+            const triggerSpan = select.querySelector('.pj-modal-select-trigger span');
+            
+            if (input) input.value = value;
+            if (triggerSpan) triggerSpan.textContent = value;
+            
+            // Toggle active class on items
+            select.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            
+            select.classList.remove('active');
+        }
+    } else {
+        allSelects.forEach(s => s.classList.remove('active'));
+        // Also close filter dropdown if open
+        const filterDropdown = document.getElementById('pwdFilterDropdown');
+        if (filterDropdown && filterDropdown.classList.contains('open') && !e.target.closest('.pj-filter-wrapper')) {
+            filterDropdown.classList.remove('open');
+        }
+    }
+});
+
 // Modal Password Functions
 function openAddPwdModal() {
     currentActionMode = 'add';
@@ -828,13 +868,36 @@ function renderCategories() {
         </div>
     `).join('');
     
-    // Update Password Modal Select options
-    const catSelect = document.getElementById('mPwdCategory');
-    const currentVal = catSelect.value;
-    catSelect.innerHTML = CATEGORIES.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+    // Update Password Modal Select options (UI ONLY)
+    const selectMenu = document.querySelector('#mPwdCategorySelect .pj-dropdown');
+    const hiddenInput = document.getElementById('mPwdCategory');
+    const triggerSpan = document.querySelector('#mPwdCategorySelect .pj-modal-select-trigger span');
+    
     if (CATEGORIES.length === 0) {
-        catSelect.innerHTML = '<option value="Khác">Khác</option>';
+        selectMenu.innerHTML = '<div class="pj-dropdown-item active" data-value="Khác">Khác</div>';
+        hiddenInput.value = 'Khác';
+        triggerSpan.textContent = 'Khác';
+    } else {
+        selectMenu.innerHTML = CATEGORIES.map((c, i) => `
+            <div class="pj-dropdown-item ${i === 0 ? 'active' : ''}" data-value="${c.name}">
+                ${c.name}
+            </div>
+        `).join('');
+        
+        // Update hidden input and trigger if newly created
+        if (CATEGORIES.length > 0) {
+            hiddenInput.value = CATEGORIES[0].name;
+            triggerSpan.textContent = CATEGORIES[0].name;
+        }
     }
+
+    // Update Filter Dropdown as well
+    const filterDropdown = document.getElementById('pwdFilterDropdown');
+    const filterItems = [`<div class="pj-dropdown-item active" onclick="setPwdFilter('', 'Lọc bởi loại', this)">Tất cả</div>`];
+    CATEGORIES.forEach(c => {
+        filterItems.push(`<div class="pj-dropdown-item" onclick="setPwdFilter('${c.name}', '${c.name}', this)">${c.name}</div>`);
+    });
+    filterDropdown.innerHTML = filterItems.join('');
 }
 
 function renderColorPresets() {

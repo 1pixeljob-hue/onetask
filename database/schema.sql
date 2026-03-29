@@ -45,15 +45,39 @@ CREATE TABLE `hostings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
+-- Table structure for password_categories
+-- ----------------------------
+DROP TABLE IF EXISTS `password_categories`;
+CREATE TABLE `password_categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL UNIQUE,
+  `color` varchar(20) DEFAULT '#2fab91',
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------
+-- Seeding for password_categories
+-- ----------------------------
+INSERT INTO `password_categories` (`name`, `color`) VALUES 
+('Email', '#2fab91'),
+('Banking', '#2563eb'),
+('Social', '#ef4444'),
+('Gaming', '#f59e0b'),
+('Work', '#8b5cf6'),
+('Khác', '#475569');
+
+-- ----------------------------
 -- Table structure for passwords
 -- ----------------------------
 DROP TABLE IF EXISTS `passwords`;
 CREATE TABLE `passwords` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `username` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `category` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT 'Khác',
+  `username` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
   `notes` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
