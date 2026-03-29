@@ -196,7 +196,7 @@
                             </div>
                             <div class="chart-total">
                                 <span>TỔNG TÍCH LŨY</span>
-                                <h2 id="chartTotalValue" style="color: #2563eb;">$0</h2>
+                                <h2 id="chartTotalValue" style="color: #2ab89c;">$0</h2>
                             </div>
                         </div>
                         <div class="chart-wrapper" style="height: 320px; position: relative;">
@@ -310,16 +310,33 @@
         }
 
         new Chart(ctx, {
-            type: 'bar',
+            type: 'line',
             data: {
-                labels: ['THÁNG 1', 'THÁNG 2', 'THÁNG 3', 'THÁNG 4', 'THÁNG 5', 'THÁNG 6', 'THÁNG 7', 'THÁNG 8', 'THÁNG 9', 'THÁNG 10', 'THÁNG 11', 'THÁNG 12'],
+                labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
                 datasets: [{
                     label: 'Doanh thu',
                     data: monthlyValues,
-                    backgroundColor: monthlyValues.map((_, i) => i === currentMonthIdx ? '#2563eb' : '#dbeafe'),
-                    borderRadius: 8,
-                    borderSkipped: false,
-                    hoverBackgroundColor: '#2563eb',
+                    borderColor: '#2ab89c', // Teal color from image
+                    borderWidth: 3,
+                    tension: 0.4, // Smooth curves
+                    fill: true,
+                    backgroundColor: function(context) {
+                        const chart = context.chart;
+                        const {ctx, chartArea} = chart;
+                        if (!chartArea) return null;
+                        const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                        gradient.addColorStop(0, 'rgba(42, 184, 156, 0.01)');
+                        gradient.addColorStop(1, 'rgba(42, 184, 156, 0.15)');
+                        return gradient;
+                    },
+                    pointRadius: 4,
+                    pointBackgroundColor: '#2ab89c',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#2ab89c',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2
                 }]
             },
             options: {
@@ -328,6 +345,8 @@
                 plugins: { 
                     legend: { display: false },
                     tooltip: {
+                        mode: 'index',
+                        intersect: false,
                         callbacks: {
                             label: function(context) {
                                 return ' Doanh thu: ' + formatM(context.raw);
@@ -337,14 +356,30 @@
                 },
                 scales: {
                     y: { 
-                        display: false,
-                        beginAtZero: true 
+                        display: true,
+                        beginAtZero: true,
+                        grid: {
+                            color: '#f1f5f9',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: { size: 10, weight: '600' },
+                            callback: function(value) {
+                                if (value >= 1000000) return (value / 1000000) + 'M';
+                                if (value >= 1000) return (value / 1000) + 'K';
+                                return value;
+                            }
+                        }
                     },
                     x: {
-                        grid: { display: false },
+                        grid: {
+                            color: '#f1f5f9',
+                            drawBorder: false
+                        },
                         ticks: { 
                             color: '#94a3b8', 
-                            font: { size: 10, weight: '700' }
+                            font: { size: 10, weight: '600' }
                         }
                     }
                 }

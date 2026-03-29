@@ -18,7 +18,9 @@
 - **Hành Động Nhanh (Quick Actions)**: Các phím tắt để mở Modal thêm mới ở bất kỳ đâu.
 
 ## 3. Lịch sử thay đổi (Changelog)
-- **[2026-03-29]** Tích hợp dữ liệu thật 12 tháng từ Database vào biểu đồ **Xu hướng Doanh thu (Bar Chart)**.
+- **[2026-03-29]** Chuyển đổi biểu đồ doanh thu sang dạng **Đường (Line Chart)** với hiệu ứng Gradient Teal cao cấp.
+- **[2026-03-29]** Tích hợp đường cong mềm mại (`tension: 0.4`) và nhãn trục Y rút gọn (5M, 10M...) như bản thiết kế.
+- **[2026-03-29]** Tích hợp dữ liệu thật 12 tháng từ Database vào biểu đồ mới.
 - **[2026-03-29]** Nâng cấp phần **Tiến độ Dự án** với giao diện sạch và Badge trạng thái mới (Refined Badges).
 - **[2026-03-29]** Thêm thẻ **Milestone Footer cao cấp** trang trí góc dưới màn hình tiến độ.
 - **[2026-03-29]** Tối ưu hóa layout Dashboard với tỉ lệ vàng (biểu đồ doanh thu rộng nhỉnh hơn 2 lần danh sách tiến độ).
