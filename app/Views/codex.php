@@ -433,6 +433,40 @@ function searchSnippets() {
 }
 
 // Category Management Functions
+document.addEventListener('click', function(e) {
+    const isSelect = e.target.closest('.pj-modal-select');
+    const allSelects = document.querySelectorAll('.pj-modal-select');
+    
+    if (isSelect) {
+        const trigger = e.target.closest('.pj-modal-select-trigger');
+        if (trigger) {
+            const currentActive = isSelect.classList.contains('active');
+            allSelects.forEach(s => s.classList.remove('active'));
+            if (!currentActive) isSelect.classList.add('active');
+        }
+        
+        const item = e.target.closest('.pj-dropdown-item');
+        if (item) {
+            const value = item.dataset.value;
+            const select = item.closest('.pj-modal-select');
+            const inputId = select.dataset.inputId;
+            const input = document.getElementById(inputId);
+            const badge = select.querySelector('.cx-lang-badge');
+            
+            if (input) input.value = value;
+            if (badge) badge.textContent = value;
+            
+            // Toggle active class on items
+            select.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            
+            select.classList.remove('active');
+        }
+    } else {
+        allSelects.forEach(s => s.classList.remove('active'));
+    }
+});
+
 function showAddLangInput(e) {
     e.stopPropagation();
     document.getElementById('cxShowAddBtn').style.display = 'none';
@@ -500,6 +534,7 @@ function saveNewLang(e) {
             });
 
             hideAddLangInput();
+            document.getElementById('cxLangSelect').classList.remove('active');
         } else {
             alert(data.message || 'Lỗi khi thêm loại code');
         }

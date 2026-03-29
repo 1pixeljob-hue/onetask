@@ -41,7 +41,16 @@ class SnippetModel {
     }
 
     public function save($data) {
-        if (isset($data['id']) && !empty($data['id'])) {
+        $params = [
+            ':title' => $data['title'],
+            ':language' => $data['language'],
+            ':description' => $data['description'],
+            ':code' => $data['code'],
+            ':line_count' => $data['line_count'],
+            ':char_count' => $data['char_count']
+        ];
+
+        if (!empty($data['id'])) {
             $sql = "UPDATE snippets SET 
                     title = :title, 
                     language = :language, 
@@ -50,13 +59,14 @@ class SnippetModel {
                     line_count = :line_count, 
                     char_count = :char_count 
                     WHERE id = :id";
+            $params[':id'] = $data['id'];
         } else {
             $sql = "INSERT INTO snippets (title, language, description, code, line_count, char_count) 
                     VALUES (:title, :language, :description, :code, :line_count, :char_count)";
         }
 
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute($data);
+        return $stmt->execute($params);
     }
 
     public function delete($id) {
