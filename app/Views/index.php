@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,6 +19,7 @@
     </script>
     <script src="/js/shared-data.js"></script>
 </head>
+
 <body>
     <!-- Global Loader -->
     <div id="global-loader" class="global-loader">
@@ -113,19 +115,19 @@
                 </div>
 
                 <script>
-                function updateGreeting() {
-                    const hour = new Date().getHours();
-                    let greeting = "Chào buổi tối";
-                    if (hour >= 5 && hour < 12) greeting = "Chào buổi sáng";
-                    else if (hour >= 12 && hour < 14) greeting = "Chào buổi trưa";
-                    else if (hour >= 14 && hour < 18) greeting = "Chào buổi chiều";
-                    
-                    const greetingElement = document.getElementById('greetingText');
-                    if (greetingElement) {
-                        greetingElement.innerHTML = `${greeting}, <span class="highlight">Quydev</span>`;
+                    function updateGreeting() {
+                        const hour = new Date().getHours();
+                        let greeting = "Chào buổi tối";
+                        if (hour >= 5 && hour < 12) greeting = "Chào buổi sáng";
+                        else if (hour >= 12 && hour < 14) greeting = "Chào buổi trưa";
+                        else if (hour >= 14 && hour < 18) greeting = "Chào buổi chiều";
+
+                        const greetingElement = document.getElementById('greetingText');
+                        if (greetingElement) {
+                            greetingElement.innerHTML = `${greeting}, <span class="highlight">Quydev</span>`;
+                        }
                     }
-                }
-                updateGreeting();
+                    updateGreeting();
                 </script>
 
                 <!-- Layer 1: Stats Grid V2 -->
@@ -195,7 +197,7 @@
                                 <p>Theo dõi hiệu quả tài chính</p>
                             </div>
                             <div class="chart-total">
-                                <span>TỔNG TÍCH LŨY</span>
+                                <span>TỔNG DOANH THU</span>
                                 <h2 id="chartTotalValue" style="color: #2ab89c;">$0</h2>
                             </div>
                         </div>
@@ -212,7 +214,7 @@
                         <div class="card-list" id="sideProjectList">
                             <!-- Rendered by JS -->
                         </div>
-                        
+
                         <!-- Milestone Card -->
                         <div class="milestone-footer">
                             <div class="milestone-icon">
@@ -274,184 +276,184 @@
     </div>
 </body>
 <script>
-// Dashboard Premium Renderer
-(function() {
-    const stats = getDashboardStats();
-    
-    // Layer 1: Stat cards V2
-    if (document.getElementById('statTotalHosting')) {
-        document.getElementById('statTotalHosting').textContent = stats.totalHostings;
-        document.getElementById('statActiveHosting').textContent = `${stats.activeHostings} cụm đang chạy`;
-        document.getElementById('statExpiring').textContent = stats.expiringSoon;
-        document.getElementById('statDoing').textContent = stats.doingProjects.length;
-        document.getElementById('statRevenue').textContent = formatVNDShort(stats.totalRevenue).replace(' VNĐ', '');
-        if (document.getElementById('chartTotalValue')) {
-            document.getElementById('chartTotalValue').textContent = formatVNDShort(stats.totalPotentialRevenue);
-        }
-    }
+    // Dashboard Premium Renderer
+    (function () {
+        const stats = getDashboardStats();
 
-    // Layer 2: Revenue Chart
-    const ctx = document.getElementById('revenueChart');
-    if (ctx) {
-        const currentYear = new Date().getFullYear();
-        const monthlyData = getMonthlyBreakdown(currentYear);
-        const labels = monthlyData.map(m => 'Tháng ' + m.month);
-        
-        const projData = monthlyData.map(m => m.projectValue);
-        const hostData = monthlyData.map(m => m.hostingValue);
-        const totalData = monthlyData.map(m => m.total);
-
-        // Formatter for Y axis / Totals
-        const formatM = (val) => {
-            if (val >= 1000000000) return '$' + (val / 1000000000).toFixed(1) + 'B';
-            if (val >= 1000000) return '$' + (val / 1000000).toFixed(1) + 'M';
-            if (val >= 1000) return '$' + (val / 1000).toFixed(0) + 'K';
-            return '$' + val;
-        };
-
-        // Update Total Display in header (Grand Total for the year)
-        const totalRev = totalData.reduce((a, b) => a + b, 0);
-        if (document.getElementById('chartTotalValue')) {
-            document.getElementById('chartTotalValue').textContent = formatM(totalRev);
+        // Layer 1: Stat cards V2
+        if (document.getElementById('statTotalHosting')) {
+            document.getElementById('statTotalHosting').textContent = stats.totalHostings;
+            document.getElementById('statActiveHosting').textContent = `${stats.activeHostings} cụm đang chạy`;
+            document.getElementById('statExpiring').textContent = stats.expiringSoon;
+            document.getElementById('statDoing').textContent = stats.doingProjects.length;
+            document.getElementById('statRevenue').textContent = formatVNDShort(stats.totalRevenue).replace(' VNĐ', '');
+            if (document.getElementById('chartTotalValue')) {
+                document.getElementById('chartTotalValue').textContent = formatVNDShort(stats.totalPotentialRevenue);
+            }
         }
 
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'Projects',
-                        data: projData,
-                        borderColor: '#2ab89c',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        pointRadius: 3,
-                        pointBackgroundColor: '#2ab89c',
-                        fill: false
-                    },
-                    {
-                        label: 'Hosting',
-                        data: hostData,
-                        borderColor: '#3b82f6',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        pointRadius: 3,
-                        pointBackgroundColor: '#3b82f6',
-                        fill: false
-                    },
-                    {
-                        label: 'Tổng',
-                        data: totalData,
-                        borderColor: '#10b981',
-                        borderWidth: 2,
-                        borderDash: [5, 5],
-                        tension: 0.4,
-                        pointRadius: 3,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#10b981',
-                        fill: true,
-                        backgroundColor: function(context) {
-                            const chart = context.chart;
-                            const {ctx, chartArea} = chart;
-                            if (!chartArea) return null;
-                            const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-                            gradient.addColorStop(0, 'rgba(16, 185, 129, 0.01)');
-                            gradient.addColorStop(1, 'rgba(16, 185, 129, 0.1)');
-                            return gradient;
-                        }
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { 
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            pointStyle: 'circle',
-                            padding: 20,
-                            font: { size: 12, weight: '500' },
-                            color: '#64748b'
-                        }
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        callbacks: {
-                            label: function(context) {
-                                return ` ${context.dataset.label}: ${formatM(context.raw)}`;
+        // Layer 2: Revenue Chart
+        const ctx = document.getElementById('revenueChart');
+        if (ctx) {
+            const currentYear = new Date().getFullYear();
+            const monthlyData = getMonthlyBreakdown(currentYear);
+            const labels = monthlyData.map(m => 'Tháng ' + m.month);
+
+            const projData = monthlyData.map(m => m.projectValue);
+            const hostData = monthlyData.map(m => m.hostingValue);
+            const totalData = monthlyData.map(m => m.total);
+
+            // Formatter for Y axis / Totals
+            const formatM = (val) => {
+                if (val >= 1000000000) return '$' + (val / 1000000000).toFixed(1) + 'B';
+                if (val >= 1000000) return '$' + (val / 1000000).toFixed(1) + 'M';
+                if (val >= 1000) return '$' + (val / 1000).toFixed(0) + 'K';
+                return '$' + val;
+            };
+
+            // Update Total Display in header (Grand Total for the year)
+            const totalRev = totalData.reduce((a, b) => a + b, 0);
+            if (document.getElementById('chartTotalValue')) {
+                document.getElementById('chartTotalValue').textContent = formatM(totalRev);
+            }
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Projects',
+                            data: projData,
+                            borderColor: '#2ab89c',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#2ab89c',
+                            fill: false
+                        },
+                        {
+                            label: 'Hosting',
+                            data: hostData,
+                            borderColor: '#3b82f6',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#3b82f6',
+                            fill: false
+                        },
+                        {
+                            label: 'Tổng',
+                            data: totalData,
+                            borderColor: '#10b981',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#10b981',
+                            fill: true,
+                            backgroundColor: function (context) {
+                                const chart = context.chart;
+                                const { ctx, chartArea } = chart;
+                                if (!chartArea) return null;
+                                const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                                gradient.addColorStop(0, 'rgba(16, 185, 129, 0.01)');
+                                gradient.addColorStop(1, 'rgba(16, 185, 129, 0.1)');
+                                return gradient;
                             }
                         }
-                    }
+                    ]
                 },
-                scales: {
-                    y: { 
-                        display: true,
-                        beginAtZero: true,
-                        grid: {
-                            color: '#f1f5f9',
-                            drawBorder: false
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                padding: 20,
+                                font: { size: 12, weight: '500' },
+                                color: '#64748b'
+                            }
                         },
-                        ticks: {
-                            color: '#94a3b8',
-                            font: { size: 10, weight: '600' },
-                            callback: function(value) {
-                                return formatM(value);
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function (context) {
+                                    return ` ${context.dataset.label}: ${formatM(context.raw)}`;
+                                }
                             }
                         }
                     },
-                    x: {
-                        grid: {
-                            color: '#f1f5f9',
-                            drawBorder: false
+                    scales: {
+                        y: {
+                            display: true,
+                            beginAtZero: true,
+                            grid: {
+                                color: '#f1f5f9',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#94a3b8',
+                                font: { size: 10, weight: '600' },
+                                callback: function (value) {
+                                    return formatM(value);
+                                }
+                            }
                         },
-                        ticks: { 
-                            color: '#94a3b8', 
-                            font: { size: 10, weight: '600' }
+                        x: {
+                            grid: {
+                                color: '#f1f5f9',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#94a3b8',
+                                font: { size: 10, weight: '600' }
+                            }
                         }
                     }
                 }
-            }
-        });
-    }
+            });
+        }
 
-    // Layer 2: Project Progress Sidebar
-    const sideProjectContainer = document.getElementById('sideProjectList');
-    if (sideProjectContainer) {
-        const displayProjects = PROJECTS.slice(0, 3);
-        let html = '';
-        displayProjects.forEach(p => {
-            let badgeClass = 'status-badge-v3-running';
-            let label = 'ĐANG THỰC HIỆN';
-            if (p.status === 'testing') { badgeClass = 'status-badge-v3-warning'; label = 'CHỜ NGHIỆM THU'; }
-            if (p.status === 'done') { badgeClass = 'status-badge-v3-active'; label = 'HOÀN THÀNH'; }
+        // Layer 2: Project Progress Sidebar
+        const sideProjectContainer = document.getElementById('sideProjectList');
+        if (sideProjectContainer) {
+            const displayProjects = PROJECTS.slice(0, 3);
+            let html = '';
+            displayProjects.forEach(p => {
+                let badgeClass = 'status-badge-v3-running';
+                let label = 'ĐANG THỰC HIỆN';
+                if (p.status === 'testing') { badgeClass = 'status-badge-v3-warning'; label = 'CHỜ NGHIỆM THU'; }
+                if (p.status === 'done') { badgeClass = 'status-badge-v3-active'; label = 'HOÀN THÀNH'; }
 
-            html += `
+                html += `
                 <div class="progress-item">
                     <span class="progress-name">${p.name}</span>
                     <span class="status-badge-v3 ${badgeClass}">${label}</span>
                 </div>
             `;
-        });
-        sideProjectContainer.innerHTML = html;
-    }
+            });
+            sideProjectContainer.innerHTML = html;
+        }
 
-    // Layer 3: Recent Activity
-    const activityContainer = document.getElementById('dashActivityList');
-    if (activityContainer) {
-        const activities = [
-            { user: 'quydev', action: 'đã cập nhật dự án', target: '1Pixel Digital', time: '2 GIỜ TRƯỚC', avatar: 'QD' },
-            { user: 'quydev', action: 'đã tạo hosting cho cụm', target: 'VINALIGHT', time: '5 GIỜ TRƯỚC', avatar: 'QD' },
-            { user: 'Hệ thống', action: 'đã hoàn tất sao lưu cho', target: 'Web Pencil', time: 'HÔM QUA', avatar: 'HS' }
-        ];
+        // Layer 3: Recent Activity
+        const activityContainer = document.getElementById('dashActivityList');
+        if (activityContainer) {
+            const activities = [
+                { user: 'quydev', action: 'đã cập nhật dự án', target: '1Pixel Digital', time: '2 GIỜ TRƯỚC', avatar: 'QD' },
+                { user: 'quydev', action: 'đã tạo hosting cho cụm', target: 'VINALIGHT', time: '5 GIỜ TRƯỚC', avatar: 'QD' },
+                { user: 'Hệ thống', action: 'đã hoàn tất sao lưu cho', target: 'Web Pencil', time: 'HÔM QUA', avatar: 'HS' }
+            ];
 
-        let actHtml = '';
-        activities.forEach(a => {
-            actHtml += `
+            let actHtml = '';
+            activities.forEach(a => {
+                actHtml += `
                 <div class="list-item" style="border:none; padding: 12px 0;">
                     <div class="avatar" style="width: 40px; height: 40px; font-size: 14px;">${a.avatar}</div>
                     <div class="activity-content">
@@ -462,10 +464,10 @@
                     </div>
                 </div>
             `;
-        });
-        activityContainer.innerHTML = actHtml;
-    }
-})();
+            });
+            activityContainer.innerHTML = actHtml;
+        }
+    })();
 
 </script>
 
