@@ -52,7 +52,10 @@ class MainController extends BaseController {
     }
 
     public function passwords() {
-        $data = ['passwords' => $this->passwordModel->getAll()];
+        $data = [
+            'passwords' => $this->passwordModel->getAll(),
+            'categories' => $this->categoryModel->getAll()
+        ];
         $this->view('passwords', $data);
     }
 
