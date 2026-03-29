@@ -293,18 +293,24 @@
     // Layer 2: Revenue Chart
     const ctx = document.getElementById('revenueChart');
     if (ctx) {
-        const monthlyValues = PHP_DATA.monthlyRevenue || new Array(12).fill(0);
-        const currentMonthIdx = new Date().getMonth(); // 0-11
+        const currentYear = new Date().getFullYear();
+        const monthlyData = getMonthlyBreakdown(currentYear);
+        const labels = monthlyData.map(m => 'Tháng ' + m.month);
         
+        const projData = monthlyData.map(m => m.projectValue);
+        const hostData = monthlyData.map(m => m.hostingValue);
+        const totalData = monthlyData.map(m => m.total);
+
         // Formatter for Y axis / Totals
         const formatM = (val) => {
             if (val >= 1000000000) return '$' + (val / 1000000000).toFixed(1) + 'B';
             if (val >= 1000000) return '$' + (val / 1000000).toFixed(1) + 'M';
-            return '$' + (val / 1000).toFixed(0) + 'K';
+            if (val >= 1000) return '$' + (val / 1000).toFixed(0) + 'K';
+            return '$' + val;
         };
 
-        // Update Total Display in header
-        const totalRev = monthlyValues.reduce((a, b) => a + b, 0);
+        // Update Total Display in header (Grand Total for the year)
+        const totalRev = totalData.reduce((a, b) => a + b, 0);
         if (document.getElementById('chartTotalValue')) {
             document.getElementById('chartTotalValue').textContent = formatM(totalRev);
         }
@@ -312,44 +318,72 @@
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
-                datasets: [{
-                    label: 'Doanh thu',
-                    data: monthlyValues,
-                    borderColor: '#2ab89c', // Teal color from image
-                    borderWidth: 3,
-                    tension: 0.4, // Smooth curves
-                    fill: true,
-                    backgroundColor: function(context) {
-                        const chart = context.chart;
-                        const {ctx, chartArea} = chart;
-                        if (!chartArea) return null;
-                        const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-                        gradient.addColorStop(0, 'rgba(42, 184, 156, 0.01)');
-                        gradient.addColorStop(1, 'rgba(42, 184, 156, 0.15)');
-                        return gradient;
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Projects',
+                        data: projData,
+                        borderColor: '#2ab89c',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#2ab89c',
+                        fill: false
                     },
-                    pointRadius: 4,
-                    pointBackgroundColor: '#2ab89c',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointHoverRadius: 6,
-                    pointHoverBackgroundColor: '#2ab89c',
-                    pointHoverBorderColor: '#fff',
-                    pointHoverBorderWidth: 2
-                }]
+                    {
+                        label: 'Hosting',
+                        data: hostData,
+                        borderColor: '#3b82f6',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#3b82f6',
+                        fill: false
+                    },
+                    {
+                        label: 'Tổng',
+                        data: totalData,
+                        borderColor: '#10b981',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#10b981',
+                        fill: true,
+                        backgroundColor: function(context) {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return null;
+                            const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                            gradient.addColorStop(0, 'rgba(16, 185, 129, 0.01)');
+                            gradient.addColorStop(1, 'rgba(16, 185, 129, 0.1)');
+                            return gradient;
+                        }
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: { 
-                    legend: { display: false },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            padding: 20,
+                            font: { size: 12, weight: '500' },
+                            color: '#64748b'
+                        }
+                    },
                     tooltip: {
                         mode: 'index',
                         intersect: false,
                         callbacks: {
                             label: function(context) {
-                                return ' Doanh thu: ' + formatM(context.raw);
+                                return ` ${context.dataset.label}: ${formatM(context.raw)}`;
                             }
                         }
                     }
@@ -366,9 +400,7 @@
                             color: '#94a3b8',
                             font: { size: 10, weight: '600' },
                             callback: function(value) {
-                                if (value >= 1000000) return (value / 1000000) + 'M';
-                                if (value >= 1000) return (value / 1000) + 'K';
-                                return value;
+                                return formatM(value);
                             }
                         }
                     },
