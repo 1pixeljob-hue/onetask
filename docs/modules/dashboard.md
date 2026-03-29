@@ -18,6 +18,8 @@
 - **Hành Động Nhanh (Quick Actions)**: Các phím tắt để mở Modal thêm mới ở bất kỳ đâu.
 
 ## 3. Lịch sử thay đổi (Changelog)
+- **[2026-03-29]** Đồng bộ toàn diện biểu đồ với module Báo cáo: Hiển thị 3 đường (**Projects, Hosting, Tổng**) thay vì chỉ Projects.
+- **[2026-03-29]** Tích hợp logic xử lý `getMonthlyBreakdown` từ `shared-data.js` để đảm bảo số liệu nhất quán 100% giữa Dashboard và Reports.
 - **[2026-03-29]** Chuyển đổi biểu đồ doanh thu sang dạng **Đường (Line Chart)** với hiệu ứng Gradient Teal cao cấp.
 - **[2026-03-29]** Tích hợp đường cong mềm mại (`tension: 0.4`) và nhãn trục Y rút gọn (5M, 10M...) như bản thiết kế.
 - **[2026-03-29]** Tích hợp dữ liệu thật 12 tháng từ Database vào biểu đồ mới.
