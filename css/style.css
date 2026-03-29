@@ -3653,17 +3653,48 @@ body {
 
 .cx-sidebar-actions {
     display: flex;
+    flex-direction: column;
     gap: 10px;
     margin-top: 15px;
 }
 
 .cx-sidebar-actions .btn-primary, 
-.cx-sidebar-actions .btn-secondary {
-    flex: 1;
-    padding: 10px 12px;
-    font-size: 13px;
+.cx-sidebar-actions .btn-cx-category {
+    padding: 12px 16px;
+    font-size: 14px;
     font-weight: 600;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    gap: 8px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.cx-sidebar-actions .btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.cx-sidebar-actions .btn-primary:hover {
+    background-color: #215e7a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(43, 116, 149, 0.2);
+}
+
+.cx-sidebar-actions .btn-cx-category {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.cx-sidebar-actions .btn-cx-category:hover {
+    background-color: #e2e8f0;
+    color: #1e293b;
+    transform: translateY(-1px);
 }
 
 .cx-code-editor-wrapper {

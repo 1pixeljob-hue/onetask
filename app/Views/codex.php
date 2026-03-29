@@ -105,7 +105,7 @@
                             <h3><i class="ph ph-funnel"></i> Bộ Lọc</h3>
                             <div class="cx-sidebar-actions">
                                 <button class="btn-primary" onclick="openCxModal()"><i class="ph ph-plus"></i> Thêm Mới</button>
-                                <button class="btn-secondary" onclick="openCodeCategoryModal()"><i class="ph ph-tag"></i> Danh Mục</button>
+                                <button class="btn-cx-category" onclick="openCodeCategoryModal()"><i class="ph ph-tag"></i> Danh Mục</button>
                             </div>
                         </div>
                         <div class="cx-sidebar-nav" id="cxSidebarNav">
@@ -201,14 +201,9 @@
     <!-- Modal: Quản lý Danh mục Code -->
     <div id="codeCategoryModal" class="modal-overlay">
         <div class="modal-box cat-modal-box">
-            <div class="modal-header">
-                <div class="modal-title">
-                    <div class="cat-modal-icon">
-                        <i class="ph ph-tag"></i>
-                    </div>
-                    <span>Quản lý Danh mục Code</span>
-                </div>
-                <button class="modal-close" onclick="closeCodeCategoryModal()">&times;</button>
+            <div class="modal-header-gradient">
+                <h3 class="modal-title-light"><i class="ph-fill ph-tag"></i> Quản lý Danh mục Code</h3>
+                <button class="modal-close-light" onclick="closeCodeCategoryModal()"><i class="ph ph-x"></i></button>
             </div>
             <div class="cat-modal-body">
                 <div class="cat-manager-layout">
