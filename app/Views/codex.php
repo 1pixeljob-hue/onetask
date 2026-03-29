@@ -199,64 +199,66 @@
                 </div>
 
     <!-- Modal: Quản lý Danh mục Code -->
-    <div id="codeCategoryModal" class="modal-overlay">
-        <div class="modal-box cat-modal-box">
+    <div id="codeCategoryModal" class="modal-overlay" onclick="if(event.target.id==='codeCategoryModal') closeCodeCategoryModal()">
+        <div class="modal-box" style="max-width: 550px;">
             <div class="modal-header-gradient">
                 <h3 class="modal-title-light"><i class="ph-fill ph-tag"></i> Quản lý Danh mục Code</h3>
                 <button class="modal-close-light" onclick="closeCodeCategoryModal()"><i class="ph ph-x"></i></button>
             </div>
-            <div class="cat-modal-body">
-                <div class="cat-manager-layout">
-                    <!-- Left: List -->
-                    <div class="cat-list-panel">
-                        <div class="cat-list-header">
-                            <span id="codeCatCount">0</span> Danh mục
-                            <button class="btn-add-cat" onclick="showAddCodeCategoryForm()">
-                                <i class="ph ph-plus"></i> Thêm mới
-                            </button>
-                        </div>
-                        <div class="cat-list-container" id="codeCatListContainer">
-                            <!-- Categories will be rendered here -->
-                        </div>
+            
+            <div class="modal-body">
+                <!-- Chế độ Danh sách -->
+                <div id="codeCatListView">
+                    <button class="btn-add-cat-dashed" onclick="showAddCodeCategoryForm()">
+                        <i class="ph ph-plus"></i> Thêm Danh Mục Mới
+                    </button>
+                    
+                    <div class="label-with-action" style="margin-top: 24px;">
+                        <span class="modal-label" style="font-size: 14px; font-weight: 700;">Danh Sách Danh Mục (<span id="codeCatCount">0</span>)</span>
                     </div>
-
-                    <!-- Right: Editor (Hidden by default) -->
-                    <div class="cat-edit-panel" id="codeCatEditPanel" style="display: none;">
-                        <div class="cat-edit-header">
-                            <h4 id="codeCatModalTitle">Thêm Danh mục mới</h4>
-                            <button class="btn-close-panel" onclick="hideCodeCatEditPanel()"><i class="ph ph-x"></i></button>
-                        </div>
-                        <div class="cat-edit-form">
-                            <div class="modal-field">
-                                <label class="modal-label">Tên danh mục</label>
-                                <input type="text" id="codeCatNameInput" class="modal-input" placeholder="VD: React, Vue, Python...">
-                            </div>
-                            <div class="modal-field">
-                                <label class="modal-label">Màu sắc</label>
-                                <div class="color-presets" id="codeCatColorPresets">
-                                    <!-- Colors will be rendered here -->
-                                </div>
-                                <div class="custom-color-row">
-                                    <input type="color" id="codeCatColorInput" oninput="updateCodeCatPreview()">
-                                    <input type="text" id="codeCatHexInput" class="modal-input" placeholder="#000000" oninput="updateCodeCatPreviewByHex()">
-                                </div>
-                            </div>
-                            
-                            <!-- Preview -->
-                            <div class="modal-field">
-                                <label class="modal-label">Xem trước</label>
-                                <div class="cat-preview-box">
-                                    <span class="cx-tag" id="codeCatPreviewTag">Preview</span>
-                                </div>
-                            </div>
-
-                            <div class="cat-edit-actions">
-                                <button class="btn-cx-cancel" onclick="hideCodeCatEditPanel()">Hủy</button>
-                                <button class="btn-cx-submit" onclick="saveCodeCategory()">Lưu danh mục</button>
-                            </div>
-                        </div>
+                    
+                    <div class="cat-list" id="codeCatListContainer">
+                        <!-- Categories dynamic render -->
                     </div>
                 </div>
+
+                <!-- Chế độ Thêm/Sửa -->
+                <div id="codeCatFormView" style="display: none;">
+                    <div class="cat-preview-section">
+                        <span class="cat-preview-label">XEM TRƯỚC</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span id="codeCatPreviewTag" class="cx-tag">Tên danh mục</span>
+                            <span id="codeCatPreviewHex" style="font-family: monospace; font-size: 13px; color: #64748b;">#fef9c3</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-field full">
+                        <label class="modal-label">Tên Danh Mục</label>
+                        <input type="text" class="modal-input" id="codeCatNameInput" placeholder="VD: React, Vue, Python..." oninput="updateCodeCatPreview()">
+                    </div>
+
+                    <div class="modal-field full">
+                        <label class="modal-label">Màu Sắc</label>
+                        <div class="hex-input-wrapper">
+                            <div class="color-dot" id="codeCatColorDot" style="background: #fef9c3;"></div>
+                            <input type="text" class="hex-input" id="codeCatHexInput" value="#fef9c3" oninput="updateCodeCatPreviewFromHex()">
+                        </div>
+                    </div>
+
+                    <div class="modal-label" style="margin-top: 16px;">Bộ màu gợi ý:</div>
+                    <div class="color-presets" id="codeCatColorPresets">
+                        <!-- Generated by JS -->
+                    </div>
+
+                    <div class="modal-footer" style="padding: 16px 0 0 0; margin-top: 24px; border-top: 1px solid #f1f5f9;">
+                        <button type="button" class="modal-btn-cancel" onclick="showCodeCategoryList()">Hủy</button>
+                        <button type="button" class="modal-btn-submit" id="codeCatSubmitBtn" onclick="saveCodeCategory()">Thêm Mới</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer" id="codeCatMainFooter">
+                <button class="modal-btn-submit" style="width: 100%; height: 48px; background: #2b7495;" onclick="closeCodeCategoryModal()">Đóng</button>
             </div>
         </div>
     </div>
@@ -353,11 +355,7 @@
 let CODE_CATEGORIES = <?php echo json_encode($categories); ?>;
 const ALL_SNIPPETS = <?php echo json_encode($snippets); ?>;
 
-const colorPresets = [
-    '#fef9c3', '#eff6ff', '#f5f3ff', '#fff7ed', '#ecfdf5', '#fdf2f8', 
-    '#fef3c7', '#dcfce7', '#bae6fd', '#f3e8ff', '#ffedd5', '#fee2e2'
-];
-let currentCatEditId = null;
+// Modal Snippet Variables
 
 // --- Modal Snippet Functions ---
 function openCxModal() {
@@ -387,14 +385,48 @@ function updateStats() {
 }
 
 // --- Category Management Functions ---
+let currentCatEditId = null;
+const CODE_COLOR_PRESETS = [
+    '#2fab91', '#2563eb', '#ef4444', '#f59e0b', '#f97316', '#059669',
+    '#38bdf8', '#6366f1', '#8b5cf6', '#d946ef', '#ec4899', '#475569'
+];
+
 function openCodeCategoryModal() {
-    renderCodeCategories();
     document.getElementById('codeCategoryModal').classList.add('active');
-    hideCodeCatEditPanel();
+    document.body.style.overflow = 'hidden';
+    showCodeCategoryList();
+    renderCodeColorPresets();
 }
 
 function closeCodeCategoryModal() {
     document.getElementById('codeCategoryModal').classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+function showCodeCategoryList() {
+    document.getElementById('codeCatListView').style.display = 'block';
+    document.getElementById('codeCatFormView').style.display = 'none';
+    document.getElementById('codeCatMainFooter').style.display = 'block';
+    renderCodeCategories();
+}
+
+function showAddCodeCategoryForm(id = null) {
+    currentCatEditId = id;
+    document.getElementById('codeCatListView').style.display = 'none';
+    document.getElementById('codeCatFormView').style.display = 'block';
+    document.getElementById('codeCatMainFooter').style.display = 'none';
+    
+    if (id) {
+        const cat = CODE_CATEGORIES.find(c => c.id == id);
+        document.getElementById('codeCatNameInput').value = cat.name;
+        document.getElementById('codeCatHexInput').value = cat.color;
+        document.getElementById('codeCatSubmitBtn').textContent = 'Cập Nhật';
+    } else {
+        document.getElementById('codeCatNameInput').value = '';
+        document.getElementById('codeCatHexInput').value = '#fef9c3';
+        document.getElementById('codeCatSubmitBtn').textContent = 'Thêm Mới';
+    }
+    updateCodeCatPreview();
 }
 
 function renderCodeCategories() {
@@ -406,24 +438,25 @@ function renderCodeCategories() {
             <div class="cat-info">
                 <div class="cat-color-preview" style="background: ${c.color}"></div>
                 <div class="cat-name">${c.name}</div>
-                <div class="cat-tag-preview" style="background: ${c.color}; color: ${c.text_color}">${c.name}</div>
+                <div class="cx-tag" style="background: ${c.color}20; color: ${c.color}; border-color: ${c.color}">${c.name}</div>
             </div>
-            <div class="cat-actions">
-                <button class="btn-icon-sm" onclick="showEditCodeCategoryForm(${c.id})"><i class="ph ph-pencil-simple"></i></button>
+            <div class="cat-actions" style="display: flex; gap: 8px;">
+                <button class="btn-icon-sm" onclick="showAddCodeCategoryForm(${c.id})"><i class="ph ph-pencil-simple"></i></button>
                 <button class="btn-icon-sm" style="color: #ef4444;" onclick="deleteCodeCategory(${c.id})"><i class="ph ph-trash"></i></button>
             </div>
         </div>
     `).join('');
     
-    // Update the dropdown list in cxModal
+    // Update Sidebar Nav and Dropdowns
     const list = document.getElementById('cxLangDropdownList');
-    const currentVal = document.getElementById('cxLangInput').value;
-    
-    list.innerHTML = CODE_CATEGORIES.map(c => `
-        <div class="pj-dropdown-item ${c.name === currentVal ? 'active' : ''}" data-value="${c.name}">
-            <span>${c.name}</span>
-        </div>
-    `).join('');
+    if (list) {
+        const currentVal = document.getElementById('cxLangInput').value;
+        list.innerHTML = CODE_CATEGORIES.map(c => `
+            <div class="pj-dropdown-item ${c.name === currentVal ? 'active' : ''}" data-value="${c.name}">
+                <span>${c.name}</span>
+            </div>
+        `).join('');
+    }
     
     updateSidebarNav();
 }
@@ -452,101 +485,71 @@ function updateSidebarNav() {
         `;
     });
     
-    sidebarNav.innerHTML = html;
+    if (sidebarNav) sidebarNav.innerHTML = html;
 }
 
-function showAddCodeCategoryForm() {
-    currentCatEditId = null;
-    document.getElementById('codeCatModalTitle').textContent = 'Thêm Danh mục mới';
-    document.getElementById('codeCatNameInput').value = '';
-    document.getElementById('codeCatColorInput').value = '#fef9c3';
-    document.getElementById('codeCatHexInput').value = '#fef9c3';
-    
-    renderCodeCatColorPresets();
-    updateCodeCatPreview();
-    document.getElementById('codeCatEditPanel').style.display = 'block';
-}
-
-function showEditCodeCategoryForm(id) {
-    const cat = CODE_CATEGORIES.find(c => c.id == id);
-    if (!cat) return;
-    
-    currentCatEditId = id;
-    document.getElementById('codeCatModalTitle').textContent = 'Chỉnh sửa Danh mục';
-    document.getElementById('codeCatNameInput').value = cat.name;
-    document.getElementById('codeCatColorInput').value = cat.color;
-    document.getElementById('codeCatHexInput').value = cat.color;
-    
-    renderCodeCatColorPresets();
-    updateCodeCatPreview();
-    document.getElementById('codeCatEditPanel').style.display = 'block';
-}
-
-function hideCodeCatEditPanel() {
-    document.getElementById('codeCatEditPanel').style.display = 'none';
-}
-
-function renderCodeCatColorPresets() {
+function renderCodeColorPresets() {
     const container = document.getElementById('codeCatColorPresets');
-    container.innerHTML = colorPresets.map(color => `
-        <div class="color-preset ${document.getElementById('codeCatHexInput').value === color ? 'active' : ''}" 
-             style="background: ${color}" 
-             onclick="setCodeCatColor('${color}')">
+    container.innerHTML = CODE_COLOR_PRESETS.map(c => `
+        <div class="color-tile" style="background: ${c}" onclick="selectCodePresetColor('${c}', this)">
+            <i class="ph ph-check"></i>
         </div>
     `).join('');
+    selectCodePresetColor(document.getElementById('codeCatHexInput').value);
 }
 
-function setCodeCatColor(color) {
-    document.getElementById('codeCatColorInput').value = color;
+function selectCodePresetColor(color, el = null) {
     document.getElementById('codeCatHexInput').value = color;
-    renderCodeCatColorPresets();
+    document.querySelectorAll('#codeCatColorPresets .color-tile').forEach(t => t.classList.remove('active'));
+    if (el) el.classList.add('active');
+    else {
+        const tiles = [...document.querySelectorAll('#codeCatColorPresets .color-tile')];
+        const active = tiles.find(t => t.style.backgroundColor.includes(color.toLowerCase()) || 
+                                     rgbToHex(t.style.backgroundColor) === color.toLowerCase());
+        if (active) active.classList.add('active');
+    }
     updateCodeCatPreview();
+}
+
+function rgbToHex(rgb) {
+    if (!rgb) return "";
+    const match = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    if (!match) return rgb;
+    function hex(x) { return ("0" + parseInt(x).toString(16)).slice(-2); }
+    return "#" + hex(match[1]) + hex(match[2]) + hex(match[3]);
 }
 
 function updateCodeCatPreview() {
-    const name = document.getElementById('codeCatNameInput').value || 'Preview';
-    const color = document.getElementById('codeCatColorInput').value;
+    const name = document.getElementById('codeCatNameInput').value || 'Tên danh mục';
+    const color = document.getElementById('codeCatHexInput').value;
     const tag = document.getElementById('codeCatPreviewTag');
     
-    tag.textContent = name;
-    tag.style.backgroundColor = color;
-    const textColor = getContrastYIQ(color);
-    tag.style.color = textColor;
+    if (tag) {
+        tag.textContent = name;
+        tag.style.background = color + '20';
+        tag.style.color = color;
+        tag.style.borderColor = color;
+    }
+    document.getElementById('codeCatPreviewHex').textContent = color;
+    document.getElementById('codeCatColorDot').style.background = color;
 }
 
-function updateCodeCatPreviewByHex() {
-    let hex = document.getElementById('codeCatHexInput').value;
-    if (!hex.startsWith('#')) hex = '#' + hex;
+function updateCodeCatPreviewFromHex() {
+    const hex = document.getElementById('codeCatHexInput').value;
     if (/^#[0-9A-F]{6}$/i.test(hex)) {
-        document.getElementById('codeCatColorInput').value = hex;
         updateCodeCatPreview();
-        renderCodeCatColorPresets();
     }
 }
 
-function getContrastYIQ(hexcolor){
-    hexcolor = hexcolor.replace("#", "");
-    var r = parseInt(hexcolor.substr(0,2),16);
-    var g = parseInt(hexcolor.substr(2,2),16);
-    var b = parseInt(hexcolor.substr(4,2),16);
-    var yiq = ((r*299)+(g*587)+(b*114))/1000;
-    return (yiq >= 128) ? '#854d0e' : '#ffffff';
-}
-
 async function saveCodeCategory() {
-    const name = document.getElementById('codeCatNameInput').value.trim();
-    if (!name) return;
-    
-    const color = document.getElementById('codeCatColorInput').value;
-    const textColor = document.getElementById('codeCatPreviewTag').style.color;
-    
     const data = {
         id: currentCatEditId,
-        name: name,
-        color: color,
-        text_color: textColor
+        name: document.getElementById('codeCatNameInput').value,
+        color: document.getElementById('codeCatHexInput').value
     };
-    
+
+    if (!data.name) return alert('Vui lòng nhập tên danh mục');
+
     try {
         const response = await fetch('/codex/categories/save', {
             method: 'POST',
@@ -554,22 +557,18 @@ async function saveCodeCategory() {
             body: JSON.stringify(data)
         });
         const result = await response.json();
-        
         if (result.success) {
             if (currentCatEditId) {
-                const index = CODE_CATEGORIES.findIndex(c => c.id == currentCatEditId);
-                if (index !== -1) CODE_CATEGORIES[index] = result;
+                const idx = CODE_CATEGORIES.findIndex(c => c.id == currentCatEditId);
+                CODE_CATEGORIES[idx] = result;
             } else {
                 CODE_CATEGORIES.push(result);
             }
-            renderCodeCategories();
-            hideCodeCatEditPanel();
+            showCodeCategoryList();
         } else {
             alert(result.message || 'Lỗi khi lưu danh mục');
         }
-    } catch (err) {
-        console.error('Error:', err);
-    }
+    } catch (e) { console.error(e); }
 }
 
 async function deleteCodeCategory(id) {
@@ -578,20 +577,18 @@ async function deleteCodeCategory(id) {
         const response = await fetch('/codex/categories/delete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: id })
+            body: JSON.stringify({ id })
         });
         const result = await response.json();
         if (result.success) {
             CODE_CATEGORIES = CODE_CATEGORIES.filter(c => c.id != id);
             renderCodeCategories();
-            hideCodeCatEditPanel();
         } else {
             alert('Không thể xóa danh mục này');
         }
-    } catch (err) {
-        console.error('Error:', err);
-    }
+    } catch (e) { console.error(e); }
 }
+
 
 // --- Snippet Logic ---
 document.getElementById('cxForm').onsubmit = function(e) {
