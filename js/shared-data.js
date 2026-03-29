@@ -340,10 +340,10 @@ function getMonthlyBreakdown(year) {
     for (let m = 1; m <= 12; m++) {
         const projectsInMonth = PROJECTS.filter(p => getYear(p.date) === year && getMonth(p.date) === m);
         const hostingsInMonth = HOSTINGS.filter(h => getYear(h.regDate) === year && getMonth(h.regDate) === m);
-        
+
         const projValue = projectsInMonth.reduce((s, p) => s + p.value, 0);
         const hostValue = hostingsInMonth.reduce((s, h) => s + h.price, 0);
-        
+
         months.push({
             month: m,
             projectValue: projValue,
@@ -375,7 +375,7 @@ function getDashboardStats() {
         const exp = new Date(h.expDate);
         exp.setHours(0, 0, 0, 0);
         const diffDays = Math.ceil((exp - today) / (1000 * 60 * 60 * 24));
-        
+
         if (diffDays < 0) {
             expiredHostings++;
             expiredList.push({ ...h, diffDays });
@@ -395,11 +395,11 @@ function getDashboardStats() {
     const doingProjects = PROJECTS.filter(p => p.status === 'doing');
     const testingProjects = PROJECTS.filter(p => p.status === 'testing');
     const doneProjects = PROJECTS.filter(p => p.status === 'done');
-    
+
     // Total revenue (Refined Logic)
     // 1. Only include completed projects
     const totalProjectRevenue = doneProjects.reduce((s, p) => s + p.value, 0);
-    
+
     // 2. Only include hostings that haven't expired
     const activeAndExpiringHostings = HOSTINGS.filter(h => {
         const exp = new Date(h.expDate);
@@ -407,7 +407,7 @@ function getDashboardStats() {
         return exp >= today;
     });
     const totalHostingRevenue = activeAndExpiringHostings.reduce((s, h) => s + h.price, 0);
-    
+
     const totalRevenue = totalProjectRevenue + totalHostingRevenue;
 
     // Testing projects value
@@ -465,7 +465,7 @@ function formatDateVN(dateStr) {
  */
 document.addEventListener('DOMContentLoaded', () => {
     const loader = document.getElementById('global-loader');
-    
+
     // 1. Hide loader when everything is ready (including images and data rendering)
     window.addEventListener('load', () => {
         if (loader) {
@@ -479,7 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Intercept sidebar navigation to show loader immediately
     // This provides instant feedback before the browser starts fetching the next page
     document.querySelectorAll('.nav-item, .logo, .pj-add-btn, .action-btn').forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
             const href = this.getAttribute('href');
             // Only for internal links (starts with / or is relative, not #)
             if (href && href !== '#' && !href.startsWith('http') && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
@@ -513,7 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearSearchInputs();
         if (++clearAttempts > 10) clearInterval(clearLoop);
     }, 200);
-    
+
     // Extra guard on first focus
     document.addEventListener('focusin', (e) => {
         if (e.target.classList.contains('pj-search-input')) {
@@ -540,10 +540,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (trigger) {
             const dropdown = trigger.closest('.pj-modal-select');
             const isOpen = dropdown.classList.contains('open');
-            
+
             // Close all other open modal selects first
             document.querySelectorAll('.pj-modal-select.open').forEach(d => d.classList.remove('open'));
-            
+
             if (!isOpen) {
                 dropdown.classList.add('open');
             }
@@ -558,7 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const trigger = dropdown.querySelector('.pj-modal-select-trigger');
             const hiddenInputId = dropdown.dataset.inputId;
             const value = option.dataset.value;
-            
+
             // Extract label and icon
             const span = option.querySelector('span');
             const labelText = span ? span.textContent : option.textContent.trim();
@@ -567,7 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update Trigger UI
             const triggerLabel = trigger.querySelector('span');
             if (triggerLabel) triggerLabel.textContent = labelText;
-            
+
             const triggerIcon = trigger.querySelector('i:first-child');
             if (triggerIcon && icon) {
                 triggerIcon.className = icon.className;

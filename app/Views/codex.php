@@ -714,44 +714,7 @@ function copySnippet() {
     });
 }
 
-// Custom select listener for cxModal dropdown
-document.addEventListener('click', function(e) {
-    const isSelect = e.target.closest('.pj-modal-select');
-    const allSelects = document.querySelectorAll('.pj-modal-select');
-    
-    if (isSelect) {
-        const trigger = e.target.closest('.pj-modal-select-trigger');
-        if (trigger) {
-            const currentActive = isSelect.classList.contains('active');
-            allSelects.forEach(s => s.classList.remove('active'));
-            if (!currentActive) isSelect.classList.add('active');
-        }
-        
-        const item = e.target.closest('.pj-dropdown-item');
-        if (item) {
-            const value = item.dataset.value;
-            const select = item.closest('.pj-modal-select');
-            const inputId = select.dataset.inputId;
-            const input = document.getElementById(inputId);
-            const badge = select.querySelector('.cx-lang-badge');
-            
-            if (input) input.value = value;
-            if (badge) {
-                badge.textContent = value;
-                const cat = CODE_CATEGORIES.find(c => c.name === value);
-                if (cat) {
-                    badge.style.backgroundColor = cat.color;
-                    badge.style.color = cat.text_color;
-                }
-            }
-            select.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-            select.classList.remove('active');
-        }
-    } else {
-        allSelects.forEach(s => s.classList.remove('active'));
-    }
-});
+// --- Snippet Logic ---
 
 function showAddLangInput(e) {
     e.stopPropagation();
@@ -805,7 +768,6 @@ async function saveNewLang(e) {
         console.error('Error:', err);
     }
 }
-</script>
 </script>
 </body>
 </html>

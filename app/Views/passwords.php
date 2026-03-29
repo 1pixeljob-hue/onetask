@@ -489,45 +489,7 @@ let pwdToDeleteId = null;
 let currentSearchTerm = '';
 let currentCategoryFilter = '';
 
-// Custom Dropdown Logic
-document.addEventListener('click', function(e) {
-    const isSelect = e.target.closest('.pj-modal-select');
-    const allSelects = document.querySelectorAll('.pj-modal-select');
-    
-    if (isSelect) {
-        const trigger = e.target.closest('.pj-modal-select-trigger');
-        if (trigger) {
-            const currentActive = isSelect.classList.contains('active');
-            allSelects.forEach(s => s.classList.remove('active'));
-            if (!currentActive) isSelect.classList.add('active');
-        }
-        
-        const item = e.target.closest('.pj-dropdown-item');
-        if (item) {
-            const value = item.dataset.value;
-            const select = item.closest('.pj-modal-select');
-            const inputId = select.dataset.inputId;
-            const input = document.getElementById(inputId);
-            const triggerSpan = select.querySelector('.pj-modal-select-trigger span');
-            
-            if (input) input.value = value;
-            if (triggerSpan) triggerSpan.textContent = value;
-            
-            // Toggle active class on items
-            select.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-            
-            select.classList.remove('active');
-        }
-    } else {
-        allSelects.forEach(s => s.classList.remove('active'));
-        // Also close filter dropdown if open
-        const filterDropdown = document.getElementById('pwdFilterDropdown');
-        if (filterDropdown && filterDropdown.classList.contains('open') && !e.target.closest('.pj-filter-wrapper')) {
-            filterDropdown.classList.remove('open');
-        }
-    }
-});
+// Modal Password Functions
 
 // Modal Password Functions
 function openAddPwdModal() {
