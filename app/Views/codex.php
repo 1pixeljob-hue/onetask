@@ -239,20 +239,9 @@
                                     </div>
                                     <div class="pj-dropdown-divider"></div>
                                     <div class="cx-add-lang-wrapper" onclick="event.stopPropagation()">
-                                        <button type="button" class="cx-show-add-btn" id="cxShowAddBtn" onclick="showAddLangInput(event)">
-                                            <i class="ph ph-plus-circle"></i> Thêm loại mới...
+                                        <button type="button" class="cx-show-add-btn" id="cxShowAddBtn" onclick="openCodeCategoryModal(); document.getElementById('cxLangSelect').classList.remove('active');">
+                                            <i class="ph ph-gear"></i> Quản lý danh mục...
                                         </button>
-                                        <div class="cx-add-lang-input-group" id="cxAddLangInputGroup" style="display: none;">
-                                            <input type="text" id="newLangInput" placeholder="Tên loại mới..." onkeyup="handleNewLangKey(event)">
-                                            <div class="cx-add-lang-actions">
-                                                <button type="button" class="cx-add-btn-small" onclick="saveNewLang(event)">
-                                                    <i class="ph ph-check"></i>
-                                                </button>
-                                                <button type="button" class="cx-cancel-btn-small" onclick="hideAddLangInput(event)">
-                                                    <i class="ph ph-x"></i>
-                                                </button>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -282,7 +271,88 @@
         </div>
     </div>
 
+    <!-- Modal Quản Lý Danh Mục (CodeX) -->
+    <div class="modal-overlay" id="codeCategoryModal" onclick="if(event.target.id==='codeCategoryModal') closeCodeCategoryModal()">
+        <div class="modal-box" style="max-width: 550px;">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <div class="modal-icon-brand" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                        <i class="ph-fill ph-tag"></i>
+                    </div>
+                    <h3 class="modal-title">Quản Lý Danh Mục Code</h3>
+                </div>
+                <button class="modal-close" onclick="closeCodeCategoryModal()"><i class="ph ph-x"></i></button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Chế độ Danh sách -->
+                <div id="codeCatListView">
+                    <button class="btn-add-cat-dashed" onclick="showAddCodeCategoryForm()">
+                        <i class="ph ph-plus"></i> Thêm Loại Code Mới
+                    </button>
+                    
+                    <div class="label-with-action" style="margin-top: 24px;">
+                        <span class="modal-label" style="font-size: 14px; font-weight: 700;">Danh Sách Loại Code (<span id="codeCatCount">0</span>)</span>
+                    </div>
+                    
+                    <div class="cat-list" id="codeCatListContainer">
+                        <!-- Categories dynamic render -->
+                    </div>
+                </div>
+
+                <!-- Chế độ Thêm/Sửa -->
+                <div id="codeCatFormView" style="display: none;">
+                    <div class="cat-preview-section">
+                        <span class="cat-preview-label">Xem Trước</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span id="codeCatPreviewTag" class="cat-tag-preview" style="padding: 6px 12px; border-radius: 6px; font-weight: 600;">Tên loại code</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-field full">
+                        <label class="modal-label">Tên Loại Code</label>
+                        <input type="text" class="modal-input" id="codeCatNameInput" placeholder="VD: React, Python, Flutter..." oninput="updateCodeCatPreview()">
+                    </div>
+
+                    <div class="modal-field full">
+                        <label class="modal-label">Màu Nền (Background)</label>
+                        <div class="hex-input-wrapper">
+                            <div class="color-dot" id="codeCatBgColorDot" style="background: #fef9c3;"></div>
+                            <input type="text" class="hex-input" id="codeCatBgHexInput" value="#fef9c3" oninput="updateCodeCatPreview()">
+                        </div>
+                    </div>
+
+                    <div class="modal-field full">
+                        <label class="modal-label">Màu Chữ (Text)</label>
+                        <div class="hex-input-wrapper">
+                            <div class="color-dot" id="codeCatTextColorDot" style="background: #854d0e;"></div>
+                            <input type="text" class="hex-input" id="codeCatTextHexInput" value="#854d0e" oninput="updateCodeCatPreview()">
+                        </div>
+                    </div>
+
+                    <div class="modal-label" style="margin-top: 16px;">Gợi ý màu sắc:</div>
+                    <div class="color-presets" id="codeCatColorPresets">
+                        <!-- Presets generated via JS -->
+                    </div>
+
+                    <div class="modal-footer" style="padding: 16px 0 0 0; margin-top: 24px; border-top: 1px solid #f1f5f9;">
+                        <button type="button" class="modal-btn-cancel" onclick="showCodeCategoryList()">Hủy</button>
+                        <button type="button" class="modal-btn-submit" id="codeCatSubmitBtn" onclick="saveCodeCategory()">Thêm Mới</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer" id="codeCatMainFooter">
+                <button class="modal-btn-submit" style="width: 100%; height: 48px;" onclick="closeCodeCategoryModal()">Đóng</button>
+            </div>
+        </div>
+    </div>
+
 <script>
+    // Data injected from PHP Models
+    let SNIPPETS = <?php echo json_encode($snippets ?? []); ?>;
+    let CODE_CATEGORIES = <?php echo json_encode($categories ?? []); ?>;
+    let currentCodeCatEditId = null;
 function openCxModal() {
     document.getElementById('cxId').value = '';
     document.getElementById('cxForm').reset();
@@ -467,79 +537,160 @@ document.addEventListener('click', function(e) {
     }
 });
 
-function showAddLangInput(e) {
-    e.stopPropagation();
-    document.getElementById('cxShowAddBtn').style.display = 'none';
-    document.getElementById('cxAddLangInputGroup').style.display = 'flex';
-    document.getElementById('newLangInput').focus();
+// Category Management Functions (CodeX)
+function openCodeCategoryModal() {
+    showCodeCategoryList();
+    document.getElementById('codeCategoryModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
-function hideAddLangInput(e) {
-    if (e) e.stopPropagation();
-    document.getElementById('cxShowAddBtn').style.display = 'flex';
-    document.getElementById('cxAddLangInputGroup').style.display = 'none';
-    document.getElementById('newLangInput').value = '';
+function closeCodeCategoryModal() {
+    document.getElementById('codeCategoryModal').classList.remove('active');
+    document.body.style.overflow = '';
 }
 
-function handleNewLangKey(e) {
-    if (e.key === 'Enter') saveNewLang(e);
-    if (e.key === 'Escape') hideAddLangInput(e);
+function showCodeCategoryList() {
+    document.getElementById('codeCatListView').style.display = 'block';
+    document.getElementById('codeCatFormView').style.display = 'none';
+    document.getElementById('codeCatMainFooter').style.display = 'block';
+    renderCodeCategories();
 }
 
-function saveNewLang(e) {
-    e.stopPropagation();
-    const name = document.getElementById('newLangInput').value.trim();
-    if (!name) return;
+function showAddCodeCategoryForm(id = null) {
+    currentCodeCatEditId = id;
+    document.getElementById('codeCatListView').style.display = 'none';
+    document.getElementById('codeCatFormView').style.display = 'block';
+    document.getElementById('codeCatMainFooter').style.display = 'none';
+    
+    if (id) {
+        const cat = CODE_CATEGORIES.find(c => c.id == id);
+        document.getElementById('codeCatNameInput').value = cat.name;
+        document.getElementById('codeCatBgHexInput').value = cat.color;
+        document.getElementById('codeCatTextHexInput').value = cat.text_color;
+        document.getElementById('codeCatSubmitBtn').textContent = 'Cập Nhật';
+    } else {
+        document.getElementById('codeCatNameInput').value = '';
+        document.getElementById('codeCatBgHexInput').value = '#fef9c3';
+        document.getElementById('codeCatTextHexInput').value = '#854d0e';
+        document.getElementById('codeCatSubmitBtn').textContent = 'Thêm Mới';
+    }
+    
+    renderCodeColorPresets();
+    updateCodeCatPreview();
+}
 
-    fetch('/codex/categories/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            // Add to dropdown list if it doesn't exist
-            const list = document.getElementById('cxLangDropdownList');
-            const exists = Array.from(list.children).some(item => item.dataset.value === data.name);
-            
-            if (!exists) {
-                const newItem = document.createElement('div');
-                newItem.className = 'pj-dropdown-item';
-                newItem.dataset.value = data.name;
-                newItem.innerHTML = `<span>${data.name}</span>`;
-                list.appendChild(newItem);
+function updateCodeCatPreview() {
+    const name = document.getElementById('codeCatNameInput').value || 'Tên loại code';
+    const bg = document.getElementById('codeCatBgHexInput').value;
+    const text = document.getElementById('codeCatTextHexInput').value;
+    
+    const preview = document.getElementById('codeCatPreviewTag');
+    preview.textContent = name;
+    preview.style.background = bg;
+    preview.style.color = text;
+    
+    document.getElementById('codeCatBgColorDot').style.background = bg;
+    document.getElementById('codeCatTextColorDot').style.background = text;
+}
 
-                // Add to sidebar nav if it doesn't exist
-                const sidebarNav = document.getElementById('cxSidebarNav');
-                const navExists = Array.from(sidebarNav.children).some(item => item.dataset.langName === data.name);
-                if (!navExists) {
-                    const newNavItem = document.createElement('div');
-                    newNavItem.className = 'cx-nav-item';
-                    newNavItem.dataset.langName = data.name;
-                    newNavItem.onclick = () => filterByLang(data.name);
-                    newNavItem.innerHTML = `<span>${data.name}</span> <span class="cx-count">0</span>`;
-                    sidebarNav.appendChild(newNavItem);
-                }
-            }
+function renderCodeColorPresets() {
+    const presets = [
+        {bg: '#fef9c3', text: '#854d0e'}, // Yellow
+        {bg: '#eff6ff', text: '#1e40af'}, // Blue
+        {bg: '#f5f3ff', text: '#5b21b6'}, // Purple
+        {bg: '#fff7ed', text: '#9a3412'}, // Orange
+        {bg: '#ecfdf5', text: '#065f46'}, // Green
+        {bg: '#fdf2f8', text: '#9d174d'}, // Pink
+        {bg: '#f1f5f9', text: '#475569'}, // Gray
+        {bg: '#fff1f2', text: '#9f1239'}, // Red
+    ];
+    
+    const container = document.getElementById('codeCatColorPresets');
+    container.innerHTML = presets.map(p => `
+        <div class="color-preset-item" style="background: ${p.bg}; color: ${p.text}; border: 1px solid ${p.text}20;" 
+             onclick="applyCodeColorPreset('${p.bg}', '${p.text}')">Aa</div>
+    `).join('');
+}
 
-            // Select it
-            document.getElementById('cxLangInput').value = data.name;
-            document.getElementById('cxLangBadge').textContent = data.name;
-            
-            // UI active state
-            Array.from(list.children).forEach(item => {
-                if (item.dataset.value === data.name) item.classList.add('active');
-                else item.classList.remove('active');
-            });
+function applyCodeColorPreset(bg, text) {
+    document.getElementById('codeCatBgHexInput').value = bg;
+    document.getElementById('codeCatTextHexInput').value = text;
+    updateCodeCatPreview();
+}
 
-            hideAddLangInput();
-            document.getElementById('cxLangSelect').classList.remove('active');
+async function saveCodeCategory() {
+    const data = {
+        id: currentCodeCatEditId,
+        name: document.getElementById('codeCatNameInput').value,
+        color: document.getElementById('codeCatBgHexInput').value,
+        text_color: document.getElementById('codeCatTextHexInput').value
+    };
+
+    if (!data.name) return alert('Vui lòng nhập tên loại code');
+
+    try {
+        const response = await fetch('/codex/categories/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (result.success) {
+            // Hard reload for now to ensure all UI components sync correctly
+            location.reload();
         } else {
-            alert(data.message || 'Lỗi khi thêm loại code');
+            alert(result.message || 'Không thể lưu danh mục');
         }
-    })
-    .catch(err => console.error('Error:', err));
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function deleteCodeCategory(id) {
+    if (!confirm('Bạn có chắc muốn xóa loại code này? Các snippet thuộc loại này sẽ không bị xóa.')) return;
+    
+    try {
+        const response = await fetch('/codex/categories/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        });
+        const result = await response.json();
+        if (result.success) {
+            location.reload();
+        } else {
+            alert('Không thể xóa danh mục');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+function renderCodeCategories() {
+    const container = document.getElementById('codeCatListContainer');
+    document.getElementById('codeCatCount').textContent = CODE_CATEGORIES.length;
+    
+    container.innerHTML = CODE_CATEGORIES.map(c => `
+        <div class="cat-item">
+            <div class="cat-info">
+                <div class="cat-tag-preview" style="background: ${c.color}; color: ${c.text_color}; border: 1px solid ${c.text_color}20">${c.name}</div>
+            </div>
+            <div class="cat-actions">
+                <button class="btn-icon-sm" onclick="showAddCodeCategoryForm(${c.id})"><i class="ph ph-pencil-simple"></i></button>
+                <button class="btn-icon-sm" style="color: #ef4444;" onclick="deleteCodeCategory(${c.id})"><i class="ph ph-trash"></i></button>
+            </div>
+        </div>
+    `).join('');
+
+    // Update Snippet Modal Select options (UI ONLY)
+    const selectMenu = document.getElementById('cxLangDropdownList');
+    if (selectMenu) {
+        selectMenu.innerHTML = CODE_CATEGORIES.map(c => `
+            <div class="pj-dropdown-item" data-value="${c.name}">
+                <span>${c.name}</span>
+            </div>
+        `).join('');
+    }
 }
 
 function copySnippet() {

@@ -52,13 +52,40 @@ class CodeCategoryModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function create($name) {
+    public function create($data) {
         try {
-            $stmt = $this->db->prepare("INSERT INTO snippet_categories (name) VALUES (:name)");
-            if ($stmt->execute([':name' => $name])) {
+            $stmt = $this->db->prepare("INSERT INTO snippet_categories (name, color, text_color) VALUES (:name, :color, :text_color)");
+            if ($stmt->execute([
+                ':name' => $data['name'],
+                ':color' => $data['color'] ?? '#fef9c3',
+                ':text_color' => $data['text_color'] ?? '#854d0e'
+            ])) {
                 return $this->db->lastInsertId();
             }
             return false;
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function update($id, $data) {
+        try {
+            $stmt = $this->db->prepare("UPDATE snippet_categories SET name = :name, color = :color, text_color = :text_color WHERE id = :id");
+            return $stmt->execute([
+                ':id' => $id,
+                ':name' => $data['name'],
+                ':color' => $data['color'],
+                ':text_color' => $data['text_color']
+            ]);
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function delete($id) {
+        try {
+            $stmt = $this->db->prepare("DELETE FROM snippet_categories WHERE id = ?");
+            return $stmt->execute([$id]);
         } catch (PDOException $e) {
             return false;
         }

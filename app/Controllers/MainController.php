@@ -95,32 +95,42 @@ class MainController extends BaseController {
     }
 
     /**
-     * API: Lưu Danh mục Code (Thêm mới)
+     * API: Lưu Danh mục Code (Thêm mới hoặc Cập nhật)
      */
     public function saveCodeCategory() {
         header('Content-Type: application/json');
         
-        // Handle both standard POST and JSON input
         $input = json_decode(file_get_contents('php://input'), true);
-        $name = $input['name'] ?? ($_POST['name'] ?? null);
+        if (!$input) $input = $_POST;
 
-        if (!$name) {
+        if (!$input || !isset($input['name'])) {
             echo json_encode(['success' => false, 'message' => 'Tên danh mục không hợp lệ']);
             return;
         }
 
-        $existing = $this->codeCategoryModel->findByName($name);
-        if ($existing) {
-            echo json_encode(['success' => true, 'id' => $existing['id'], 'name' => $existing['name'], 'exists' => true]);
+        if (isset($input['id']) && $input['id']) {
+            $success = $this->codeCategoryModel->update($input['id'], $input);
+        } else {
+            $success = $this->codeCategoryModel->create($input);
+        }
+
+        echo json_encode(['success' => (bool)$success]);
+    }
+
+    /**
+     * API: Xóa Danh mục Code
+     */
+    public function deleteCodeCategory() {
+        header('Content-Type: application/json');
+        $input = json_decode(file_get_contents('php://input'), true);
+        
+        if (!$input || !isset($input['id'])) {
+            echo json_encode(['success' => false, 'message' => 'ID không hợp lệ']);
             return;
         }
 
-        $id = $this->codeCategoryModel->create($name);
-        if ($id) {
-            echo json_encode(['success' => true, 'id' => $id, 'name' => $name]);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Lỗi khi tạo danh mục']);
-        }
+        $success = $this->codeCategoryModel->delete($input['id']);
+        echo json_encode(['success' => $success]);
     }
 
     public function logs() {
