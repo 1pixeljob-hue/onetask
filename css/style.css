@@ -4623,6 +4623,18 @@ body {
     margin-bottom: 8px;
 }
 
+.label-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: #10b981;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.label-link:hover {
+    color: #059669;
+}
+
 .cat-list {
     display: flex;
     flex-direction: column;
