@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodeX - 1Pixel Dashboard</title>
     <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="/js/shared-data.js"></script>
 </head>
+
 <body>
     <!-- Global Loader -->
     <div id="global-loader" class="global-loader">
@@ -98,14 +102,16 @@
 
             <div class="content-body codex-body">
                 <div class="codex-layout">
-                    
+
                     <!-- Left Panel: Filters -->
                     <div class="cx-panel cx-sidebar">
                         <div class="cx-sidebar-header">
                             <h3><i class="ph ph-funnel"></i> Bộ Lọc</h3>
                             <div class="cx-sidebar-actions">
-                                <button class="btn-primary" onclick="openCxModal()"><i class="ph ph-plus"></i> Thêm Mới</button>
-                                <button class="btn-cx-category" onclick="openCodeCategoryModal()"><i class="ph ph-tag"></i> Danh Mục</button>
+                                <button class="btn-primary" onclick="openCxModal()"><i class="ph ph-plus"></i> Thêm
+                                    Mới</button>
+                                <button class="btn-cx-category" onclick="openCodeCategoryModal()"><i
+                                        class="ph ph-tag"></i> Danh Mục</button>
                             </div>
                         </div>
                         <div class="cx-sidebar-nav" id="cxSidebarNav">
@@ -116,13 +122,15 @@
                                     <i class="ph ph-caret-right"></i>
                                 </div>
                             </div>
-                            <?php foreach($categories as $cat): 
-                                $langCount = count(array_filter($snippets, function($s) use ($cat) { return $s['language'] == $cat['name']; }));
-                            ?>
-                            <div class="cx-nav-item" data-lang-name="<?php echo $cat['name']; ?>" onclick="filterByLang('<?php echo $cat['name']; ?>')">
-                                <span><?php echo $cat['name']; ?></span>
-                                <span class="cx-count"><?php echo $langCount; ?></span>
-                            </div>
+                            <?php foreach ($categories as $cat):
+                                $langCount = count(array_filter($snippets, function ($s) use ($cat) {
+                                    return $s['language'] == $cat['name']; }));
+                                ?>
+                                <div class="cx-nav-item" data-lang-name="<?php echo $cat['name']; ?>"
+                                    onclick="filterByLang('<?php echo $cat['name']; ?>')">
+                                    <span><?php echo $cat['name']; ?></span>
+                                    <span class="cx-count"><?php echo $langCount; ?></span>
+                                </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -132,58 +140,67 @@
                         <div class="cx-list-header">
                             <div class="cx-search">
                                 <i class="ph ph-magnifying-glass"></i>
-                                <input type="text" id="cxSearchInput" placeholder="Tìm kiếm snippet..." oninput="searchSnippets()">
+                                <input type="text" id="cxSearchInput" placeholder="Tìm kiếm snippet..."
+                                    oninput="searchSnippets()">
                             </div>
                             <p class="cx-subtitle" id="visibleCount"><?php echo count($snippets); ?> snippets</p>
                         </div>
                         <div class="cx-list-body" id="cxListBody">
-                            <?php foreach($snippets as $index => $snippet): ?>
-                            <div class="cx-snippet-item <?php echo $index === 0 ? 'active' : ''; ?>" 
-                                 onclick="selectSnippet(<?php echo htmlspecialchars(json_encode($snippet)); ?>, this)"
-                                 data-lang="<?php echo $snippet['language']; ?>"
-                                 data-title="<?php echo strtolower($snippet['title']); ?>">
-                                <div class="cx-snippet-top">
-                                    <h4 class="cx-snippet-title"><?php echo $snippet['title']; ?></h4>
-                                    <span class="cx-tag tag-gray"><?php echo $snippet['language']; ?></span>
+                            <?php foreach ($snippets as $index => $snippet): ?>
+                                <div class="cx-snippet-item <?php echo $index === 0 ? 'active' : ''; ?>"
+                                    onclick="selectSnippet(<?php echo htmlspecialchars(json_encode($snippet)); ?>, this)"
+                                    data-lang="<?php echo $snippet['language']; ?>"
+                                    data-title="<?php echo strtolower($snippet['title']); ?>">
+                                    <div class="cx-snippet-top">
+                                        <h4 class="cx-snippet-title"><?php echo $snippet['title']; ?></h4>
+                                        <span class="cx-tag tag-gray"><?php echo $snippet['language']; ?></span>
+                                    </div>
+                                    <p class="cx-snippet-desc"><?php echo $snippet['description']; ?></p>
+                                    <div class="cx-snippet-meta">
+                                        <i class="ph ph-hash"></i> <?php echo $snippet['line_count']; ?> dòng <span
+                                            class="cx-dot">•</span> <?php echo $snippet['char_count']; ?> ký tự
+                                    </div>
                                 </div>
-                                <p class="cx-snippet-desc"><?php echo $snippet['description']; ?></p>
-                                <div class="cx-snippet-meta">
-                                    <i class="ph ph-hash"></i> <?php echo $snippet['line_count']; ?> dòng <span class="cx-dot">•</span> <?php echo $snippet['char_count']; ?> ký tự
-                                </div>
-                            </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
 
                     <!-- Right Panel: Preview -->
                     <div class="cx-panel cx-preview" id="cxPreview">
-                        <?php if(!empty($snippets)): $first = $snippets[0]; ?>
-                        <div class="cx-preview-header">
-                            <div class="cx-preview-title-row">
-                                <div class="cx-preview-title">
-                                    <h2 id="pTitle"><?php echo $first['title']; ?></h2>
-                                    <span class="cx-tag tag-gray" id="pLang"><?php echo $first['language']; ?></span>
+                        <?php if (!empty($snippets)):
+                            $first = $snippets[0]; ?>
+                            <div class="cx-preview-header">
+                                <div class="cx-preview-title-row">
+                                    <div class="cx-preview-title">
+                                        <h2 id="pTitle"><?php echo $first['title']; ?></h2>
+                                        <span class="cx-tag tag-gray" id="pLang"><?php echo $first['language']; ?></span>
+                                    </div>
+                                    <div class="cx-preview-actions">
+                                        <button class="btn-icon-nm"
+                                            onclick="editSnippet(<?php echo htmlspecialchars(json_encode($first)); ?>)"><i
+                                                class="ph ph-pencil-simple"></i></button>
+                                        <button class="btn-icon-nm" onclick="deleteSnippet(<?php echo $first['id']; ?>)"><i
+                                                class="ph ph-trash"></i></button>
+                                    </div>
                                 </div>
-                                <div class="cx-preview-actions">
-                                    <button class="btn-icon-nm" onclick="editSnippet(<?php echo htmlspecialchars(json_encode($first)); ?>)"><i class="ph ph-pencil-simple"></i></button>
-                                    <button class="btn-icon-nm" onclick="deleteSnippet(<?php echo $first['id']; ?>)"><i class="ph ph-trash"></i></button>
+                                <p class="cx-preview-desc" id="pDesc"><?php echo $first['description']; ?></p>
+                                <div class="cx-snippet-meta">
+                                    <i class="ph ph-hash"></i> <span id="pLines"><?php echo $first['line_count']; ?></span>
+                                    dòng <span class="cx-dot">•</span> <span
+                                        id="pChars"><?php echo $first['char_count']; ?></span> ký tự
                                 </div>
                             </div>
-                            <p class="cx-preview-desc" id="pDesc"><?php echo $first['description']; ?></p>
-                            <div class="cx-snippet-meta">
-                                <i class="ph ph-hash"></i> <span id="pLines"><?php echo $first['line_count']; ?></span> dòng <span class="cx-dot">•</span> <span id="pChars"><?php echo $first['char_count']; ?></span> ký tự
-                            </div>
-                        </div>
 
-                        <div class="cx-preview-body">
-                            <div class="cx-code-toolbar">
-                                <span class="cx-code-label"><i class="ph ph-code"></i> Code Preview</span>
-                                <button class="btn-dark" onclick="copySnippet()"><i class="ph ph-copy"></i> Copy Code</button>
+                            <div class="cx-preview-body">
+                                <div class="cx-code-toolbar">
+                                    <span class="cx-code-label"><i class="ph ph-code"></i> Code Preview</span>
+                                    <button class="btn-dark" onclick="copySnippet()"><i class="ph ph-copy"></i> Copy
+                                        Code</button>
+                                </div>
+                                <div class="cx-code-container">
+                                    <pre><code id="pCode"><?php echo htmlspecialchars($first['code']); ?></code></pre>
+                                </div>
                             </div>
-                            <div class="cx-code-container">
-                                <pre><code id="pCode"><?php echo htmlspecialchars($first['code']); ?></code></pre>
-                            </div>
-                        </div>
                         <?php else: ?>
                             <div class="cx-empty">Chọn một snippet để xem nội dung</div>
                         <?php endif; ?>
@@ -191,49 +208,57 @@
 
                 </div>
 
-    <!-- Modal: Quản lý Danh mục Code -->
-    <div id="codeCategoryModal" class="modal-overlay" onclick="if(event.target.id==='codeCategoryModal') closeCodeCategoryModal()">
-        <div class="modal-box" style="max-width: 550px;">
-            <div class="modal-header-gradient">
-                <h3 class="modal-title-light"><i class="ph-fill ph-tag"></i> Quản lý Danh mục Code</h3>
-                <button class="modal-close-light" onclick="closeCodeCategoryModal()"><i class="ph ph-x"></i></button>
-            </div>
-            
-            <div class="modal-body">
-                <!-- Chế độ Danh sách -->
-                <div id="codeCatListView">
-                    <button class="btn-add-cat-dashed" onclick="showAddCodeCategoryForm()">
-                        <i class="ph ph-plus"></i> Thêm Danh Mục Mới
-                    </button>
-                    
-                    <div class="label-with-action" style="margin-top: 24px;">
-                        <span class="modal-label" style="font-size: 14px; font-weight: 700;">Danh Sách Danh Mục (<span id="codeCatCount">0</span>)</span>
-                    </div>
-                    
-                    <div class="cat-list" id="codeCatListContainer">
-                        <!-- Categories dynamic render -->
+                <!-- Modal: Quản lý Danh mục Code -->
+                <div id="codeCategoryModal" class="modal-overlay"
+                    onclick="if(event.target.id==='codeCategoryModal') closeCodeCategoryModal()">
+                    <div class="modal-box" style="max-width: 550px;">
+                        <div class="modal-header-gradient">
+                            <h3 class="modal-title-light"><i class="ph-fill ph-tag"></i> Quản lý Danh mục Code</h3>
+                            <button class="modal-close-light" onclick="closeCodeCategoryModal()"><i
+                                    class="ph ph-x"></i></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <!-- Chế độ Danh sách -->
+                            <div id="codeCatListView">
+                                <button class="btn-add-cat-dashed" onclick="showAddCodeCategoryForm()">
+                                    <i class="ph ph-plus"></i> Thêm Danh Mục Mới
+                                </button>
+
+                                <div class="label-with-action" style="margin-top: 24px;">
+                                    <span class="modal-label" style="font-size: 14px; font-weight: 700;">Danh Sách Danh
+                                        Mục (<span id="codeCatCount">0</span>)</span>
+                                </div>
+
+                                <div class="cat-list" id="codeCatListContainer">
+                                    <!-- Categories dynamic render -->
+                                </div>
+                            </div>
+
+                            <!-- Chế độ Thêm/Sửa -->
+                            <div id="codeCatFormView" style="display: none;">
+                                <div class="modal-field full">
+                                    <label class="modal-label">Tên Danh Mục</label>
+                                    <input type="text" class="modal-input" id="codeCatNameInput"
+                                        placeholder="VD: React, Vue, Python...">
+                                </div>
+
+                                <div class="modal-footer"
+                                    style="padding: 16px 0 0 0; margin-top: 24px; border-top: 1px solid #f1f5f9;">
+                                    <button type="button" class="modal-btn-cancel"
+                                        onclick="showCodeCategoryList()">Hủy</button>
+                                    <button type="button" class="modal-btn-submit" id="codeCatSubmitBtn"
+                                        onclick="saveCodeCategory()">Thêm Mới</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer" id="codeCatMainFooter">
+                            <button class="modal-btn-submit" style="width: 100%; height: 48px; background: #2b7495;"
+                                onclick="closeCodeCategoryModal()">Đóng</button>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Chế độ Thêm/Sửa -->
-                <div id="codeCatFormView" style="display: none;">
-                    <div class="modal-field full">
-                        <label class="modal-label">Tên Danh Mục</label>
-                        <input type="text" class="modal-input" id="codeCatNameInput" placeholder="VD: React, Vue, Python...">
-                    </div>
-
-                    <div class="modal-footer" style="padding: 16px 0 0 0; margin-top: 24px; border-top: 1px solid #f1f5f9;">
-                        <button type="button" class="modal-btn-cancel" onclick="showCodeCategoryList()">Hủy</button>
-                        <button type="button" class="modal-btn-submit" id="codeCatSubmitBtn" onclick="saveCodeCategory()">Thêm Mới</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal-footer" id="codeCatMainFooter">
-                <button class="modal-btn-submit" style="width: 100%; height: 48px; background: #2b7495;" onclick="closeCodeCategoryModal()">Đóng</button>
-            </div>
-        </div>
-    </div>
             </div>
         </main>
     </div>
@@ -259,36 +284,46 @@
                 <div class="modal-body">
                     <div class="modal-row">
                         <div class="modal-field">
-                            <label class="modal-label"><i class="ph ph-notebook"></i> Tên Code <span class="req">*</span></label>
-                            <input type="text" name="title" id="cxTitle" class="modal-input" placeholder="VD: React useEffect Hook" required>
+                            <label class="modal-label"><i class="ph ph-notebook"></i> Tên Code <span
+                                    class="req">*</span></label>
+                            <input type="text" name="title" id="cxTitle" class="modal-input"
+                                placeholder="VD: React useEffect Hook" required>
                         </div>
                         <div class="modal-field">
-                            <label class="modal-label"><i class="ph ph-tag"></i> Loại Code <span class="req">*</span></label>
-                            <div class="pj-modal-select" data-input-id="cxLangInput" data-callback="onCxLangSelect" id="cxLangSelect">
+                            <label class="modal-label"><i class="ph ph-tag"></i> Loại Code <span
+                                    class="req">*</span></label>
+                            <div class="pj-modal-select" data-input-id="cxLangInput" data-callback="onCxLangSelect"
+                                id="cxLangSelect">
                                 <div class="cx-badge-select-trigger pj-modal-select-trigger">
                                     <span class="cx-lang-badge" id="cxLangBadge">JavaScript</span>
                                     <i class="ph ph-caret-down"></i>
                                 </div>
                                 <div class="pj-dropdown">
                                     <div class="pj-dropdown-list" id="cxLangDropdownList">
-                                        <?php foreach($categories as $cat): ?>
-                                        <div class="pj-dropdown-item <?php echo $cat['name'] == 'JavaScript' ? 'active' : ''; ?>" data-value="<?php echo $cat['name']; ?>">
-                                            <span><?php echo $cat['name']; ?></span>
-                                        </div>
+                                        <?php foreach ($categories as $cat): ?>
+                                            <div class="pj-dropdown-item <?php echo $cat['name'] == 'JavaScript' ? 'active' : ''; ?>"
+                                                data-value="<?php echo $cat['name']; ?>">
+                                                <span><?php echo $cat['name']; ?></span>
+                                            </div>
                                         <?php endforeach; ?>
                                     </div>
                                     <div class="pj-dropdown-divider"></div>
                                     <div class="cx-add-lang-wrapper" onclick="event.stopPropagation()">
-                                        <button type="button" class="cx-show-add-btn" id="cxShowAddBtn" onclick="showAddLangInput(event)">
+                                        <button type="button" class="cx-show-add-btn" id="cxShowAddBtn"
+                                            onclick="showAddLangInput(event)">
                                             <i class="ph ph-plus-circle"></i> Thêm loại mới...
                                         </button>
-                                        <div class="cx-add-lang-input-group" id="cxAddLangInputGroup" style="display: none;">
-                                            <input type="text" id="newLangInput" placeholder="Tên loại mới..." onkeyup="handleNewLangKey(event)">
+                                        <div class="cx-add-lang-input-group" id="cxAddLangInputGroup"
+                                            style="display: none;">
+                                            <input type="text" id="newLangInput" placeholder="Tên loại mới..."
+                                                onkeyup="handleNewLangKey(event)">
                                             <div class="cx-add-lang-actions">
-                                                <button type="button" class="cx-add-btn-small" onclick="saveNewLang(event)">
+                                                <button type="button" class="cx-add-btn-small"
+                                                    onclick="saveNewLang(event)">
                                                     <i class="ph ph-check"></i>
                                                 </button>
-                                                <button type="button" class="cx-cancel-btn-small" onclick="hideAddLangInput(event)">
+                                                <button type="button" class="cx-cancel-btn-small"
+                                                    onclick="hideAddLangInput(event)">
                                                     <i class="ph ph-x"></i>
                                                 </button>
                                             </div>
@@ -300,12 +335,16 @@
                     </div>
                     <div class="modal-field full">
                         <label class="modal-label"><i class="ph ph-text-align-left"></i> Mô Tả</label>
-                        <input type="text" name="description" id="cxDesc" class="modal-input" placeholder="VD: Hook để xử lý side effects trong React">
+                        <input type="text" name="description" id="cxDesc" class="modal-input"
+                            placeholder="VD: Hook để xử lý side effects trong React">
                     </div>
                     <div class="modal-field full">
-                        <label class="modal-label"><i class="ph ph-code"></i> Nội Dung Code <span class="req">*</span></label>
+                        <label class="modal-label"><i class="ph ph-code"></i> Nội Dung Code <span
+                                class="req">*</span></label>
                         <div class="cx-code-editor-wrapper">
-                            <textarea name="code" id="cxCodeArea" class="cx-code-textarea" placeholder="// Nhập code của bạn tại đây..." oninput="updateStats()" required></textarea>
+                            <textarea name="code" id="cxCodeArea" class="cx-code-textarea"
+                                placeholder="// Nhập code của bạn tại đây..." oninput="updateStats()"
+                                required></textarea>
                             <div class="cx-code-status-bar">
                                 <span id="statLines">1 dòng</span>
                                 <span class="cx-dot">•</span>
@@ -322,90 +361,122 @@
         </div>
     </div>
 
-<script>
-// Data from PHP
-let CODE_CATEGORIES = <?php echo json_encode($categories); ?>;
-const ALL_SNIPPETS = <?php echo json_encode($snippets); ?>;
+    <script>
+        // Data from PHP
+        let CODE_CATEGORIES = <?php echo json_encode($categories); ?>;
+        const ALL_SNIPPETS = <?php echo json_encode($snippets); ?>;
 
-// Modal Snippet Variables
+        // Modal Snippet Variables
 
-// --- Modal Snippet Functions ---
-function openCxModal() {
-    document.getElementById('cxId').value = '';
-    document.getElementById('cxForm').reset();
-    document.querySelector('#cxModal .modal-title span').textContent = 'Thêm Code Mới';
-    document.querySelector('#cxModal .btn-cx-submit').textContent = 'Thêm Mới';
-    document.getElementById('cxLangBadge').textContent = 'Chọn danh mục';
-    document.getElementById('cxLangInput').value = '';
-    
-    // Sync dropdown with latest categories
-    renderCodeCategories();
-    
-    document.getElementById('cxModal').classList.add('active');
-    updateStats();
-}
+        function showCxToast(message, type = 'loading') {
+            const toast = document.getElementById('cxToast');
+            const msg = document.getElementById('cxToastMsg');
+            const spinner = document.getElementById('cxToastSpinner');
+            const successIcon = document.getElementById('cxToastSuccessIcon');
+            const errorIcon = document.getElementById('cxToastErrorIcon');
 
-function closeCxModal() {
-    document.getElementById('cxModal').classList.remove('active');
-}
+            // Reset
+            spinner.style.display = 'none';
+            successIcon.style.display = 'none';
+            errorIcon.style.display = 'none';
+            toast.style.borderLeftColor = '#2fab91';
 
-function updateStats() {
-    const code = document.getElementById('cxCodeArea').value;
-    const lines = code ? code.split('\n').length : 0;
-    const chars = code.length;
-    
-    document.getElementById('statLines').textContent = lines + ' dòng';
-    document.getElementById('statChars').textContent = chars + ' ký tự';
-    document.getElementById('cxLineCount').value = lines;
-    document.getElementById('cxCharCount').value = chars;
-}
+            msg.textContent = message;
 
-// --- Category Management Functions ---
-let currentCatEditId = null;
-const CODE_COLOR_PRESETS = [
-    '#2fab91', '#2563eb', '#ef4444', '#f59e0b', '#f97316', '#059669',
-    '#38bdf8', '#6366f1', '#8b5cf6', '#d946ef', '#ec4899', '#475569'
-];
+            if (type === 'loading') {
+                spinner.style.display = 'block';
+            } else if (type === 'success') {
+                successIcon.style.display = 'block';
+                toast.style.borderLeftColor = '#10b981';
+            } else if (type === 'error') {
+                errorIcon.style.display = 'block';
+                toast.style.borderLeftColor = '#ef4444';
+            }
 
-function openCodeCategoryModal() {
-    document.getElementById('codeCategoryModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
-    showCodeCategoryList();
-}
+            toast.classList.add('show');
 
-function closeCodeCategoryModal() {
-    document.getElementById('codeCategoryModal').classList.remove('active');
-    document.body.style.overflow = 'auto';
-}
+            if (type !== 'loading') {
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+        }
 
-function showCodeCategoryList() {
-    document.getElementById('codeCatListView').style.display = 'block';
-    document.getElementById('codeCatFormView').style.display = 'none';
-    document.getElementById('codeCatMainFooter').style.display = 'block';
-    renderCodeCategories();
-}
+        // --- Modal Snippet Functions ---
+        function openCxModal() {
+            document.getElementById('cxId').value = '';
+            document.getElementById('cxForm').reset();
+            document.querySelector('#cxModal .modal-title span').textContent = 'Thêm Code Mới';
+            document.querySelector('#cxModal .btn-cx-submit').textContent = 'Thêm Mới';
+            document.getElementById('cxLangBadge').textContent = 'Chọn danh mục';
+            document.getElementById('cxLangInput').value = '';
 
-function showAddCodeCategoryForm(id = null) {
-    currentCatEditId = id;
-    document.getElementById('codeCatListView').style.display = 'none';
-    document.getElementById('codeCatFormView').style.display = 'block';
-    document.getElementById('codeCatMainFooter').style.display = 'none';
-    
-    if (id) {
-        const cat = CODE_CATEGORIES.find(c => c.id == id);
-        document.getElementById('codeCatNameInput').value = cat.name;
-        document.getElementById('codeCatSubmitBtn').textContent = 'Cập Nhật';
-    } else {
-        document.getElementById('codeCatNameInput').value = '';
-        document.getElementById('codeCatSubmitBtn').textContent = 'Thêm Mới';
-    }
-}
+            // Sync dropdown with latest categories
+            renderCodeCategories();
 
-function renderCodeCategories() {
-    const container = document.getElementById('codeCatListContainer');
-    document.getElementById('codeCatCount').textContent = CODE_CATEGORIES.length;
-    
-    container.innerHTML = CODE_CATEGORIES.map(c => `
+            document.getElementById('cxModal').classList.add('active');
+            updateStats();
+        }
+
+        function closeCxModal() {
+            document.getElementById('cxModal').classList.remove('active');
+        }
+
+        function updateStats() {
+            const code = document.getElementById('cxCodeArea').value;
+            const lines = code ? code.split('\n').length : 0;
+            const chars = code.length;
+
+            document.getElementById('statLines').textContent = lines + ' dòng';
+            document.getElementById('statChars').textContent = chars + ' ký tự';
+            document.getElementById('cxLineCount').value = lines;
+            document.getElementById('cxCharCount').value = chars;
+        }
+
+        // --- Category Management Functions ---
+        let currentCatEditId = null;
+        const CODE_COLOR_PRESETS = [
+            '#2fab91', '#2563eb', '#ef4444', '#f59e0b', '#f97316', '#059669',
+            '#38bdf8', '#6366f1', '#8b5cf6', '#d946ef', '#ec4899', '#475569'
+        ];
+
+        function openCodeCategoryModal() {
+            document.getElementById('codeCategoryModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            showCodeCategoryList();
+        }
+
+        function closeCodeCategoryModal() {
+            document.getElementById('codeCategoryModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function showCodeCategoryList() {
+            document.getElementById('codeCatListView').style.display = 'block';
+            document.getElementById('codeCatFormView').style.display = 'none';
+            document.getElementById('codeCatMainFooter').style.display = 'block';
+            renderCodeCategories();
+        }
+
+        function showAddCodeCategoryForm(id = null) {
+            currentCatEditId = id;
+            document.getElementById('codeCatListView').style.display = 'none';
+            document.getElementById('codeCatFormView').style.display = 'block';
+            document.getElementById('codeCatMainFooter').style.display = 'none';
+
+            if (id) {
+                const cat = CODE_CATEGORIES.find(c => c.id == id);
+                document.getElementById('codeCatNameInput').value = cat.name;
+                document.getElementById('codeCatSubmitBtn').textContent = 'Cập Nhật';
+            } else {
+                document.getElementById('codeCatNameInput').value = '';
+                document.getElementById('codeCatSubmitBtn').textContent = 'Thêm Mới';
+            }
+        }
+
+        function renderCodeCategories() {
+            const container = document.getElementById('codeCatListContainer');
+            document.getElementById('codeCatCount').textContent = CODE_CATEGORIES.length;
+
+            container.innerHTML = CODE_CATEGORIES.map(c => `
         <div class="cat-item">
             <div class="cat-info">
                 <i class="ph ph-tag" style="color: #64748b; font-size: 18px;"></i>
@@ -417,26 +488,26 @@ function renderCodeCategories() {
             </div>
         </div>
     `).join('');
-    
-    // Update Sidebar Nav and Dropdowns
-    const list = document.getElementById('cxLangDropdownList');
-    if (list) {
-        const currentVal = document.getElementById('cxLangInput').value;
-        list.innerHTML = CODE_CATEGORIES.map(c => `
+
+            // Update Sidebar Nav and Dropdowns
+            const list = document.getElementById('cxLangDropdownList');
+            if (list) {
+                const currentVal = document.getElementById('cxLangInput').value;
+                list.innerHTML = CODE_CATEGORIES.map(c => `
             <div class="pj-dropdown-item ${c.name === currentVal ? 'active' : ''}" data-value="${c.name}">
                 <span>${c.name}</span>
             </div>
         `).join('');
-    }
-    
-    updateSidebarNav();
-}
+            }
 
-function updateSidebarNav() {
-    const sidebarNav = document.getElementById('cxSidebarNav');
-    const totalCount = ALL_SNIPPETS.length;
-    
-    let html = `
+            updateSidebarNav();
+        }
+
+        function updateSidebarNav() {
+            const sidebarNav = document.getElementById('cxSidebarNav');
+            const totalCount = ALL_SNIPPETS.length;
+
+            let html = `
         <div class="cx-nav-item active" onclick="filterByLang('all')">
             <span>Tất cả ngôn ngữ</span>
             <div class="cx-badge-right">
@@ -445,272 +516,320 @@ function updateSidebarNav() {
             </div>
         </div>
     `;
-    
-    CODE_CATEGORIES.forEach(cat => {
-        const count = ALL_SNIPPETS.filter(s => s.language === cat.name).length;
-        html += `
+
+            CODE_CATEGORIES.forEach(cat => {
+                const count = ALL_SNIPPETS.filter(s => s.language === cat.name).length;
+                html += `
             <div class="cx-nav-item" data-lang-name="${cat.name}" onclick="filterByLang('${cat.name}')">
                 <span>${cat.name}</span>
                 <span class="cx-count">${count}</span>
             </div>
         `;
-    });
-    
-    if (sidebarNav) sidebarNav.innerHTML = html;
-}
+            });
 
-async function saveCodeCategory() {
-    const data = {
-        id: currentCatEditId,
-        name: document.getElementById('codeCatNameInput').value
-    };
+            if (sidebarNav) sidebarNav.innerHTML = html;
+        }
 
-    if (!data.name) return alert('Vui lòng nhập tên danh mục');
+        async function saveCodeCategory() {
+            const nameInput = document.getElementById('codeCatNameInput');
+            const data = {
+                id: currentCatEditId,
+                name: nameInput.value.trim()
+            };
 
-    try {
-        const response = await fetch('/codex/categories/save', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-        const result = await response.json();
-        if (result.success) {
-            if (currentCatEditId) {
-                const idx = CODE_CATEGORIES.findIndex(c => c.id == currentCatEditId);
-                CODE_CATEGORIES[idx] = result;
-            } else {
-                CODE_CATEGORIES.push(result);
+            if (!data.name) {
+                showCxToast('Vui lòng nhập tên danh mục', 'error');
+                return;
             }
-            showCodeCategoryList();
-        } else {
-            alert(result.message || 'Lỗi khi lưu danh mục');
+
+            // Kiểm tra trùng lặp local
+            const isDuplicate = CODE_CATEGORIES.some(c => 
+                c.name.toLowerCase() === data.name.toLowerCase() && c.id != data.id
+            );
+            if (isDuplicate) {
+                showCxToast('Tên danh mục này đã tồn tại', 'error');
+                return;
+            }
+
+            showCxToast(currentCatEditId ? 'Đang cập nhật danh mục...' : 'Đang thêm danh mục...', 'loading');
+
+            try {
+                const response = await fetch('/codex/categories/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    if (currentCatEditId) {
+                        const idx = CODE_CATEGORIES.findIndex(c => c.id == currentCatEditId);
+                        CODE_CATEGORIES[idx] = result;
+                    } else {
+                        CODE_CATEGORIES.push(result);
+                    }
+                    showCxToast(currentCatEditId ? 'Đã cập nhật danh mục!' : 'Đã thêm danh mục thành công!', 'success');
+                    showCodeCategoryList();
+                } else {
+                    showCxToast(result.message || 'Lỗi khi lưu danh mục', 'error');
+                }
+            } catch (e) { 
+                console.error(e); 
+                showCxToast('Lỗi kết nối máy chủ', 'error');
+            }
         }
-    } catch (e) { console.error(e); }
-}
 
-async function deleteCodeCategory(id) {
-    if (!confirm('Bạn có chắc chắn muốn xóa danh mục này?')) return;
-    try {
-        const response = await fetch('/codex/categories/delete', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id })
-        });
-        const result = await response.json();
-        if (result.success) {
-            CODE_CATEGORIES = CODE_CATEGORIES.filter(c => c.id != id);
-            renderCodeCategories();
-        } else {
-            alert('Không thể xóa danh mục này');
+        async function deleteCodeCategory(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa danh mục này?')) return;
+            
+            showCxToast('Đang xóa danh mục...', 'loading');
+            try {
+                const response = await fetch('/codex/categories/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    CODE_CATEGORIES = CODE_CATEGORIES.filter(c => c.id != id);
+                    showCxToast('Đã xóa danh mục thành công!', 'success');
+                    renderCodeCategories();
+                } else {
+                    showCxToast(result.message || 'Không thể xóa danh mục này', 'error');
+                }
+            } catch (e) { 
+                console.error(e); 
+                showCxToast('Lỗi kết nối máy chủ', 'error');
+            }
         }
-    } catch (e) { console.error(e); }
-}
 
 
-// --- Snippet Logic ---
-document.getElementById('cxForm').onsubmit = function(e) {
-    e.preventDefault();
-    
-    // Validation: Loại code không được để trống
-    const lang = document.getElementById('cxLangInput').value;
-    if (!lang || lang === 'Chọn danh mục') {
-        alert('Vui lòng chọn loại code cho snippet này');
-        return;
-    }
+        // --- Snippet Logic ---
+        document.getElementById('cxForm').onsubmit = function (e) {
+            e.preventDefault();
 
-    const formData = new FormData(this);
-    fetch('/codex/save', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === 'success') {
-            location.reload();
-        } else {
-            alert(data.message);
-        }
-    });
-};
+            // Validation: Loại code không được để trống
+            const lang = document.getElementById('cxLangInput').value;
+            if (!lang || lang === 'Chọn danh mục') {
+                showCxToast('Vui lòng chọn loại code cho snippet này', 'error');
+                return;
+            }
 
-function selectSnippet(snippet, element) {
-    document.querySelectorAll('.cx-snippet-item').forEach(i => i.classList.remove('active'));
-    element.classList.add('active');
-    
-    document.getElementById('pTitle').textContent = snippet.title;
-    document.getElementById('pLang').textContent = snippet.language;
-    document.getElementById('pDesc').textContent = snippet.description;
-    document.getElementById('pLines').textContent = snippet.line_count;
-    document.getElementById('pChars').textContent = snippet.char_count;
-    document.getElementById('pCode').textContent = snippet.code;
-    
-    const actionContainer = document.querySelector('.cx-preview-actions');
-    actionContainer.innerHTML = `
+            // Hiển thị loading toast
+            showCxToast(document.getElementById('cxId').value ? 'Đang cập nhật snippet...' : 'Đang thêm snippet...', 'loading');
+
+            const formData = new FormData(this);
+            fetch('/codex/save', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showCxToast('Thành công!', 'success');
+                    setTimeout(() => location.reload(), 500);
+                } else {
+                    showCxToast(data.message || 'Lỗi khi lưu snippet', 'error');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showCxToast('Lỗi kết nối máy chủ', 'error');
+            });
+        };
+
+        function selectSnippet(snippet, element) {
+            document.querySelectorAll('.cx-snippet-item').forEach(i => i.classList.remove('active'));
+            element.classList.add('active');
+
+            document.getElementById('pTitle').textContent = snippet.title;
+            document.getElementById('pLang').textContent = snippet.language;
+            document.getElementById('pDesc').textContent = snippet.description;
+            document.getElementById('pLines').textContent = snippet.line_count;
+            document.getElementById('pChars').textContent = snippet.char_count;
+            document.getElementById('pCode').textContent = snippet.code;
+
+            const actionContainer = document.querySelector('.cx-preview-actions');
+            actionContainer.innerHTML = `
         <button class="btn-icon-nm" onclick='editSnippet(${JSON.stringify(snippet)})'><i class="ph ph-pencil-simple"></i></button>
         <button class="btn-icon-nm" onclick="deleteSnippet(${snippet.id})"><i class="ph ph-trash"></i></button>
     `;
-}
+        }
 
-function editSnippet(snippet) {
-    document.getElementById('cxId').value = snippet.id;
-    document.getElementById('cxTitle').value = snippet.title;
-    document.getElementById('cxDesc').value = snippet.description;
-    document.getElementById('cxCodeArea').value = snippet.code;
-    document.getElementById('cxLangInput').value = snippet.language;
-    document.getElementById('cxLangBadge').textContent = snippet.language;
-    
-    document.getElementById('cxLangBadge').style.backgroundColor = '#f1f5f9';
-    document.getElementById('cxLangBadge').style.color = '#64748b';
-    
-    document.querySelector('#cxModal .modal-title span').textContent = 'Chỉnh sửa Snippet';
-    document.querySelector('#cxModal .btn-cx-submit').textContent = 'Cập nhật';
-    document.getElementById('cxModal').classList.add('active');
-    updateStats();
-}
+        function editSnippet(snippet) {
+            document.getElementById('cxId').value = snippet.id;
+            document.getElementById('cxTitle').value = snippet.title;
+            document.getElementById('cxDesc').value = snippet.description;
+            document.getElementById('cxCodeArea').value = snippet.code;
+            document.getElementById('cxLangInput').value = snippet.language;
+            document.getElementById('cxLangBadge').textContent = snippet.language;
 
-function deleteSnippet(id) {
-    if (confirm('Bạn có chắc chắn muốn xoá snippet này?')) {
-        const formData = new FormData();
-        formData.append('id', id);
-        
-        fetch('/codex/delete', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'success') {
-                location.reload();
-            } else {
-                alert(data.message);
+            document.getElementById('cxLangBadge').style.backgroundColor = '#f1f5f9';
+            document.getElementById('cxLangBadge').style.color = '#64748b';
+
+            document.querySelector('#cxModal .modal-title span').textContent = 'Chỉnh sửa Snippet';
+            document.querySelector('#cxModal .btn-cx-submit').textContent = 'Cập nhật';
+            document.getElementById('cxModal').classList.add('active');
+            updateStats();
+        }
+
+        function deleteSnippet(id) {
+            if (confirm('Bạn có chắc chắn muốn xoá snippet này?')) {
+                showCxToast('Đang xóa snippet...', 'loading');
+                const formData = new FormData();
+                formData.append('id', id);
+
+                fetch('/codex/delete', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showCxToast('Đã xóa thành công!', 'success');
+                        setTimeout(() => location.reload(), 500);
+                    } else {
+                        showCxToast(data.message || 'Lỗi khi xóa snippet', 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showCxToast('Lỗi kết nối máy chủ', 'error');
+                });
             }
-        });
-    }
-}
-
-function filterByLang(lang) {
-    const items = document.querySelectorAll('.cx-snippet-item');
-    let visible = 0;
-    items.forEach(item => {
-        if (lang === 'all' || item.dataset.lang === lang) {
-            item.style.display = 'block';
-            visible++;
-        } else {
-            item.style.display = 'none';
         }
-    });
-    document.getElementById('visibleCount').textContent = visible + ' snippets';
-    
-    document.querySelectorAll('.cx-nav-item').forEach(nav => {
-        const langName = nav.getAttribute('data-lang-name');
-        if (lang === 'all') {
-            if (!langName) nav.classList.add('active');
-            else nav.classList.remove('active');
-        } else {
-            if (langName === lang) nav.classList.add('active');
-            else nav.classList.remove('active');
+
+        function filterByLang(lang) {
+            const items = document.querySelectorAll('.cx-snippet-item');
+            let visible = 0;
+            items.forEach(item => {
+                if (lang === 'all' || item.dataset.lang === lang) {
+                    item.style.display = 'block';
+                    visible++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            document.getElementById('visibleCount').textContent = visible + ' snippets';
+
+            document.querySelectorAll('.cx-nav-item').forEach(nav => {
+                const langName = nav.getAttribute('data-lang-name');
+                if (lang === 'all') {
+                    if (!langName) nav.classList.add('active');
+                    else nav.classList.remove('active');
+                } else {
+                    if (langName === lang) nav.classList.add('active');
+                    else nav.classList.remove('active');
+                }
+            });
         }
-    });
-}
 
-function searchSnippets() {
-    const query = document.getElementById('cxSearchInput').value.toLowerCase();
-    const items = document.querySelectorAll('.cx-snippet-item');
-    let visible = 0;
-    items.forEach(item => {
-        const title = item.dataset.title;
-        if (title.includes(query)) {
-            item.style.display = 'block';
-            visible++;
-        } else {
-            item.style.display = 'none';
+        function searchSnippets() {
+            const query = document.getElementById('cxSearchInput').value.toLowerCase();
+            const items = document.querySelectorAll('.cx-snippet-item');
+            let visible = 0;
+            items.forEach(item => {
+                const title = item.dataset.title;
+                if (title.includes(query)) {
+                    item.style.display = 'block';
+                    visible++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            document.getElementById('visibleCount').textContent = visible + ' snippets';
         }
-    });
-    document.getElementById('visibleCount').textContent = visible + ' snippets';
-}
 
-function copySnippet() {
-    const code = document.getElementById('pCode').textContent;
-    navigator.clipboard.writeText(code).then(() => {
-        alert('Đã copy vào clipboard!');
-    });
-}
+        function copySnippet() {
+            const code = document.getElementById('pCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Đã copy vào clipboard!');
+            });
+        }
 
-// --- Snippet Logic ---
+        // --- Snippet Logic ---
 
-function showAddLangInput(e) {
-    e.stopPropagation();
-    document.getElementById('cxShowAddBtn').style.display = 'none';
-    document.getElementById('cxAddLangInputGroup').style.display = 'flex';
-    document.getElementById('newLangInput').focus();
-}
+        function showAddLangInput(e) {
+            e.stopPropagation();
+            document.getElementById('cxShowAddBtn').style.display = 'none';
+            document.getElementById('cxAddLangInputGroup').style.display = 'flex';
+            document.getElementById('newLangInput').focus();
+        }
 
-function hideAddLangInput(e) {
-    if (e) e.stopPropagation();
-    document.getElementById('cxShowAddBtn').style.display = 'flex';
-    document.getElementById('cxAddLangInputGroup').style.display = 'none';
-    document.getElementById('newLangInput').value = '';
-}
+        function hideAddLangInput(e) {
+            if (e) e.stopPropagation();
+            document.getElementById('cxShowAddBtn').style.display = 'flex';
+            document.getElementById('cxAddLangInputGroup').style.display = 'none';
+            document.getElementById('newLangInput').value = '';
+        }
 
-function handleNewLangKey(e) {
-    if (e.key === 'Enter') saveNewLang(e);
-    if (e.key === 'Escape') hideAddLangInput(e);
-}
+        function handleNewLangKey(e) {
+            if (e.key === 'Enter') saveNewLang(e);
+            if (e.key === 'Escape') hideAddLangInput(e);
+        }
 
-async function saveNewLang(e) {
-    e.stopPropagation();
-    const name = document.getElementById('newLangInput').value.trim();
-    if (!name) return;
+        async function saveNewLang(e) {
+            e.stopPropagation();
+            const name = document.getElementById('newLangInput').value.trim();
+            if (!name) return;
 
-    try {
-        const response = await fetch('/codex/categories/save', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: name })
-        });
-        const data = await response.json();
-        
-        if (data.success) {
-            if (!data.exists) {
-                CODE_CATEGORIES.push(data);
-                renderCodeCategories();
+            try {
+                const response = await fetch('/codex/categories/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    if (!data.exists) {
+                        CODE_CATEGORIES.push(data);
+                        renderCodeCategories();
+                    }
+                    document.getElementById('cxLangInput').value = data.name;
+                    document.getElementById('cxLangBadge').textContent = data.name;
+                    const badge = document.getElementById('cxLangBadge');
+                    badge.style.backgroundColor = '#f1f5f9';
+                    badge.style.color = '#64748b';
+
+                    hideAddLangInput();
+                    document.getElementById('cxLangSelect').classList.remove('open');
+                } else {
+                    alert(data.message || 'Lỗi khi thêm loại code');
+                }
+            } catch (err) {
+                console.error('Error:', err);
             }
-            document.getElementById('cxLangInput').value = data.name;
-            document.getElementById('cxLangBadge').textContent = data.name;
+        }
+        // Callback khi chọn loại code từ dropdown
+        function onCxLangSelect(value, label, option) {
             const badge = document.getElementById('cxLangBadge');
+            if (!badge || !value) return;
+
+            // Tìm danh mục từ dữ liệu CODE_CATEGORIES
+            const cat = CODE_CATEGORIES.find(c => c.name === value);
+            if (cat) {
+                // Cập nhật giá trị input language ẩn
+                document.getElementById('cxLangInput').value = cat.name;
+            }
+
+            // Reset badge style (neutral)
             badge.style.backgroundColor = '#f1f5f9';
             badge.style.color = '#64748b';
-
-            hideAddLangInput();
-            document.getElementById('cxLangSelect').classList.remove('open');
-        } else {
-            alert(data.message || 'Lỗi khi thêm loại code');
         }
-    } catch (err) {
-        console.error('Error:', err);
-    }
-}
-// Callback khi chọn loại code từ dropdown
-function onCxLangSelect(value, label, option) {
-    const badge = document.getElementById('cxLangBadge');
-    if (!badge || !value) return;
-    
-    // Tìm danh mục từ dữ liệu CODE_CATEGORIES
-    const cat = CODE_CATEGORIES.find(c => c.name === value);
-    if (cat) {
-        // Cập nhật giá trị input language ẩn
-        document.getElementById('cxLangInput').value = cat.name;
-    }
-    
-    // Reset badge style (neutral)
-    badge.style.backgroundColor = '#f1f5f9';
-    badge.style.color = '#64748b';
-}
 
-// Khởi tạo trang: đồng bộ hóa danh sách từ PHP khi DOM sẵn sàng
-document.addEventListener('DOMContentLoaded', () => {
-    renderCodeCategories();
-});
-</script>
+        // Khởi tạo trang: đồng bộ hóa danh sách từ PHP khi DOM sẵn sàng
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCodeCategories();
+        });
+    </script>
+    <div id="cxToast" class="toast">
+        <div class="toast-content">
+            <div id="cxToastSpinner" class="spinner"></div>
+            <i id="cxToastSuccessIcon" class="ph-fill ph-check-circle" style="display:none; color: #10b981; font-size: 24px;"></i>
+            <i id="cxToastErrorIcon" class="ph-fill ph-x-circle" style="display:none; color: #ef4444; font-size: 24px;"></i>
+            <span id="cxToastMsg">Đang xử lý...</span>
+        </div>
+    </div>
 </body>
+
 </html>
