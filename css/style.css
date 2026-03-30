@@ -2357,7 +2357,10 @@ body {
     z-index: 100;
     padding: 6px;
 }
-.pj-dropdown.open { display: block; }
+.pj-dropdown.open, 
+.pj-modal-select.open .pj-dropdown { 
+    display: block; 
+}
 
 .pj-dropdown-item {
     padding: 9px 14px;

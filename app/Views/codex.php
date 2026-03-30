@@ -365,6 +365,10 @@ function openCxModal() {
     document.querySelector('#cxModal .btn-cx-submit').textContent = 'Thêm Mới';
     document.getElementById('cxLangBadge').textContent = 'JavaScript';
     document.getElementById('cxLangInput').value = 'JavaScript';
+    
+    // Sync dropdown with latest categories
+    renderCodeCategories();
+    
     document.getElementById('cxModal').classList.add('active');
     updateStats();
 }
@@ -778,17 +782,23 @@ function onCxLangSelect(value, label, option) {
     // Tìm danh mục từ dữ liệu CODE_CATEGORIES
     const cat = CODE_CATEGORIES.find(c => c.name === value);
     if (cat) {
-        // Cập nhật phong cách badge theo danh mục
-        badge.style.backgroundColor = cat.color + '20'; 
-        badge.style.color = cat.color;
-        badge.style.borderColor = cat.color;
+        // Cập nhật màu sắc badge theo category
+        badge.style.backgroundColor = cat.color;
+        badge.style.color = cat.text_color;
+        
+        // Cập nhật giá trị input language ẩn
+        document.getElementById('cxLangInput').value = cat.name;
     } else {
-        // Màu mặc định nếu không tìm thấy
-        badge.style.backgroundColor = '#f1f5f9';
-        badge.style.color = '#64748b';
-        badge.style.borderColor = '#e2e8f0';
+        // Mặc định
+        badge.style.backgroundColor = '#fef9c3';
+        badge.style.color = '#854d0e';
     }
 }
+
+// Khởi tạo trang: đồng bộ hóa danh sách từ PHP khi DOM sẵn sàng
+document.addEventListener('DOMContentLoaded', () => {
+    renderCodeCategories();
+});
 </script>
 </body>
 </html>
