@@ -414,12 +414,12 @@
     </div>
 </div>
 
-<!-- Toast Thông báo (Giống Hosting) -->
-<div class="delete-toast" id="deleteToast">
-    <div class="toast-spinner" id="dtSpinner"></div>
-    <div id="dtSuccessIcon" style="display:none; color: #10b981; font-size: 20px; display: flex; align-items: center;"><i class="ph-fill ph-check-circle"></i></div>
-    <span id="dtMessage">Đang xử lý...</span>
-</div>
+    <div class="delete-toast" id="deleteToast">
+        <div class="toast-spinner" id="dtSpinner"></div>
+        <div id="dtSuccessIcon" style="display:none; color: #10b981; font-size: 22px; align-items: center; justify-content: center;"><i class="ph-fill ph-check-circle"></i></div>
+        <div id="dtErrorIcon" style="display:none; color: #ef4444; font-size: 22px; align-items: center; justify-content: center;"><i class="ph-fill ph-x-circle"></i></div>
+        <span id="dtMessage" style="color: #1e293b; font-weight: 600;">Đang xử lý...</span>
+    </div>
 
 <div class="row-action-menu" id="rowActionMenu">
     <button class="ram-item ram-view">
@@ -457,6 +457,54 @@
 
 <script>
 let selectedProjects = new Set();
+
+function clearErrors() {
+    document.querySelectorAll('.modal-input-error').forEach(el => el.classList.remove('modal-input-error'));
+}
+
+function markError(id, isCustom = false) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (isCustom) {
+        const container = el.closest('.pj-modal-select');
+        if (container) {
+            container.classList.add('modal-input-error');
+            const trigger = container.querySelector('.pj-modal-select-trigger');
+            if (trigger) trigger.focus();
+        }
+    } else {
+        el.classList.add('modal-input-error');
+        el.focus();
+    }
+}
+
+function showToast(msg, icon = 'dtSpinner') {
+    const t = document.getElementById('deleteToast');
+    const m = document.getElementById('dtMessage');
+    const s = document.getElementById('dtSpinner');
+    const succ = document.getElementById('dtSuccessIcon');
+    const err = document.getElementById('dtErrorIcon');
+    if (!t) return;
+    m.textContent = msg;
+    t.classList.add('show');
+    
+    s.style.display = 'none';
+    succ.style.display = 'none';
+    err.style.display = 'none';
+
+    if (icon === 'success') {
+        succ.style.display = 'flex';
+    } else if (icon === 'error') {
+        err.style.display = 'flex';
+    } else {
+        s.style.display = 'block';
+    }
+}
+
+function hideToast() {
+    const t = document.getElementById('deleteToast');
+    if (t) t.classList.remove('show');
+}
 
 function updateBulkActionBar() {
     const bar = document.getElementById('bulkActionBar');
@@ -673,14 +721,14 @@ function confirmDeleteAction() {
                 });
                 const result = await response.json();
                 if (result.status === 'success' || result.success) {
-                    rowToDelete.remove();
-                    rowToDelete = null;
+                    showToast('Xóa dự án thành công', 'success');
+                    setTimeout(() => location.reload(), 1000);
                 } else {
-                    alert('Lỗi khi xóa: ' + (result.message || 'Không xác định'));
+                    showToast('Lỗi khi xóa: ' + (result.message || 'Không xác định'), 'error');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Có lỗi xảy ra khi kết nối với máy chủ.');
+                showToast('Có lỗi xảy ra khi kết nối với máy chủ.', 'error');
             }
         });
     } else if (selectedProjects.size > 0) {
@@ -699,14 +747,17 @@ function confirmDeleteAction() {
                         if (tr) tr.remove();
                     });
                     selectedProjects.clear();
+                    selectedProjects.clear();
                     updateBulkActionBar();
                     document.getElementById('selectAllProjects').checked = false;
+                    showToast(`Đã xóa các dự án đã chọn`, 'success');
+                    setTimeout(() => location.reload(), 1000);
                 } else {
-                    alert('Lỗi khi xóa: ' + (result.message || 'Không xác định'));
+                    showToast('Lỗi khi xóa: ' + (result.message || 'Không xác định'), 'error');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Có lỗi xảy ra khi kết nối với máy chủ.');
+                showToast('Có lỗi xảy ra khi kết nối với máy chủ.', 'error');
             }
         });
     }
@@ -794,25 +845,24 @@ function addProject() {
     const data = getFormData();
     if (!data) return;
 
-    showActionToast('Đang thêm dự án...', `Đã thêm dự án "${data.name}"`, async () => {
-        try {
-            const response = await fetch('/projects/save', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            const result = await response.json();
-            if (result.status === 'success' || result.success) {
-                closeAddProjectModal();
-                window.location.reload();
-            } else {
-                alert('Lỗi khi thêm: ' + (result.message || 'Không xác định'));
-            }
-        } catch (err) {
-            console.error(err);
-            alert('Có lỗi xảy ra khi kết nối với máy chủ.');
+    showToast('Đang thêm dự án...');
+    try {
+        const response = await fetch('/projects/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (result.status === 'success' || result.success) {
+            showToast('Thêm dự án thành công!', 'success');
+            setTimeout(() => location.reload(), 1200);
+        } else {
+            showToast('Lỗi khi thêm: ' + (result.message || 'Không xác định'), 'error');
         }
-    });
+    } catch (err) {
+        console.error(err);
+        showToast('Có lỗi xảy ra khi kết nối với máy chủ.', 'error');
+    }
 }
 
 function updateProject() {
@@ -822,28 +872,24 @@ function updateProject() {
     // Thêm ID vào data để backend biết là cập nhật
     data.id = currentRowToEdit.getAttribute('data-id');
 
-    showActionToast('Đang cập nhật dự án...', `Đã cập nhật dự án "${data.name}"`, async () => {
-        try {
-            const response = await fetch('/projects/save', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            const result = await response.json();
-            if (result.status === 'success' || result.success) {
-                populateRow(currentRowToEdit, data);
-                closeAddProjectModal();
-                if (document.getElementById('detailProjectModal').classList.contains('active')) {
-                    openProjectDetail(currentRowToEdit);
-                }
-            } else {
-                alert('Lỗi khi cập nhật: ' + (result.message || 'Không xác định'));
-            }
-        } catch (err) {
-            console.error(err);
-            alert('Có lỗi xảy ra khi kết nối với máy chủ.');
+    showToast('Đang cập nhật dự án...');
+    try {
+        const response = await fetch('/projects/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (result.status === 'success' || result.success) {
+            showToast('Cập nhật thành công!', 'success');
+            setTimeout(() => location.reload(), 1200);
+        } else {
+            showToast('Lỗi khi cập nhật: ' + (result.message || 'Không xác định'), 'error');
         }
-    });
+    } catch (err) {
+        console.error(err);
+        showToast('Có lỗi xảy ra khi kết nối với máy chủ.', 'error');
+    }
 }
 
 function getFormData() {
@@ -858,12 +904,10 @@ function getFormData() {
     const adminPass = document.getElementById('adminPassword').value;
     const value = parseInt(document.getElementById('projectValue').value) || 0;
 
-    console.log('Project Form Data:', { name, status, date, customer });
-
-    if (!name || !date || !customer) {
-        alert('Vui lòng điền đầy đủ các thông tin bắt buộc (*)');
-        return null;
-    }
+    clearErrors();
+    if (!name) { showToast('Vui lòng nhập tên dự án!', 'error'); markError('mProjectName'); return null; }
+    if (!date) { showToast('Vui lòng chọn ngày tạo!', 'error'); markError('mProjectDate'); return null; }
+    if (!customer) { showToast('Vui lòng nhập tên khách hàng!', 'error'); markError('mCustomerName'); return null; }
 
     return { name, link: adminUrl, status, desc, date, customer, phone, adminUrl, adminUser, adminPass, value };
 }

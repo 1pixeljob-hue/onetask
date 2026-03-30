@@ -197,7 +197,16 @@
                 </div>
 
             </div>
-        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="logToast" class="toast">
+        <div class="toast-content">
+            <div id="logToastSpinner" class="spinner"></div>
+            <i id="logToastSuccessIcon" class="ph-fill ph-check-circle" style="display:none; color: #10b981; font-size: 24px;"></i>
+            <i id="logToastErrorIcon" class="ph-fill ph-x-circle" style="display:none; color: #ef4444; font-size: 24px;"></i>
+            <span id="logToastMsg">Đang xử lý...</span>
+        </div>
     </div>
 
     <!-- Modal Chi tiết Log -->
@@ -295,9 +304,81 @@
     .badge-action-update, .badge-yellow { background: #fefce8; color: #854d0e; border: 1px solid #fef08a; }
     .badge-action-delete, .badge-red { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
     .badge-blue { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+
+    /* Toast Notification Styles */
+    .toast {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 16px 24px;
+        box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
+        z-index: 2000;
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border-left: 4px solid #2fab91;
+    }
+    .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    .toast-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 600;
+        color: #1e293b;
+    }
+    .spinner {
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #2fab91;
+        border-radius: 50%;
+        animation: spin-toast 1s linear infinite;
+    }
+    @keyframes spin-toast {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
     </style>
 
-<script>
+    <script>
+    function showLogToast(message, type = 'loading') {
+        const toast = document.getElementById('logToast');
+        const msg = document.getElementById('logToastMsg');
+        const spinner = document.getElementById('logToastSpinner');
+        const successIcon = document.getElementById('logToastSuccessIcon');
+        const errorIcon = document.getElementById('logToastErrorIcon');
+        
+        // Reset
+        spinner.style.display = 'none';
+        successIcon.style.display = 'none';
+        errorIcon.style.display = 'none';
+        toast.style.borderLeftColor = '#2fab91';
+
+        msg.textContent = message;
+        
+        if (type === 'loading') {
+            spinner.style.display = 'block';
+        } else if (type === 'success') {
+            successIcon.style.display = 'block';
+            toast.style.borderLeftColor = '#10b981';
+        } else if (type === 'error') {
+            errorIcon.style.display = 'block';
+            toast.style.borderLeftColor = '#ef4444';
+        }
+        
+        toast.classList.add('show');
+        
+        if (type !== 'loading') {
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    }
 function viewLogDetail(id) {
     const log = LOGS.find(l => l.id == id);
     if (!log) return;
@@ -467,6 +548,7 @@ document.getElementById('logsSearchInput').addEventListener('keypress', function
 async function restoreLog(id) {
     if (!confirm('Bạn có chắc chắn muốn khôi phục dữ liệu này?')) return;
     
+    showLogToast('Đang khôi phục dữ liệu...', 'loading');
     try {
         const response = await fetch('/logs/restore', {
             method: 'POST',
@@ -476,14 +558,14 @@ async function restoreLog(id) {
         
         const result = await response.json();
         if (result.status === 'success' || result.success) {
-            alert('Khôi phục thành công!');
-            location.reload();
+            showLogToast('Khôi phục thành công!', 'success');
+            setTimeout(() => location.reload(), 1000);
         } else {
-            alert('Lỗi: ' + result.message);
+            showLogToast('Lỗi: ' + result.message, 'error');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Đã xảy ra lỗi khi kết nối với máy chủ.');
+        showLogToast('Đã xảy ra lỗi khi kết nối với máy chủ.', 'error');
     }
 }
 </script>

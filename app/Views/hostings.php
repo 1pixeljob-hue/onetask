@@ -207,6 +207,54 @@ let selectedHostings = new Set();
 let currentPage = 1;
 const itemsPerPage = 10;
 
+function clearErrors() {
+    document.querySelectorAll('.modal-input-error').forEach(el => el.classList.remove('modal-input-error'));
+}
+
+function markError(id, isCustom = false) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (isCustom) {
+        const container = el.closest('.pj-modal-select');
+        if (container) {
+            container.classList.add('modal-input-error');
+            const trigger = container.querySelector('.pj-modal-select-trigger');
+            if (trigger) trigger.focus();
+        }
+    } else {
+        el.classList.add('modal-input-error');
+        el.focus();
+    }
+}
+
+function showToast(msg, icon = 'dtSpinner') {
+    const t = document.getElementById('deleteToast');
+    const m = document.getElementById('dtMessage');
+    const s = document.getElementById('dtSpinner');
+    const succ = document.getElementById('dtSuccessIcon');
+    const err = document.getElementById('dtErrorIcon');
+    if (!t) return;
+    m.textContent = msg;
+    t.classList.add('show');
+    
+    s.style.display = 'none';
+    succ.style.display = 'none';
+    err.style.display = 'none';
+
+    if (icon === 'success') {
+        succ.style.display = 'flex';
+    } else if (icon === 'error') {
+        err.style.display = 'flex';
+    } else {
+        s.style.display = 'block';
+    }
+}
+
+function hideToast() {
+    const t = document.getElementById('deleteToast');
+    if (t) t.classList.remove('show');
+}
+
 function updateBulkActionBar() {
     const bar = document.getElementById('bulkActionBar');
     const countText = document.getElementById('selectedCountText');
@@ -536,6 +584,10 @@ document.addEventListener('click', function(e) {
             <button class="modal-close" onclick="closeHostingModalBtn()"><i class="ph ph-x"></i></button>
         </div>
         <div class="modal-body">
+            <div style="display: none;">
+                <input type="text" name="mUsername">
+                <input type="password" name="mPassword">
+            </div>
             <div class="modal-field full">
                 <label class="modal-label">Tên Hosting <span class="req">*</span></label>
                 <input type="text" class="modal-input" id="mHostingName" placeholder="VD: Website Chính">
@@ -769,11 +821,11 @@ function confirmDeleteAction() {
                     document.getElementById('selectAllHostings').checked = false;
                     applyFilters();
                 } else {
-                    alert('Lỗi khi xóa: ' + (result.message || 'Không xác định'));
+                    showToast('Lỗi khi xóa: ' + (result.message || 'Không xác định'), 'error');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Có lỗi xảy ra khi kết nối với máy chủ.');
+                showToast('Có lỗi xảy ra khi kết nối với máy chủ.', 'error');
             }
         });
     } else if (rowToDelete) {
@@ -794,11 +846,11 @@ function confirmDeleteAction() {
                         applyFilters();
                     }
                 } else {
-                    alert('Lỗi khi xóa: ' + (result.message || 'Không xác định'));
+                    showToast('Lỗi khi xóa: ' + (result.message || 'Không xác định'), 'error');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Có lỗi xảy ra khi kết nối với máy chủ.');
+                showToast('Có lỗi xảy ra khi kết nối với máy chủ.', 'error');
             }
         });
     }
@@ -873,10 +925,12 @@ function addHosting() {
     const regDate  = document.getElementById('mRegDate').value;
     const price    = document.getElementById('hostingPrice').value;
 
-    if (!name || !domain || !provider || !expDate) {
-        alert('Vui lòng điền đầy đủ các trường bắt buộc (*).');
-        return;
-    }
+    clearErrors();
+    if (!name) { showToast('Vui lòng nhập tên hosting!', 'error'); markError('mHostingName'); return; }
+    if (!domain) { showToast('Vui lòng nhập tên miền!', 'error'); markError('mDomain'); return; }
+    if (!regDate) { showToast('Vui lòng chọn ngày đăng ký!', 'error'); markError('mRegDate'); return; }
+    if (!expDate) { showToast('Vui lòng chọn ngày hết hạn!', 'error'); markError('mExpDate'); return; }
+    if (!price) { showToast('Vui lòng nhập giá hosting!', 'error'); markError('hostingPrice'); return; }
 
     const data = { 
         name, 
@@ -900,11 +954,11 @@ function addHosting() {
                 closeHostingModalBtn();
                 window.location.reload();
             } else {
-                alert('Lỗi khi thêm: ' + (result.message || 'Không xác định'));
+                showToast('Lỗi khi thêm: ' + (result.message || 'Không xác định'), 'error');
             }
         } catch (err) {
             console.error(err);
-            alert('Có lỗi xảy ra khi kết nối với máy chủ.');
+            showToast('Có lỗi xảy ra khi kết nối với máy chủ.', 'error');
         }
     });
 }
@@ -920,10 +974,12 @@ function updateHosting() {
     const regDate  = document.getElementById('mRegDate').value;
     const price    = document.getElementById('hostingPrice').value;
 
-    if (!name || !domain || !provider || !expDate) {
-        alert('Vui lòng điền đầy đủ các trường bắt buộc (*).');
-        return;
-    }
+    clearErrors();
+    if (!name) { showToast('Vui lòng nhập tên hosting!', 'error'); markError('mHostingName'); return; }
+    if (!domain) { showToast('Vui lòng nhập tên miền!', 'error'); markError('mDomain'); return; }
+    if (!regDate) { showToast('Vui lòng chọn ngày đăng ký!', 'error'); markError('mRegDate'); return; }
+    if (!expDate) { showToast('Vui lòng chọn ngày hết hạn!', 'error'); markError('mExpDate'); return; }
+    if (!price) { showToast('Vui lòng nhập giá hosting!', 'error'); markError('hostingPrice'); return; }
 
     const data = { 
         id,
@@ -950,11 +1006,11 @@ function updateHosting() {
                 closeHostingModalBtn();
                 applyFilters();
             } else {
-                alert('Lỗi khi cập nhật: ' + (result.message || 'Không xác định'));
+                showToast(result.message || 'Lỗi khi cập nhật', 'error');
             }
         } catch (err) {
             console.error(err);
-            alert('Có lỗi xảy ra khi kết nối với máy chủ.');
+            showToast('Có lỗi xảy ra khi kết nối với máy chủ.', 'error');
         }
     });
 }
@@ -1018,5 +1074,12 @@ function closeDetailModal(e) {
     if (e.target === document.getElementById('detailModal')) closeDetailModalBtn();
 }
 </script>
+    <!-- Notification Toast -->
+    <div class="delete-toast" id="deleteToast">
+        <div class="toast-spinner" id="dtSpinner"></div>
+        <div id="dtSuccessIcon" style="display:none; color: #10b981; font-size: 22px; align-items: center; justify-content: center;"><i class="ph-fill ph-check-circle"></i></div>
+        <div id="dtErrorIcon" style="display:none; color: #ef4444; font-size: 22px; align-items: center; justify-content: center;"><i class="ph-fill ph-x-circle"></i></div>
+        <span id="dtMessage" style="color: #1e293b; font-weight: 600;">Đang xử lý...</span>
+    </div>
 </body>
 </html>

@@ -489,6 +489,26 @@ let currentSearchTerm = '';
 let currentCategoryFilter = '';
 
 // Modal Password Functions
+function clearErrors() {
+    document.querySelectorAll('.modal-input-error').forEach(el => el.classList.remove('modal-input-error'));
+}
+
+function markError(id, isCustom = false) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (isCustom) {
+        const container = el.closest('.pj-modal-select');
+        if (container) {
+            container.classList.add('modal-input-error');
+            const trigger = container.querySelector('.pj-modal-select-trigger');
+            if (trigger) trigger.focus();
+        }
+    } else {
+        el.classList.add('modal-input-error');
+        el.focus();
+    }
+}
+
 
 // Modal Password Functions
 function openAddPwdModal() {
@@ -578,14 +598,26 @@ function generateStrongPwd() {
 
 async function submitAddPwdForm(e) {
     e.preventDefault();
+    const title = document.getElementById('mPwdTitle').value.trim();
+    const url = document.getElementById('mPwdUrl').value.trim();
+    const category = document.getElementById('mPwdCategory').value;
+    const username = document.getElementById('mPwdUser').value.trim();
+    const password = document.getElementById('mPwdPass').value.trim();
+    const notes = document.getElementById('mPwdNotes').value;
+
+    clearErrors();
+    if (!title) { showPwdToast('Vui lòng nhập tiêu đề!', 'error'); markError('mPwdTitle'); return; }
+    if (!username) { showPwdToast('Vui lòng nhập tài khoản!', 'error'); markError('mPwdUser'); return; }
+    if (!password) { showPwdToast('Vui lòng nhập mật khẩu!', 'error'); markError('mPwdPass'); return; }
+
     const data = {
         id: currentEditId,
-        title: document.getElementById('mPwdTitle').value,
-        url: document.getElementById('mPwdUrl').value,
-        category: document.getElementById('mPwdCategory').value,
-        username: document.getElementById('mPwdUser').value,
-        password: document.getElementById('mPwdPass').value,
-        notes: document.getElementById('mPwdNotes').value
+        title,
+        url,
+        category,
+        username,
+        password,
+        notes
     };
 
     const loadingMsg = currentActionMode === 'add' ? 'Đang thêm mật khẩu...' : 'Đang cập nhật...';
@@ -761,13 +793,17 @@ function updateCatPreviewFromHex() {
 }
 
 async function saveCategory() {
-    const data = {
-        id: currentCatEditId,
-        name: document.getElementById('catNameInput').value,
-        color: document.getElementById('catHexInput').value
-    };
+    const name = document.getElementById('catNameInput').value.trim();
+    const color = document.getElementById('catHexInput').value;
 
-    if (!data.name) return alert('Vui lòng nhập tên danh mục');
+    clearErrors();
+    if (!name) {
+        showPwdToast('Vui lòng nhập tên danh mục!', 'error');
+        markError('catNameInput');
+        return;
+    }
+
+    const data = { id: currentCatEditId, name, color };
 
     showPwdToast(currentCatEditId ? 'Đang cập nhật danh mục...' : 'Đang thêm danh mục...', 'loading');
 

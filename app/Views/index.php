@@ -877,6 +877,29 @@
     })();
 
     // --- DASHBOARD QUICK ACTION MODAL LOGIC ---
+    function clearErrors() {
+        document.querySelectorAll('.modal-input-error').forEach(el => el.classList.remove('modal-input-error'));
+    }
+
+    function markError(id, isCustom = false) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (isCustom) {
+            const container = el.closest('.pj-modal-select');
+            if (container) {
+                container.classList.add('modal-input-error');
+                const trigger = container.querySelector('.pj-modal-select-trigger');
+                if (trigger) trigger.focus();
+            }
+        } else {
+            el.classList.add('modal-input-error');
+            if (id === 'cxCodeArea') {
+                el.closest('.cx-code-editor-wrapper').classList.add('modal-input-error');
+            }
+            el.focus();
+        }
+    }
+
     function showToast(msg, icon = 'dtSpinner') {
         const t = document.getElementById('deleteToast');
         const m = document.getElementById('dtMessage');
@@ -906,6 +929,7 @@
 
     // Modal Dropdown Helper
     function togglePjModalSelect(trigger) {
+        clearErrors(); // Also clear errors when interacting
         const select = trigger.closest('.pj-modal-select');
         const menu = select.querySelector('.pj-dropdown');
         const isOpen = menu.classList.contains('active');
@@ -920,11 +944,15 @@
 
     // Hosting Logic
     function openHostingModal() { 
+        clearErrors();
         document.getElementById('hostingModal').classList.add('active'); 
         document.getElementById('mRegDate').value = new Date().toISOString().split('T')[0];
     }
     function closeHostingModal(e) { if (e.target.id === 'hostingModal') closeHostingModalBtn(); }
-    function closeHostingModalBtn() { document.getElementById('hostingModal').classList.remove('active'); }
+    function closeHostingModalBtn() { 
+        document.getElementById('hostingModal').classList.remove('active'); 
+        clearErrors();
+    }
     function formatPrice() {
         const p = document.getElementById('hostingPrice').value;
         const h = document.getElementById('priceHint');
@@ -932,6 +960,7 @@
         h.textContent = new Intl.NumberFormat('vi-VN').format(p) + ' VNĐ';
     }
     async function submitHostingForm() {
+        clearErrors();
         const data = {
             name: document.getElementById('mHostingName').value,
             domain: document.getElementById('mDomain').value,
@@ -941,7 +970,13 @@
             price: document.getElementById('hostingPrice').value,
             notes: document.getElementById('mHostingNotes').value
         };
-        if (!data.name || !data.domain) { alert('Vui lòng điền đầy đủ thông tin bắt buộc!'); return; }
+
+        if (!data.name) { showToast('Vui lòng nhập tên hosting!', 'error'); markError('mHostingName'); return; }
+        if (!data.domain) { showToast('Vui lòng nhập tên miền!', 'error'); markError('mDomain'); return; }
+        if (!data.regDate) { showToast('Vui lòng chọn ngày đăng ký!', 'error'); markError('mRegDate'); return; }
+        if (!data.expDate) { showToast('Vui lòng chọn ngày hết hạn!', 'error'); markError('mExpDate'); return; }
+        if (!data.price) { showToast('Vui lòng nhập giá hosting!', 'error'); markError('hostingPrice'); return; }
+
         showToast('Đang tạo hosting...');
         try {
             const resp = await fetch('/hostings/save', { 
@@ -954,26 +989,29 @@
                 showToast('Thêm hosting thành công!', 'success');
                 setTimeout(() => location.reload(), 1500);
             } else {
-                alert(res.message || 'Lỗi khi lưu.');
-                hideToast();
+                showToast(res.message || 'Lỗi khi lưu.', 'error');
             }
         } catch (e) {
-            alert('Lỗi kết nối!');
-            hideToast();
+            showToast('Lỗi kết nối!', 'error');
         }
     }
 
     // Projects Logic
     function openAddProjectModal() { 
+        clearErrors();
         document.getElementById('addProjectModal').classList.add('active'); 
         document.getElementById('mProjectDate').value = new Date().toISOString().split('T')[0];
     }
-    function closeAddProjectModal() { document.getElementById('addProjectModal').classList.remove('active'); }
+    function closeAddProjectModal() { 
+        document.getElementById('addProjectModal').classList.remove('active'); 
+        clearErrors();
+    }
     function closeAddProjectModalOverlay(e) { if (e.target.id === 'addProjectModal') closeAddProjectModal(); }
     function updateProjectValueDisplay(input) {
         document.getElementById('projectValueDisplay').textContent = new Intl.NumberFormat('vi-VN').format(input.value || 0) + ' VNĐ';
     }
     async function submitProjectForm() {
+        clearErrors();
         const data = {
             name: document.getElementById('mProjectName').value,
             status: document.getElementById('mProjectStatus').value,
@@ -986,7 +1024,11 @@
             admin_pass: document.getElementById('adminPassword').value,
             value: document.getElementById('projectValue').value
         };
-        if (!data.name || !data.customerName) { alert('Vui lòng điền tên project và khách hàng!'); return; }
+
+        if (!data.name) { showToast('Vui lòng nhập tên dự án!', 'error'); markError('mProjectName'); return; }
+        if (!data.date) { showToast('Vui lòng chọn ngày tạo!', 'error'); markError('mProjectDate'); return; }
+        if (!data.customerName) { showToast('Vui lòng nhập tên khách hàng!', 'error'); markError('mCustomerName'); return; }
+
         showToast('Đang tạo dự án...');
         try {
             const resp = await fetch('/projects/save', { 
@@ -999,18 +1041,22 @@
                 showToast('Thêm dự án thành công!', 'success');
                 setTimeout(() => location.reload(), 1500);
             } else {
-                alert(res.message || 'Lỗi khi lưu.');
-                hideToast();
+                showToast(res.message || 'Lỗi khi lưu.', 'error');
             }
         } catch (e) {
-            alert('Lỗi kết nối!');
-            hideToast();
+            showToast('Lỗi kết nối!', 'error');
         }
     }
 
     // Passwords Logic
-    function openPasswordModal() { document.getElementById('addPasswordModal').classList.add('active'); }
-    function closeAddPwdModal() { document.getElementById('addPasswordModal').classList.remove('active'); }
+    function openPasswordModal() { 
+        clearErrors();
+        document.getElementById('addPasswordModal').classList.add('active'); 
+    }
+    function closeAddPwdModal() { 
+        document.getElementById('addPasswordModal').classList.remove('active'); 
+        clearErrors();
+    }
     function closeAddPasswordModalOverlay(e) { if (e.target.id === 'addPasswordModal') closeAddPwdModal(); }
     function toggleAddPwdVisibility() {
         const p = document.getElementById('mPwdPass');
@@ -1028,6 +1074,7 @@
     }
     async function submitAddPwdForm(e) {
         e.preventDefault();
+        clearErrors();
         const data = {
             title: document.getElementById('mPwdTitle').value,
             url: document.getElementById('mPwdUrl').value,
@@ -1036,6 +1083,12 @@
             password: document.getElementById('mPwdPass').value,
             notes: document.getElementById('mPwdNotes').value
         };
+
+        if (!data.title) { showToast('Vui lòng nhập tiêu đề!', 'error'); markError('mPwdTitle'); return; }
+        if (!data.category) { showToast('Vui lòng chọn danh mục!', 'error'); markError('mPwdCategory', true); return; }
+        if (!data.username) { showToast('Vui lòng nhập tài khoản!', 'error'); markError('mPwdUser'); return; }
+        if (!data.password) { showToast('Vui lòng nhập mật khẩu!', 'error'); markError('mPwdPass'); return; }
+
         showToast('Đang lưu mật khẩu...');
         try {
             const resp = await fetch('/passwords/save', { 
@@ -1048,18 +1101,22 @@
                 showToast('Đã lưu mật khẩu!', 'success');
                 setTimeout(() => location.reload(), 1500);
             } else {
-                alert(res.message);
-                hideToast();
+                showToast(res.message, 'error');
             }
         } catch (err) {
-            alert('Lỗi hệ thống!');
-            hideToast();
+            showToast('Lỗi hệ thống!', 'error');
         }
     }
 
     // Snippets Logic
-    function openAddSnippetModal() { document.getElementById('cxModal').classList.add('active'); }
-    function closeCxModal() { document.getElementById('cxModal').classList.remove('active'); }
+    function openAddSnippetModal() { 
+        clearErrors();
+        document.getElementById('cxModal').classList.add('active'); 
+    }
+    function closeCxModal() { 
+        document.getElementById('cxModal').classList.remove('active'); 
+        clearErrors();
+    }
     function updateCxStats() {
         const code = document.getElementById('cxCodeArea').value;
         document.getElementById('statLines').textContent = (code.split('\n').length) + ' dòng';
@@ -1067,9 +1124,18 @@
     }
     async function submitCxForm(e) {
         e.preventDefault();
+        clearErrors();
         const formData = new FormData(e.target);
-        formData.append('line_count', document.getElementById('cxCodeArea').value.split('\n').length);
-        formData.append('char_count', document.getElementById('cxCodeArea').value.length);
+        const code = document.getElementById('cxCodeArea').value;
+        const title = document.getElementById('cxTitle').value;
+        const lang = document.getElementById('cxLangInput').value;
+
+        if (!title) { showToast('Vui lòng nhập tên code!', 'error'); markError('cxTitle'); return; }
+        if (!lang) { showToast('Vui lòng chọn ngôn ngữ!', 'error'); markError('cxLangInput', true); return; }
+        if (!code) { showToast('Vui lòng nhập nội dung code!', 'error'); markError('cxCodeArea'); return; }
+
+        formData.append('line_count', code.split('\n').length);
+        formData.append('char_count', code.length);
         
         showToast('Đang tạo snippet...');
         try {
@@ -1082,12 +1148,10 @@
                 showToast('Tạo snippet thành công!', 'success');
                 setTimeout(() => location.reload(), 1500);
             } else {
-                alert(res.message);
-                hideToast();
+                showToast(res.message, 'error');
             }
         } catch (err) {
-            alert('Lỗi kết nối!');
-            hideToast();
+            showToast('Lỗi kết nối!', 'error');
         }
     }
 

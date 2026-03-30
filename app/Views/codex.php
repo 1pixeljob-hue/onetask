@@ -446,6 +446,26 @@
         const ALL_SNIPPETS = <?php echo json_encode($snippets); ?>;
 
         // Modal Snippet Variables
+        function clearErrors() {
+            document.querySelectorAll('.modal-input-error').forEach(el => el.classList.remove('modal-input-error'));
+        }
+
+        function markError(id, isCustom = false) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (isCustom) {
+                const container = el.closest('.pj-modal-select');
+                if (container) {
+                    container.classList.add('modal-input-error');
+                    const trigger = container.querySelector('.pj-modal-select-trigger');
+                    if (trigger) trigger.focus();
+                }
+            } else {
+                el.classList.add('modal-input-error');
+                el.focus();
+            }
+        }
+
 
         function showCxToast(message, type = 'loading') {
             const toast = document.getElementById('cxToast');
@@ -637,8 +657,10 @@
                 name: nameInput.value.trim()
             };
 
+            clearErrors();
             if (!data.name) {
                 showCxToast('Vui lòng nhập tên danh mục', 'error');
+                markError('codeCatNameInput');
                 return;
             }
 
@@ -715,15 +737,15 @@
 
 
         // --- Snippet Logic ---
-        document.getElementById('cxForm').onsubmit = function (e) {
-            e.preventDefault();
-
-            // Validation: Loại code không được để trống
+            // Validation
+            const title = document.getElementById('cxTitle').value.trim();
             const lang = document.getElementById('cxLangInput').value;
-            if (!lang || lang === 'Chọn danh mục') {
-                showCxToast('Vui lòng chọn loại code cho snippet này', 'error');
-                return;
-            }
+            const code = document.getElementById('cxCodeArea').value.trim();
+
+            clearErrors();
+            if (!title) { showCxToast('Vui lòng nhập tên code!', 'error'); markError('cxTitle'); return; }
+            if (!lang || lang === 'Chọn danh mục') { showCxToast('Vui lòng chọn loại code!', 'error'); markError('cxLangSelect', true); return; }
+            if (!code) { showCxToast('Vui lòng nhập nội dung code!', 'error'); markError('cxCodeArea'); return; }
 
             // Hiển thị loading toast & overlay
             const modal = document.getElementById('cxModal');
@@ -864,7 +886,7 @@
         function copySnippet() {
             const code = document.getElementById('pCode').textContent;
             navigator.clipboard.writeText(code).then(() => {
-                alert('Đã copy vào clipboard!');
+                showCxToast('Đã copy code vào clipboard!', 'success');
             });
         }
 
