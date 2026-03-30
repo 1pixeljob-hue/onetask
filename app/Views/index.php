@@ -977,7 +977,7 @@
         if (!data.expDate) { showToast('Vui lòng chọn ngày hết hạn!', 'error'); markError('mExpDate'); return; }
         if (!data.price) { showToast('Vui lòng nhập giá hosting!', 'error'); markError('hostingPrice'); return; }
 
-        showToast('Đang tạo hosting...');
+        showToast('Đang thêm hosting...');
         try {
             const resp = await fetch('/hostings/save', { 
                 method: 'POST', 
@@ -1029,7 +1029,7 @@
         if (!data.date) { showToast('Vui lòng chọn ngày tạo!', 'error'); markError('mProjectDate'); return; }
         if (!data.customerName) { showToast('Vui lòng nhập tên khách hàng!', 'error'); markError('mCustomerName'); return; }
 
-        showToast('Đang tạo dự án...');
+        showToast('Đang thêm dự án...');
         try {
             const resp = await fetch('/projects/save', { 
                 method: 'POST', 
@@ -1089,7 +1089,7 @@
         if (!data.username) { showToast('Vui lòng nhập tài khoản!', 'error'); markError('mPwdUser'); return; }
         if (!data.password) { showToast('Vui lòng nhập mật khẩu!', 'error'); markError('mPwdPass'); return; }
 
-        showToast('Đang lưu mật khẩu...');
+        showToast('Đang thêm mật khẩu...');
         try {
             const resp = await fetch('/passwords/save', { 
                 method: 'POST', 
@@ -1137,7 +1137,7 @@
         formData.append('line_count', code.split('\n').length);
         formData.append('char_count', code.length);
         
-        showToast('Đang tạo snippet...');
+        showToast('Đang thêm snippet...');
         try {
             const resp = await fetch('/codex/save', { 
                 method: 'POST', 
