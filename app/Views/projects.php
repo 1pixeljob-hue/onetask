@@ -143,6 +143,7 @@
                                 <div class="pj-dropdown-item" onclick="setFilter('doing', 'Đang Thực Hiện', this)">Đang Thực Hiện</div>
                                 <div class="pj-dropdown-item" onclick="setFilter('testing', 'Chờ Nghiệm Thu', this)">Chờ Nghiệm Thu</div>
                                 <div class="pj-dropdown-item" onclick="setFilter('done', 'Hoàn Thành', this)">Hoàn Thành</div>
+                                <div class="pj-dropdown-item" onclick="setFilter('paused', 'Tạm Dừng', this)">Tạm Dừng</div>
                             </div>
                         </div>
                         <button class="pj-add-btn" onclick="openAddProjectModal()">
@@ -218,6 +219,7 @@
                         <div class="pj-dropdown-item" data-value="doing">Đang Thực Hiện</div>
                         <div class="pj-dropdown-item" data-value="testing">Chờ Nghiệm Thu</div>
                         <div class="pj-dropdown-item" data-value="done">Hoàn Thành</div>
+                        <div class="pj-dropdown-item" data-value="paused">Tạm Dừng</div>
                     </div>
                     <!-- Actual hidden input for form data -->
                     <input type="hidden" id="mProjectStatus" value="planning">
@@ -858,7 +860,8 @@ function populateRow(row, data) {
         'planning': { cls: 'warning', icon: 'ph-calendar-blank', label: 'Lên Kế Hoạch' },
         'doing': { cls: 'doing', icon: 'ph-clock', label: 'Đang Thực Hiện' },
         'testing': { cls: 'testing', icon: 'ph-circle-dashed', label: 'Chờ Nghiệm Thu' },
-        'done': { cls: 'done', icon: 'ph-check-circle', label: 'Hoàn Thành' }
+        'done': { cls: 'done', icon: 'ph-check-circle', label: 'Hoàn Thành' },
+        'paused': { cls: 'paused', icon: 'ph-pause-circle', label: 'Tạm Dừng' }
     };
     const s = statusInfo[data.status] || { cls: 'doing', icon: 'ph-clock', label: data.status || 'Đang Thực Hiện' };
     
