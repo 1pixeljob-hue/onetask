@@ -94,6 +94,7 @@ CREATE TABLE `activity_logs` (
   `module` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT 'quydev',
   `item_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `data` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

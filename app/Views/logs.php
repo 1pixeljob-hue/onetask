@@ -166,6 +166,11 @@
                                     <td class="text-center">
                                         <div class="log-actions">
                                             <button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button>
+                                            <?php if ($log['action'] == 'Xoá' && !empty($log['data'])): ?>
+                                                <button class="btn-action" title="Khôi phục" onclick="restoreLog(<?= $log['id'] ?>)">
+                                                    <i class="ph ph-arrows-counter-clockwise color-green"></i>
+                                                </button>
+                                            <?php endif; ?>
                                             <button class="btn-action" title="Xoá" onclick="deleteLog(<?= $log['id'] ?>)"><i class="ph ph-trash color-red"></i></button>
                                         </div>
                                     </td>
@@ -222,6 +227,29 @@ document.getElementById('logsSearchInput').addEventListener('keypress', function
         applyFilters();
     }
 });
+
+async function restoreLog(id) {
+    if (!confirm('Bạn có chắc chắn muốn khôi phục dữ liệu này?')) return;
+    
+    try {
+        const response = await fetch('/logs/restore', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        });
+        
+        const result = await response.json();
+        if (result.status === 'success' || result.success) {
+            alert('Khôi phục thành công!');
+            location.reload();
+        } else {
+            alert('Lỗi: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Đã xảy ra lỗi khi kết nối với máy chủ.');
+    }
+}
 
 async function deleteLog(id) {
     if (!confirm('Bạn có chắc chắn muốn xóa bản ghi log này?')) return;

@@ -105,7 +105,7 @@ class MainController extends BaseController {
                 $snippet = $this->snippetModel->find($_POST['id']);
                 if ($this->snippetModel->delete($_POST['id'])) {
                     $snippetTitle = ($snippet && isset($snippet['title'])) ? $snippet['title'] : 'Snippet #' . $_POST['id'];
-                    $this->logModel->addLog('CodeX', 'Xoá', $snippetTitle);
+                    $this->logModel->addLog('CodeX', 'Xoá', $snippetTitle, 'quydev', json_encode($snippet));
                     echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá snippet thành công']);
                 } else {
                     echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá snippet']);
@@ -199,7 +199,7 @@ class MainController extends BaseController {
             $success = $this->codeCategoryModel->delete($input['id']);
             if ($success) {
                 $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $input['id'];
-                $this->logModel->addLog('CodeX', 'Xoá', 'Danh mục: ' . $catName);
+                $this->logModel->addLog('CodeX', 'Xoá', 'Danh mục: ' . $catName, 'quydev', json_encode($cat));
                 echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá danh mục thành công']);
             } else {
                 echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá danh mục']);
@@ -299,7 +299,7 @@ class MainController extends BaseController {
             $success = $this->projectModel->delete($input['id']);
             if ($success) {
                 $projectName = ($project && isset($project['name'])) ? $project['name'] : 'Project #' . $input['id'];
-                $this->logModel->addLog('Project', 'Xoá', $projectName);
+                $this->logModel->addLog('Project', 'Xoá', $projectName, 'quydev', json_encode($project));
                 echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá dự án thành công']);
             } else {
                 echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá dự án']);
@@ -359,7 +359,7 @@ class MainController extends BaseController {
             $success = $this->hostingModel->delete($input['id']);
             if ($success) {
                 $hostingName = ($hosting && isset($hosting['name'])) ? $hosting['name'] : 'Hosting #' . $input['id'];
-                $this->logModel->addLog('Hosting', 'Xoá', $hostingName);
+                $this->logModel->addLog('Hosting', 'Xoá', $hostingName, 'quydev', json_encode($hosting));
                 echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá hosting thành công']);
             } else {
                 echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá hosting']);
@@ -473,7 +473,7 @@ class MainController extends BaseController {
             $success = $this->passwordModel->delete($input['id']);
             if ($success) {
                 $passwordTitle = ($password && isset($password['title'])) ? $password['title'] : 'Mật khẩu #' . $input['id'];
-                $this->logModel->addLog('Passwords', 'Xoá', $passwordTitle);
+                $this->logModel->addLog('Passwords', 'Xoá', $passwordTitle, 'quydev', json_encode($password));
                 echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá mật khẩu thành công']);
             } else {
                 echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá mật khẩu']);
@@ -533,7 +533,7 @@ class MainController extends BaseController {
             $success = $this->categoryModel->delete($input['id']);
             if ($success) {
                 $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $input['id'];
-                $this->logModel->addLog('Passwords', 'Xoá', 'Danh mục: ' . $catName);
+                $this->logModel->addLog('Passwords', 'Xoá', 'Danh mục: ' . $catName, 'quydev', json_encode($cat));
                 echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá danh mục thành công']);
             } else {
                 echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá danh mục']);
@@ -541,6 +541,83 @@ class MainController extends BaseController {
         } catch (\Exception $e) {
             error_log("Error deleting category: " . $e->getMessage());
             echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
+        }
+    }
+
+    /**
+     * API: Khôi phục dữ liệu từ Log (Restore)
+     */
+    public function restoreLog() {
+        header('Content-Type: application/json');
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            if (!$input || !isset($input['id'])) {
+                echo json_encode(['status' => 'error', 'message' => 'ID log không hợp lệ']);
+                return;
+            }
+
+            $log = $this->logModel->find($input['id']);
+            if (!$log || empty($log['data'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Không tìm thấy dữ liệu để khôi phục']);
+                return;
+            }
+
+            $data = json_decode($log['data'], true);
+            $module = $log['module'];
+            $success = false;
+            $itemName = $log['item_name'];
+
+            // Thực hiện khôi phục theo từng Module
+            switch ($module) {
+                case 'Project':
+                    // Mapping fields for ProjectModel
+                    $mappedData = $data;
+                    if (isset($data['description'])) $mappedData['desc'] = $data['description'];
+                    if (isset($data['admin_url'])) $mappedData['adminUrl'] = $data['admin_url'];
+                    if (isset($data['admin_user'])) $mappedData['adminUser'] = $data['admin_user'];
+                    if (isset($data['admin_pass'])) $mappedData['adminPass'] = $data['admin_pass'];
+                    $success = $this->projectModel->create($mappedData);
+                    break;
+
+                case 'Hosting':
+                    // Mapping fields for HostingModel
+                    $mappedData = $data;
+                    if (isset($data['reg_date'])) $mappedData['regDate'] = $data['reg_date'];
+                    if (isset($data['exp_date'])) $mappedData['expDate'] = $data['exp_date'];
+                    if (isset($data['usage_period'])) $mappedData['usage'] = $data['usage_period'];
+                    $success = $this->hostingModel->create($mappedData);
+                    break;
+
+                case 'Passwords':
+                    if (strpos($itemName, 'Danh mục:') === 0) {
+                        $success = $this->categoryModel->create($data);
+                    } else {
+                        $success = $this->passwordModel->create($data);
+                    }
+                    break;
+
+                case 'CodeX':
+                    if (strpos($itemName, 'Danh mục:') === 0) {
+                        $success = $this->codeCategoryModel->create($data);
+                    } else {
+                        $success = $this->snippetModel->save($data);
+                    }
+                    break;
+
+                default:
+                    echo json_encode(['status' => 'error', 'message' => 'Module không được hỗ trợ khôi phục']);
+                    return;
+            }
+
+            if ($success) {
+                $this->logModel->addLog($module, 'Khôi phục', $itemName);
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Khôi phục dữ liệu thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi ghi đè dữ liệu vào Database']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error restoring from log: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận: ' . $e->getMessage()]);
         }
     }
 }

@@ -24,11 +24,11 @@ class LogModel
             $tableExists = $this->db->query("SHOW TABLES LIKE 'activity_logs'")->fetch();
             
             if ($tableExists) {
-                // If table exists, check if column 'item_name' exists
-                $check = $this->db->query("SHOW COLUMNS FROM activity_logs LIKE 'item_name'");
-                if (!$check->fetch()) {
-                    // Drop and recreate if schema is old (item_name is missing)
-                    $this->db->exec("DROP TABLE IF EXISTS activity_logs;");
+                // Check if column 'data' exists (Restore feature)
+                $checkData = $this->db->query("SHOW COLUMNS FROM activity_logs LIKE 'data'");
+                if (!$checkData->fetch()) {
+                    // Update schema for existing table - Add 'data' column
+                    $this->db->exec("ALTER TABLE activity_logs ADD COLUMN data LONGTEXT DEFAULT NULL AFTER item_name;");
                 }
             }
 
@@ -38,6 +38,7 @@ class LogModel
                 module VARCHAR(50) DEFAULT NULL,
                 user_name VARCHAR(100) DEFAULT 'quydev',
                 item_name VARCHAR(255) DEFAULT NULL,
+                data LONGTEXT DEFAULT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
             $this->db->exec($sql);
@@ -48,26 +49,38 @@ class LogModel
     }
 
     /**
+     * Tìm một bản ghi log theo ID
+     */
+    public function find($id)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM activity_logs WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Lưu một bản ghi log mới
      * @param string $module Tên module (Project, Hosting, Passwords, CodeX)
      * @param string $action Hành động (Tạo mới, Cập nhật, Xoá)
      * @param string $itemName Tên item bị tác động
      * @param string $userName Người thực hiện (mặc định 'quydev')
+     * @param string $data Dữ liệu JSON sao lưu (cho hành động Xoá)
      * @return bool
      */
-    public function addLog($module, $action, $itemName, $userName = 'quydev')
+    public function addLog($module, $action, $itemName, $userName = 'quydev', $data = null)
     {
         if (!$this->db)
             return false;
         try {
-            $sql = "INSERT INTO activity_logs (module, action, item_name, user_name) 
-                    VALUES (:module, :action, :item_name, :user_name)";
+            $sql = "INSERT INTO activity_logs (module, action, item_name, user_name, data) 
+                    VALUES (:module, :action, :item_name, :user_name, :data)";
             $stmt = $this->db->prepare($sql);
             return $stmt->execute([
                 ':module' => $module,
                 ':action' => $action,
                 ':item_name' => $itemName,
-                ':user_name' => $userName
+                ':user_name' => $userName,
+                ':data' => $data
             ]);
         } catch (\Exception $e) {
             // Ghi log lỗi vào file hệ thống, không echo ra màn hình
