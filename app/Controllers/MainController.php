@@ -252,7 +252,36 @@ class MainController extends BaseController {
     }
 
     public function settings() {
-        $this->view('settings');
+        $hostings = $this->hostingModel->getAll();
+        $projects = $this->projectModel->getAll();
+        
+        $active_count = 0;
+        foreach ($projects as $pj) {
+            if (isset($pj['status']) && $pj['status'] !== 'done') $active_count++;
+        }
+        
+        $expiring_count = 0;
+        $today = new DateTime();
+        foreach ($hostings as $h) {
+            if (!empty($h['exp_date'])) {
+                $exp = new DateTime($h['exp_date']);
+                $diff = $today->diff($exp);
+                // Nếu chưa hết hạn (invert == 0) và còn <= 30 ngày
+                if ($diff->invert == 0 && $diff->days <= 30) {
+                    $expiring_count++;
+                }
+            }
+        }
+
+        $data = [
+            'stats' => [
+                'total_hostings' => count($hostings),
+                'total_projects' => count($projects),
+                'active_items' => $active_count,
+                'expiring_soon' => $expiring_count
+            ]
+        ];
+        $this->view('settings', $data);
     }
 
     /**

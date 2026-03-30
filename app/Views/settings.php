@@ -100,31 +100,31 @@
                 
                 <h2 class="settings-page-title">Cài Đặt</h2>
 
-                <!-- Card 1: Supabase Database -->
+                <!-- Card 1: MySQL Database -->
                 <div class="db-card">
                     <div class="db-header">
                         <div class="db-icon"><i class="ph ph-database"></i></div>
                         <div>
-                            <h3>Supabase Cloud Database</h3>
+                            <h3>MySQL Database System</h3>
                             <p>Hệ thống lưu trữ dữ liệu tập trung</p>
                         </div>
                     </div>
                     
                     <div class="db-stats">
                         <div class="db-stat-item">
-                            <h4>23</h4>
+                            <h4><?= $stats['total_hostings'] ?? 0 ?></h4>
                             <p>Hostings</p>
                         </div>
                         <div class="db-stat-item">
-                            <h4>27</h4>
+                            <h4><?= $stats['total_projects'] ?? 0 ?></h4>
                             <p>Projects</p>
                         </div>
                         <div class="db-stat-item">
-                            <h4>22</h4>
+                            <h4><?= $stats['active_items'] ?? 0 ?></h4>
                             <p>Hoạt động</p>
                         </div>
                         <div class="db-stat-item">
-                            <h4 class="text-yellow">1</h4>
+                            <h4 class="text-yellow"><?= $stats['expiring_soon'] ?? 0 ?></h4>
                             <p>Sắp hết hạn</p>
                         </div>
                     </div>
@@ -134,7 +134,7 @@
                             <i class="ph ph-circles-three"></i> Trạng thái kết nối
                         </div>
                         <div class="db-f-right">
-                            <span class="status-dot green"></span> Đã kết nối
+                            <span class="status-dot green"></span> Đã kết nối (MySQL)
                         </div>
                     </div>
                 </div>
