@@ -20,17 +20,30 @@ class LogModel
         if (!$this->db)
             return;
         try {
+            // Auto-migration: Check if table even exists
+            $tableExists = $this->db->query("SHOW TABLES LIKE 'activity_logs'")->fetch();
+            
+            if ($tableExists) {
+                // If table exists, check if column 'item_name' exists
+                $check = $this->db->query("SHOW COLUMNS FROM activity_logs LIKE 'item_name'");
+                if (!$check->fetch()) {
+                    // Drop and recreate if schema is old (item_name is missing)
+                    $this->db->exec("DROP TABLE IF EXISTS activity_logs;");
+                }
+            }
+
             $sql = "CREATE TABLE IF NOT EXISTS activity_logs (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                module VARCHAR(50) NOT NULL,
-                action VARCHAR(50) NOT NULL,
-                item_name VARCHAR(255) DEFAULT NULL,
+                action VARCHAR(255) NOT NULL,
+                module VARCHAR(50) DEFAULT NULL,
                 user_name VARCHAR(100) DEFAULT 'quydev',
+                item_name VARCHAR(255) DEFAULT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
             $this->db->exec($sql);
         } catch (\PDOException $e) {
-            // Tắt lỗi để không làm hỏng phản hồi JSON của các module khác
+            // Ghi lỗi nếu cần nhưng không làm hỏng ứng dụng
+            error_log("Migration error: " . $e->getMessage());
         }
     }
 
