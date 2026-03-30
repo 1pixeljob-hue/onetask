@@ -139,11 +139,11 @@
                             </button>
                             <div class="pj-dropdown" id="filterDropdown">
                                 <div class="pj-dropdown-item active" onclick="setFilter('', 'Lọc bởi trạng thái', this)">Tất cả</div>
-                                <div class="pj-dropdown-item" onclick="setFilter('planning', 'LÊN KẾ HOẠCH', this)">LÊN KẾ HOẠCH</div>
-                                <div class="pj-dropdown-item" onclick="setFilter('doing', 'ĐANG THỰC HIỆN', this)">ĐANG THỰC HIỆN</div>
-                                <div class="pj-dropdown-item" onclick="setFilter('testing', 'CHỜ NGHIỆM THU', this)">CHỜ NGHIỆM THU</div>
-                                <div class="pj-dropdown-item" onclick="setFilter('done', 'HOÀN THÀNH', this)">HOÀN THÀNH</div>
-                                <div class="pj-dropdown-item" onclick="setFilter('paused', 'TẠM DỪNG', this)">TẠM DỪNG</div>
+                                <div class="pj-dropdown-item" onclick="setFilter('planning', 'Lên Kế Hoạch', this)">Lên Kế Hoạch</div>
+                                <div class="pj-dropdown-item" onclick="setFilter('doing', 'Đang Thực Hiện', this)">Đang Thực Hiện</div>
+                                <div class="pj-dropdown-item" onclick="setFilter('testing', 'Chờ Nghiệm Thu', this)">Chờ Nghiệm Thu</div>
+                                <div class="pj-dropdown-item" onclick="setFilter('done', 'Hoàn Thành', this)">Hoàn Thành</div>
+                                <div class="pj-dropdown-item" onclick="setFilter('paused', 'Tạm Dừng', this)">Tạm Dừng</div>
                             </div>
                         </div>
                         <button class="pj-add-btn" onclick="openAddProjectModal()">
@@ -211,30 +211,24 @@
                 <label class="modal-label">Trạng Thái <span class="req">*</span></label>
                 <div class="pj-modal-select" id="mProjectStatusSelect" data-input-id="mProjectStatus">
                     <div class="pj-modal-select-trigger">
-                        <span>LÊN KẾ HOẠCH</span>
-                        <i class="ph ph-calendar-blank" style="color: #a16207;"></i>
+                        <span>Lên Kế Hoạch</span>
                         <i class="ph ph-caret-down trigger-chevron"></i>
                     </div>
                     <div class="pj-modal-select-menu pj-dropdown" style="width: 100%; right: auto; left: 0;">
                         <div class="pj-dropdown-item active" data-value="planning">
-                            <i class="ph ph-calendar-blank" style="color: #a16207;"></i>
-                            <span>LÊN KẾ HOẠCH</span>
+                            <span>Lên Kế Hoạch</span>
                         </div>
                         <div class="pj-dropdown-item" data-value="doing">
-                            <i class="ph ph-clock" style="color: #3b82f6;"></i>
-                            <span>ĐANG THỰC HIỆN</span>
+                            <span>Đang Thực Hiện</span>
                         </div>
                         <div class="pj-dropdown-item" data-value="testing">
-                            <i class="ph ph-circle-dashed" style="color: #f97316;"></i>
-                            <span>CHỜ NGHIỆM THU</span>
+                            <span>Chờ Nghiệm Thu</span>
                         </div>
                         <div class="pj-dropdown-item" data-value="done">
-                            <i class="ph ph-check-circle" style="color: #10b981;"></i>
-                            <span>HOÀN THÀNH</span>
+                            <span>Hoàn Thành</span>
                         </div>
                         <div class="pj-dropdown-item" data-value="paused">
-                            <i class="ph ph-pause-circle" style="color: #64748b;"></i>
-                            <span>TẠM DỪNG</span>
+                            <span>Tạm Dừng</span>
                         </div>
                     </div>
                     <!-- Actual hidden input for form data -->
@@ -633,13 +627,8 @@ function openEditProjectModal(tr) {
         const trigger = customSelect.querySelector('.pj-modal-select-trigger');
         const triggerLabel = trigger.querySelector('span');
         const triggerIcon = trigger.querySelector('i:first-child');
-        const optionIcon = option.querySelector('i');
         
         if (triggerLabel) triggerLabel.textContent = option.querySelector('span').textContent.trim();
-        if (triggerIcon && optionIcon) {
-            triggerIcon.className = optionIcon.className;
-            triggerIcon.style.color = optionIcon.style.color;
-        }
         
         customSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
         option.classList.add('active');
@@ -881,11 +870,11 @@ function getFormData() {
 
 function populateRow(row, data) {
     const statusInfo = {
-        'planning': { cls: 'planning', icon: 'ph-calendar-blank', label: 'LÊN KẾ HOẠCH' },
-        'doing': { cls: 'doing', icon: 'ph-clock', label: 'ĐANG THỰC HIỆN' },
-        'testing': { cls: 'testing', icon: 'ph-circle-dashed', label: 'CHỜ NGHIỆM THU' },
-        'done': { cls: 'done', icon: 'ph-check-circle', label: 'HOÀN THÀNH' },
-        'paused': { cls: 'paused', icon: 'ph-pause-circle', label: 'TẠM DỪNG' }
+        'planning': { cls: 'planning', icon: 'ph-calendar-blank', label: 'Lên Kế Hoạch' },
+        'doing': { cls: 'doing', icon: 'ph-clock', label: 'Đang Thực Hiện' },
+        'testing': { cls: 'testing', icon: 'ph-circle-dashed', label: 'Chờ Nghiệm Thu' },
+        'done': { cls: 'done', icon: 'ph-check-circle', label: 'Hoàn Thành' },
+        'paused': { cls: 'paused', icon: 'ph-pause-circle', label: 'Tạm Dừng' }
     };
     
     // Robust status matching

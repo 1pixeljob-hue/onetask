@@ -460,20 +460,20 @@
                 displayProjects.forEach(p => {
                     const statusLower = (p.status || '').toLowerCase().trim();
                     let badgeClass = 'status-badge-v3-running';
-                    let label = 'ĐANG THỰC HIỆN';
+                    let label = 'Đang thực hiện';
                     
                     if (statusLower === 'planning') { 
                         badgeClass = 'status-badge-v3-warning'; 
-                        label = 'LÊN KẾ HOẠCH'; 
+                        label = 'Lên kế hoạch'; 
                     } else if (statusLower === 'testing') { 
                         badgeClass = 'status-badge-v3-warning'; 
-                        label = 'CHỜ NGHIỆM THU'; 
+                        label = 'Chờ nghiệm thu'; 
                     } else if (statusLower === 'done') { 
                         badgeClass = 'status-badge-v3-active'; 
-                        label = 'HOÀN THÀNH'; 
+                        label = 'Hoàn thành'; 
                     } else if (statusLower === 'paused') {
                         badgeClass = 'status-badge-v3-paused';
-                        label = 'TẠM DỪNG';
+                        label = 'Tạm dừng';
                     }
 
                     html += `
