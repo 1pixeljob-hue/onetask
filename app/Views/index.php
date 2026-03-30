@@ -434,8 +434,14 @@
         if (sideProjectContainer) {
             // Priority: doing (1), testing (2), planning (3)
             const statusPriority = { 'doing': 1, 'testing': 2, 'planning': 3 };
-            const activeProjects = PROJECTS.filter(p => p.status === 'planning' || p.status === 'doing' || p.status === 'testing')
-                                          .sort((a, b) => (statusPriority[a.status] || 99) - (statusPriority[b.status] || 99));
+            const activeProjects = PROJECTS.filter(p => {
+                const s = (p.status || '').toLowerCase();
+                return s === 'planning' || s === 'doing' || s === 'testing';
+            }).sort((a, b) => {
+                const sA = (a.status || '').toLowerCase();
+                const sB = (b.status || '').toLowerCase();
+                return (statusPriority[sA] || 99) - (statusPriority[sB] || 99);
+            });
 
             const displayProjects = activeProjects.slice(0, 10);
 
@@ -451,11 +457,20 @@
                 html = '<div class="text-center py-4 text-muted" style="font-size: 13px;">Không có dự án đang thực hiện</div>';
             } else {
                 displayProjects.forEach(p => {
+                    const statusLower = (p.status || '').toLowerCase();
                     let badgeClass = 'status-badge-v3-running';
                     let label = 'ĐANG THỰC HIỆN';
-                    if (p.status === 'planning') { badgeClass = 'status-badge-v3-warning'; label = 'LÊN KẾ HOẠCH'; }
-                    if (p.status === 'testing') { badgeClass = 'status-badge-v3-warning'; label = 'CHỜ NGHIỆM THU'; }
-                    if (p.status === 'done') { badgeClass = 'status-badge-v3-active'; label = 'HOÀN THÀNH'; }
+                    
+                    if (statusLower === 'planning') { 
+                        badgeClass = 'status-badge-v3-warning'; 
+                        label = 'LÊN KẾ HOẠCH'; 
+                    } else if (statusLower === 'testing') { 
+                        badgeClass = 'status-badge-v3-warning'; 
+                        label = 'CHỜ NGHIỆM THU'; 
+                    } else if (statusLower === 'done') { 
+                        badgeClass = 'status-badge-v3-active'; 
+                        label = 'HOÀN THÀNH'; 
+                    }
 
                     html += `
                     <div class="progress-item">
