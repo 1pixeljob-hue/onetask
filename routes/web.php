@@ -32,3 +32,4 @@ $router->add('/codex/categories/delete', 'MainController', 'deleteCodeCategory')
 
 // Log Routes
 $router->add('/logs/delete', 'MainController', 'deleteLog');
+$router->add('/logs/restore', 'MainController', 'restoreLog');
