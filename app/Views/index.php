@@ -491,9 +491,10 @@
                             <label class="modal-label">Mật Khẩu <span class="req">*</span></label>
                             <a href="javascript:void(0)" class="label-link" onclick="generateStrongPwd()">Tạo mật khẩu mạnh</a>
                         </div>
-                        <div class="pwd-input-wrapper">
-                            <input type="password" class="modal-input" id="mPwdPass" placeholder="••••••••" required>
-                            <button type="button" class="btn-toggle-pwd" onclick="toggleAddPwdVisibility()">
+                        <div class="modal-input-group">
+                            <i class="ph ph-lock modal-input-prefix"></i>
+                            <input type="password" class="modal-input with-prefix" id="mPwdPass" placeholder="••••••••" required>
+                            <button type="button" class="modal-input-icon-btn" onclick="toggleAddPwdVisibility()">
                                 <i class="ph ph-eye" id="mPwdEyeIcon"></i>
                             </button>
                         </div>
