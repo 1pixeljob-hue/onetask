@@ -270,8 +270,9 @@
 
                 <!-- Pagination -->
                 <div class="logs-pagination-row" id="pwdPaginationRow" style="display: none;">
-                    <span class="logs-count" id="pwdPaginationCount">Hiển thị: 0 - 0 / 0 mục</span>
+                    <span class="logs-count" id="pwdPaginationCount">Hiển thị <b>0</b> đến <b>0</b> trong tổng số <b>0</b> kết quả</span>
                     <div class="logs-pagination" id="pwdPaginationButtons">
+                        <!-- Buttons populated by JS -->
                     </div>
                 </div>
 
@@ -951,13 +952,23 @@ function updatePagination(totalItems, totalPages, currentPage, itemsPerPage) {
     row.style.display = 'flex';
     const start = (currentPage - 1) * itemsPerPage + 1;
     const end = Math.min(currentPage * itemsPerPage, totalItems);
-    countText.textContent = `Hiển thị: ${start} - ${end} / ${totalItems} mục`;
+    
+    countText.innerHTML = `Hiển thị <b>${start}</b> đến <b>${end}</b> trong tổng số <b>${totalItems}</b> kết quả`;
 
-    let html = `<button class="pg-btn ${currentPage === 1 ? 'disabled' : ''}" onclick="renderPasswords('', ${currentPage - 1})">Trước</button>`;
+    let html = `
+        <button class="pg-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="renderPasswords('', ${currentPage - 1})">
+            <i class="ph ph-caret-left"></i>
+        </button>`;
+
     for (let i = 1; i <= totalPages; i++) {
         html += `<button class="pg-btn ${i === currentPage ? 'active' : ''}" onclick="renderPasswords('', ${i})">${i}</button>`;
     }
-    html += `<button class="pg-btn ${currentPage === totalPages ? 'disabled' : ''}" onclick="renderPasswords('', ${currentPage + 1})">Sau</button>`;
+
+    html += `
+        <button class="pg-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="renderPasswords('', ${currentPage + 1})">
+            <i class="ph ph-caret-right"></i>
+        </button>`;
+    
     buttonsContainer.innerHTML = html;
 }
 

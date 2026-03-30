@@ -176,10 +176,10 @@
 
                 <!-- Pagination -->
                 <div class="logs-pagination-row">
-                    <span class="logs-count">Hiển thị: <?= $offset + 1 ?> - <?= min($offset + $limit, $totalLogs) ?> / <?= $totalLogs ?> logs</span>
+                    <span class="logs-count">Hiển thị <b><?= $offset + 1 ?></b> đến <b><?= min($offset + $limit, $totalLogs) ?></b> trong tổng số <b><?= $totalLogs ?></b> kết quả</span>
                     <div class="logs-pagination">
                         <?php if ($currentPage > 1): ?>
-                            <a href="?page=<?= $currentPage - 1 ?>&module=<?= $filters['module'] ?>&action=<?= $filters['action'] ?>&search=<?= urlencode($filters['search']) ?>" class="pg-btn">Trước</a>
+                            <a href="?page=<?= $currentPage - 1 ?>&module=<?= $filters['module'] ?>&action=<?= $filters['action'] ?>&search=<?= urlencode($filters['search']) ?>" class="pg-btn"><i class="ph ph-caret-left"></i></a>
                         <?php endif; ?>
                         
                         <?php 
@@ -191,7 +191,7 @@
                         <?php endfor; ?>
 
                         <?php if ($currentPage < $totalPages): ?>
-                            <a href="?page=<?= $currentPage + 1 ?>&module=<?= $filters['module'] ?>&action=<?= $filters['action'] ?>&search=<?= urlencode($filters['search']) ?>" class="pg-btn">Sau</a>
+                            <a href="?page=<?= $currentPage + 1 ?>&module=<?= $filters['module'] ?>&action=<?= $filters['action'] ?>&search=<?= urlencode($filters['search']) ?>" class="pg-btn"><i class="ph ph-caret-right"></i></a>
                         <?php endif; ?>
                     </div>
                 </div>

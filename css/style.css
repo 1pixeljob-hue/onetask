@@ -2865,50 +2865,72 @@ body {
     gap: 4px;
 }
 
-/* Pagination */
+/* Pagination System */
 .logs-pagination-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 0;
+    padding: 16px 0;
+    margin-top: 20px;
+    border-top: 1px solid #f1f5f9;
 }
 
 .logs-count {
-    font-size: 13px;
-    color: var(--text-muted);
+    font-size: 13.5px;
+    color: #64748b;
+}
+
+.logs-count b {
+    color: #1e293b;
+    font-weight: 600;
 }
 
 .logs-pagination {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
 }
 
 .pg-btn {
-    min-width: 34px;
-    height: 34px;
-    padding: 0 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
+    min-width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
     background: #fff;
     font-size: 13px;
-    font-weight: 500;
-    color: var(--text-main);
+    font-weight: 600;
+    color: #64748b;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: inherit;
 }
 
-.pg-btn:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+.pg-btn:hover:not(:disabled):not(.active) {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+    color: #334155;
+    transform: translateY(-1px);
 }
 
 .pg-btn.active {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+    background: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%);
+    border: none;
     color: #fff;
-    font-weight: 700;
+    box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.2), 0 2px 4px -1px rgba(20, 184, 166, 0.1);
+}
+
+.pg-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background-color: #f8fafc;
+}
+
+.pg-btn i {
+    font-size: 16px;
 }
 
 /* --- Projects Table Overflow Fix --- */

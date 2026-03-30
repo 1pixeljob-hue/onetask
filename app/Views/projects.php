@@ -175,9 +175,9 @@
 
                 <!-- Pagination -->
                 <div class="logs-pagination-row" id="paginationRow" style="display: none;">
-                    <span class="logs-count" id="paginationCount">Hiển thị: 0 - 0 / 0 projects</span>
+                    <span class="logs-count" id="paginationCount">Hiển thị <b>0</b> đến <b>0</b> trong tổng số <b>0</b> kết quả</span>
                     <div class="logs-pagination" id="paginationButtons">
-                        <!-- Buttons added by JS -->
+                        <!-- Buttons populated by JS -->
                     </div>
                 </div>
             </div>
@@ -457,6 +457,9 @@
 
 <script>
 let selectedProjects = new Set();
+let currentPage = 1;
+const itemsPerPage = 10;
+let filteredProjects = [];
 
 function clearErrors() {
     document.querySelectorAll('.modal-input-error').forEach(el => el.classList.remove('modal-input-error'));
@@ -576,21 +579,56 @@ function setFilter(val, label, el) {
     document.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
     el.classList.add('active');
     document.getElementById('filterDropdown').classList.remove('open');
-    document.querySelectorAll('.data-table tbody tr').forEach(row => {
-        if (!val) { row.style.display = ''; return; }
-        row.style.display = row.dataset.status === val ? '' : 'none';
-    });
+    
+    // Reset selection and page
+    deselectAllProjects();
+    currentPage = 1;
+    
+    // Update global PROJECTS filter state if needed, but here we just filter the DOM or re-init
+    // For consistency with other modules, we'll re-run initProjectsTable with filtered data
+    initProjectsTable();
 }
-document.addEventListener('DOMContentLoaded', initProjectsTable);
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initial data setup
+    filteredProjects = [...(typeof PROJECTS !== 'undefined' ? PROJECTS : [])];
+    initProjectsTable();
+});
 
 function initProjectsTable() {
     const tbody = document.getElementById('projectTableBody');
     if (!tbody) return;
     tbody.innerHTML = '';
     
-    if (!PROJECTS) return;
+    // Get current filter and search
+    const statusFilter = document.querySelector('.pj-dropdown-item.active').dataset.value || '';
+    const searchVal = document.getElementById('p_search_v2').value.toLowerCase();
+    
+    // Apply filters
+    filteredProjects = PROJECTS.filter(p => {
+        const matchesStatus = !statusFilter || (p.status || '').toLowerCase() === statusFilter;
+        const matchesSearch = !searchVal || 
+            (p.name || '').toLowerCase().includes(searchVal) || 
+            (p.customer || '').toLowerCase().includes(searchVal);
+        return matchesStatus && matchesSearch;
+    });
 
-    PROJECTS.forEach((p) => {
+    const totalItems = filteredProjects.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    
+    // Handle empty state
+    if (totalItems === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="padding: 40px; color: #64748b;">Không có dữ liệu phù hợp</td></tr>';
+        document.getElementById('paginationRow').style.display = 'none';
+        return;
+    }
+
+    // Slicing for pagination
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const endIdx = Math.min(startIdx + itemsPerPage, totalItems);
+    const pageData = filteredProjects.slice(startIdx, endIdx);
+
+    pageData.forEach((p) => {
         try {
             const tr = document.createElement('tr');
             populateRow(tr, p);
@@ -604,6 +642,47 @@ function initProjectsTable() {
             console.error('Error rendering project row:', err, p);
         }
     });
+
+    renderPagination(totalItems, totalPages);
+}
+
+function renderPagination(totalItems, totalPages) {
+    const row = document.getElementById('paginationRow');
+    const countText = document.getElementById('paginationCount');
+    const buttonsContainer = document.getElementById('paginationButtons');
+
+    if (totalItems <= itemsPerPage) {
+        row.style.display = 'none';
+        return;
+    }
+
+    row.style.display = 'flex';
+    const start = (currentPage - 1) * itemsPerPage + 1;
+    const end = Math.min(currentPage * itemsPerPage, totalItems);
+    
+    countText.innerHTML = `Hiển thị <b>${start}</b> đến <b>${end}</b> trong tổng số <b>${totalItems}</b> kết quả`;
+
+    let html = `
+        <button class="pg-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">
+            <i class="ph ph-caret-left"></i>
+        </button>`;
+
+    for (let i = 1; i <= totalPages; i++) {
+        html += `<button class="pg-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+    }
+
+    html += `
+        <button class="pg-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">
+            <i class="ph ph-caret-right"></i>
+        </button>`;
+    
+    buttonsContainer.innerHTML = html;
+}
+
+function changePage(page) {
+    currentPage = page;
+    initProjectsTable();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 document.addEventListener('click', function(e) {
@@ -613,10 +692,8 @@ document.addEventListener('click', function(e) {
     }
 });
 document.getElementById('p_search_v2').addEventListener('input', function() {
-    const q = this.value.toLowerCase();
-    document.querySelectorAll('.data-table tbody tr').forEach(row => {
-        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
-    });
+    currentPage = 1;
+    initProjectsTable();
 });
 
 let currentActionMode = 'add';
