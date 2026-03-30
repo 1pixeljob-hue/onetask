@@ -214,12 +214,12 @@
                         <i class="ph ph-caret-down trigger-chevron"></i>
                     </div>
                     <div class="pj-modal-select-menu pj-dropdown" style="width: 100%; right: auto; left: 0;">
-                        <div class="pj-dropdown-item" data-value="planning">
+                        <div class="pj-dropdown-item active" data-value="planning">
                             <i class="ph ph-calendar-blank color-blue"></i>
                             <span>Lên Kế Hoạch</span>
                         </div>
-                        <div class="pj-dropdown-item active" data-value="doing">
-                            <i class="ph ph-clock color-yellow"></i>
+                        <div class="pj-dropdown-item" data-value="doing">
+                            <i class="ph ph-clock color-gray"></i>
                             <span>Đang Thực Hiện</span>
                         </div>
                         <div class="pj-dropdown-item" data-value="testing">
@@ -869,9 +869,9 @@ function getFormData() {
 
 function populateRow(row, data) {
     const statusInfo = {
-        'planning': { cls: 'warning', icon: 'ph-calendar-plus', label: 'Lên Kế Hoạch' },
+        'planning': { cls: 'warning', icon: 'ph-calendar-blank', label: 'Lên Kế Hoạch' },
         'doing': { cls: 'doing', icon: 'ph-clock', label: 'Đang Thực Hiện' },
-        'testing': { cls: 'testing', icon: 'ph-flask', label: 'Chờ Nghiệm Thu' },
+        'testing': { cls: 'testing', icon: 'ph-circle-dashed', label: 'Chờ Nghiệm Thu' },
         'done': { cls: 'done', icon: 'ph-check-circle', label: 'Hoàn Thành' }
     };
     const s = statusInfo[data.status] || { cls: 'doing', icon: 'ph-clock', label: data.status || 'Đang Thực Hiện' };
