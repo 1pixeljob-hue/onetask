@@ -11,6 +11,85 @@
         rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="/js/shared-data.js"></script>
+    <style>
+        /* Toast Notification Styles */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px 24px;
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
+            z-index: 2000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-left: 4px solid #2fab91;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2fab91;
+            border-radius: 50%;
+            animation: spin-toast 1s linear infinite;
+        }
+        @keyframes spin-toast {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Danger Modal Styles */
+        .danger-modal {
+            border-top: 4px solid #ef4444 !important;
+        }
+        .btn-danger-ok {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-danger-ok:hover {
+            background: #dc2626 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+        .req {
+            color: #ef4444;
+            margin-left: 4px;
+            font-weight: bold;
+        }
+        
+        /* Modal Overlay for Loading state effect */
+        .modal-overlay.loading {
+            cursor: wait;
+        }
+        .modal-overlay.loading .modal-box {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -400,6 +479,27 @@
             }
         }
 
+        let pendingDeleteAction = null;
+
+        function openCxConfirmDelete(title, message, confirmCallback) {
+            document.getElementById('cxConfirmDeleteTitle').textContent = title;
+            document.getElementById('cxConfirmDeleteMsg').innerHTML = message;
+            document.getElementById('cxConfirmDeleteModal').classList.add('active');
+            
+            const btn = document.getElementById('cxConfirmDeleteBtn');
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            newBtn.onclick = () => {
+                closeCxConfirmDelete();
+                confirmCallback();
+            };
+        }
+
+        function closeCxConfirmDelete() {
+            document.getElementById('cxConfirmDeleteModal').classList.remove('active');
+        }
+
         // --- Modal Snippet Functions ---
         function openCxModal() {
             document.getElementById('cxId').value = '';
@@ -551,6 +651,8 @@
                 return;
             }
 
+            const modal = document.getElementById('codeCategoryModal');
+            modal.classList.add('loading');
             showCxToast(currentCatEditId ? 'Đang cập nhật danh mục...' : 'Đang thêm danh mục...', 'loading');
 
             try {
@@ -560,6 +662,7 @@
                     body: JSON.stringify(data)
                 });
                 const result = await response.json();
+                modal.classList.remove('loading');
                 if (result.success) {
                     if (currentCatEditId) {
                         const idx = CODE_CATEGORIES.findIndex(c => c.id == currentCatEditId);
@@ -573,33 +676,41 @@
                     showCxToast(result.message || 'Lỗi khi lưu danh mục', 'error');
                 }
             } catch (e) { 
+                modal.classList.remove('loading');
                 console.error(e); 
                 showCxToast('Lỗi kết nối máy chủ', 'error');
             }
         }
 
         async function deleteCodeCategory(id) {
-            if (!confirm('Bạn có chắc chắn muốn xóa danh mục này?')) return;
-            
-            showCxToast('Đang xóa danh mục...', 'loading');
-            try {
-                const response = await fetch('/codex/categories/delete', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    CODE_CATEGORIES = CODE_CATEGORIES.filter(c => c.id != id);
-                    showCxToast('Đã xóa danh mục thành công!', 'success');
-                    renderCodeCategories();
-                } else {
-                    showCxToast(result.message || 'Không thể xóa danh mục này', 'error');
+            const cat = CODE_CATEGORIES.find(c => c.id == id);
+            if (!cat) return;
+
+            openCxConfirmDelete(
+                'Xác nhận xóa danh mục',
+                `Bạn có chắc chắn muốn xóa danh mục "<strong>${cat.name}</strong>"? Toàn bộ snippet thuộc danh mục này sẽ bị ảnh hưởng.`,
+                async () => {
+                    showCxToast('Đang xóa danh mục...', 'loading');
+                    try {
+                        const response = await fetch('/codex/categories/delete', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id })
+                        });
+                        const result = await response.json();
+                        if (result.success) {
+                            CODE_CATEGORIES = CODE_CATEGORIES.filter(c => c.id != id);
+                            showCxToast('Đã xóa danh mục thành công!', 'success');
+                            renderCodeCategories();
+                        } else {
+                            showCxToast(result.message || 'Không thể xóa danh mục này', 'error');
+                        }
+                    } catch (e) { 
+                        console.error(e); 
+                        showCxToast('Lỗi kết nối máy chủ', 'error');
+                    }
                 }
-            } catch (e) { 
-                console.error(e); 
-                showCxToast('Lỗi kết nối máy chủ', 'error');
-            }
+            );
         }
 
 
@@ -614,7 +725,9 @@
                 return;
             }
 
-            // Hiển thị loading toast
+            // Hiển thị loading toast & overlay
+            const modal = document.getElementById('cxModal');
+            modal.classList.add('loading');
             showCxToast(document.getElementById('cxId').value ? 'Đang cập nhật snippet...' : 'Đang thêm snippet...', 'loading');
 
             const formData = new FormData(this);
@@ -624,6 +737,7 @@
             })
             .then(res => res.json())
             .then(data => {
+                modal.classList.remove('loading');
                 if (data.status === 'success') {
                     showCxToast('Thành công!', 'success');
                     setTimeout(() => location.reload(), 500);
@@ -632,6 +746,7 @@
                 }
             })
             .catch(err => {
+                modal.classList.remove('loading');
                 console.error(err);
                 showCxToast('Lỗi kết nối máy chủ', 'error');
             });
@@ -673,29 +788,36 @@
         }
 
         function deleteSnippet(id) {
-            if (confirm('Bạn có chắc chắn muốn xoá snippet này?')) {
-                showCxToast('Đang xóa snippet...', 'loading');
-                const formData = new FormData();
-                formData.append('id', id);
+            const snippet = ALL_SNIPPETS.find(s => s.id == id);
+            const title = snippet ? snippet.title : 'mục này';
 
-                fetch('/codex/delete', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        showCxToast('Đã xóa thành công!', 'success');
-                        setTimeout(() => location.reload(), 500);
-                    } else {
-                        showCxToast(data.message || 'Lỗi khi xóa snippet', 'error');
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    showCxToast('Lỗi kết nối máy chủ', 'error');
-                });
-            }
+            openCxConfirmDelete(
+                'Xác nhận xóa snippet',
+                `Bạn có chắc chắn muốn xóa snippet "<strong>${title}</strong>"? Toàn bộ dữ liệu của mục này sẽ bị xóa khỏi hệ thống.`,
+                async () => {
+                    showCxToast('Đang xóa snippet...', 'loading');
+                    const formData = new FormData();
+                    formData.append('id', id);
+
+                    fetch('/codex/delete', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            showCxToast('Đã xóa thành công!', 'success');
+                            setTimeout(() => location.reload(), 500);
+                        } else {
+                            showCxToast(data.message || 'Lỗi khi xóa snippet', 'error');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        showCxToast('Lỗi kết nối máy chủ', 'error');
+                    });
+                }
+            );
         }
 
         function filterByLang(lang) {
@@ -770,7 +892,19 @@
         async function saveNewLang(e) {
             e.stopPropagation();
             const name = document.getElementById('newLangInput').value.trim();
-            if (!name) return;
+            if (!name) {
+                showCxToast('Vui lòng nhập tên loại code', 'error');
+                return;
+            }
+
+            // Kiểm tra trùng lặp local
+            const isDuplicate = CODE_CATEGORIES.some(c => c.name.toLowerCase() === name.toLowerCase());
+            if (isDuplicate) {
+                showCxToast('Tên loại code này đã tồn tại', 'error');
+                return;
+            }
+
+            showCxToast('Đang thêm loại mới...', 'loading');
 
             try {
                 const response = await fetch('/codex/categories/save', {
@@ -781,6 +915,7 @@
                 const data = await response.json();
 
                 if (data.success) {
+                    showCxToast('Đã thêm loại code!', 'success');
                     if (!data.exists) {
                         CODE_CATEGORIES.push(data);
                         renderCodeCategories();
@@ -794,10 +929,11 @@
                     hideAddLangInput();
                     document.getElementById('cxLangSelect').classList.remove('open');
                 } else {
-                    alert(data.message || 'Lỗi khi thêm loại code');
+                    showCxToast(data.message || 'Lỗi khi thêm loại code', 'error');
                 }
             } catch (err) {
                 console.error('Error:', err);
+                showCxToast('Lỗi kết nối máy chủ', 'error');
             }
         }
         // Callback khi chọn loại code từ dropdown
@@ -828,6 +964,28 @@
             <i id="cxToastSuccessIcon" class="ph-fill ph-check-circle" style="display:none; color: #10b981; font-size: 24px;"></i>
             <i id="cxToastErrorIcon" class="ph-fill ph-x-circle" style="display:none; color: #ef4444; font-size: 24px;"></i>
             <span id="cxToastMsg">Đang xử lý...</span>
+        </div>
+    </div>
+    <!-- Modal Xác nhận Xóa -->
+    <div class="modal-overlay" id="cxConfirmDeleteModal" onclick="if(event.target.id==='cxConfirmDeleteModal') closeCxConfirmDelete()">
+        <div class="modal-box danger-modal" style="max-width: 420px; padding: 24px; border-radius: 16px; position: relative;">
+            <button class="modal-close" style="position: absolute; right: 20px; top: 20px;" onclick="closeCxConfirmDelete()"><i class="ph ph-x"></i></button>
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px;">
+                <div style="width: 48px; height: 48px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 12px; font-size: 24px; display: flex; align-items: center; justify-content: center;">
+                    <i class="ph-fill ph-warning"></i>
+                </div>
+                <div>
+                    <h3 id="cxConfirmDeleteTitle" style="margin: 0; font-size: 18px; font-weight: 700; color: #1e293b;">Xác nhận xóa</h3>
+                    <p style="margin: 4px 0 0 0; color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">HÀNH ĐỘNG KHÔNG THỂ HOÀN TÁC</p>
+                </div>
+            </div>
+            <p id="cxConfirmDeleteMsg" style="margin: 0 0 28px 0; color: #475569; font-size: 14px; line-height: 1.6;">
+                Bạn có chắc chắn muốn xóa mục này? Toàn bộ dữ liệu sẽ bị xóa khỏi hệ thống.
+            </p>
+            <div style="display: flex; gap: 12px;">
+                <button class="modal-btn-cancel" style="flex: 1; justify-content: center; height: 44px; border-radius: 10px; font-weight: 600;" onclick="closeCxConfirmDelete()">Hủy Bỏ</button>
+                <button class="btn-danger-ok" id="cxConfirmDeleteBtn">Xác Nhận Xóa</button>
+            </div>
         </div>
     </div>
 </body>
