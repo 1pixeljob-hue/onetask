@@ -737,6 +737,8 @@
 
 
         // --- Snippet Logic ---
+        document.getElementById('cxForm').onsubmit = async function (e) {
+            e.preventDefault();
             // Validation
             const title = document.getElementById('cxTitle').value.trim();
             const lang = document.getElementById('cxLangInput').value;
