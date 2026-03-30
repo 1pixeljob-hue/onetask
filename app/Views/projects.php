@@ -210,7 +210,7 @@
             <div class="modal-field full">
                 <label class="modal-label">Trạng Thái <span class="req">*</span></label>
                 <div class="pj-modal-select" id="mProjectStatusSelect" data-input-id="mProjectStatus">
-                    <div class="pj-modal-select-trigger">
+                    <div class="pj-modal-select-trigger" onclick="togglePjModalSelect(this)">
                         <span>Lên Kế Hoạch</span>
                         <i class="ph ph-caret-down trigger-chevron"></i>
                     </div>

@@ -544,20 +544,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+/**
+ * Global toggle for .pj-modal-select components
+ */
+window.togglePjModalSelect = function(trigger) {
+    const dropdown = trigger.closest('.pj-modal-select');
+    if (!dropdown) return;
+    
+    const isOpen = dropdown.classList.contains('open');
+    
+    // Close all others
+    document.querySelectorAll('.pj-modal-select.open').forEach(d => {
+        if (d !== dropdown) d.classList.remove('open');
+    });
+    
+    // Toggle current
+    dropdown.classList.toggle('open');
+};
+
     // 4. Universal Modal Select (Dropdown) Logic (Synchronized)
     document.addEventListener('click', (e) => {
-        // Toggle Dropdown
         const trigger = e.target.closest('.pj-modal-select-trigger');
+        const selectItem = e.target.closest('.pj-modal-select-item') || e.target.closest('.pj-dropdown-item');
+        
+        // If clicking outside any .pj-modal-select, close all
+        if (!trigger && !selectItem && !e.target.closest('.pj-modal-select')) {
+            document.querySelectorAll('.pj-modal-select.open').forEach(d => d.classList.remove('open'));
+            return;
+        }
+
+        // Handle Toggle Dropdown (only if not handled by onclick)
         if (trigger) {
             const dropdown = trigger.closest('.pj-modal-select');
+            // If the element has onclick, we let onclick handle it to avoid double-toggle
+            if (trigger.getAttribute('onclick')) return;
+
             const isOpen = dropdown.classList.contains('open');
-
-            // Close all other open modal selects first
-            document.querySelectorAll('.pj-modal-select.open').forEach(d => d.classList.remove('open'));
-
-            if (!isOpen) {
-                dropdown.classList.add('open');
-            }
+            document.querySelectorAll('.pj-modal-select.open').forEach(d => {
+                if (d !== dropdown) d.classList.remove('open');
+            });
+            if (!isOpen) dropdown.classList.add('open');
             e.stopPropagation();
             return;
         }
