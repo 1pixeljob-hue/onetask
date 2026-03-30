@@ -209,8 +209,8 @@
                 <label class="modal-label">Trạng Thái <span class="req">*</span></label>
                 <div class="pj-modal-select" id="mProjectStatusSelect" data-input-id="mProjectStatus">
                     <div class="pj-modal-select-trigger">
-                        <i class="ph ph-clock"></i>
-                        <span>Đang Thực Hiện</span>
+                        <i class="ph ph-calendar-blank"></i>
+                        <span>Lên Kế Hoạch</span>
                         <i class="ph ph-caret-down trigger-chevron"></i>
                     </div>
                     <div class="pj-modal-select-menu pj-dropdown" style="width: 100%; right: auto; left: 0;">
@@ -232,7 +232,7 @@
                         </div>
                     </div>
                     <!-- Actual hidden input for form data -->
-                    <input type="hidden" id="mProjectStatus" value="doing">
+                    <input type="hidden" id="mProjectStatus" value="planning">
                 </div>
             </div>
 
@@ -1039,7 +1039,7 @@ function resetProjectForm() {
     document.getElementById('mProjectName').value = '';
     // Reset Custom Select
     const customSelect = document.getElementById('mProjectStatusSelect');
-    const defaultOption = customSelect.querySelector('.pj-dropdown-item[data-value="doing"]');
+    const defaultOption = customSelect.querySelector('.pj-dropdown-item[data-value="planning"]');
     if (defaultOption) {
         const trigger = customSelect.querySelector('.pj-modal-select-trigger');
         trigger.querySelector('span').textContent = defaultOption.textContent.trim();
@@ -1047,7 +1047,7 @@ function resetProjectForm() {
         if (icon) trigger.querySelector('i:first-child').className = icon.className;
         customSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
         defaultOption.classList.add('active');
-        document.getElementById('mProjectStatus').value = 'doing';
+        document.getElementById('mProjectStatus').value = 'planning';
     }
 
     document.getElementById('projectValueDisplay').textContent = '0 VNĐ';

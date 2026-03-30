@@ -16,7 +16,7 @@ CREATE TABLE `projects` (
   `phone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `value` decimal(15,2) DEFAULT 0.00,
   `date` date DEFAULT NULL,
-  `status` enum('doing','testing','done') COLLATE utf8mb4_unicode_ci DEFAULT 'doing',
+  `status` enum('planning','doing','testing','done') COLLATE utf8mb4_unicode_ci DEFAULT 'planning',
   `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `admin_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `admin_user` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
