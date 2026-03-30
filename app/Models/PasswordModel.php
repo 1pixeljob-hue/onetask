@@ -110,4 +110,18 @@ class PasswordModel {
             return false;
         }
     }
+
+    /**
+     * Tìm mật khẩu theo ID
+     */
+    public function find($id) {
+        if (!$this->db) return null;
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM passwords WHERE id = :id");
+            $stmt->execute([':id' => $id]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
 }

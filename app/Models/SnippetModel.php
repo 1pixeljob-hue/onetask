@@ -40,6 +40,10 @@ class SnippetModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function find($id) {
+        return $this->getById($id);
+    }
+
     public function save($data) {
         $params = [
             ':title' => $data['title'],

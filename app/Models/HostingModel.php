@@ -94,4 +94,13 @@ class HostingModel {
         $stmt = $this->db->prepare("DELETE FROM hostings WHERE id IN ($placeholders)");
         return $stmt->execute(array_values($ids));
     }
+
+    /**
+     * Tìm hosting theo ID
+     */
+    public function find($id) {
+        $stmt = $this->db->prepare("SELECT * FROM hostings WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

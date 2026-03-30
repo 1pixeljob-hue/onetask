@@ -29,3 +29,6 @@ $router->add('/codex/save', 'MainController', 'saveSnippet');
 $router->add('/codex/delete', 'MainController', 'deleteSnippet');
 $router->add('/codex/categories/save', 'MainController', 'saveCodeCategory');
 $router->add('/codex/categories/delete', 'MainController', 'deleteCodeCategory');
+
+// Log Routes
+$router->add('/logs/delete', 'MainController', 'deleteLog');

@@ -146,4 +146,13 @@ class ProjectModel {
 
         return array_values($monthlyData); // Trả về mảng 12 phần tử (index 0-11)
     }
+
+    /**
+     * Tìm dự án theo ID
+     */
+    public function find($id) {
+        $stmt = $this->db->prepare("SELECT * FROM projects WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

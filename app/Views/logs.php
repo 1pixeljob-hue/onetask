@@ -108,19 +108,20 @@
                 <div class="logs-toolbar-row">
                     <div class="pj-search-wrap logs-search">
                         <i class="ph ph-magnifying-glass pj-search-icon"></i>
-                        <input type="text" class="pj-search-input" id="logsSearchInput" placeholder="Tìm kiếm theo tên item hoặc user...">
+                        <input type="text" class="pj-search-input" id="logsSearchInput" placeholder="Tìm kiếm theo tên item hoặc user..." value="<?= htmlspecialchars($filters['search']) ?>">
                     </div>
-                    <select class="logs-select" id="logsModuleSelect" onchange="filterLogs()">
+                    <select class="logs-select" id="logsModuleSelect" onchange="applyFilters()">
                         <option value="">Tất cả Module</option>
-                        <option value="Project">Project</option>
-                        <option value="Hosting">Hosting</option>
-                        <option value="CodeX">CodeX</option>
+                        <option value="Project" <?= $filters['module'] == 'Project' ? 'selected' : '' ?>>Project</option>
+                        <option value="Hosting" <?= $filters['module'] == 'Hosting' ? 'selected' : '' ?>>Hosting</option>
+                        <option value="CodeX" <?= $filters['module'] == 'CodeX' ? 'selected' : '' ?>>CodeX</option>
+                        <option value="Passwords" <?= $filters['module'] == 'Passwords' ? 'selected' : '' ?>>Passwords</option>
                     </select>
-                    <select class="logs-select" id="logsActionSelect" onchange="filterLogs()">
+                    <select class="logs-select" id="logsActionSelect" onchange="applyFilters()">
                         <option value="">Tất cả Hành động</option>
-                        <option value="Cập nhật">Cập nhật</option>
-                        <option value="Tạo mới">Tạo mới</option>
-                        <option value="Xoá">Xoá</option>
+                        <option value="Cập nhật" <?= $filters['action'] == 'Cập nhật' ? 'selected' : '' ?>>Cập nhật</option>
+                        <option value="Tạo mới" <?= $filters['action'] == 'Tạo mới' ? 'selected' : '' ?>>Tạo mới</option>
+                        <option value="Xoá" <?= $filters['action'] == 'Xoá' ? 'selected' : '' ?>>Xoá</option>
                     </select>
                 </div>
 
@@ -139,121 +140,61 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Row 1 -->
-                            <tr data-module="Project" data-action="Cập nhật">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td><div class="log-module"><i class="ph ph-folder"></i> Project</div></td>
-                                <td><span class="status-badge badge-blue">Cập nhật</span></td>
-                                <td>Thêm sản phẩm cho web Trái Cây Lâm Thành</td>
-                                <td class="text-muted">quydev</td>
-                                <td class="text-muted">16/03/2026 14:39</td>
-                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
-                            </tr>
-                            <!-- Row 2 -->
-                            <tr data-module="Project" data-action="Cập nhật">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td><div class="log-module"><i class="ph ph-folder"></i> Project</div></td>
-                                <td><span class="status-badge badge-blue">Cập nhật</span></td>
-                                <td>Thiết kế website KLP</td>
-                                <td class="text-muted">quydev</td>
-                                <td class="text-muted">16/03/2026 14:39</td>
-                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
-                            </tr>
-                            <!-- Row 3 -->
-                            <tr data-module="Project" data-action="Cập nhật">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td><div class="log-module"><i class="ph ph-folder"></i> Project</div></td>
-                                <td><span class="status-badge badge-blue">Cập nhật</span></td>
-                                <td>Onelaw Code section tài liệu kèm iframe view</td>
-                                <td class="text-muted">quydev</td>
-                                <td class="text-muted">16/03/2026 14:39</td>
-                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
-                            </tr>
-                            <!-- Row 4 -->
-                            <tr data-module="Project" data-action="Cập nhật">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td><div class="log-module"><i class="ph ph-folder"></i> Project</div></td>
-                                <td><span class="status-badge badge-blue">Cập nhật</span></td>
-                                <td>Hỗ trợ chị Hạnh xử lý web Phú Thành</td>
-                                <td class="text-muted">quydev</td>
-                                <td class="text-muted">11/03/2026 10:41</td>
-                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
-                            </tr>
-                            <!-- Row 5 -->
-                            <tr data-module="Hosting" data-action="Tạo mới">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td><div class="log-module"><i class="ph ph-hard-drives"></i> Hosting</div></td>
-                                <td><span class="status-badge badge-green">Tạo mới</span></td>
-                                <td>VINALIGHT</td>
-                                <td class="text-muted">quydev</td>
-                                <td class="text-muted">11/03/2026 10:14</td>
-                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
-                            </tr>
-                            <!-- Row 6 -->
-                            <tr data-module="Hosting" data-action="Tạo mới">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td><div class="log-module"><i class="ph ph-hard-drives"></i> Hosting</div></td>
-                                <td><span class="status-badge badge-green">Tạo mới</span></td>
-                                <td>VINALIGHT</td>
-                                <td class="text-muted">quydev</td>
-                                <td class="text-muted">11/03/2026 10:14</td>
-                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
-                            </tr>
-                            <!-- Row 7 -->
-                            <tr data-module="Project" data-action="Cập nhật">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td><div class="log-module"><i class="ph ph-folder"></i> Project</div></td>
-                                <td><span class="status-badge badge-blue">Cập nhật</span></td>
-                                <td>VINALIGHT x Rooster</td>
-                                <td class="text-muted">quydev</td>
-                                <td class="text-muted">11/03/2026 10:13</td>
-                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
-                            </tr>
-                            <!-- Row 8 -->
-                            <tr data-module="Project" data-action="Tạo mới">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td><div class="log-module"><i class="ph ph-folder"></i> Project</div></td>
-                                <td><span class="status-badge badge-green">Tạo mới</span></td>
-                                <td>VINALIGHT x Rooster</td>
-                                <td class="text-muted">quydev</td>
-                                <td class="text-muted">11/03/2026 10:13</td>
-                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
-                            </tr>
-                            <!-- Row 9 -->
-                            <tr data-module="CodeX" data-action="Cập nhật">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td><div class="log-module"><i class="ph ph-code"></i> CodeX</div></td>
-                                <td><span class="status-badge badge-blue">Cập nhật</span></td>
-                                <td>Ẩn 1 menu trong admin WP</td>
-                                <td class="text-muted">quydev</td>
-                                <td class="text-muted">10/03/2026 20:13</td>
-                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
-                            </tr>
-                            <!-- Row 10 -->
-                            <tr data-module="Project" data-action="Cập nhật">
-                                <td><input type="checkbox" class="cb-custom"></td>
-                                <td><div class="log-module"><i class="ph ph-folder"></i> Project</div></td>
-                                <td><span class="status-badge badge-blue">Cập nhật</span></td>
-                                <td>Thêm sản phẩm cho web Trái Cây Lâm Thành</td>
-                                <td class="text-muted">quydev</td>
-                                <td class="text-muted">10/03/2026 18:03</td>
-                                <td class="text-center"><div class="log-actions"><button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button><button class="btn-action" title="Xoá"><i class="ph ph-trash color-red"></i></button></div></td>
-                            </tr>
+                            <?php if (empty($logs)): ?>
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">Không tìm thấy bản ghi log nào.</td>
+                                </tr>
+                            <?php else: ?>
+                                <?php foreach ($logs as $log): 
+                                    $icon = 'ph-file-text';
+                                    if ($log['module'] == 'Project') $icon = 'ph-folder';
+                                    elseif ($log['module'] == 'Hosting') $icon = 'ph-hard-drives';
+                                    elseif ($log['module'] == 'CodeX') $icon = 'ph-code';
+                                    elseif ($log['module'] == 'Passwords') $icon = 'ph-key';
+
+                                    $badgeClass = 'badge-blue';
+                                    if ($log['action'] == 'Tạo mới') $badgeClass = 'badge-green';
+                                    elseif ($log['action'] == 'Xoá') $badgeClass = 'badge-red';
+                                ?>
+                                <tr data-id="<?= $log['id'] ?>">
+                                    <td><input type="checkbox" class="cb-custom"></td>
+                                    <td><div class="log-module"><i class="ph <?= $icon ?>"></i> <?= htmlspecialchars($log['module']) ?></div></td>
+                                    <td><span class="status-badge <?= $badgeClass ?>"><?= htmlspecialchars($log['action']) ?></span></td>
+                                    <td><?= htmlspecialchars($log['item_name']) ?></td>
+                                    <td class="text-muted"><?= htmlspecialchars($log['user_name']) ?></td>
+                                    <td class="text-muted"><?= date('d/m/Y H:i', strtotime($log['created_at'])) ?></td>
+                                    <td class="text-center">
+                                        <div class="log-actions">
+                                            <button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button>
+                                            <button class="btn-action" title="Xoá" onclick="deleteLog(<?= $log['id'] ?>)"><i class="ph ph-trash color-red"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
 
                 <!-- Pagination -->
                 <div class="logs-pagination-row">
-                    <span class="logs-count">Hiển thị: 1 - 10 / 154 logs</span>
+                    <span class="logs-count">Hiển thị: <?= $offset + 1 ?> - <?= min($offset + $limit, $totalLogs) ?> / <?= $totalLogs ?> logs</span>
                     <div class="logs-pagination">
-                        <button class="pg-btn">Trước</button>
-                        <button class="pg-btn active">1</button>
-                        <button class="pg-btn">2</button>
-                        <button class="pg-btn">3</button>
-                        <button class="pg-btn">4</button>
-                        <button class="pg-btn">5</button>
-                        <button class="pg-btn">Sau</button>
+                        <?php if ($currentPage > 1): ?>
+                            <a href="?page=<?= $currentPage - 1 ?>&module=<?= $filters['module'] ?>&action=<?= $filters['action'] ?>&search=<?= urlencode($filters['search']) ?>" class="pg-btn">Trước</a>
+                        <?php endif; ?>
+                        
+                        <?php 
+                        $start = max(1, $currentPage - 2);
+                        $end = min($totalPages, $currentPage + 2);
+                        for ($i = $start; $i <= $end; $i++): 
+                        ?>
+                            <a href="?page=<?= $i ?>&module=<?= $filters['module'] ?>&action=<?= $filters['action'] ?>&search=<?= urlencode($filters['search']) ?>" class="pg-btn <?= $i == $currentPage ? 'active' : '' ?>"><?= $i ?></a>
+                        <?php endfor; ?>
+
+                        <?php if ($currentPage < $totalPages): ?>
+                            <a href="?page=<?= $currentPage + 1 ?>&module=<?= $filters['module'] ?>&action=<?= $filters['action'] ?>&search=<?= urlencode($filters['search']) ?>" class="pg-btn">Sau</a>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -262,21 +203,47 @@
     </div>
 
 <script>
-function filterLogs() {
+function applyFilters() {
     const module = document.getElementById('logsModuleSelect').value;
     const action = document.getElementById('logsActionSelect').value;
-    const search = document.getElementById('logsSearchInput').value.toLowerCase();
-    document.querySelectorAll('#logsTable tbody tr').forEach(row => {
-        const rowModule = row.dataset.module || '';
-        const rowAction = row.dataset.action || '';
-        const rowText = row.textContent.toLowerCase();
-        const moduleMatch = !module || rowModule === module;
-        const actionMatch = !action || rowAction === action;
-        const searchMatch = !search || rowText.includes(search);
-        row.style.display = (moduleMatch && actionMatch && searchMatch) ? '' : 'none';
-    });
+    const search = document.getElementById('logsSearchInput').value;
+    
+    let url = new URL(window.location.href);
+    url.searchParams.set('module', module);
+    url.searchParams.set('action', action);
+    url.searchParams.set('search', search);
+    url.searchParams.set('page', 1); // Reset to first page when filtering
+    
+    window.location.href = url.toString();
 }
-document.getElementById('logsSearchInput').addEventListener('input', filterLogs);
+
+document.getElementById('logsSearchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        applyFilters();
+    }
+});
+
+async function deleteLog(id) {
+    if (!confirm('Bạn có chắc chắn muốn xóa bản ghi log này?')) return;
+    
+    try {
+        const response = await fetch('/logs/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+            location.reload();
+        } else {
+            alert('Lỗi: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Đã xảy ra lỗi khi kết nối với máy chủ.');
+    }
+}
 </script>
 </body>
 </html>

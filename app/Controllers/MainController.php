@@ -5,6 +5,7 @@ use App\Models\PasswordModel;
 use App\Models\CategoryModel;
 use App\Models\SnippetModel;
 use App\Models\CodeCategoryModel;
+use App\Models\LogModel;
 
 class MainController extends BaseController {
     private $projectModel;
@@ -13,6 +14,7 @@ class MainController extends BaseController {
     private $categoryModel;
     private $snippetModel;
     private $codeCategoryModel;
+    private $logModel;
 
     public function __construct() {
         $this->projectModel = new ProjectModel();
@@ -21,6 +23,7 @@ class MainController extends BaseController {
         $this->categoryModel = new CategoryModel();
         $this->snippetModel = new SnippetModel();
         $this->codeCategoryModel = new CodeCategoryModel();
+        $this->logModel = new LogModel();
     }
 
     public function dashboard() {
@@ -80,6 +83,8 @@ class MainController extends BaseController {
             ];
 
             if ($this->snippetModel->save($data)) {
+                $action = $data['id'] ? 'Cập nhật' : 'Tạo mới';
+                $this->logModel->addLog('CodeX', $action, $data['title']);
                 echo json_encode(['status' => 'success', 'message' => 'Lưu snippet thành công']);
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu snippet']);
@@ -89,7 +94,9 @@ class MainController extends BaseController {
 
     public function deleteSnippet() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
+            $snippet = $this->snippetModel->find($_POST['id']);
             if ($this->snippetModel->delete($_POST['id'])) {
+                $this->logModel->addLog('CodeX', 'Xoá', $snippet['title'] ?? 'Snippet #' . $_POST['id']);
                 echo json_encode(['status' => 'success', 'message' => 'Xoá snippet thành công']);
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá snippet']);
@@ -141,6 +148,8 @@ class MainController extends BaseController {
 
         if ($success) {
             $cat = $this->codeCategoryModel->find($success_id);
+            $action = $id ? 'Cập nhật' : 'Tạo mới';
+            $this->logModel->addLog('CodeX', $action, 'Danh mục: ' . $cat['name']);
             echo json_encode(['success' => true, 'id' => $success_id, 'name' => $cat['name'], 'color' => $cat['color'], 'text_color' => $cat['text_color']]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Lỗi khi lưu danh mục']);
@@ -159,12 +168,48 @@ class MainController extends BaseController {
             return;
         }
 
+        $cat = $this->codeCategoryModel->find($input['id']);
         $success = $this->codeCategoryModel->delete($input['id']);
+        if ($success) {
+            $this->logModel->addLog('CodeX', 'Xoá', 'Danh mục: ' . ($cat['name'] ?? 'ID #' . $input['id']));
+        }
         echo json_encode(['success' => $success]);
     }
 
     public function logs() {
-        $this->view('logs');
+        $filters = [
+            'module' => $_GET['module'] ?? '',
+            'action' => $_GET['action'] ?? '',
+            'search' => $_GET['search'] ?? ''
+        ];
+        $limit = 15;
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        $logs = $this->logModel->getAll($filters, $limit, $offset);
+        $totalLogs = $this->logModel->getCount($filters);
+        
+        $data = [
+            'logs' => $logs,
+            'totalLogs' => $totalLogs,
+            'currentPage' => $page,
+            'totalPages' => ceil($totalLogs / $limit),
+            'limit' => $limit,
+            'offset' => $offset,
+            'filters' => $filters
+        ];
+        $this->view('logs', $data);
+    }
+
+    public function deleteLog() {
+        header('Content-Type: application/json');
+        $input = json_decode(file_get_contents('php://input'), true);
+        if (!$input || !isset($input['id'])) {
+            echo json_encode(['success' => false, 'message' => 'ID không hợp lệ']);
+            return;
+        }
+        $success = $this->logModel->delete($input['id']);
+        echo json_encode(['success' => $success]);
     }
 
     public function settings() {
@@ -185,8 +230,10 @@ class MainController extends BaseController {
 
         if (isset($input['id']) && $input['id']) {
             $success = $this->projectModel->update($input['id'], $input);
+            $this->logModel->addLog('Project', 'Cập nhật', $input['name']);
         } else {
             $success = $this->projectModel->create($input);
+            $this->logModel->addLog('Project', 'Tạo mới', $input['name']);
         }
 
         echo json_encode(['success' => $success]);
@@ -204,7 +251,11 @@ class MainController extends BaseController {
             return;
         }
 
+        $project = $this->projectModel->find($input['id']);
         $success = $this->projectModel->delete($input['id']);
+        if ($success) {
+            $this->logModel->addLog('Project', 'Xoá', $project['name'] ?? 'Project #' . $input['id']);
+        }
         echo json_encode(['success' => $success]);
     }
 
@@ -222,8 +273,10 @@ class MainController extends BaseController {
 
         if (isset($input['id']) && $input['id']) {
             $success = $this->hostingModel->update($input['id'], $input);
+            $this->logModel->addLog('Hosting', 'Cập nhật', $input['name']);
         } else {
             $success = $this->hostingModel->create($input);
+            $this->logModel->addLog('Hosting', 'Tạo mới', $input['name']);
         }
 
         echo json_encode(['success' => $success]);
@@ -241,7 +294,11 @@ class MainController extends BaseController {
             return;
         }
 
+        $hosting = $this->hostingModel->find($input['id']);
         $success = $this->hostingModel->delete($input['id']);
+        if ($success) {
+            $this->logModel->addLog('Hosting', 'Xoá', $hosting['name'] ?? 'Hosting #' . $input['id']);
+        }
         echo json_encode(['success' => $success]);
     }
 
@@ -291,8 +348,10 @@ class MainController extends BaseController {
 
         if (isset($input['id']) && $input['id']) {
             $success = $this->passwordModel->update($input['id'], $input);
+            $this->logModel->addLog('Passwords', 'Cập nhật', $input['title']);
         } else {
             $success = $this->passwordModel->create($input);
+            $this->logModel->addLog('Passwords', 'Tạo mới', $input['title']);
         }
 
         echo json_encode(['success' => $success]);
@@ -310,7 +369,11 @@ class MainController extends BaseController {
             return;
         }
 
+        $password = $this->passwordModel->find($input['id']);
         $success = $this->passwordModel->delete($input['id']);
+        if ($success) {
+            $this->logModel->addLog('Passwords', 'Xoá', $password['title'] ?? 'Mật khẩu #' . $input['id']);
+        }
         echo json_encode(['success' => $success]);
     }
 
@@ -328,8 +391,10 @@ class MainController extends BaseController {
 
         if (isset($input['id']) && $input['id']) {
             $success = $this->categoryModel->update($input['id'], $input);
+            $this->logModel->addLog('Passwords', 'Cập nhật', 'Danh mục: ' . $input['name']);
         } else {
             $success = $this->categoryModel->create($input);
+            $this->logModel->addLog('Passwords', 'Tạo mới', 'Danh mục: ' . $input['name']);
         }
 
         echo json_encode(['success' => $success]);
@@ -347,7 +412,11 @@ class MainController extends BaseController {
             return;
         }
 
+        $cat = $this->categoryModel->find($input['id']);
         $success = $this->categoryModel->delete($input['id']);
+        if ($success) {
+            $this->logModel->addLog('Passwords', 'Xoá', 'Danh mục: ' . ($cat['name'] ?? 'ID #' . $input['id']));
+        }
         echo json_encode(['success' => $success]);
     }
 }
