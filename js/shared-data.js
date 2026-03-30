@@ -316,10 +316,16 @@ function getProjectStats(year) {
     const filtered = PROJECTS.filter(p => getYear(p.date) === year);
     const totalValue = filtered.reduce((sum, p) => sum + p.value, 0);
     const count = filtered.length;
-    const doing = filtered.filter(p => p.status === 'doing').length;
-    const testing = filtered.filter(p => p.status === 'testing').length;
-    const done = filtered.filter(p => p.status === 'done').length;
-    return { filtered, totalValue, count, doing, testing, done };
+    
+    const stats = {
+        planning: filtered.filter(p => p.status === 'planning').length,
+        doing: filtered.filter(p => p.status === 'doing').length,
+        testing: filtered.filter(p => p.status === 'testing').length,
+        done: filtered.filter(p => p.status === 'done').length,
+        paused: filtered.filter(p => p.status === 'paused').length
+    };
+    
+    return { filtered, totalValue, count, ...stats };
 }
 
 /**
@@ -392,9 +398,11 @@ function getDashboardStats() {
     expiringSoonList.sort((a, b) => a.diffDays - b.diffDays);
 
     // Project stats
+    const planningProjects = PROJECTS.filter(p => p.status === 'planning');
     const doingProjects = PROJECTS.filter(p => p.status === 'doing');
     const testingProjects = PROJECTS.filter(p => p.status === 'testing');
     const doneProjects = PROJECTS.filter(p => p.status === 'done');
+    const pausedProjects = PROJECTS.filter(p => p.status === 'paused');
 
     // Total revenue (Refined Logic)
     // 1. Only include completed projects
@@ -410,8 +418,9 @@ function getDashboardStats() {
 
     const totalRevenue = totalProjectRevenue + totalHostingRevenue;
 
-    // Testing projects value
-    const testingValue = testingProjects.reduce((s, p) => s + p.value, 0);
+    // Potential project value (all except done and paused)
+    const activeValue = PROJECTS.filter(p => ['planning', 'doing', 'testing'].includes(p.status))
+                                .reduce((s, p) => s + p.value, 0);
 
     // Total Potential Revenue (Global)
     const totalPotentialRevenue = PROJECTS.reduce((s, p) => s + p.value, 0) + HOSTINGS.reduce((s, h) => s + h.price, 0);
@@ -423,13 +432,15 @@ function getDashboardStats() {
         expiredHostings,
         expiringSoonList,
         expiredList,
+        planningProjects,
         doingProjects,
         testingProjects,
         doneProjects,
+        pausedProjects,
         totalRevenue,
         totalProjectRevenue,
         totalHostingRevenue,
-        testingValue,
+        activeValue,
         totalPotentialRevenue
     };
 }

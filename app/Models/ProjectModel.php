@@ -34,9 +34,11 @@ class ProjectModel {
     public function getDashboardStats() {
         $stats = [
             'total_value' => 0,
+            'planning' => 0,
             'doing' => 0,
             'testing' => 0,
-            'done' => 0
+            'done' => 0,
+            'paused' => 0
         ];
 
         $stmt = $this->db->query("SELECT status, SUM(value) as total_val, COUNT(*) as count FROM projects GROUP BY status");
@@ -44,8 +46,9 @@ class ProjectModel {
 
         foreach ($results as $row) {
             $stats['total_value'] += $row['total_val'];
-            if (isset($stats[$row['status']])) {
-                $stats[$row['status']] = $row['count'];
+            $status = (string)$row['status'];
+            if (isset($stats[$status])) {
+                $stats[$status] = (int)$row['count'];
             }
         }
 

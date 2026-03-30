@@ -291,7 +291,8 @@
             document.getElementById('statTotalHosting').textContent = stats.totalHostings;
             document.getElementById('statActiveHosting').textContent = `${stats.activeHostings} cụm đang chạy`;
             document.getElementById('statExpiring').textContent = stats.expiringSoon;
-            document.getElementById('statDoing').textContent = stats.doingProjects.length;
+            // "Dự án đang thực hiện" counts both doing and testing
+            document.getElementById('statDoing').textContent = stats.doingProjects.length + stats.testingProjects.length;
             document.getElementById('statRevenue').textContent = formatVNDShort(stats.totalRevenue).replace(' VNĐ', '');
             if (document.getElementById('chartTotalValue')) {
                 document.getElementById('chartTotalValue').textContent = formatVNDShort(stats.totalPotentialRevenue);
@@ -432,14 +433,14 @@
         const noProgressReminder = document.getElementById('noProgressReminder');
 
         if (sideProjectContainer) {
-            // Priority: doing (1), testing (2), planning (3)
-            const statusPriority = { 'doing': 1, 'testing': 2, 'planning': 3 };
+            // Priority: doing (1), testing (2), planning (3), paused (4), done (5)
+            const statusPriority = { 'doing': 1, 'testing': 2, 'planning': 3, 'paused': 4, 'done': 5 };
             const activeProjects = PROJECTS.filter(p => {
-                const s = (p.status || '').toLowerCase();
-                return s === 'planning' || s === 'doing' || s === 'testing';
+                const s = (p.status || '').toLowerCase().trim();
+                return ['planning', 'doing', 'testing', 'paused'].includes(s); // Focus on non-completed
             }).sort((a, b) => {
-                const sA = (a.status || '').toLowerCase();
-                const sB = (b.status || '').toLowerCase();
+                const sA = (a.status || '').toLowerCase().trim();
+                const sB = (b.status || '').toLowerCase().trim();
                 return (statusPriority[sA] || 99) - (statusPriority[sB] || 99);
             });
 
@@ -457,7 +458,7 @@
                 html = '<div class="text-center py-4 text-muted" style="font-size: 13px;">Không có dự án đang thực hiện</div>';
             } else {
                 displayProjects.forEach(p => {
-                    const statusLower = (p.status || '').toLowerCase();
+                    const statusLower = (p.status || '').toLowerCase().trim();
                     let badgeClass = 'status-badge-v3-running';
                     let label = 'ĐANG THỰC HIỆN';
                     
@@ -470,6 +471,9 @@
                     } else if (statusLower === 'done') { 
                         badgeClass = 'status-badge-v3-active'; 
                         label = 'HOÀN THÀNH'; 
+                    } else if (statusLower === 'paused') {
+                        badgeClass = 'status-badge-v3-paused';
+                        label = 'TẠM DỪNG';
                     }
 
                     html += `
