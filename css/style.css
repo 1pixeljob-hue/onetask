@@ -4450,14 +4450,16 @@ body {
 
 .pj-modal-select-trigger {
     width: 100%;
-    padding: 12px 16px;
+    padding: 0 16px;
+    height: 44px;
     background: #fff;
-    border: 1px solid #5ea4a4;
-    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
+    box-sizing: border-box;
     transition: all 0.2s;
 }
 
