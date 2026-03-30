@@ -2907,6 +2907,7 @@ body {
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: inherit;
+    text-decoration: none;
 }
 
 .pg-btn:hover:not(:disabled):not(.active) {
@@ -2914,11 +2915,13 @@ body {
     border-color: #cbd5e1;
     color: #334155;
     transform: translateY(-1px);
+    text-decoration: none;
 }
 
 .pg-btn.active {
     background: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%);
     border: none;
+    text-decoration: none;
     color: #fff;
     box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.2), 0 2px 4px -1px rgba(20, 184, 166, 0.1);
 }
@@ -2927,10 +2930,12 @@ body {
     opacity: 0.4;
     cursor: not-allowed;
     background-color: #f8fafc;
+    text-decoration: none;
 }
 
 .pg-btn i {
     font-size: 16px;
+    text-decoration: none;
 }
 
 /* --- Projects Table Overflow Fix --- */
