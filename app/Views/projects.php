@@ -186,7 +186,7 @@
 
 <!-- Modal Thêm Project Mới -->
 <div class="modal-overlay" id="addProjectModal" onclick="closeAddProjectModalOverlay(event)">
-    <div class="modal-box scrollable" style="overflow: visible !important;">
+    <div class="modal-box scrollable">
         <div class="modal-header">
             <div class="modal-title-wrap">
                 <div class="modal-icon-brand">
@@ -196,7 +196,7 @@
             </div>
             <button class="modal-close" onclick="closeAddProjectModal()"><i class="ph ph-x"></i></button>
         </div>
-        <div class="modal-body" style="overflow: visible !important;">
+        <div class="modal-body">
             <!-- Section 1: Thông Tin Project -->
             <div class="modal-section-header">
                 <span class="modal-section-title">Thông Tin Project</span>
