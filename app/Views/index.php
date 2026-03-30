@@ -234,46 +234,68 @@
                     </div>
                 </div>
 
-                <!-- Layer 3: Bottom Section (Activity + Actions) -->
-                <div class="bottom-section-grid">
+                <!-- Layer 3: Bottom Section (Status + Activity) -->
+                <div class="dashboard-main-grid">
+                    <!-- Hosting Status -->
+                    <div class="hosting-status-card">
+                        <div class="card-header-v2">
+                            <h3>Tình trạng Hosting</h3>
+                            <i class="ph ph-warning-circle" style="color: #ef4444; font-size: 20px; font-weight: 800;"></i>
+                        </div>
+                        <div class="hosting-status-list" id="dashHostingStatusList">
+                            <!-- Rendered by JS -->
+                        </div>
+                        <div class="card-footer-v2">
+                            <a href="/hostings" class="footer-btn-red">QUẢN LÝ GIA HẠN</a>
+                        </div>
+                    </div>
+
                     <!-- Recent Activity -->
                     <div class="activity-card-v2">
                         <div class="card-header-v2">
                             <h3>Hoạt động gần đây</h3>
-                            <a href="/logs" class="card-link">Xem tất cả</a>
+                            <a href="/logs" class="card-link">XEM TẤT CẢ</a>
                         </div>
                         <div class="activity-list" id="dashActivityList">
                             <!-- Rendered by JS -->
                         </div>
                     </div>
+                </div>
 
-                    <!-- Quick Actions -->
-                    <div class="actions-card">
-                        <div class="card-header-v2">
-                            <h3>Thao tác nhanh</h3>
+                <!-- Layer 4: Quick Actions Full Width -->
+                <div class="quick-actions-card-full">
+                    <div class="card-header-v2" style="margin-bottom: 24px;">
+                        <h3>Thao tác nhanh</h3>
+                        <div class="header-actions-right">
+                           <a href="#" class="header-action-link"><i class="ph ph-export"></i> XUẤT NHẬT KÝ</a>
+                           <a href="#" class="header-action-link"><i class="ph ph-share-network"></i> CHIA SẺ BÁO CÁO</a>
                         </div>
-                        <div class="quick-actions-grid">
-                            <button class="action-btn-v2" onclick="openHostingModal()">
-                                <i class="ph ph-plus-circle"></i>
-                                <span>Thêm Hosting</span>
-                            </button>
-                            <button class="action-btn-v2" onclick="openAddProjectModal()">
+                    </div>
+                    <div class="quick-actions-grid-v3">
+                        <button class="action-item-v3" onclick="openHostingModal()">
+                            <div class="action-icon-box" style="background: #eff6ff; color: #3b82f6;">
+                                <i class="ph ph-plus"></i>
+                            </div>
+                            <span>Thêm Hosting</span>
+                        </button>
+                        <button class="action-item-v3" onclick="openAddProjectModal()">
+                            <div class="action-icon-box" style="background: #ecfdf5; color: #10b981;">
                                 <i class="ph ph-folder-plus"></i>
-                                <span>Thêm Dự án</span>
-                            </button>
-                            <button class="action-btn-v2" onclick="openPasswordModal()">
+                            </div>
+                            <span>Thêm Dự án</span>
+                        </button>
+                        <button class="action-item-v3" onclick="openPasswordModal()">
+                            <div class="action-icon-box" style="background: #fdf2f8; color: #db2777;">
                                 <i class="ph ph-key"></i>
-                                <span>Lưu Mật khẩu</span>
-                            </button>
-                            <button class="action-btn-v2" onclick="openAddSnippetModal()">
+                            </div>
+                            <span>Lưu Mật khẩu</span>
+                        </button>
+                        <button class="action-item-v3" onclick="openAddSnippetModal()">
+                            <div class="action-icon-box" style="background: #f5f3ff; color: #8b5cf6;">
                                 <i class="ph ph-code"></i>
-                                <span>Tạo Snippet</span>
-                            </button>
-                        </div>
-                        <div class="actions-footer">
-                            <a href="#" class="footer-link"><i class="ph ph-export"></i> Xuất nhật ký</a>
-                            <a href="#" class="footer-link"><i class="ph ph-share-network"></i> Chia sẻ báo cáo</a>
-                        </div>
+                            </div>
+                            <span>Tạo Snippet</span>
+                        </button>
                     </div>
                 </div>
 
@@ -487,7 +509,39 @@
             sideProjectContainer.innerHTML = html;
         }
 
-        // Layer 3: Recent Activity (Dynamic)
+        // Layer 3.1: Hosting Status (NEW)
+        function renderHostingStatus(stats) {
+            const container = document.getElementById('dashHostingStatusList');
+            if (!container) return;
+
+            const list = [...(stats.expiredList || []), ...(stats.expiringSoonList || [])].slice(0, 5);
+            
+            if (list.length === 0) {
+                container.innerHTML = '<div class="text-center py-4 text-muted" style="font-size: 13px;">Tất cả hosting đều ổn định</div>';
+                return;
+            }
+
+            let html = '';
+            list.forEach(item => {
+                const isExpired = item.diffDays < 0;
+                const badgeClass = isExpired ? 'badge-red' : 'badge-orange';
+                const badgeLabel = isExpired ? 'HẾT HẠN' : 'SẮP HẾT HẠN';
+                
+                html += `
+                <div class="status-item-v3">
+                    <div class="status-info">
+                        <span class="status-name">${item.name}</span>
+                        <span class="status-date">${formatDateVN(item.expDate)}</span>
+                    </div>
+                    <span class="status-badge-mini ${badgeClass}">${badgeLabel}</span>
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+        renderHostingStatus(stats);
+
+        // Layer 3.2: Recent Activity (Dynamic)
         const activityContainer = document.getElementById('dashActivityList');
         if (activityContainer) {
             const logs = PHP_DATA.recentLogs || [];
@@ -512,7 +566,8 @@
 
                 let actHtml = '';
                 logs.forEach(log => {
-                    const avatarStr = (log.user_name || 'quy').substring(0, 2).toUpperCase();
+                    const userName = log.user_name || 'quy';
+                    const userInitial = userName.substring(0, 1).toUpperCase();
                     
                     // Module mapping
                     const moduleMap = {
@@ -523,19 +578,25 @@
                     };
                     const moduleName = moduleMap[log.module] || (log.module ? log.module.toLowerCase() : '');
 
+                    // Get random color for avatar if not existing
+                    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+                    const colorIndex = userName.length % colors.length;
+                    const avatarColor = colors[colorIndex];
+
                     actHtml += `
-                    <div class="list-item" style="border:none; padding: 12px 0;">
-                        <div class="avatar" style="width: 40px; height: 40px; font-size: 14px; background: #f1f5f9; color: #64748b;">${avatarStr}</div>
-                        <div class="activity-content">
-                            <p style="font-size: 13px; font-weight: 500; color: #334155; line-height: 1.4;">
-                                <b style="color: #1e293b;">${log.user_name}</b> đã ${log.action.toLowerCase()}${moduleName ? ' ' + moduleName : ''} <b style="color:#3b82f6;">${log.item_name}</b>
-                                <span style="display: block; font-size: 11px; color:#94a3b8; font-weight:700; margin-top: 4px; text-transform: uppercase;">
-                                    <i class="ph ph-clock" style="vertical-align: middle;"></i> ${timeAgo(log.created_at)}
-                                </span>
+                    <div class="activity-item-v3">
+                        <div class="activity-avatar" style="background: ${avatarColor}">
+                            ${userInitial}
+                        </div>
+                        <div class="activity-details">
+                            <p>
+                                <b style="color: #1e293b;">${userName}</b> đã ${log.action.toLowerCase()}${moduleName ? ' ' + moduleName : ''} 
+                                <span class="activity-link">${log.item_name}</span>
                             </p>
+                            <span class="activity-time">${timeAgo(log.created_at)}</span>
                         </div>
                     </div>
-                `;
+                    `;
                 });
                 activityContainer.innerHTML = actHtml;
             }
