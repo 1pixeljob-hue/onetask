@@ -847,6 +847,8 @@ function getFormData() {
     const adminPass = document.getElementById('adminPassword').value;
     const value = parseInt(document.getElementById('projectValue').value) || 0;
 
+    console.log('Project Form Data:', { name, status, date, customer });
+
     if (!name || !date || !customer) {
         alert('Vui lòng điền đầy đủ các thông tin bắt buộc (*)');
         return null;
@@ -863,7 +865,14 @@ function populateRow(row, data) {
         'done': { cls: 'done', icon: 'ph-check-circle', label: 'Hoàn Thành' },
         'paused': { cls: 'paused', icon: 'ph-pause-circle', label: 'Tạm Dừng' }
     };
-    const s = statusInfo[data.status] || { cls: 'doing', icon: 'ph-clock', label: data.status || 'Đang Thực Hiện' };
+    
+    // Robust status matching
+    const statusKey = (data.status || '').toLowerCase().trim();
+    const s = statusInfo[statusKey] || { 
+        cls: 'doing', 
+        icon: 'ph-clock', 
+        label: data.status || 'Đang Thực Hiện' 
+    };
     
     let formattedDate = 'N/A';
     if (data.date) {
