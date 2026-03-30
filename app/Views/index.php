@@ -218,17 +218,6 @@
 
                         <!-- Milestone Card Container -->
                         <div id="milestoneContainer">
-                            <!-- Milestone Card -->
-                            <div class="milestone-footer" id="milestoneCard">
-                                <div class="milestone-icon">
-                                    <i class="ph ph-flag-star"></i>
-                                </div>
-                                <div class="milestone-text">
-                                    <span>Cột mốc tiếp theo</span>
-                                    <p id="nextMilestone">Hoàn tất Tích hợp API</p>
-                                </div>
-                            </div>
-
                             <!-- No Progress Reminder -->
                             <div class="milestone-footer reminder-card" id="noProgressReminder" style="display: none; background: #f8fafc; border: 1px dashed #e2e8f0; box-shadow: none;">
                                 <div class="milestone-icon" style="background: #f1f5f9; color: #94a3b8;">
@@ -438,25 +427,16 @@
 
         // Layer 2: Project Progress Sidebar & Milestone Logic
         const sideProjectContainer = document.getElementById('sideProjectList');
-        const milestoneCard = document.getElementById('milestoneCard');
         const noProgressReminder = document.getElementById('noProgressReminder');
 
         if (sideProjectContainer) {
             const activeProjects = PROJECTS.filter(p => p.status === 'doing' || p.status === 'testing');
             const displayProjects = activeProjects.slice(0, 3);
             
-            // Toggle Milestone vs Reminder
+            // Toggle Reminder
             if (activeProjects.length > 0) {
-                if (milestoneCard) milestoneCard.style.display = 'flex';
                 if (noProgressReminder) noProgressReminder.style.display = 'none';
-                
-                // Update milestone text if possible (using the name of the first active project)
-                const nextMilestoneElement = document.getElementById('nextMilestone');
-                if (nextMilestoneElement && displayProjects.length > 0) {
-                    nextMilestoneElement.textContent = `Thúc đẩy tiến độ: ${displayProjects[0].name}`;
-                }
             } else {
-                if (milestoneCard) milestoneCard.style.display = 'none';
                 if (noProgressReminder) noProgressReminder.style.display = 'flex';
             }
 
