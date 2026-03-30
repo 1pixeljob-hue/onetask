@@ -874,6 +874,11 @@ function populateRow(row, data) {
         label: data.status || 'Đang Thực Hiện' 
     };
     
+    // Debug label if it's mismatching
+    if (statusKey === 'planning' && s.label !== 'Lên Kế Hoạch') {
+        console.warn('Status mapping mismatch for planning:', s);
+    }
+    
     let formattedDate = 'N/A';
     if (data.date) {
         const parts = data.date.split('-');
@@ -1037,13 +1042,27 @@ function resetProjectForm() {
     document.getElementById('mProjectName').value = '';
     // Reset Custom Select
     const customSelect = document.getElementById('mProjectStatusSelect');
-    const defaultOption = customSelect.querySelector('.pj-dropdown-item[data-value="planning"]');
-    if (defaultOption) {
+    if (customSelect) {
         const trigger = customSelect.querySelector('.pj-modal-select-trigger');
-        trigger.querySelector('span').textContent = defaultOption.textContent.trim();
-        customSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
-        defaultOption.classList.add('active');
-        document.getElementById('mProjectStatus').value = 'planning';
+        const defaultOption = customSelect.querySelector('.pj-dropdown-item[data-value="planning"]');
+        
+        if (trigger && defaultOption) {
+            trigger.querySelector('span').textContent = defaultOption.textContent.trim();
+            const icon = defaultOption.querySelector('i');
+            const triggerIcon = trigger.querySelector('i:first-child');
+            if (icon && triggerIcon) triggerIcon.className = icon.className;
+        }
+
+        // Explicitly set hidden input and remove active from others
+        const hiddenInput = document.getElementById('mProjectStatus');
+        if (hiddenInput) {
+            hiddenInput.value = 'planning';
+            console.log('resetProjectForm: Set #mProjectStatus to "planning"');
+        }
+        
+        customSelect.querySelectorAll('.pj-dropdown-item').forEach(opt => {
+            opt.classList.toggle('active', opt.dataset.value === 'planning');
+        });
     }
 
     document.getElementById('projectValueDisplay').textContent = '0 VNĐ';

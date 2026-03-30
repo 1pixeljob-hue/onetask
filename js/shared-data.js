@@ -559,32 +559,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const hiddenInputId = dropdown.dataset.inputId;
             const value = option.dataset.value;
 
+            console.log('Dropdown Selected:', { id: hiddenInputId, value: value });
+
             // Extract label and icon
             const span = option.querySelector('span');
             const labelText = span ? span.textContent : option.textContent.trim();
             const icon = option.querySelector('i');
 
             // Update Trigger UI
-            const triggerLabel = trigger.querySelector('span');
-            if (triggerLabel) triggerLabel.textContent = labelText;
+            if (trigger) {
+                const triggerLabel = trigger.querySelector('span');
+                if (triggerLabel) triggerLabel.textContent = labelText;
 
-            const triggerIcon = trigger.querySelector('i:first-child');
-            if (triggerIcon && icon) {
-                triggerIcon.className = icon.className;
-                if (icon.style.color) triggerIcon.style.color = icon.style.color;
+                const triggerIcon = trigger.querySelector('i:first-child');
+                if (triggerIcon && icon) {
+                    triggerIcon.className = icon.className;
+                    if (icon.style.color) triggerIcon.style.color = icon.style.color;
+                }
             }
 
             // Update Active State
             dropdown.querySelectorAll('.pj-modal-select-item, .pj-dropdown-item').forEach(i => i.classList.remove('active'));
             option.classList.add('active');
 
-            // Update Hidden Input
+            // Update Hidden Input (CRITICAL FIX)
             if (hiddenInputId) {
                 const input = document.getElementById(hiddenInputId);
                 if (input) {
                     input.value = value;
+                    // Trigger events for reactive frameworks or other listeners
                     input.dispatchEvent(new Event('change', { bubbles: true }));
                     input.dispatchEvent(new Event('input', { bubbles: true }));
+                    console.log(`Updated #${hiddenInputId} to "${value}"`);
+                } else {
+                    console.error(`Could not find hidden input with ID: ${hiddenInputId}`);
                 }
             }
 
@@ -594,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window[callbackName](value, labelText, option);
             }
 
-            // Close dropdown (Support both class names)
+            // Close dropdown
             dropdown.classList.remove('open');
             dropdown.classList.remove('active');
             
