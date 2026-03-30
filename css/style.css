@@ -757,6 +757,9 @@ body {
 
 .text-main { color: var(--text-main); }
 .success-text { color: var(--success-color); }
+.warning-text { color: #a16207; } /* Consistent with planning/warning status color */
+.danger-text { color: var(--danger-color); }
+
 
 .status-badge {
     display: inline-flex;
@@ -803,6 +806,13 @@ body {
     color: #dc2626;
     border: 1px solid #fecaca;
 }
+
+.status-badge.warning {
+    background-color: #fefce8;
+    color: #a16207;
+    border: 1px solid #fef08a;
+}
+
 
 /* Dashboard V3 Status Badges (Sidebar) */
 .status-badge-v3 {

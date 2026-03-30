@@ -473,11 +473,16 @@ document.addEventListener('click', function(e) {
             document.getElementById('dModalDomain').innerHTML = `<i class="ph ph-globe color-gray"></i> ${domain}`;
             document.getElementById('dModalProvider').innerHTML = `<i class="ph ph-hard-drives color-gray"></i> ${provider}`;
             document.getElementById('dModalExpDate').textContent = expDate;
+            const expDateEl = document.getElementById('dModalExpDate');
+            expDateEl.className = 'dgc-val ' + (statusBadgeEl.classList.contains('warning') ? 'warning-text' : (statusBadgeEl.classList.contains('expired') ? 'danger-text' : 'success-text'));
+            
             document.getElementById('dModalRegDate').textContent = regDateText;
             document.getElementById('dModalUsage').textContent = usage || '1 năm';
             
             const daysLeftContainer = document.getElementById('dModalDaysLeft');
+            daysLeftContainer.className = 'dgc-val ' + (statusBadgeEl.classList.contains('warning') ? 'warning-text' : (statusBadgeEl.classList.contains('expired') ? 'danger-text' : 'success-text'));
             daysLeftContainer.innerHTML = daysLeft.includes('Còn') ? `<i class="ph ph-clock"></i> ${daysLeft}` : daysLeft;
+
             
             document.getElementById('detailModal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -956,8 +961,9 @@ function updateHosting() {
 
 function generateRowHTML(name, domain, provider, expDate, status) {
     const daysText = status.days !== null
-        ? `<div class="date-sub ${status.cls === 'warning' ? 'error-text' : (status.cls === 'success' ? 'success-text' : '')}"><i class="ph ph-clock"></i> Còn ${status.days} ngày</div>`
-        : `<div class="date-sub error-text"><i class="ph ph-clock"></i> Đã hết hạn</div>`;
+        ? `<div class="date-sub ${status.cls === 'warning' ? 'warning-text' : (status.cls === 'success' ? 'success-text' : '')}"><i class="ph ph-clock"></i> Còn ${status.days} ngày</div>`
+        : `<div class="date-sub danger-text"><i class="ph ph-clock"></i> Đã hết hạn</div>`;
+
 
     return `
         <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
@@ -978,11 +984,12 @@ function generateRowHTML(name, domain, provider, expDate, status) {
             </div>
         </td>
         <td>
-            <div class="date-info ${status.cls === 'warning' || status.cls === 'expired' ? 'error-text' : 'text-main'}">
+            <div class="date-info ${status.cls === 'warning' ? 'warning-text' : (status.cls === 'expired' ? 'danger-text' : 'text-main')}">
                 <i class="ph ph-calendar-blank"></i> ${formatDateVN(expDate)}
             </div>
             ${daysText}
         </td>
+
         <td>
             <span class="status-badge ${status.cls}">
                 <i class="ph ${status.icon}"></i>
