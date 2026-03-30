@@ -96,7 +96,8 @@ class MainController extends BaseController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
             $snippet = $this->snippetModel->find($_POST['id']);
             if ($this->snippetModel->delete($_POST['id'])) {
-                $this->logModel->addLog('CodeX', 'Xoá', $snippet['title'] ?? 'Snippet #' . $_POST['id']);
+                $snippetTitle = ($snippet && isset($snippet['title'])) ? $snippet['title'] : 'Snippet #' . $_POST['id'];
+                $this->logModel->addLog('CodeX', 'Xoá', $snippetTitle);
                 echo json_encode(['status' => 'success', 'message' => 'Xoá snippet thành công']);
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá snippet']);
@@ -148,9 +149,10 @@ class MainController extends BaseController {
 
         if ($success) {
             $cat = $this->codeCategoryModel->find($success_id);
+            $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $success_id;
             $action = $id ? 'Cập nhật' : 'Tạo mới';
-            $this->logModel->addLog('CodeX', $action, 'Danh mục: ' . $cat['name']);
-            echo json_encode(['success' => true, 'id' => $success_id, 'name' => $cat['name'], 'color' => $cat['color'], 'text_color' => $cat['text_color']]);
+            $this->logModel->addLog('CodeX', $action, 'Danh mục: ' . $catName);
+            echo json_encode(['success' => true, 'id' => $success_id, 'name' => $catName, 'color' => $cat ? $cat['color'] : '#fef9c3', 'text_color' => $cat ? $cat['text_color'] : '#854d0e']);
         } else {
             echo json_encode(['success' => false, 'message' => 'Lỗi khi lưu danh mục']);
         }
@@ -171,7 +173,8 @@ class MainController extends BaseController {
         $cat = $this->codeCategoryModel->find($input['id']);
         $success = $this->codeCategoryModel->delete($input['id']);
         if ($success) {
-            $this->logModel->addLog('CodeX', 'Xoá', 'Danh mục: ' . ($cat['name'] ?? 'ID #' . $input['id']));
+            $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $input['id'];
+            $this->logModel->addLog('CodeX', 'Xoá', 'Danh mục: ' . $catName);
         }
         echo json_encode(['success' => $success]);
     }
@@ -254,7 +257,8 @@ class MainController extends BaseController {
         $project = $this->projectModel->find($input['id']);
         $success = $this->projectModel->delete($input['id']);
         if ($success) {
-            $this->logModel->addLog('Project', 'Xoá', $project['name'] ?? 'Project #' . $input['id']);
+            $projectName = ($project && isset($project['name'])) ? $project['name'] : 'Project #' . $input['id'];
+            $this->logModel->addLog('Project', 'Xoá', $projectName);
         }
         echo json_encode(['success' => $success]);
     }
@@ -297,7 +301,8 @@ class MainController extends BaseController {
         $hosting = $this->hostingModel->find($input['id']);
         $success = $this->hostingModel->delete($input['id']);
         if ($success) {
-            $this->logModel->addLog('Hosting', 'Xoá', $hosting['name'] ?? 'Hosting #' . $input['id']);
+            $hostingName = ($hosting && isset($hosting['name'])) ? $hosting['name'] : 'Hosting #' . $input['id'];
+            $this->logModel->addLog('Hosting', 'Xoá', $hostingName);
         }
         echo json_encode(['success' => $success]);
     }
@@ -372,7 +377,8 @@ class MainController extends BaseController {
         $password = $this->passwordModel->find($input['id']);
         $success = $this->passwordModel->delete($input['id']);
         if ($success) {
-            $this->logModel->addLog('Passwords', 'Xoá', $password['title'] ?? 'Mật khẩu #' . $input['id']);
+            $passwordTitle = ($password && isset($password['title'])) ? $password['title'] : 'Mật khẩu #' . $input['id'];
+            $this->logModel->addLog('Passwords', 'Xoá', $passwordTitle);
         }
         echo json_encode(['success' => $success]);
     }
@@ -415,7 +421,8 @@ class MainController extends BaseController {
         $cat = $this->categoryModel->find($input['id']);
         $success = $this->categoryModel->delete($input['id']);
         if ($success) {
-            $this->logModel->addLog('Passwords', 'Xoá', 'Danh mục: ' . ($cat['name'] ?? 'ID #' . $input['id']));
+            $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $input['id'];
+            $this->logModel->addLog('Passwords', 'Xoá', 'Danh mục: ' . $catName);
         }
         echo json_encode(['success' => $success]);
     }

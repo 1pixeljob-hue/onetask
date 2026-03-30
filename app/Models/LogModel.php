@@ -10,6 +10,24 @@ class LogModel {
 
     public function __construct() {
         $this->db = Database::getInstance()->getConnection();
+        $this->checkAndCreateTable();
+    }
+
+    private function checkAndCreateTable() {
+        if (!$this->db) return;
+        try {
+            $sql = "CREATE TABLE IF NOT EXISTS activity_logs (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                module VARCHAR(50) NOT NULL,
+                action VARCHAR(50) NOT NULL,
+                item_name VARCHAR(255) DEFAULT NULL,
+                user_name VARCHAR(100) DEFAULT 'quydev',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+            $this->db->exec($sql);
+        } catch (\PDOException $e) {
+            // Tắt lỗi để không làm hỏng phản hồi JSON của các module khác
+        }
     }
 
     /**
@@ -21,15 +39,22 @@ class LogModel {
      * @return bool
      */
     public function addLog($module, $action, $itemName, $userName = 'quydev') {
-        $sql = "INSERT INTO activity_logs (module, action, item_name, user_name) 
-                VALUES (:module, :action, :item_name, :user_name)";
-        $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
-            ':module' => $module,
-            ':action' => $action,
-            ':item_name' => $itemName,
-            ':user_name' => $userName
-        ]);
+        if (!$this->db) return false;
+        try {
+            $sql = "INSERT INTO activity_logs (module, action, item_name, user_name) 
+                    VALUES (:module, :action, :item_name, :user_name)";
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([
+                ':module' => $module,
+                ':action' => $action,
+                ':item_name' => $itemName,
+                ':user_name' => $userName
+            ]);
+        } catch (\Exception $e) {
+            // Ghi log lỗi vào file hệ thống, không echo ra màn hình
+            error_log("Logging error: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
