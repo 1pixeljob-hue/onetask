@@ -98,8 +98,6 @@
 
             <div class="content-body">
                 
-                <h2 class="settings-page-title">Cài Đặt</h2>
-
                 <!-- Card 1: MySQL Database -->
                 <div class="db-card">
                     <div class="db-header">
