@@ -148,17 +148,19 @@
                                     <td colspan="7" class="text-center py-4 text-muted">Không tìm thấy bản ghi log nào.</td>
                                 </tr>
                             <?php else: ?>
-                                <?php foreach ($logs as $log): 
-                                    $icon = 'ph-file-text';
-                                    if ($log['module'] == 'Project') $icon = 'ph-folder';
-                                    elseif ($log['module'] == 'Hosting') $icon = 'ph-hard-drives';
-                                    elseif ($log['module'] == 'CodeX') $icon = 'ph-code';
-                                    elseif ($log['module'] == 'Passwords') $icon = 'ph-key';
+                                    <?php foreach ($logs as $log): 
+                                        $icon = 'ph-file-text';
+                                        if ($log['module'] == 'Project') $icon = 'ph-folder';
+                                        elseif ($log['module'] == 'Hosting') $icon = 'ph-hard-drives';
+                                        elseif ($log['module'] == 'CodeX') $icon = 'ph-code';
+                                        elseif ($log['module'] == 'Passwords') $icon = 'ph-key';
 
-                                    $badgeClass = 'badge-blue';
-                                    if ($log['action'] == 'Tạo mới') $badgeClass = 'badge-green';
-                                    elseif ($log['action'] == 'Xoá') $badgeClass = 'badge-red';
-                                ?>
+                                        $badgeClass = 'badge-blue';
+                                        if ($log['action'] == 'Tạo mới') $badgeClass = 'badge-green';
+                                        elseif ($log['action'] == 'Xoá') $badgeClass = 'badge-red';
+                                        elseif ($log['action'] == 'Khôi phục') $badgeClass = 'badge-blue';
+                                        elseif ($log['action'] == 'Cập nhật') $badgeClass = 'badge-yellow';
+                                    ?>
                                 <tr data-id="<?= $log['id'] ?>">
                                     <td><input type="checkbox" class="cb-custom"></td>
                                     <td><div class="log-module"><i class="ph <?= $icon ?>"></i> <?= htmlspecialchars($log['module']) ?></div></td>
@@ -295,9 +297,10 @@
         font-size: 12px;
         font-weight: 600;
     }
-    .badge-action-create { background: #dcfce7; color: #166534; }
-    .badge-action-update { background: #fef9c3; color: #854d0e; }
-    .badge-action-delete { background: #fee2e2; color: #991b1b; }
+    .badge-action-create, .badge-green { background: #ecfdf5; color: #166534; border: 1px solid #a7f3d0; }
+    .badge-action-update, .badge-yellow { background: #fefce8; color: #854d0e; border: 1px solid #fef08a; }
+    .badge-action-delete, .badge-red { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .badge-blue { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
     </style>
 
 <script>
