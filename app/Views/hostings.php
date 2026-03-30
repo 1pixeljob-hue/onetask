@@ -754,7 +754,7 @@ function confirmDeleteAction() {
                     body: JSON.stringify({ ids: ids })
                 });
                 const result = await response.json();
-                if (result.success) {
+                if (result.status === 'success' || result.success) {
                     ids.forEach(id => {
                         const tr = document.querySelector(`.data-table tbody tr[data-id="${id}"]`);
                         if (tr) tr.remove();
@@ -783,7 +783,7 @@ function confirmDeleteAction() {
                     body: JSON.stringify({ id: id })
                 });
                 const result = await response.json();
-                if (result.success) {
+                if (result.status === 'success' || result.success) {
                     if (rowToDelete) {
                         rowToDelete.remove();
                         applyFilters();

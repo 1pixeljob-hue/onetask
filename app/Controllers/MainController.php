@@ -87,9 +87,9 @@ class MainController extends BaseController {
                 if ($this->snippetModel->save($data)) {
                     $action = $data['id'] ? 'Cập nhật' : 'Tạo mới';
                     $this->logModel->addLog('CodeX', $action, $data['title']);
-                    echo json_encode(['status' => 'success', 'message' => 'Lưu snippet thành công']);
+                    echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Lưu snippet thành công']);
                 } else {
-                    echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu snippet']);
+                    echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi lưu snippet']);
                 }
             } catch (\Exception $e) {
                 error_log("Error saving snippet: " . $e->getMessage());
@@ -106,9 +106,9 @@ class MainController extends BaseController {
                 if ($this->snippetModel->delete($_POST['id'])) {
                     $snippetTitle = ($snippet && isset($snippet['title'])) ? $snippet['title'] : 'Snippet #' . $_POST['id'];
                     $this->logModel->addLog('CodeX', 'Xoá', $snippetTitle);
-                    echo json_encode(['status' => 'success', 'message' => 'Xoá snippet thành công']);
+                    echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá snippet thành công']);
                 } else {
-                    echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá snippet']);
+                    echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá snippet']);
                 }
             } catch (\Exception $e) {
                 error_log("Error deleting snippet: " . $e->getMessage());
@@ -143,7 +143,7 @@ class MainController extends BaseController {
             } else {
                 $existing = $this->codeCategoryModel->findByName($name);
                 if ($existing) {
-                    echo json_encode(['status' => 'success', 'data' => ['id' => $existing['id'], 'name' => $existing['name'], 'exists' => true]]);
+                    echo json_encode(['status' => 'success', 'success' => true, 'data' => ['id' => $existing['id'], 'name' => $existing['name'], 'exists' => true]]);
                     return;
                 }
 
@@ -163,9 +163,18 @@ class MainController extends BaseController {
                 $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $success_id;
                 $action = $id ? 'Cập nhật' : 'Tạo mới';
                 $this->logModel->addLog('CodeX', $action, 'Danh mục: ' . $catName);
-                echo json_encode(['status' => 'success', 'data' => ['id' => $success_id, 'name' => $catName, 'color' => $cat ? $cat['color'] : '#fef9c3', 'text_color' => $cat ? $cat['text_color'] : '#854d0e']]);
+                echo json_encode([
+                    'status' => 'success', 
+                    'success' => true,
+                    'data' => [
+                        'id' => $success_id, 
+                        'name' => $catName, 
+                        'color' => $cat ? $cat['color'] : '#fef9c3', 
+                        'text_color' => $cat ? $cat['text_color'] : '#854d0e'
+                    ]
+                ]);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu danh mục']);
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi lưu danh mục']);
             }
         } catch (\Exception $e) {
             error_log("Error saving code category: " . $e->getMessage());
@@ -191,9 +200,9 @@ class MainController extends BaseController {
             if ($success) {
                 $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $input['id'];
                 $this->logModel->addLog('CodeX', 'Xoá', 'Danh mục: ' . $catName);
-                echo json_encode(['status' => 'success', 'message' => 'Xoá danh mục thành công']);
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá danh mục thành công']);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá danh mục']);
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá danh mục']);
             }
         } catch (\Exception $e) {
             error_log("Error deleting code category: " . $e->getMessage());
@@ -263,9 +272,9 @@ class MainController extends BaseController {
             }
 
             if ($success) {
-                echo json_encode(['status' => 'success', 'message' => 'Lưu dự án thành công']);
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Lưu dự án thành công']);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu dự án']);
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi lưu dự án']);
             }
         } catch (\Exception $e) {
             error_log("Error saving project: " . $e->getMessage());
@@ -291,9 +300,9 @@ class MainController extends BaseController {
             if ($success) {
                 $projectName = ($project && isset($project['name'])) ? $project['name'] : 'Project #' . $input['id'];
                 $this->logModel->addLog('Project', 'Xoá', $projectName);
-                echo json_encode(['status' => 'success', 'message' => 'Xoá dự án thành công']);
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá dự án thành công']);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá dự án']);
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá dự án']);
             }
         } catch (\Exception $e) {
             error_log("Error deleting project: " . $e->getMessage());
@@ -323,9 +332,9 @@ class MainController extends BaseController {
             }
 
             if ($success) {
-                echo json_encode(['status' => 'success', 'message' => 'Lưu hosting thành công']);
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Lưu hosting thành công']);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu hosting']);
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi lưu hosting']);
             }
         } catch (\Exception $e) {
             error_log("Error saving hosting: " . $e->getMessage());
@@ -351,9 +360,9 @@ class MainController extends BaseController {
             if ($success) {
                 $hostingName = ($hosting && isset($hosting['name'])) ? $hosting['name'] : 'Hosting #' . $input['id'];
                 $this->logModel->addLog('Hosting', 'Xoá', $hostingName);
-                echo json_encode(['status' => 'success', 'message' => 'Xoá hosting thành công']);
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá hosting thành công']);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá hosting']);
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá hosting']);
             }
         } catch (\Exception $e) {
             error_log("Error deleting hosting: " . $e->getMessage());
@@ -378,9 +387,9 @@ class MainController extends BaseController {
             $success = $this->projectModel->deleteBulk($input['ids']);
             if ($success) {
                 $this->logModel->addLog('Project', 'Xoá nhiều', "Đã xoá $count dự án");
-                echo json_encode(['status' => 'success', 'message' => "Đã xoá $count dự án"]);
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => "Đã xoá $count dự án"]);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá hàng loạt']);
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá hàng loạt']);
             }
         } catch (\Exception $e) {
             error_log("Error bulk deleting projects: " . $e->getMessage());
@@ -405,9 +414,9 @@ class MainController extends BaseController {
             $success = $this->hostingModel->deleteBulk($input['ids']);
             if ($success) {
                 $this->logModel->addLog('Hosting', 'Xoá nhiều', "Đã xoá $count hosting");
-                echo json_encode(['status' => 'success', 'message' => "Đã xoá $count hosting"]);
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => "Đã xoá $count hosting"]);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá hàng loạt']);
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá hàng loạt']);
             }
         } catch (\Exception $e) {
             error_log("Error bulk deleting hostings: " . $e->getMessage());
@@ -465,9 +474,9 @@ class MainController extends BaseController {
             if ($success) {
                 $passwordTitle = ($password && isset($password['title'])) ? $password['title'] : 'Mật khẩu #' . $input['id'];
                 $this->logModel->addLog('Passwords', 'Xoá', $passwordTitle);
-                echo json_encode(['status' => 'success', 'message' => 'Xoá mật khẩu thành công']);
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá mật khẩu thành công']);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá mật khẩu']);
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá mật khẩu']);
             }
         } catch (\Exception $e) {
             error_log("Error deleting password: " . $e->getMessage());
@@ -497,9 +506,9 @@ class MainController extends BaseController {
             }
 
             if ($success) {
-                echo json_encode(['status' => 'success', 'message' => 'Lưu danh mục thành công']);
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Lưu danh mục thành công']);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu danh mục']);
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi lưu danh mục']);
             }
         } catch (\Exception $e) {
             error_log("Error saving category: " . $e->getMessage());
@@ -525,9 +534,9 @@ class MainController extends BaseController {
             if ($success) {
                 $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $input['id'];
                 $this->logModel->addLog('Passwords', 'Xoá', 'Danh mục: ' . $catName);
-                echo json_encode(['status' => 'success', 'message' => 'Xoá danh mục thành công']);
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá danh mục thành công']);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá danh mục']);
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá danh mục']);
             }
         } catch (\Exception $e) {
             error_log("Error deleting category: " . $e->getMessage());

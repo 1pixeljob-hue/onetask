@@ -605,7 +605,7 @@ async function submitAddPwdForm(e) {
             body: JSON.stringify(data)
         });
         const result = await response.json();
-        if (result.success) {
+        if (result.status === 'success' || result.success) {
             // Update local data and UI immediately
             if (currentActionMode === 'add') {
                 data.id = result.id || Date.now();
@@ -783,7 +783,7 @@ async function saveCategory() {
             body: JSON.stringify(data)
         });
         const result = await response.json();
-        if (result.success) {
+        if (result.status === 'success' || result.success) {
             if (currentCatEditId) {
                 const idx = CATEGORIES.findIndex(c => c.id == currentCatEditId);
                 CATEGORIES[idx] = { ...data, id: currentCatEditId };
@@ -811,7 +811,7 @@ async function deleteCategory(id) {
             body: JSON.stringify({ id })
         });
         const result = await response.json();
-        if (result.success) {
+        if (result.status === 'success' || result.success) {
             const idx = CATEGORIES.findIndex(c => c.id == id);
             if (idx !== -1) CATEGORIES.splice(idx, 1);
             showPwdToast('Đã xóa danh mục thành công!', 'success');
@@ -1052,7 +1052,7 @@ async function confirmDeletePwdAction() {
             body: JSON.stringify({ id: pwdToDeleteId })
         });
         const result = await response.json();
-        if (result.success) {
+        if (result.status === 'success' || result.success) {
             // Update local state without reload to avoid UI glitches
             const index = PASSWORDS.findIndex(p => p.id == pwdToDeleteId);
             if (index !== -1) {

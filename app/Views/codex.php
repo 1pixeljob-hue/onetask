@@ -663,7 +663,7 @@
                 });
                 const result = await response.json();
                 modal.classList.remove('loading');
-                if (result.success) {
+                if (result.status === 'success' || result.success) {
                     if (currentCatEditId) {
                         const idx = CODE_CATEGORIES.findIndex(c => c.id == currentCatEditId);
                         CODE_CATEGORIES[idx] = result;
@@ -698,7 +698,7 @@
                             body: JSON.stringify({ id })
                         });
                         const result = await response.json();
-                        if (result.success) {
+                        if (result.status === 'success' || result.success) {
                             CODE_CATEGORIES = CODE_CATEGORIES.filter(c => c.id != id);
                             showCxToast('Đã xóa danh mục thành công!', 'success');
                             renderCodeCategories();
@@ -738,7 +738,7 @@
             .then(res => res.json())
             .then(data => {
                 modal.classList.remove('loading');
-                if (data.status === 'success') {
+                if (data.status === 'success' || data.success) {
                     showCxToast('Thành công!', 'success');
                     setTimeout(() => location.reload(), 500);
                 } else {
@@ -805,7 +805,7 @@
                     })
                     .then(res => res.json())
                     .then(data => {
-                        if (data.status === 'success') {
+                        if (data.status === 'success' || data.success) {
                             showCxToast('Đã xóa thành công!', 'success');
                             setTimeout(() => location.reload(), 500);
                         } else {
@@ -914,7 +914,7 @@
                 });
                 const data = await response.json();
 
-                if (data.success) {
+                if (data.status === 'success' || data.success) {
                     showCxToast('Đã thêm loại code!', 'success');
                     if (!data.exists) {
                         CODE_CATEGORIES.push(data);
