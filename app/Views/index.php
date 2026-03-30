@@ -215,14 +215,28 @@
                             <!-- Rendered by JS -->
                         </div>
 
-                        <!-- Milestone Card -->
-                        <div class="milestone-footer">
-                            <div class="milestone-icon">
-                                <i class="ph ph-flag-star"></i>
+                        <!-- Milestone Card Container -->
+                        <div id="milestoneContainer">
+                            <!-- Milestone Card -->
+                            <div class="milestone-footer" id="milestoneCard">
+                                <div class="milestone-icon">
+                                    <i class="ph ph-flag-star"></i>
+                                </div>
+                                <div class="milestone-text">
+                                    <span>Cột mốc tiếp theo</span>
+                                    <p id="nextMilestone">Hoàn tất Tích hợp API</p>
+                                </div>
                             </div>
-                            <div class="milestone-text">
-                                <span>Cột mốc tiếp theo</span>
-                                <p id="nextMilestone">Hoàn tất Tích hợp API</p>
+
+                            <!-- No Progress Reminder -->
+                            <div class="milestone-footer reminder-card" id="noProgressReminder" style="display: none; background: #f8fafc; border: 1px dashed #e2e8f0; box-shadow: none;">
+                                <div class="milestone-icon" style="background: #f1f5f9; color: #94a3b8;">
+                                    <i class="ph ph-sparkle"></i>
+                                </div>
+                                <div class="milestone-text">
+                                    <span style="color: #64748b;">Sẵn sàng khởi đầu?</span>
+                                    <p style="color: #475569; font-size: 13px; font-weight: 500;">Chưa có dự án nào đang có tiến độ. Hãy thêm dự án mới để bắt đầu ngay!</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -421,24 +435,48 @@
             });
         }
 
-        // Layer 2: Project Progress Sidebar
+        // Layer 2: Project Progress Sidebar & Milestone Logic
         const sideProjectContainer = document.getElementById('sideProjectList');
-        if (sideProjectContainer) {
-            const displayProjects = PROJECTS.slice(0, 3);
-            let html = '';
-            displayProjects.forEach(p => {
-                let badgeClass = 'status-badge-v3-running';
-                let label = 'ĐANG THỰC HIỆN';
-                if (p.status === 'testing') { badgeClass = 'status-badge-v3-warning'; label = 'CHỜ NGHIỆM THU'; }
-                if (p.status === 'done') { badgeClass = 'status-badge-v3-active'; label = 'HOÀN THÀNH'; }
+        const milestoneCard = document.getElementById('milestoneCard');
+        const noProgressReminder = document.getElementById('noProgressReminder');
 
-                html += `
-                <div class="progress-item">
-                    <span class="progress-name">${p.name}</span>
-                    <span class="status-badge-v3 ${badgeClass}">${label}</span>
-                </div>
-            `;
-            });
+        if (sideProjectContainer) {
+            const activeProjects = PROJECTS.filter(p => p.status === 'doing' || p.status === 'testing');
+            const displayProjects = activeProjects.slice(0, 3);
+            
+            // Toggle Milestone vs Reminder
+            if (activeProjects.length > 0) {
+                if (milestoneCard) milestoneCard.style.display = 'flex';
+                if (noProgressReminder) noProgressReminder.style.display = 'none';
+                
+                // Update milestone text if possible (using the name of the first active project)
+                const nextMilestoneElement = document.getElementById('nextMilestone');
+                if (nextMilestoneElement && displayProjects.length > 0) {
+                    nextMilestoneElement.textContent = `Thúc đẩy tiến độ: ${displayProjects[0].name}`;
+                }
+            } else {
+                if (milestoneCard) milestoneCard.style.display = 'none';
+                if (noProgressReminder) noProgressReminder.style.display = 'flex';
+            }
+
+            let html = '';
+            if (activeProjects.length === 0) {
+                html = '<div class="text-center py-4 text-muted" style="font-size: 13px;">Không có dự án đang thực hiện</div>';
+            } else {
+                displayProjects.forEach(p => {
+                    let badgeClass = 'status-badge-v3-running';
+                    let label = 'ĐANG THỰC HIỆN';
+                    if (p.status === 'testing') { badgeClass = 'status-badge-v3-warning'; label = 'CHỜ NGHIỆM THU'; }
+                    if (p.status === 'done') { badgeClass = 'status-badge-v3-active'; label = 'HOÀN THÀNH'; }
+
+                    html += `
+                    <div class="progress-item">
+                        <span class="progress-name">${p.name}</span>
+                        <span class="status-badge-v3 ${badgeClass}">${label}</span>
+                    </div>
+                `;
+                });
+            }
             sideProjectContainer.innerHTML = html;
         }
 
