@@ -215,16 +215,20 @@
                     </div>
                     <div class="pj-modal-select-menu pj-dropdown" style="width: 100%; right: auto; left: 0;">
                         <div class="pj-dropdown-item" data-value="planning">
-                            Lên Kế Hoạch
+                            <i class="ph ph-calendar-blank color-blue"></i>
+                            <span>Lên Kế Hoạch</span>
                         </div>
                         <div class="pj-dropdown-item active" data-value="doing">
-                            Đang Thực Hiện
+                            <i class="ph ph-clock color-yellow"></i>
+                            <span>Đang Thực Hiện</span>
                         </div>
                         <div class="pj-dropdown-item" data-value="testing">
-                            Chờ Nghiệm Thu
+                            <i class="ph ph-circle-dashed color-orange"></i>
+                            <span>Chờ Nghiệm Thu</span>
                         </div>
                         <div class="pj-dropdown-item" data-value="done">
-                            Hoàn Thành
+                            <i class="ph ph-check-circle color-green"></i>
+                            <span>Hoàn Thành</span>
                         </div>
                     </div>
                     <!-- Actual hidden input for form data -->
@@ -618,7 +622,7 @@ function openEditProjectModal(tr) {
     
     // Update Custom Select UI
     const customSelect = document.getElementById('mProjectStatusSelect');
-    const option = customSelect.querySelector(`.pj-modal-select-item[data-value="${status}"]`);
+    const option = customSelect.querySelector(`.pj-dropdown-item[data-value="${status}"]`);
     if (option) {
         // This will trigger the shared-data handle if we clicked, 
         // but here we just manually sync for the edit modal open.
