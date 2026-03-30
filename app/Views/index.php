@@ -1017,17 +1017,17 @@
             status: document.getElementById('mProjectStatus').value,
             desc: document.getElementById('mProjectDesc').value,
             date: document.getElementById('mProjectDate').value,
-            customerName: document.getElementById('mCustomerName').value,
-            customerPhone: document.getElementById('mCustomerPhone').value,
-            admin_url: document.getElementById('mAdminLink').value,
-            admin_user: document.getElementById('mAdminUser').value,
-            admin_pass: document.getElementById('adminPassword').value,
+            customer: document.getElementById('mCustomerName').value,
+            phone: document.getElementById('mCustomerPhone').value,
+            adminUrl: document.getElementById('mAdminLink').value,
+            adminUser: document.getElementById('mAdminUser').value,
+            adminPass: document.getElementById('adminPassword').value,
             value: document.getElementById('projectValue').value
         };
 
         if (!data.name) { showToast('Vui lòng nhập tên dự án!', 'error'); markError('mProjectName'); return; }
         if (!data.date) { showToast('Vui lòng chọn ngày tạo!', 'error'); markError('mProjectDate'); return; }
-        if (!data.customerName) { showToast('Vui lòng nhập tên khách hàng!', 'error'); markError('mCustomerName'); return; }
+        if (!data.customer) { showToast('Vui lòng nhập tên khách hàng!', 'error'); markError('mCustomerName'); return; }
 
         showToast('Đang thêm dự án...');
         try {
