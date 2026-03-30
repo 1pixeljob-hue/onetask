@@ -513,12 +513,22 @@
                 let actHtml = '';
                 logs.forEach(log => {
                     const avatarStr = (log.user_name || 'quy').substring(0, 2).toUpperCase();
+                    
+                    // Module mapping
+                    const moduleMap = {
+                        'Project': 'dự án',
+                        'Hosting': 'hosting',
+                        'Passwords': 'passwords',
+                        'CodeX': 'codex'
+                    };
+                    const moduleName = moduleMap[log.module] || (log.module ? log.module.toLowerCase() : '');
+
                     actHtml += `
                     <div class="list-item" style="border:none; padding: 12px 0;">
                         <div class="avatar" style="width: 40px; height: 40px; font-size: 14px; background: #f1f5f9; color: #64748b;">${avatarStr}</div>
                         <div class="activity-content">
                             <p style="font-size: 13px; font-weight: 500; color: #334155; line-height: 1.4;">
-                                <b style="color: #1e293b;">${log.user_name}</b> đã ${log.action.toLowerCase()} <b style="color:#3b82f6;">${log.item_name}</b>
+                                <b style="color: #1e293b;">${log.user_name}</b> đã ${log.action.toLowerCase()}${moduleName ? ' ' + moduleName : ''} <b style="color:#3b82f6;">${log.item_name}</b>
                                 <span style="display: block; font-size: 11px; color:#94a3b8; font-weight:700; margin-top: 4px; text-transform: uppercase;">
                                     <i class="ph ph-clock" style="vertical-align: middle;"></i> ${timeAgo(log.created_at)}
                                 </span>
