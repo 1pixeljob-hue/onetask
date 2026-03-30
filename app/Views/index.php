@@ -452,26 +452,28 @@
         <div class="modal-box">
             <div class="modal-header">
                 <div class="modal-title-wrap">
-                    <div class="modal-icon-brand"><i class="ph-fill ph-key"></i></div>
-                    <h3 class="modal-title">Lưu Mật Khẩu Mới</h3>
+                    <div class="modal-icon-brand" style="background: #ecfdf5; color: #10b981;">
+                        <i class="ph-fill ph-key"></i>
+                    </div>
+                    <h3 class="modal-title">Thêm Mật Khẩu Mới</h3>
                 </div>
                 <button class="modal-close" onclick="closeAddPwdModal()"><i class="ph ph-x"></i></button>
             </div>
             <form id="addPasswordForm" onsubmit="submitAddPwdForm(event)">
                 <div class="modal-body">
                     <div class="modal-field full">
-                        <label class="modal-label">Tiêu Đề <span class="req">*</span></label>
+                        <label class="modal-label"><i class="ph ph-pencil-line"></i> Tiêu Đề <span class="req">*</span></label>
                         <input type="text" class="modal-input" id="mPwdTitle" placeholder="VD: Gmail - Công Ty" required>
                     </div>
                     <div class="modal-field full">
-                        <label class="modal-label">Website</label>
-                        <input type="text" class="modal-input" id="mPwdUrl" placeholder="VD: https://gmail.com">
+                        <label class="modal-label"><i class="ph ph-globe"></i> Website</label>
+                        <input type="text" class="modal-input" id="mPwdUrl" placeholder="VD: https://gmail.com hoặc gmail.com">
                     </div>
                     <div class="modal-field full">
-                        <label class="modal-label">Danh Mục <span class="req">*</span></label>
+                        <label class="modal-label"><i class="ph ph-tag"></i> Danh Mục <span class="req">*</span></label>
                         <div class="pj-modal-select" id="mPwdCategorySelect" data-input-id="mPwdCategory">
                             <div class="pj-modal-select-trigger" onclick="togglePjModalSelect(this)">
-                                <span>Khác</span>
+                                <span>Email</span>
                                 <i class="ph ph-caret-down trigger-chevron"></i>
                             </div>
                             <div class="pj-modal-select-menu pj-dropdown" style="width: 100%; right: auto; left: 0;">
@@ -479,34 +481,33 @@
                                     <div class="pj-dropdown-item" data-value="<?php echo htmlspecialchars($cat['name']); ?>"><?php echo htmlspecialchars($cat['name']); ?></div>
                                 <?php endforeach; ?>
                             </div>
-                            <input type="hidden" id="mPwdCategory" value="Khác" required>
+                            <input type="hidden" id="mPwdCategory" value="Email" required>
                         </div>
                     </div>
                     <div class="modal-field full">
-                        <label class="modal-label">Tài Khoản <span class="req">*</span></label>
+                        <label class="modal-label"><i class="ph ph-user"></i> Tài Khoản <span class="req">*</span></label>
                         <input type="text" class="modal-input" id="mPwdUser" placeholder="VD: user@example.com" required>
                     </div>
                     <div class="modal-field full">
                         <div class="label-with-action">
-                            <label class="modal-label">Mật Khẩu <span class="req">*</span></label>
+                            <label class="modal-label"><i class="ph ph-lock"></i> Mật Khẩu <span class="req">*</span></label>
                             <a href="javascript:void(0)" class="label-link" onclick="generateStrongPwd()">Tạo mật khẩu mạnh</a>
                         </div>
                         <div class="modal-input-group">
-                            <i class="ph ph-lock modal-input-prefix"></i>
-                            <input type="password" class="modal-input with-prefix" id="mPwdPass" placeholder="••••••••" required>
+                            <input type="password" class="modal-input" id="mPwdPass" placeholder="••••••••" required>
                             <button type="button" class="modal-input-icon-btn" onclick="toggleAddPwdVisibility()">
                                 <i class="ph ph-eye" id="mPwdEyeIcon"></i>
                             </button>
                         </div>
                     </div>
                     <div class="modal-field full">
-                        <label class="modal-label">Ghi Chú</label>
+                        <label class="modal-label"><i class="ph ph-note"></i> Ghi Chú</label>
                         <textarea class="modal-textarea" id="mPwdNotes" placeholder="Ghi chú bổ sung (tùy chọn)..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="modal-btn-cancel" onclick="closeAddPwdModal()">Hủy</button>
-                    <button type="submit" class="modal-btn-submit">Lưu Mật Khẩu</button>
+                    <button type="submit" class="modal-btn-submit">Thêm Mới</button>
                 </div>
             </form>
         </div>
