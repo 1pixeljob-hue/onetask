@@ -335,8 +335,8 @@ function openCxModal() {
     document.getElementById('cxForm').reset();
     document.querySelector('#cxModal .modal-title span').textContent = 'Thêm Code Mới';
     document.querySelector('#cxModal .btn-cx-submit').textContent = 'Thêm Mới';
-    document.getElementById('cxLangBadge').textContent = 'JavaScript';
-    document.getElementById('cxLangInput').value = 'JavaScript';
+    document.getElementById('cxLangBadge').textContent = 'Chọn danh mục';
+    document.getElementById('cxLangInput').value = '';
     
     // Sync dropdown with latest categories
     renderCodeCategories();
@@ -510,6 +510,14 @@ async function deleteCodeCategory(id) {
 // --- Snippet Logic ---
 document.getElementById('cxForm').onsubmit = function(e) {
     e.preventDefault();
+    
+    // Validation: Loại code không được để trống
+    const lang = document.getElementById('cxLangInput').value;
+    if (!lang || lang === 'Chọn danh mục') {
+        alert('Vui lòng chọn loại code cho snippet này');
+        return;
+    }
+
     const formData = new FormData(this);
     fetch('/codex/save', {
         method: 'POST',
