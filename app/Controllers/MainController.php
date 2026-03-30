@@ -31,7 +31,8 @@ class MainController extends BaseController {
         $data = [
             'projects' => $this->projectModel->getAll(),
             'hostings' => $this->hostingModel->getAll(),
-            'monthlyRevenue' => $this->projectModel->getMonthlyRevenue($currentYear)
+            'monthlyRevenue' => $this->projectModel->getMonthlyRevenue($currentYear),
+            'recentLogs' => $this->logModel->getAll([], 5, 0)
         ];
         $this->view('index', $data);
     }

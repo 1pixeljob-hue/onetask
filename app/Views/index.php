@@ -14,7 +14,8 @@
         const PHP_DATA = {
             projects: <?php echo json_encode($projects); ?>,
             hostings: <?php echo json_encode($hostings); ?>,
-            monthlyRevenue: <?php echo json_encode($monthlyRevenue); ?>
+            monthlyRevenue: <?php echo json_encode($monthlyRevenue); ?>,
+            recentLogs: <?php echo json_encode($recentLogs ?? []); ?>
         };
     </script>
     <script src="/js/shared-data.js"></script>
@@ -248,7 +249,7 @@
                     <div class="activity-card-v2">
                         <div class="card-header-v2">
                             <h3>Hoạt động gần đây</h3>
-                            <a href="#" class="card-link">Xem tất cả</a>
+                            <a href="/logs" class="card-link">Xem tất cả</a>
                         </div>
                         <div class="activity-list" id="dashActivityList">
                             <!-- Rendered by JS -->
@@ -480,30 +481,48 @@
             sideProjectContainer.innerHTML = html;
         }
 
-        // Layer 3: Recent Activity
+        // Layer 3: Recent Activity (Dynamic)
         const activityContainer = document.getElementById('dashActivityList');
         if (activityContainer) {
-            const activities = [
-                { user: 'quydev', action: 'đã cập nhật dự án', target: '1Pixel Digital', time: '2 GIỜ TRƯỚC', avatar: 'QD' },
-                { user: 'quydev', action: 'đã tạo hosting cho cụm', target: 'VINALIGHT', time: '5 GIỜ TRƯỚC', avatar: 'QD' },
-                { user: 'Hệ thống', action: 'đã hoàn tất sao lưu cho', target: 'Web Pencil', time: 'HÔM QUA', avatar: 'HS' }
-            ];
+            const logs = PHP_DATA.recentLogs || [];
+            
+            if (logs.length === 0) {
+                activityContainer.innerHTML = '<div class="text-center py-5 text-muted" style="font-size: 13px;">Chưa có hoạt động nào được ghi lại</div>';
+            } else {
+                function timeAgo(dateString) {
+                    const now = new Date();
+                    const past = new Date(dateString);
+                    const diffMs = now - past;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMins / 60);
+                    const diffDays = Math.floor(diffHours / 24);
 
-            let actHtml = '';
-            activities.forEach(a => {
-                actHtml += `
-                <div class="list-item" style="border:none; padding: 12px 0;">
-                    <div class="avatar" style="width: 40px; height: 40px; font-size: 14px;">${a.avatar}</div>
-                    <div class="activity-content">
-                        <p style="font-size: 13px; font-weight: 500;">
-                            <b>${a.user}</b> ${a.action} <b style="color:#3b82f6;">${a.target}</b>
-                        </p>
-                        <span style="font-size: 11px; color:#94a3b8; font-weight:700;">${a.time}</span>
+                    if (diffMins < 1) return 'VỪA XONG';
+                    if (diffMins < 60) return `${diffMins} PHÚT TRƯỚC`;
+                    if (diffHours < 24) return `${diffHours} GIỜ TRƯỚC`;
+                    if (diffDays === 1) return 'HÔM QUA';
+                    return past.toLocaleDateString('vi-VN');
+                }
+
+                let actHtml = '';
+                logs.forEach(log => {
+                    const avatarStr = (log.user_name || 'quy').substring(0, 2).toUpperCase();
+                    actHtml += `
+                    <div class="list-item" style="border:none; padding: 12px 0;">
+                        <div class="avatar" style="width: 40px; height: 40px; font-size: 14px; background: #f1f5f9; color: #64748b;">${avatarStr}</div>
+                        <div class="activity-content">
+                            <p style="font-size: 13px; font-weight: 500; color: #334155; line-height: 1.4;">
+                                <b style="color: #1e293b;">${log.user_name}</b> đã ${log.action.toLowerCase()} <b style="color:#3b82f6;">${log.item_name}</b>
+                                <span style="display: block; font-size: 11px; color:#94a3b8; font-weight:700; margin-top: 4px; text-transform: uppercase;">
+                                    <i class="ph ph-clock" style="vertical-align: middle;"></i> ${timeAgo(log.created_at)}
+                                </span>
+                            </p>
+                        </div>
                     </div>
-                </div>
-            `;
-            });
-            activityContainer.innerHTML = actHtml;
+                `;
+                });
+                activityContainer.innerHTML = actHtml;
+            }
         }
     })();
 
