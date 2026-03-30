@@ -466,7 +466,7 @@
                         badgeClass = 'status-badge-v3-warning'; 
                         label = 'Lên kế hoạch'; 
                     } else if (statusLower === 'testing') { 
-                        badgeClass = 'status-badge-v3-warning'; 
+                        badgeClass = 'status-badge-v3-testing'; 
                         label = 'Chờ nghiệm thu'; 
                     } else if (statusLower === 'done') { 
                         badgeClass = 'status-badge-v3-active'; 

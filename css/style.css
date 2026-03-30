@@ -844,6 +844,12 @@ body {
     color: #475569;
 }
 
+.status-badge-v3-testing {
+    background: #fff7ed;
+    color: #f97316;
+}
+
+
 .status-badge.paused {
     background-color: #f1f5f9;
     color: #475569;
