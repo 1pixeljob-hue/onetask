@@ -686,11 +686,12 @@
                 const result = await response.json();
                 modal.classList.remove('loading');
                 if (result.status === 'success' || result.success) {
+                    const savedData = result.data || result; // Fallback if flattened
                     if (currentCatEditId) {
                         const idx = CODE_CATEGORIES.findIndex(c => c.id == currentCatEditId);
-                        CODE_CATEGORIES[idx] = result;
+                        if (idx !== -1) CODE_CATEGORIES[idx] = savedData;
                     } else {
-                        CODE_CATEGORIES.push(result);
+                        CODE_CATEGORIES.push(savedData);
                     }
                     showCxToast(currentCatEditId ? 'Đã cập nhật danh mục!' : 'Đã thêm danh mục thành công!', 'success');
                     showCodeCategoryList();
@@ -940,12 +941,13 @@
 
                 if (data.status === 'success' || data.success) {
                     showCxToast('Đã thêm loại code!', 'success');
+                    const savedData = data.data || data; // Handle nested 'data' from MainController
                     if (!data.exists) {
-                        CODE_CATEGORIES.push(data);
+                        CODE_CATEGORIES.push(savedData);
                         renderCodeCategories();
                     }
-                    document.getElementById('cxLangInput').value = data.name;
-                    document.getElementById('cxLangBadge').textContent = data.name;
+                    document.getElementById('cxLangInput').value = savedData.name;
+                    document.getElementById('cxLangBadge').textContent = savedData.name;
                     const badge = document.getElementById('cxLangBadge');
                     badge.style.backgroundColor = '#f1f5f9';
                     badge.style.color = '#64748b';
