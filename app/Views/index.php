@@ -571,8 +571,9 @@
     <!-- Notification Toast (Dashboard) -->
     <div class="delete-toast" id="deleteToast">
         <div class="toast-spinner" id="dtSpinner"></div>
-        <div id="dtSuccessIcon" style="display:none; color: #10b981; font-size: 20px; display: flex; align-items: center;"><i class="ph-fill ph-check-circle"></i></div>
-        <span id="dtMessage">Đang xử lý...</span>
+        <div id="dtSuccessIcon" style="display:none; color: #10b981; font-size: 22px; align-items: center; justify-content: center;"><i class="ph-fill ph-check-circle"></i></div>
+        <div id="dtErrorIcon" style="display:none; color: #ef4444; font-size: 22px; align-items: center; justify-content: center;"><i class="ph-fill ph-x-circle"></i></div>
+        <span id="dtMessage" style="color: #1e293b; font-weight: 600;">Đang xử lý...</span>
     </div>
 </body>
 <script>
@@ -881,20 +882,26 @@
         const m = document.getElementById('dtMessage');
         const s = document.getElementById('dtSpinner');
         const succ = document.getElementById('dtSuccessIcon');
+        const err = document.getElementById('dtErrorIcon');
         if (!t) return;
         m.textContent = msg;
-        t.classList.add('active');
+        t.classList.add('show');
+        
+        s.style.display = 'none';
+        succ.style.display = 'none';
+        err.style.display = 'none';
+
         if (icon === 'success') {
-            s.style.display = 'none';
             succ.style.display = 'flex';
+        } else if (icon === 'error') {
+            err.style.display = 'flex';
         } else {
             s.style.display = 'block';
-            succ.style.display = 'none';
         }
     }
     function hideToast() {
         const t = document.getElementById('deleteToast');
-        if (t) t.classList.remove('active');
+        if (t) t.classList.remove('show');
     }
 
     // Modal Dropdown Helper
