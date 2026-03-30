@@ -84,9 +84,14 @@ class MainController extends BaseController {
                     'char_count' => (int)($_POST['char_count'] ?? 0)
                 ];
 
+                $oldData = null;
+                if ($data['id']) {
+                    $oldData = $this->snippetModel->find($data['id']);
+                }
+
                 if ($this->snippetModel->save($data)) {
                     $action = $data['id'] ? 'Cập nhật' : 'Tạo mới';
-                    $this->logModel->addLog('CodeX', $action, $data['title']);
+                    $this->logModel->addLog('CodeX', $action, $data['title'], 'quydev', $oldData ? json_encode($oldData) : null);
                     echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Lưu snippet thành công']);
                 } else {
                     echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi lưu snippet']);
@@ -264,8 +269,9 @@ class MainController extends BaseController {
             }
 
             if (isset($input['id']) && $input['id']) {
+                $oldData = $this->projectModel->find($input['id']);
                 $success = $this->projectModel->update($input['id'], $input);
-                if ($success) $this->logModel->addLog('Project', 'Cập nhật', $input['name']);
+                if ($success) $this->logModel->addLog('Project', 'Cập nhật', $input['name'], 'quydev', json_encode($oldData));
             } else {
                 $success = $this->projectModel->create($input);
                 if ($success) $this->logModel->addLog('Project', 'Tạo mới', $input['name']);
@@ -324,8 +330,9 @@ class MainController extends BaseController {
             }
 
             if (isset($input['id']) && $input['id']) {
+                $oldData = $this->hostingModel->find($input['id']);
                 $success = $this->hostingModel->update($input['id'], $input);
-                if ($success) $this->logModel->addLog('Hosting', 'Cập nhật', $input['name']);
+                if ($success) $this->logModel->addLog('Hosting', 'Cập nhật', $input['name'], 'quydev', json_encode($oldData));
             } else {
                 $success = $this->hostingModel->create($input);
                 if ($success) $this->logModel->addLog('Hosting', 'Tạo mới', $input['name']);
@@ -438,8 +445,9 @@ class MainController extends BaseController {
             }
 
             if (isset($input['id']) && $input['id']) {
+                $oldData = $this->passwordModel->find($input['id']);
                 $success = $this->passwordModel->update($input['id'], $input);
-                if ($success) $this->logModel->addLog('Passwords', 'Cập nhật', $input['title']);
+                if ($success) $this->logModel->addLog('Passwords', 'Cập nhật', $input['title'], 'quydev', json_encode($oldData));
             } else {
                 $success = $this->passwordModel->create($input);
                 if ($success) $this->logModel->addLog('Passwords', 'Tạo mới', $input['title']);
@@ -570,29 +578,41 @@ class MainController extends BaseController {
             // Thực hiện khôi phục theo từng Module
             switch ($module) {
                 case 'Project':
-                    // Mapping fields for ProjectModel
                     $mappedData = $data;
                     if (isset($data['description'])) $mappedData['desc'] = $data['description'];
                     if (isset($data['admin_url'])) $mappedData['adminUrl'] = $data['admin_url'];
                     if (isset($data['admin_user'])) $mappedData['adminUser'] = $data['admin_user'];
                     if (isset($data['admin_pass'])) $mappedData['adminPass'] = $data['admin_pass'];
-                    $success = $this->projectModel->create($mappedData);
+                    
+                    if (isset($data['id']) && $this->projectModel->find($data['id'])) {
+                        $success = $this->projectModel->update($data['id'], $mappedData);
+                    } else {
+                        $success = $this->projectModel->create($mappedData);
+                    }
                     break;
 
                 case 'Hosting':
-                    // Mapping fields for HostingModel
                     $mappedData = $data;
                     if (isset($data['reg_date'])) $mappedData['regDate'] = $data['reg_date'];
                     if (isset($data['exp_date'])) $mappedData['expDate'] = $data['exp_date'];
                     if (isset($data['usage_period'])) $mappedData['usage'] = $data['usage_period'];
-                    $success = $this->hostingModel->create($mappedData);
+                    
+                    if (isset($data['id']) && $this->hostingModel->find($data['id'])) {
+                        $success = $this->hostingModel->update($data['id'], $mappedData);
+                    } else {
+                        $success = $this->hostingModel->create($mappedData);
+                    }
                     break;
 
                 case 'Passwords':
                     if (strpos($itemName, 'Danh mục:') === 0) {
                         $success = $this->categoryModel->create($data);
                     } else {
-                        $success = $this->passwordModel->create($data);
+                        if (isset($data['id']) && $this->passwordModel->find($data['id'])) {
+                            $success = $this->passwordModel->update($data['id'], $data);
+                        } else {
+                            $success = $this->passwordModel->create($data);
+                        }
                     }
                     break;
 

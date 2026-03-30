@@ -166,12 +166,11 @@
                                     <td class="text-center">
                                         <div class="log-actions">
                                             <button class="btn-action" title="Xem"><i class="ph ph-eye color-blue"></i></button>
-                                            <?php if ($log['action'] == 'Xoá' && !empty($log['data'])): ?>
-                                                <button class="btn-action" title="Khôi phục" onclick="restoreLog(<?= $log['id'] ?>)">
+                                            <?php if (($log['action'] == 'Xoá' || $log['action'] == 'Cập nhật') && !empty($log['data'])): ?>
+                                                <button class="btn-action" title="<?= $log['action'] == 'Xoá' ? 'Khôi phục' : 'Hoàn tác thay đổi' ?>" onclick="restoreLog(<?= $log['id'] ?>)">
                                                     <i class="ph ph-arrows-counter-clockwise color-green"></i>
                                                 </button>
                                             <?php endif; ?>
-                                            <button class="btn-action" title="Xoá" onclick="deleteLog(<?= $log['id'] ?>)"><i class="ph ph-trash color-red"></i></button>
                                         </div>
                                     </td>
                                 </tr>

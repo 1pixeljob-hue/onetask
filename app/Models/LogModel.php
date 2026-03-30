@@ -75,16 +75,46 @@ class LogModel
             $sql = "INSERT INTO activity_logs (module, action, item_name, user_name, data) 
                     VALUES (:module, :action, :item_name, :user_name, :data)";
             $stmt = $this->db->prepare($sql);
-            return $stmt->execute([
+            $success = $stmt->execute([
                 ':module' => $module,
                 ':action' => $action,
                 ':item_name' => $itemName,
                 ':user_name' => $userName,
                 ':data' => $data
             ]);
+
+            if ($success) {
+                $this->pruneLogs(200);
+            }
+
+            return $success;
         } catch (\Exception $e) {
             // Ghi log lỗi vào file hệ thống, không echo ra màn hình
-            error_log("Logging error: " . $e->getMessage());
+            error_log("Add Log Error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Giới hạn số lượng bản ghi logs để tránh làm phình Database
+     */
+    public function pruneLogs($limit = 200)
+    {
+        try {
+            // Xóa các bản ghi cũ nhất nếu vượt quá giới hạn
+            $sql = "DELETE FROM activity_logs 
+                    WHERE id NOT IN (
+                        SELECT id FROM (
+                            SELECT id FROM activity_logs 
+                            ORDER BY created_at DESC 
+                            LIMIT :limit
+                        ) AS tmp
+                    )";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (\Exception $e) {
+            error_log("Prune Log Error: " . $e->getMessage());
             return false;
         }
     }
