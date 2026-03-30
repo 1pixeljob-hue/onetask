@@ -144,7 +144,7 @@
                         </div>
                         <div class="stat-label">Tổng số Hosting</div>
                         <div class="stat-main">
-                            <span class="stat-value-big" id="statTotalHosting">0</span>
+                            <span class="stat-value-big" id="statTotalHosting"></span>
                             <span class="stat-sub" id="statActiveHosting">cụm đang chạy</span>
                         </div>
                     </div>
@@ -214,7 +214,8 @@
                         <div class="progress-header">
                             <h3>Tiến độ dự án</h3>
                         </div>
-                        <div class="card-list" id="sideProjectList" style="max-height: 480px; overflow-y: auto; padding-right: 4px;">
+                        <div class="card-list" id="sideProjectList"
+                            style="max-height: 480px; overflow-y: auto; padding-right: 4px;">
                             <!-- Rendered by JS -->
                         </div>
 
@@ -242,7 +243,8 @@
                     <div class="hosting-status-card">
                         <div class="card-header-v2">
                             <h3>Tình trạng Hosting</h3>
-                            <i class="ph ph-warning-circle" style="color: #ef4444; font-size: 20px; font-weight: 800;"></i>
+                            <i class="ph ph-warning-circle"
+                                style="color: #ef4444; font-size: 20px; font-weight: 800;"></i>
                         </div>
                         <div class="hosting-status-list" id="dashHostingStatusList">
                             <!-- Rendered by JS -->
@@ -269,8 +271,9 @@
                     <div class="card-header-v2" style="margin-bottom: 24px;">
                         <h3>Thao tác nhanh</h3>
                         <div class="header-actions-right">
-                           <a href="#" class="header-action-link"><i class="ph ph-export"></i> XUẤT NHẬT KÝ</a>
-                           <a href="#" class="header-action-link"><i class="ph ph-share-network"></i> CHIA SẺ BÁO CÁO</a>
+                            <a href="#" class="header-action-link"><i class="ph ph-export"></i> XUẤT NHẬT KÝ</a>
+                            <a href="#" class="header-action-link"><i class="ph ph-share-network"></i> CHIA SẺ BÁO
+                                CÁO</a>
                         </div>
                     </div>
                     <div class="quick-actions-grid-v3">
@@ -348,12 +351,14 @@
                 </div>
                 <div class="modal-field full">
                     <label class="modal-label">Ghi Chú</label>
-                    <textarea class="modal-textarea" id="mHostingNotes" placeholder="Thêm ghi chú về hosting này..."></textarea>
+                    <textarea class="modal-textarea" id="mHostingNotes"
+                        placeholder="Thêm ghi chú về hosting này..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="modal-btn-cancel" onclick="closeHostingModalBtn()">Hủy</button>
-                <button class="modal-btn-submit" id="modalSubmitBtn" onclick="submitHostingForm()"><i class="ph ph-plus"></i> Thêm Mới</button>
+                <button class="modal-btn-submit" id="modalSubmitBtn" onclick="submitHostingForm()"><i
+                        class="ph ph-plus"></i> Thêm Mới</button>
             </div>
         </div>
     </div>
@@ -372,7 +377,8 @@
                 <div class="modal-section-header"><span class="modal-section-title">Thông Tin Project</span></div>
                 <div class="modal-field full">
                     <label class="modal-label">Tên Project <span class="req">*</span></label>
-                    <input type="text" class="modal-input" id="mProjectName" placeholder="VD: Website Thương Mại Điện Tử">
+                    <input type="text" class="modal-input" id="mProjectName"
+                        placeholder="VD: Website Thương Mại Điện Tử">
                 </div>
                 <div class="modal-field full">
                     <label class="modal-label">Trạng Thái <span class="req">*</span></label>
@@ -393,13 +399,15 @@
                 </div>
                 <div class="modal-field full">
                     <label class="modal-label">Mô Tả</label>
-                    <textarea class="modal-textarea" id="mProjectDesc" placeholder="Mô tả chi tiết về project..."></textarea>
+                    <textarea class="modal-textarea" id="mProjectDesc"
+                        placeholder="Mô tả chi tiết về project..."></textarea>
                 </div>
                 <div class="modal-field full">
                     <label class="modal-label">Ngày Tạo <span class="req">*</span></label>
                     <input type="date" class="modal-input" id="mProjectDate">
                 </div>
-                <div class="modal-section-header with-border"><span class="modal-section-title">Thông Tin Khách Hàng</span></div>
+                <div class="modal-section-header with-border"><span class="modal-section-title">Thông Tin Khách
+                        Hàng</span></div>
                 <div class="modal-row">
                     <div class="modal-field">
                         <label class="modal-label">Tên Khách Hàng <span class="req">*</span></label>
@@ -410,7 +418,8 @@
                         <input type="text" class="modal-input" id="mCustomerPhone" placeholder="VD: 0912345678">
                     </div>
                 </div>
-                <div class="modal-section-header with-border"><span class="modal-section-title">Thông Tin Quản Trị</span></div>
+                <div class="modal-section-header with-border"><span class="modal-section-title">Thông Tin Quản
+                        Trị</span></div>
                 <div class="modal-field full">
                     <label class="modal-label">Đường Dẫn Admin</label>
                     <input type="text" class="modal-input" id="mAdminLink" placeholder="VD: https://example.com/admin">
@@ -424,18 +433,21 @@
                         <label class="modal-label">Mật Khẩu Admin</label>
                         <div class="modal-input-group">
                             <input type="password" class="modal-input" id="adminPassword" placeholder="********">
-                            <button type="button" class="modal-input-icon-btn" onclick="togglePasswordVisibility('adminPassword', this)">
+                            <button type="button" class="modal-input-icon-btn"
+                                onclick="togglePasswordVisibility('adminPassword', this)">
                                 <i class="ph ph-eye"></i>
                             </button>
                         </div>
                     </div>
                 </div>
-                <div class="modal-section-header with-border"><span class="modal-section-title">Thông Tin Tài Chính</span></div>
+                <div class="modal-section-header with-border"><span class="modal-section-title">Thông Tin Tài
+                        Chính</span></div>
                 <div class="modal-field full">
                     <label class="modal-label">Giá Trị Dự Án (VNĐ)</label>
                     <div class="modal-input-group">
                         <i class="ph ph-currency-circle-dollar modal-input-prefix"></i>
-                        <input type="number" class="modal-input with-prefix" id="projectValue" value="0" oninput="updateProjectValueDisplay(this)">
+                        <input type="number" class="modal-input with-prefix" id="projectValue" value="0"
+                            oninput="updateProjectValueDisplay(this)">
                     </div>
                     <div id="projectValueDisplay" class="modal-price-hint">0 VNĐ</div>
                 </div>
@@ -462,12 +474,15 @@
             <form id="addPasswordForm" onsubmit="submitAddPwdForm(event)">
                 <div class="modal-body">
                     <div class="modal-field full">
-                        <label class="modal-label"><i class="ph ph-pencil-line"></i> Tiêu Đề <span class="req">*</span></label>
-                        <input type="text" class="modal-input" id="mPwdTitle" placeholder="VD: Gmail - Công Ty" required>
+                        <label class="modal-label"><i class="ph ph-pencil-line"></i> Tiêu Đề <span
+                                class="req">*</span></label>
+                        <input type="text" class="modal-input" id="mPwdTitle" placeholder="VD: Gmail - Công Ty"
+                            required>
                     </div>
                     <div class="modal-field full">
                         <label class="modal-label"><i class="ph ph-globe"></i> Website</label>
-                        <input type="text" class="modal-input" id="mPwdUrl" placeholder="VD: https://gmail.com hoặc gmail.com">
+                        <input type="text" class="modal-input" id="mPwdUrl"
+                            placeholder="VD: https://gmail.com hoặc gmail.com">
                     </div>
                     <div class="modal-field full">
                         <label class="modal-label"><i class="ph ph-tag"></i> Danh Mục <span class="req">*</span></label>
@@ -478,20 +493,26 @@
                             </div>
                             <div class="pj-modal-select-menu pj-dropdown" style="width: 100%; right: auto; left: 0;">
                                 <?php foreach ($password_categories as $cat): ?>
-                                    <div class="pj-dropdown-item" data-value="<?php echo htmlspecialchars($cat['name']); ?>"><?php echo htmlspecialchars($cat['name']); ?></div>
+                                    <div class="pj-dropdown-item"
+                                        data-value="<?php echo htmlspecialchars($cat['name']); ?>">
+                                        <?php echo htmlspecialchars($cat['name']); ?></div>
                                 <?php endforeach; ?>
                             </div>
                             <input type="hidden" id="mPwdCategory" value="Email" required>
                         </div>
                     </div>
                     <div class="modal-field full">
-                        <label class="modal-label"><i class="ph ph-user"></i> Tài Khoản <span class="req">*</span></label>
-                        <input type="text" class="modal-input" id="mPwdUser" placeholder="VD: user@example.com" required>
+                        <label class="modal-label"><i class="ph ph-user"></i> Tài Khoản <span
+                                class="req">*</span></label>
+                        <input type="text" class="modal-input" id="mPwdUser" placeholder="VD: user@example.com"
+                            required>
                     </div>
                     <div class="modal-field full">
                         <div class="label-with-action">
-                            <label class="modal-label"><i class="ph ph-lock"></i> Mật Khẩu <span class="req">*</span></label>
-                            <a href="javascript:void(0)" class="label-link" onclick="generateStrongPwd()">Tạo mật khẩu mạnh</a>
+                            <label class="modal-label"><i class="ph ph-lock"></i> Mật Khẩu <span
+                                    class="req">*</span></label>
+                            <a href="javascript:void(0)" class="label-link" onclick="generateStrongPwd()">Tạo mật khẩu
+                                mạnh</a>
                         </div>
                         <div class="modal-input-group">
                             <input type="password" class="modal-input" id="mPwdPass" placeholder="••••••••" required>
@@ -502,7 +523,8 @@
                     </div>
                     <div class="modal-field full">
                         <label class="modal-label"><i class="ph ph-note"></i> Ghi Chú</label>
-                        <textarea class="modal-textarea" id="mPwdNotes" placeholder="Ghi chú bổ sung (tùy chọn)..."></textarea>
+                        <textarea class="modal-textarea" id="mPwdNotes"
+                            placeholder="Ghi chú bổ sung (tùy chọn)..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -528,19 +550,23 @@
                     <div class="modal-row">
                         <div class="modal-field">
                             <label class="modal-label">Tên Code <span class="req">*</span></label>
-                            <input type="text" name="title" id="cxTitle" class="modal-input" placeholder="VD: React useEffect" required>
+                            <input type="text" name="title" id="cxTitle" class="modal-input"
+                                placeholder="VD: React useEffect" required>
                         </div>
                         <div class="modal-field">
                             <label class="modal-label">Loại Code <span class="req">*</span></label>
                             <div class="pj-modal-select" data-input-id="cxLangInput" id="cxLangSelect">
-                                <div class="cx-badge-select-trigger pj-modal-select-trigger" onclick="togglePjModalSelect(this)">
+                                <div class="cx-badge-select-trigger pj-modal-select-trigger"
+                                    onclick="togglePjModalSelect(this)">
                                     <span class="cx-lang-badge" id="cxLangBadge">JavaScript</span>
                                     <i class="ph ph-caret-down"></i>
                                 </div>
                                 <div class="pj-dropdown">
                                     <div class="pj-dropdown-list">
                                         <?php foreach ($snippet_categories as $cat): ?>
-                                            <div class="pj-dropdown-item" data-value="<?php echo htmlspecialchars($cat['name']); ?>"><span><?php echo htmlspecialchars($cat['name']); ?></span></div>
+                                            <div class="pj-dropdown-item"
+                                                data-value="<?php echo htmlspecialchars($cat['name']); ?>">
+                                                <span><?php echo htmlspecialchars($cat['name']); ?></span></div>
                                         <?php endforeach; ?>
                                     </div>
                                 </div>
@@ -550,14 +576,17 @@
                     </div>
                     <div class="modal-field full">
                         <label class="modal-label">Mô Tả</label>
-                        <input type="text" name="description" id="cxDesc" class="modal-input" placeholder="VD: Hook React">
+                        <input type="text" name="description" id="cxDesc" class="modal-input"
+                            placeholder="VD: Hook React">
                     </div>
                     <div class="modal-field full">
                         <label class="modal-label">Nội Dung Code <span class="req">*</span></label>
                         <div class="cx-code-editor-wrapper">
-                            <textarea name="code" id="cxCodeArea" class="cx-code-textarea" placeholder="// Nhập code..." required oninput="updateCxStats()"></textarea>
+                            <textarea name="code" id="cxCodeArea" class="cx-code-textarea" placeholder="// Nhập code..."
+                                required oninput="updateCxStats()"></textarea>
                             <div class="cx-code-status-bar">
-                                <span id="statLines">1 dòng</span> <span class="cx-dot">•</span> <span id="statChars">0 ký tự</span>
+                                <span id="statLines">1 dòng</span> <span class="cx-dot">•</span> <span id="statChars">0
+                                    ký tự</span>
                             </div>
                         </div>
                     </div>
@@ -573,8 +602,12 @@
     <!-- Notification Toast (Dashboard) -->
     <div class="delete-toast" id="deleteToast">
         <div class="toast-spinner" id="dtSpinner"></div>
-        <div id="dtSuccessIcon" style="display:none; color: #10b981; font-size: 22px; align-items: center; justify-content: center;"><i class="ph-fill ph-check-circle"></i></div>
-        <div id="dtErrorIcon" style="display:none; color: #ef4444; font-size: 22px; align-items: center; justify-content: center;"><i class="ph-fill ph-x-circle"></i></div>
+        <div id="dtSuccessIcon"
+            style="display:none; color: #10b981; font-size: 22px; align-items: center; justify-content: center;"><i
+                class="ph-fill ph-check-circle"></i></div>
+        <div id="dtErrorIcon"
+            style="display:none; color: #ef4444; font-size: 22px; align-items: center; justify-content: center;"><i
+                class="ph-fill ph-x-circle"></i></div>
         <span id="dtMessage" style="color: #1e293b; font-weight: 600;">Đang xử lý...</span>
     </div>
 </body>
@@ -758,16 +791,16 @@
                     const statusLower = (p.status || '').toLowerCase().trim();
                     let badgeClass = 'status-badge-v3-running';
                     let label = 'Đang thực hiện';
-                    
-                    if (statusLower === 'planning') { 
-                        badgeClass = 'status-badge-v3-warning'; 
-                        label = 'Lên kế hoạch'; 
-                    } else if (statusLower === 'testing') { 
-                        badgeClass = 'status-badge-v3-testing'; 
-                        label = 'Chờ nghiệm thu'; 
-                    } else if (statusLower === 'done') { 
-                        badgeClass = 'status-badge-v3-active'; 
-                        label = 'Hoàn thành'; 
+
+                    if (statusLower === 'planning') {
+                        badgeClass = 'status-badge-v3-warning';
+                        label = 'Lên kế hoạch';
+                    } else if (statusLower === 'testing') {
+                        badgeClass = 'status-badge-v3-testing';
+                        label = 'Chờ nghiệm thu';
+                    } else if (statusLower === 'done') {
+                        badgeClass = 'status-badge-v3-active';
+                        label = 'Hoàn thành';
                     } else if (statusLower === 'paused') {
                         badgeClass = 'status-badge-v3-paused';
                         label = 'Tạm dừng';
@@ -790,7 +823,7 @@
             if (!container) return;
 
             const list = [...(stats.expiredList || []), ...(stats.expiringSoonList || [])].slice(0, 5);
-            
+
             if (list.length === 0) {
                 container.innerHTML = '<div class="text-center py-4 text-muted" style="font-size: 13px;">Tất cả hosting đều ổn định</div>';
                 return;
@@ -801,7 +834,7 @@
                 const isExpired = item.diffDays < 0;
                 const badgeClass = isExpired ? 'badge-red' : 'badge-orange';
                 const badgeLabel = isExpired ? 'HẾT HẠN' : 'SẮP HẾT HẠN';
-                
+
                 html += `
                 <div class="status-item-v3">
                     <div class="status-info">
@@ -843,7 +876,7 @@
                 logs.forEach(log => {
                     const userName = log.user_name || 'quy';
                     const userInitial = userName.substring(0, 1).toUpperCase();
-                    
+
                     // Module mapping
                     const moduleMap = {
                         'Project': 'dự án',
@@ -911,7 +944,7 @@
         if (!t) return;
         m.textContent = msg;
         t.classList.add('show');
-        
+
         s.style.display = 'none';
         succ.style.display = 'none';
         err.style.display = 'none';
@@ -945,14 +978,14 @@
     });
 
     // Hosting Logic
-    function openHostingModal() { 
+    function openHostingModal() {
         clearErrors();
-        document.getElementById('hostingModal').classList.add('active'); 
+        document.getElementById('hostingModal').classList.add('active');
         document.getElementById('mRegDate').value = new Date().toISOString().split('T')[0];
     }
     function closeHostingModal(e) { if (e.target.id === 'hostingModal') closeHostingModalBtn(); }
-    function closeHostingModalBtn() { 
-        document.getElementById('hostingModal').classList.remove('active'); 
+    function closeHostingModalBtn() {
+        document.getElementById('hostingModal').classList.remove('active');
         clearErrors();
     }
     function formatPrice() {
@@ -981,8 +1014,8 @@
 
         showToast('Đang thêm hosting...');
         try {
-            const resp = await fetch('/hostings/save', { 
-                method: 'POST', 
+            const resp = await fetch('/hostings/save', {
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
@@ -999,13 +1032,13 @@
     }
 
     // Projects Logic
-    function openAddProjectModal() { 
+    function openAddProjectModal() {
         clearErrors();
-        document.getElementById('addProjectModal').classList.add('active'); 
+        document.getElementById('addProjectModal').classList.add('active');
         document.getElementById('mProjectDate').value = new Date().toISOString().split('T')[0];
     }
-    function closeAddProjectModal() { 
-        document.getElementById('addProjectModal').classList.remove('active'); 
+    function closeAddProjectModal() {
+        document.getElementById('addProjectModal').classList.remove('active');
         clearErrors();
     }
     function closeAddProjectModalOverlay(e) { if (e.target.id === 'addProjectModal') closeAddProjectModal(); }
@@ -1033,8 +1066,8 @@
 
         showToast('Đang thêm dự án...');
         try {
-            const resp = await fetch('/projects/save', { 
-                method: 'POST', 
+            const resp = await fetch('/projects/save', {
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
@@ -1051,12 +1084,12 @@
     }
 
     // Passwords Logic
-    function openPasswordModal() { 
+    function openPasswordModal() {
         clearErrors();
-        document.getElementById('addPasswordModal').classList.add('active'); 
+        document.getElementById('addPasswordModal').classList.add('active');
     }
-    function closeAddPwdModal() { 
-        document.getElementById('addPasswordModal').classList.remove('active'); 
+    function closeAddPwdModal() {
+        document.getElementById('addPasswordModal').classList.remove('active');
         clearErrors();
     }
     function closeAddPasswordModalOverlay(e) { if (e.target.id === 'addPasswordModal') closeAddPwdModal(); }
@@ -1093,8 +1126,8 @@
 
         showToast('Đang thêm mật khẩu...');
         try {
-            const resp = await fetch('/passwords/save', { 
-                method: 'POST', 
+            const resp = await fetch('/passwords/save', {
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
@@ -1111,12 +1144,12 @@
     }
 
     // Snippets Logic
-    function openAddSnippetModal() { 
+    function openAddSnippetModal() {
         clearErrors();
-        document.getElementById('cxModal').classList.add('active'); 
+        document.getElementById('cxModal').classList.add('active');
     }
-    function closeCxModal() { 
-        document.getElementById('cxModal').classList.remove('active'); 
+    function closeCxModal() {
+        document.getElementById('cxModal').classList.remove('active');
         clearErrors();
     }
     function updateCxStats() {
@@ -1138,11 +1171,11 @@
 
         formData.append('line_count', code.split('\n').length);
         formData.append('char_count', code.length);
-        
+
         showToast('Đang thêm snippet...');
         try {
-            const resp = await fetch('/codex/save', { 
-                method: 'POST', 
+            const resp = await fetch('/codex/save', {
+                method: 'POST',
                 body: formData
             });
             const res = await resp.json();
@@ -1165,7 +1198,7 @@
             if (!input) return;
             const triggerText = sel.querySelector('.pj-modal-select-trigger span');
             sel.querySelectorAll('.pj-dropdown-item').forEach(item => {
-                item.onclick = function() {
+                item.onclick = function () {
                     const val = this.getAttribute('data-value');
                     input.value = val;
                     triggerText.textContent = this.textContent.trim();
