@@ -2381,7 +2381,7 @@ body {
     background-color: #e6f7f4;
     color: #0d9488;
     font-weight: 600;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 8px;
 }
 .pj-dropdown-item i {

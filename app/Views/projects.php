@@ -134,27 +134,15 @@
                         <div class="pj-filter-wrapper">
                             <button class="pj-filter-btn" id="statusFilterBtn" onclick="toggleFilterDropdown()">
                                 <i class="ph ph-funnel-simple"></i>
-                                <span id="filterLabel">Tất cả trạng thái</span>
+                                <span id="filterLabel">Lọc bởi trạng thái</span>
                                 <i class="ph ph-caret-down"></i>
                             </button>
                             <div class="pj-dropdown" id="filterDropdown">
-                                <div class="pj-dropdown-item active" onclick="setFilter('', 'Tất cả trạng thái', this)">Tất cả</div>
-                                <div class="pj-dropdown-item" onclick="setFilter('planning', 'Lên Kế Hoạch', this)">
-                                    <i class="ph ph-calendar-blank color-blue"></i>
-                                    <span>Lên Kế Hoạch</span>
-                                </div>
-                                <div class="pj-dropdown-item" onclick="setFilter('doing', 'Đang Thực Hiện', this)">
-                                    <i class="ph ph-clock color-gray"></i>
-                                    <span>Đang Thực Hiện</span>
-                                </div>
-                                <div class="pj-dropdown-item" onclick="setFilter('testing', 'Chờ Nghiệm Thu', this)">
-                                    <i class="ph ph-circle-dashed color-orange"></i>
-                                    <span>Chờ Nghiệm Thu</span>
-                                </div>
-                                <div class="pj-dropdown-item" onclick="setFilter('done', 'Hoàn Thành', this)">
-                                    <i class="ph ph-check-circle color-green"></i>
-                                    <span>Hoàn Thành</span>
-                                </div>
+                                <div class="pj-dropdown-item active" onclick="setFilter('', 'Lọc bởi trạng thái', this)">Tất cả</div>
+                                <div class="pj-dropdown-item" onclick="setFilter('planning', 'Lên Kế Hoạch', this)">Lên Kế Hoạch</div>
+                                <div class="pj-dropdown-item" onclick="setFilter('doing', 'Đang Thực Hiện', this)">Đang Thực Hiện</div>
+                                <div class="pj-dropdown-item" onclick="setFilter('testing', 'Chờ Nghiệm Thu', this)">Chờ Nghiệm Thu</div>
+                                <div class="pj-dropdown-item" onclick="setFilter('done', 'Hoàn Thành', this)">Hoàn Thành</div>
                             </div>
                         </div>
                         <button class="pj-add-btn" onclick="openAddProjectModal()">
@@ -222,27 +210,14 @@
                 <label class="modal-label">Trạng Thái <span class="req">*</span></label>
                 <div class="pj-modal-select" id="mProjectStatusSelect" data-input-id="mProjectStatus">
                     <div class="pj-modal-select-trigger">
-                        <i class="ph ph-calendar-blank"></i>
                         <span>Lên Kế Hoạch</span>
                         <i class="ph ph-caret-down trigger-chevron"></i>
                     </div>
                     <div class="pj-modal-select-menu pj-dropdown" style="width: 100%; right: auto; left: 0;">
-                        <div class="pj-dropdown-item active" data-value="planning">
-                            <i class="ph ph-calendar-blank color-blue"></i>
-                            <span>Lên Kế Hoạch</span>
-                        </div>
-                        <div class="pj-dropdown-item" data-value="doing">
-                            <i class="ph ph-clock color-gray"></i>
-                            <span>Đang Thực Hiện</span>
-                        </div>
-                        <div class="pj-dropdown-item" data-value="testing">
-                            <i class="ph ph-circle-dashed color-orange"></i>
-                            <span>Chờ Nghiệm Thu</span>
-                        </div>
-                        <div class="pj-dropdown-item" data-value="done">
-                            <i class="ph ph-check-circle color-green"></i>
-                            <span>Hoàn Thành</span>
-                        </div>
+                        <div class="pj-dropdown-item active" data-value="planning">Lên Kế Hoạch</div>
+                        <div class="pj-dropdown-item" data-value="doing">Đang Thực Hiện</div>
+                        <div class="pj-dropdown-item" data-value="testing">Chờ Nghiệm Thu</div>
+                        <div class="pj-dropdown-item" data-value="done">Hoàn Thành</div>
                     </div>
                     <!-- Actual hidden input for form data -->
                     <input type="hidden" id="mProjectStatus" value="planning">
@@ -641,8 +616,6 @@ function openEditProjectModal(tr) {
         // but here we just manually sync for the edit modal open.
         const trigger = customSelect.querySelector('.pj-modal-select-trigger');
         trigger.querySelector('span').textContent = option.textContent.trim();
-        const icon = option.querySelector('i');
-        if (icon) trigger.querySelector('i:first-child').className = icon.className;
         
         customSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
         option.classList.add('active');
@@ -1056,8 +1029,6 @@ function resetProjectForm() {
     if (defaultOption) {
         const trigger = customSelect.querySelector('.pj-modal-select-trigger');
         trigger.querySelector('span').textContent = defaultOption.textContent.trim();
-        const icon = defaultOption.querySelector('i');
-        if (icon) trigger.querySelector('i:first-child').className = icon.className;
         customSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
         defaultOption.classList.add('active');
         document.getElementById('mProjectStatus').value = 'planning';

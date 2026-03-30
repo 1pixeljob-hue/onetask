@@ -309,7 +309,6 @@
                         <label class="modal-label"><i class="ph ph-tag"></i> Danh Mục <span class="req">*</span></label>
                         <div class="pj-modal-select" id="mPwdCategorySelect" data-input-id="mPwdCategory">
                             <div class="pj-modal-select-trigger">
-                                <i class="ph ph-tag"></i>
                                 <span>Khác</span>
                                 <i class="ph ph-caret-down trigger-chevron"></i>
                             </div>
@@ -505,8 +504,6 @@ function openAddPwdModal() {
     if (firstOption) {
         const trigger = customSelect.querySelector('.pj-modal-select-trigger');
         trigger.querySelector('span').textContent = firstOption.textContent.trim();
-        const icon = firstOption.querySelector('i');
-        if (icon) trigger.querySelector('i:first-child').style.color = icon.style.color;
         customSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
         firstOption.classList.add('active');
         document.getElementById('mPwdCategory').value = firstOption.dataset.value;
@@ -537,8 +534,6 @@ function openEditPwdModal(id) {
     if (option) {
         const trigger = customSelect.querySelector('.pj-modal-select-trigger');
         trigger.querySelector('span').textContent = option.textContent.trim();
-        const icon = option.querySelector('i');
-        if (icon) trigger.querySelector('i:first-child').style.color = icon.style.color;
         
         customSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
         option.classList.add('active');
