@@ -5,16 +5,20 @@ namespace App\Models;
 use App\Core\Database;
 use PDO;
 
-class LogModel {
+class LogModel
+{
     private $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = Database::getInstance()->getConnection();
         $this->checkAndCreateTable();
     }
 
-    private function checkAndCreateTable() {
-        if (!$this->db) return;
+    private function checkAndCreateTable()
+    {
+        if (!$this->db)
+            return;
         try {
             $sql = "CREATE TABLE IF NOT EXISTS activity_logs (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -38,8 +42,10 @@ class LogModel {
      * @param string $userName Người thực hiện (mặc định 'quydev')
      * @return bool
      */
-    public function addLog($module, $action, $itemName, $userName = 'quydev') {
-        if (!$this->db) return false;
+    public function addLog($module, $action, $itemName, $userName = 'quydev')
+    {
+        if (!$this->db)
+            return false;
         try {
             $sql = "INSERT INTO activity_logs (module, action, item_name, user_name) 
                     VALUES (:module, :action, :item_name, :user_name)";
@@ -60,7 +66,8 @@ class LogModel {
     /**
      * Lấy danh sách log với lọc và phân trang
      */
-    public function getAll($filters = [], $limit = 10, $offset = 0) {
+    public function getAll($filters = [], $limit = 10, $offset = 0)
+    {
         $where = [];
         $params = [];
 
@@ -86,14 +93,14 @@ class LogModel {
         $sql .= " ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
 
         $stmt = $this->db->prepare($sql);
-        
+
         // PDO bindValue for LIMIT and OFFSET because execute with array treats them as strings which MySQL might reject in some modes
         foreach ($params as $key => $val) {
             $stmt->bindValue($key, $val);
         }
-        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
-        
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -101,7 +108,8 @@ class LogModel {
     /**
      * Lấy tổng số bản ghi log (để phân trang)
      */
-    public function getCount($filters = []) {
+    public function getCount($filters = [])
+    {
         $where = [];
         $params = [];
 
@@ -128,13 +136,14 @@ class LogModel {
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         $result = $stmt->fetch();
-        return (int)$result['total'];
+        return (int) $result['total'];
     }
 
     /**
      * Xóa một bản ghi log
      */
-    public function delete($id) {
+    public function delete($id)
+    {
         $stmt = $this->db->prepare("DELETE FROM activity_logs WHERE id = :id");
         return $stmt->execute([':id' => $id]);
     }
@@ -142,7 +151,8 @@ class LogModel {
     /**
      * Dọn dẹp log cũ (Tuỳ chọn)
      */
-    public function clearOldLogs($days = 30) {
+    public function clearOldLogs($days = 30)
+    {
         $stmt = $this->db->prepare("DELETE FROM activity_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL :days DAY)");
         return $stmt->execute([':days' => $days]);
     }

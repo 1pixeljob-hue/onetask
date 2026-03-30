@@ -446,9 +446,9 @@ class MainController extends BaseController {
             }
 
             if ($success) {
-                echo json_encode(['status' => 'success', 'message' => 'Lưu mật khẩu thành công']);
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Lưu mật khẩu thành công']);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu mật khẩu']);
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi lưu mật khẩu']);
             }
         } catch (\Exception $e) {
             error_log("Error saving password: " . $e->getMessage());
