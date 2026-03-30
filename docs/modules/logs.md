@@ -2,25 +2,23 @@
 
 ## 1. Vị trí & Thành phần Hệ thống
 - **View**: `app/Views/logs.php` (Giao diện theo dõi hành động).
-- **Controller**: `MainController.php` (Phương thức `logs`).
-- **Data Source**: *(Dự kiến: bảng `logs` trong MySQL)*.
-- **JS**: Logic lọc theo Module, Action và Search nằm trong `logs.php`.
+- **Controller**: `MainController.php` (Phương thức `logs`, `addLog`).
+- **Data Source**: Bảng `activity_logs` trong MySQL.
+- **Model**: `LogModel.php` (Xử lý truy vấn, tự động tạo bảng nếu thiếu).
 
 ## 2. Business Logic (Chức năng cốt lõi)
-- **Lọc Dữ Liệu**: Thanh công cụ cho phép lọc theo Module (Project, Hosting, Passwords...) và loại hành động (Cập nhật, Tạo mới, Xóa).
-- **Danh Sách Log**: Bảng chi tiết bao gồm:
-    - Loại Module (Phân loại theo icon).
-    - Hành động (Badge màu xanh cho Cập nhật, xanh lá cho Tạo mới, đỏ cho Xóa).
-    - Tên Item bị tác động.
-    - Người thực hiện và Thời gian.
-- **Thao Tác**: Cho phép xem chi tiết thay đổi (View) hoặc xóa log (Delete).
+- **Theo dõi Thời gian thực**: Tự động ghi lại các hành động Thêm/Sửa/Xóa từ tất cả các module khác.
+- **Ghi Log Hàng loạt**: Hỗ trợ ghi log tóm tắt cho các thao tác chọn nhiều items (Bulk delete).
+- **Lọc & Tìm kiếm**: Thanh công cụ cho phép lọc theo Module, Loại hành động và từ khóa.
+- **Phân trang Backend**: Xử lý dữ liệu lớn bằng phân trang phía máy chủ (15 bản ghi/trang).
 
 ## 3. Lịch sử thay đổi (Changelog)
-- **[Mới hoàn thành]** Xây dựng Layout bảng Logs với thiết kế sạch sẽ và dễ nhìn.
-- **[Mới hoàn thành]** Triển khai logic lọc Client-side cho tất cả các cột.
-- **[Mới hoàn thành]** Phân chia trạng thái hành động bằng các Badge màu sắc trực quan.
+- **[Mới hoàn thành]** Chuyển đổi từ dữ liệu mockup sang Database thực tích hợp toàn hệ thống.
+- **[Mới hoàn thành]** Triển khai cơ chế bọc `try...catch` và chỉ ghi log khi thao tác dữ liệu thành công.
+- **[Mới hoàn thành]** Tích hợp ghi log cho thao tác "Xóa hàng loạt" trong Project và Hosting.
+- **[Mới hoàn thành]** Xây dựng Layout bảng Logs với thiết kế sạch sẽ, responsive và Badge màu sắc trực quan.
 
 ## 4. Gợi ý Tối ưu (Future Optimizations)
-1. **Dữ liệu Thực**: Chuyển đổi từ dữ liệu mockup sang Database thực tích hợp với mọi hành động lưu/xóa trong hệ thống.
-2. **Khôi phục (Restore)**: Tính năng tự động khôi phục dữ liệu đã xóa khi click vào log hành động "Xoá".
-3. **Phân trang Backend**: Xử lý phân trang phía máy chủ khi số lượng bản ghi log tăng cao.
+1. **Khôi phục (Restore)**: Lưu trữ trạng thái dữ liệu cũ vào cột `details` (JSON) để hỗ trợ tính năng Hoàn tác/Khôi phục.
+2. **Dọn dẹp định kỳ**: Tự động xóa log cũ (ví dụ: sau 30 ngày) để tối ưu dung lượng Database.
+3. **Export CSV**: Cho phép xuất báo cáo lịch sử hoạt động ra file Excel/CSV.

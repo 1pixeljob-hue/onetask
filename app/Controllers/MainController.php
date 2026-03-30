@@ -71,36 +71,48 @@ class MainController extends BaseController {
     }
 
     public function saveSnippet() {
+        header('Content-Type: application/json');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = [
-                'id' => $_POST['id'] ?? null,
-                'title' => $_POST['title'] ?? '',
-                'language' => $_POST['language'] ?? 'Khác',
-                'description' => $_POST['description'] ?? '',
-                'code' => $_POST['code'] ?? '',
-                'line_count' => (int)($_POST['line_count'] ?? 0),
-                'char_count' => (int)($_POST['char_count'] ?? 0)
-            ];
+            try {
+                $data = [
+                    'id' => $_POST['id'] ?? null,
+                    'title' => $_POST['title'] ?? '',
+                    'language' => $_POST['language'] ?? 'Khác',
+                    'description' => $_POST['description'] ?? '',
+                    'code' => $_POST['code'] ?? '',
+                    'line_count' => (int)($_POST['line_count'] ?? 0),
+                    'char_count' => (int)($_POST['char_count'] ?? 0)
+                ];
 
-            if ($this->snippetModel->save($data)) {
-                $action = $data['id'] ? 'Cập nhật' : 'Tạo mới';
-                $this->logModel->addLog('CodeX', $action, $data['title']);
-                echo json_encode(['status' => 'success', 'message' => 'Lưu snippet thành công']);
-            } else {
-                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu snippet']);
+                if ($this->snippetModel->save($data)) {
+                    $action = $data['id'] ? 'Cập nhật' : 'Tạo mới';
+                    $this->logModel->addLog('CodeX', $action, $data['title']);
+                    echo json_encode(['status' => 'success', 'message' => 'Lưu snippet thành công']);
+                } else {
+                    echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu snippet']);
+                }
+            } catch (\Exception $e) {
+                error_log("Error saving snippet: " . $e->getMessage());
+                echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
             }
         }
     }
 
     public function deleteSnippet() {
+        header('Content-Type: application/json');
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
-            $snippet = $this->snippetModel->find($_POST['id']);
-            if ($this->snippetModel->delete($_POST['id'])) {
-                $snippetTitle = ($snippet && isset($snippet['title'])) ? $snippet['title'] : 'Snippet #' . $_POST['id'];
-                $this->logModel->addLog('CodeX', 'Xoá', $snippetTitle);
-                echo json_encode(['status' => 'success', 'message' => 'Xoá snippet thành công']);
-            } else {
-                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá snippet']);
+            try {
+                $snippet = $this->snippetModel->find($_POST['id']);
+                if ($this->snippetModel->delete($_POST['id'])) {
+                    $snippetTitle = ($snippet && isset($snippet['title'])) ? $snippet['title'] : 'Snippet #' . $_POST['id'];
+                    $this->logModel->addLog('CodeX', 'Xoá', $snippetTitle);
+                    echo json_encode(['status' => 'success', 'message' => 'Xoá snippet thành công']);
+                } else {
+                    echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá snippet']);
+                }
+            } catch (\Exception $e) {
+                error_log("Error deleting snippet: " . $e->getMessage());
+                echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
             }
         }
     }
@@ -110,51 +122,54 @@ class MainController extends BaseController {
      */
     public function saveCodeCategory() {
         header('Content-Type: application/json');
-        $input = json_decode(file_get_contents('php://input'), true);
-        
-        $id = $input['id'] ?? ($_POST['id'] ?? null);
-        $name = $input['name'] ?? ($_POST['name'] ?? null);
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            $id = $input['id'] ?? ($_POST['id'] ?? null);
+            $name = $input['name'] ?? ($_POST['name'] ?? null);
 
-        if (!$name && !$id) {
-            echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);
-            return;
-        }
-
-        if ($id) {
-            $success = $this->codeCategoryModel->update($id, [
-                'name' => $name,
-                'color' => $input['color'] ?? '#fef9c3',
-                'text_color' => $input['text_color'] ?? '#854d0e'
-            ]);
-            $success_id = $id;
-        } else {
-            // Kiểm tra xem đã tồn tại chưa (cho trường hợp thêm nhanh từ dropdown)
-            $existing = $this->codeCategoryModel->findByName($name);
-            if ($existing) {
-                echo json_encode(['success' => true, 'id' => $existing['id'], 'name' => $existing['name'], 'exists' => true]);
+            if (!$name && !$id) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ']);
                 return;
             }
 
-            // Lấy màu từ input, nếu không có thì dùng mặc định
-            $color = $input['color'] ?? ($input['hex'] ?? '#fef9c3');
-            $text_color = $input['text_color'] ?? '#854d0e';
+            if ($id) {
+                $success = $this->codeCategoryModel->update($id, [
+                    'name' => $name,
+                    'color' => $input['color'] ?? '#fef9c3',
+                    'text_color' => $input['text_color'] ?? '#854d0e'
+                ]);
+                $success_id = $id;
+            } else {
+                $existing = $this->codeCategoryModel->findByName($name);
+                if ($existing) {
+                    echo json_encode(['status' => 'success', 'data' => ['id' => $existing['id'], 'name' => $existing['name'], 'exists' => true]]);
+                    return;
+                }
 
-            $success_id = $this->codeCategoryModel->create([
-                'name' => $name,
-                'color' => $color,
-                'text_color' => $text_color
-            ]);
-            $success = $success_id !== false;
-        }
+                $color = $input['color'] ?? ($input['hex'] ?? '#fef9c3');
+                $text_color = $input['text_color'] ?? '#854d0e';
 
-        if ($success) {
-            $cat = $this->codeCategoryModel->find($success_id);
-            $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $success_id;
-            $action = $id ? 'Cập nhật' : 'Tạo mới';
-            $this->logModel->addLog('CodeX', $action, 'Danh mục: ' . $catName);
-            echo json_encode(['success' => true, 'id' => $success_id, 'name' => $catName, 'color' => $cat ? $cat['color'] : '#fef9c3', 'text_color' => $cat ? $cat['text_color'] : '#854d0e']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Lỗi khi lưu danh mục']);
+                $success_id = $this->codeCategoryModel->create([
+                    'name' => $name,
+                    'color' => $color,
+                    'text_color' => $text_color
+                ]);
+                $success = $success_id !== false;
+            }
+
+            if ($success) {
+                $cat = $this->codeCategoryModel->find($success_id);
+                $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $success_id;
+                $action = $id ? 'Cập nhật' : 'Tạo mới';
+                $this->logModel->addLog('CodeX', $action, 'Danh mục: ' . $catName);
+                echo json_encode(['status' => 'success', 'data' => ['id' => $success_id, 'name' => $catName, 'color' => $cat ? $cat['color'] : '#fef9c3', 'text_color' => $cat ? $cat['text_color'] : '#854d0e']]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu danh mục']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error saving code category: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
         }
     }
 
@@ -163,20 +178,27 @@ class MainController extends BaseController {
      */
     public function deleteCodeCategory() {
         header('Content-Type: application/json');
-        $input = json_decode(file_get_contents('php://input'), true);
-        
-        if (!$input || !isset($input['id'])) {
-            echo json_encode(['success' => false, 'message' => 'ID không hợp lệ']);
-            return;
-        }
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['id'])) {
+                echo json_encode(['status' => 'error', 'message' => 'ID không hợp lệ']);
+                return;
+            }
 
-        $cat = $this->codeCategoryModel->find($input['id']);
-        $success = $this->codeCategoryModel->delete($input['id']);
-        if ($success) {
-            $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $input['id'];
-            $this->logModel->addLog('CodeX', 'Xoá', 'Danh mục: ' . $catName);
+            $cat = $this->codeCategoryModel->find($input['id']);
+            $success = $this->codeCategoryModel->delete($input['id']);
+            if ($success) {
+                $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $input['id'];
+                $this->logModel->addLog('CodeX', 'Xoá', 'Danh mục: ' . $catName);
+                echo json_encode(['status' => 'success', 'message' => 'Xoá danh mục thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá danh mục']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error deleting code category: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
         }
-        echo json_encode(['success' => $success]);
     }
 
     public function logs() {
@@ -224,22 +246,31 @@ class MainController extends BaseController {
      */
     public function saveProject() {
         header('Content-Type: application/json');
-        $input = json_decode(file_get_contents('php://input'), true);
-        
-        if (!$input || !isset($input['name'])) {
-            echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);
-            return;
-        }
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['name'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ']);
+                return;
+            }
 
-        if (isset($input['id']) && $input['id']) {
-            $success = $this->projectModel->update($input['id'], $input);
-            $this->logModel->addLog('Project', 'Cập nhật', $input['name']);
-        } else {
-            $success = $this->projectModel->create($input);
-            $this->logModel->addLog('Project', 'Tạo mới', $input['name']);
-        }
+            if (isset($input['id']) && $input['id']) {
+                $success = $this->projectModel->update($input['id'], $input);
+                if ($success) $this->logModel->addLog('Project', 'Cập nhật', $input['name']);
+            } else {
+                $success = $this->projectModel->create($input);
+                if ($success) $this->logModel->addLog('Project', 'Tạo mới', $input['name']);
+            }
 
-        echo json_encode(['success' => $success]);
+            if ($success) {
+                echo json_encode(['status' => 'success', 'message' => 'Lưu dự án thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu dự án']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error saving project: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
+        }
     }
 
     /**
@@ -247,20 +278,27 @@ class MainController extends BaseController {
      */
     public function deleteProject() {
         header('Content-Type: application/json');
-        $input = json_decode(file_get_contents('php://input'), true);
-        
-        if (!$input || !isset($input['id'])) {
-            echo json_encode(['success' => false, 'message' => 'ID không hợp lệ']);
-            return;
-        }
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['id'])) {
+                echo json_encode(['status' => 'error', 'message' => 'ID không hợp lệ']);
+                return;
+            }
 
-        $project = $this->projectModel->find($input['id']);
-        $success = $this->projectModel->delete($input['id']);
-        if ($success) {
-            $projectName = ($project && isset($project['name'])) ? $project['name'] : 'Project #' . $input['id'];
-            $this->logModel->addLog('Project', 'Xoá', $projectName);
+            $project = $this->projectModel->find($input['id']);
+            $success = $this->projectModel->delete($input['id']);
+            if ($success) {
+                $projectName = ($project && isset($project['name'])) ? $project['name'] : 'Project #' . $input['id'];
+                $this->logModel->addLog('Project', 'Xoá', $projectName);
+                echo json_encode(['status' => 'success', 'message' => 'Xoá dự án thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá dự án']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error deleting project: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
         }
-        echo json_encode(['success' => $success]);
     }
 
     /**
@@ -268,22 +306,31 @@ class MainController extends BaseController {
      */
     public function saveHosting() {
         header('Content-Type: application/json');
-        $input = json_decode(file_get_contents('php://input'), true);
-        
-        if (!$input || !isset($input['name'])) {
-            echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);
-            return;
-        }
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['name'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ']);
+                return;
+            }
 
-        if (isset($input['id']) && $input['id']) {
-            $success = $this->hostingModel->update($input['id'], $input);
-            $this->logModel->addLog('Hosting', 'Cập nhật', $input['name']);
-        } else {
-            $success = $this->hostingModel->create($input);
-            $this->logModel->addLog('Hosting', 'Tạo mới', $input['name']);
-        }
+            if (isset($input['id']) && $input['id']) {
+                $success = $this->hostingModel->update($input['id'], $input);
+                if ($success) $this->logModel->addLog('Hosting', 'Cập nhật', $input['name']);
+            } else {
+                $success = $this->hostingModel->create($input);
+                if ($success) $this->logModel->addLog('Hosting', 'Tạo mới', $input['name']);
+            }
 
-        echo json_encode(['success' => $success]);
+            if ($success) {
+                echo json_encode(['status' => 'success', 'message' => 'Lưu hosting thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu hosting']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error saving hosting: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
+        }
     }
 
     /**
@@ -291,20 +338,27 @@ class MainController extends BaseController {
      */
     public function deleteHosting() {
         header('Content-Type: application/json');
-        $input = json_decode(file_get_contents('php://input'), true);
-        
-        if (!$input || !isset($input['id'])) {
-            echo json_encode(['success' => false, 'message' => 'ID không hợp lệ']);
-            return;
-        }
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['id'])) {
+                echo json_encode(['status' => 'error', 'message' => 'ID không hợp lệ']);
+                return;
+            }
 
-        $hosting = $this->hostingModel->find($input['id']);
-        $success = $this->hostingModel->delete($input['id']);
-        if ($success) {
-            $hostingName = ($hosting && isset($hosting['name'])) ? $hosting['name'] : 'Hosting #' . $input['id'];
-            $this->logModel->addLog('Hosting', 'Xoá', $hostingName);
+            $hosting = $this->hostingModel->find($input['id']);
+            $success = $this->hostingModel->delete($input['id']);
+            if ($success) {
+                $hostingName = ($hosting && isset($hosting['name'])) ? $hosting['name'] : 'Hosting #' . $input['id'];
+                $this->logModel->addLog('Hosting', 'Xoá', $hostingName);
+                echo json_encode(['status' => 'success', 'message' => 'Xoá hosting thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá hosting']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error deleting hosting: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
         }
-        echo json_encode(['success' => $success]);
     }
 
     /**
@@ -312,15 +366,26 @@ class MainController extends BaseController {
      */
     public function deleteProjectsBulk() {
         header('Content-Type: application/json');
-        $input = json_decode(file_get_contents('php://input'), true);
-        
-        if (!$input || !isset($input['ids']) || !is_array($input['ids'])) {
-            echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);
-            return;
-        }
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['ids']) || !is_array($input['ids'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ']);
+                return;
+            }
 
-        $success = $this->projectModel->deleteBulk($input['ids']);
-        echo json_encode(['success' => $success]);
+            $count = count($input['ids']);
+            $success = $this->projectModel->deleteBulk($input['ids']);
+            if ($success) {
+                $this->logModel->addLog('Project', 'Xoá nhiều', "Đã xoá $count dự án");
+                echo json_encode(['status' => 'success', 'message' => "Đã xoá $count dự án"]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá hàng loạt']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error bulk deleting projects: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
+        }
     }
 
     /**
@@ -328,15 +393,26 @@ class MainController extends BaseController {
      */
     public function deleteHostingsBulk() {
         header('Content-Type: application/json');
-        $input = json_decode(file_get_contents('php://input'), true);
-        
-        if (!$input || !isset($input['ids']) || !is_array($input['ids'])) {
-            echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);
-            return;
-        }
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['ids']) || !is_array($input['ids'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ']);
+                return;
+            }
 
-        $success = $this->hostingModel->deleteBulk($input['ids']);
-        echo json_encode(['success' => $success]);
+            $count = count($input['ids']);
+            $success = $this->hostingModel->deleteBulk($input['ids']);
+            if ($success) {
+                $this->logModel->addLog('Hosting', 'Xoá nhiều', "Đã xoá $count hosting");
+                echo json_encode(['status' => 'success', 'message' => "Đã xoá $count hosting"]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá hàng loạt']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error bulk deleting hostings: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
+        }
     }
 
     /**
@@ -344,22 +420,31 @@ class MainController extends BaseController {
      */
     public function savePassword() {
         header('Content-Type: application/json');
-        $input = json_decode(file_get_contents('php://input'), true);
-        
-        if (!$input || !isset($input['title'])) {
-            echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ']);
-            return;
-        }
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['title'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ']);
+                return;
+            }
 
-        if (isset($input['id']) && $input['id']) {
-            $success = $this->passwordModel->update($input['id'], $input);
-            $this->logModel->addLog('Passwords', 'Cập nhật', $input['title']);
-        } else {
-            $success = $this->passwordModel->create($input);
-            $this->logModel->addLog('Passwords', 'Tạo mới', $input['title']);
-        }
+            if (isset($input['id']) && $input['id']) {
+                $success = $this->passwordModel->update($input['id'], $input);
+                if ($success) $this->logModel->addLog('Passwords', 'Cập nhật', $input['title']);
+            } else {
+                $success = $this->passwordModel->create($input);
+                if ($success) $this->logModel->addLog('Passwords', 'Tạo mới', $input['title']);
+            }
 
-        echo json_encode(['success' => $success]);
+            if ($success) {
+                echo json_encode(['status' => 'success', 'message' => 'Lưu mật khẩu thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu mật khẩu']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error saving password: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
+        }
     }
 
     /**
@@ -367,20 +452,27 @@ class MainController extends BaseController {
      */
     public function deletePassword() {
         header('Content-Type: application/json');
-        $input = json_decode(file_get_contents('php://input'), true);
-        
-        if (!$input || !isset($input['id'])) {
-            echo json_encode(['success' => false, 'message' => 'ID không hợp lệ']);
-            return;
-        }
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['id'])) {
+                echo json_encode(['status' => 'error', 'message' => 'ID không hợp lệ']);
+                return;
+            }
 
-        $password = $this->passwordModel->find($input['id']);
-        $success = $this->passwordModel->delete($input['id']);
-        if ($success) {
-            $passwordTitle = ($password && isset($password['title'])) ? $password['title'] : 'Mật khẩu #' . $input['id'];
-            $this->logModel->addLog('Passwords', 'Xoá', $passwordTitle);
+            $password = $this->passwordModel->find($input['id']);
+            $success = $this->passwordModel->delete($input['id']);
+            if ($success) {
+                $passwordTitle = ($password && isset($password['title'])) ? $password['title'] : 'Mật khẩu #' . $input['id'];
+                $this->logModel->addLog('Passwords', 'Xoá', $passwordTitle);
+                echo json_encode(['status' => 'success', 'message' => 'Xoá mật khẩu thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá mật khẩu']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error deleting password: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
         }
-        echo json_encode(['success' => $success]);
     }
 
     /**
@@ -388,22 +480,31 @@ class MainController extends BaseController {
      */
     public function saveCategory() {
         header('Content-Type: application/json');
-        $input = json_decode(file_get_contents('php://input'), true);
-        
-        if (!$input || !isset($input['name'])) {
-            echo json_encode(['success' => false, 'message' => 'Tên danh mục không hợp lệ']);
-            return;
-        }
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['name'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Tên danh mục không hợp lệ']);
+                return;
+            }
 
-        if (isset($input['id']) && $input['id']) {
-            $success = $this->categoryModel->update($input['id'], $input);
-            $this->logModel->addLog('Passwords', 'Cập nhật', 'Danh mục: ' . $input['name']);
-        } else {
-            $success = $this->categoryModel->create($input);
-            $this->logModel->addLog('Passwords', 'Tạo mới', 'Danh mục: ' . $input['name']);
-        }
+            if (isset($input['id']) && $input['id']) {
+                $success = $this->categoryModel->update($input['id'], $input);
+                if ($success) $this->logModel->addLog('Passwords', 'Cập nhật', 'Danh mục: ' . $input['name']);
+            } else {
+                $success = $this->categoryModel->create($input);
+                if ($success) $this->logModel->addLog('Passwords', 'Tạo mới', 'Danh mục: ' . $input['name']);
+            }
 
-        echo json_encode(['success' => $success]);
+            if ($success) {
+                echo json_encode(['status' => 'success', 'message' => 'Lưu danh mục thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu danh mục']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error saving category: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
+        }
     }
 
     /**
@@ -411,19 +512,26 @@ class MainController extends BaseController {
      */
     public function deleteCategory() {
         header('Content-Type: application/json');
-        $input = json_decode(file_get_contents('php://input'), true);
-        
-        if (!$input || !isset($input['id'])) {
-            echo json_encode(['success' => false, 'message' => 'ID không hợp lệ']);
-            return;
-        }
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['id'])) {
+                echo json_encode(['status' => 'error', 'message' => 'ID không hợp lệ']);
+                return;
+            }
 
-        $cat = $this->categoryModel->find($input['id']);
-        $success = $this->categoryModel->delete($input['id']);
-        if ($success) {
-            $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $input['id'];
-            $this->logModel->addLog('Passwords', 'Xoá', 'Danh mục: ' . $catName);
+            $cat = $this->categoryModel->find($input['id']);
+            $success = $this->categoryModel->delete($input['id']);
+            if ($success) {
+                $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $input['id'];
+                $this->logModel->addLog('Passwords', 'Xoá', 'Danh mục: ' . $catName);
+                echo json_encode(['status' => 'success', 'message' => 'Xoá danh mục thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xoá danh mục']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error deleting category: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
         }
-        echo json_encode(['success' => $success]);
     }
 }
