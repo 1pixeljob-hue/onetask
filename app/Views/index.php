@@ -219,13 +219,15 @@
                         <!-- Milestone Card Container -->
                         <div id="milestoneContainer">
                             <!-- No Progress Reminder -->
-                            <div class="milestone-footer reminder-card" id="noProgressReminder" style="display: none; background: #f8fafc; border: 1px dashed #e2e8f0; box-shadow: none;">
+                            <div class="milestone-footer reminder-card" id="noProgressReminder"
+                                style="display: none; background: #f8fafc; border: 1px dashed #e2e8f0; box-shadow: none;">
                                 <div class="milestone-icon" style="background: #f1f5f9; color: #94a3b8;">
                                     <i class="ph ph-sparkle"></i>
                                 </div>
                                 <div class="milestone-text">
-                                    <span style="color: #64748b;">Sẵn sàng khởi đầu?</span>
-                                    <p style="color: #475569; font-size: 13px; font-weight: 500;">Chưa có dự án nào đang có tiến độ. Hãy thêm dự án mới để bắt đầu ngay!</p>
+                                    <span style="color: #64748b;">Chưa có dự án nào!!</span>
+                                    <p style="color: #475569; font-size: 13px; font-weight: 500;">Hãy thêm dự án mới để
+                                        bắt đầu ngay!</p>
                                 </div>
                             </div>
                         </div>
@@ -432,7 +434,7 @@
         if (sideProjectContainer) {
             const activeProjects = PROJECTS.filter(p => p.status === 'doing' || p.status === 'testing');
             const displayProjects = activeProjects.slice(0, 3);
-            
+
             // Toggle Reminder
             if (activeProjects.length > 0) {
                 if (noProgressReminder) noProgressReminder.style.display = 'none';
@@ -465,7 +467,7 @@
         const activityContainer = document.getElementById('dashActivityList');
         if (activityContainer) {
             const logs = PHP_DATA.recentLogs || [];
-            
+
             if (logs.length === 0) {
                 activityContainer.innerHTML = '<div class="text-center py-5 text-muted" style="font-size: 13px;">Chưa có hoạt động nào được ghi lại</div>';
             } else {
