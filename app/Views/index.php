@@ -212,7 +212,7 @@
                         <div class="progress-header">
                             <h3>Tiến độ dự án</h3>
                         </div>
-                        <div class="card-list" id="sideProjectList">
+                        <div class="card-list" id="sideProjectList" style="max-height: 480px; overflow-y: auto; padding-right: 4px;">
                             <!-- Rendered by JS -->
                         </div>
 
@@ -432,8 +432,12 @@
         const noProgressReminder = document.getElementById('noProgressReminder');
 
         if (sideProjectContainer) {
-            const activeProjects = PROJECTS.filter(p => p.status === 'planning' || p.status === 'doing' || p.status === 'testing');
-            const displayProjects = activeProjects.slice(0, 3);
+            // Priority: doing (1), testing (2), planning (3)
+            const statusPriority = { 'doing': 1, 'testing': 2, 'planning': 3 };
+            const activeProjects = PROJECTS.filter(p => p.status === 'planning' || p.status === 'doing' || p.status === 'testing')
+                                          .sort((a, b) => (statusPriority[a.status] || 99) - (statusPriority[b.status] || 99));
+
+            const displayProjects = activeProjects.slice(0, 10);
 
             // Toggle Reminder
             if (activeProjects.length > 0) {
