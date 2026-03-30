@@ -2669,7 +2669,7 @@ body {
 .modal-label .req { color: #ef4444; }
 .modal-input {
     padding: 0 12px;
-    height: 40px;
+    height: 44px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     font-size: 13px;
@@ -3738,7 +3738,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 0 12px;
-    height: 40px;
+    height: 44px;
     box-sizing: border-box;
     border: 1px solid var(--border-color);
     border-radius: 8px;
@@ -3747,8 +3747,8 @@ body {
 }
 
 .cx-lang-badge {
-    background-color: #fef9c3;
-    color: #854d0e;
+    background-color: #f1f5f9;
+    color: #64748b;
     padding: 2px 10px;
     border-radius: 20px;
     font-size: 11px;
