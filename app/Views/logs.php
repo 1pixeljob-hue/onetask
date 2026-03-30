@@ -101,12 +101,6 @@
 
             <div class="content-body">
 
-                <!-- Page Title in Content -->
-                <div class="logs-page-title-block">
-                    <h2 class="logs-page-title">Logs</h2>
-                    <p class="logs-page-subtitle">Theo dõi các hành động và restore dữ liệu đã xóa</p>
-                </div>
-
                 <!-- Toolbar -->
                 <div class="logs-toolbar-row">
                     <div class="pj-search-wrap logs-search">
