@@ -432,7 +432,7 @@
         const noProgressReminder = document.getElementById('noProgressReminder');
 
         if (sideProjectContainer) {
-            const activeProjects = PROJECTS.filter(p => p.status === 'doing' || p.status === 'testing');
+            const activeProjects = PROJECTS.filter(p => p.status === 'planning' || p.status === 'doing' || p.status === 'testing');
             const displayProjects = activeProjects.slice(0, 3);
 
             // Toggle Reminder
@@ -449,6 +449,7 @@
                 displayProjects.forEach(p => {
                     let badgeClass = 'status-badge-v3-running';
                     let label = 'ĐANG THỰC HIỆN';
+                    if (p.status === 'planning') { badgeClass = 'status-badge-v3-warning'; label = 'LÊN KẾ HOẠCH'; }
                     if (p.status === 'testing') { badgeClass = 'status-badge-v3-warning'; label = 'CHỜ NGHIỆM THU'; }
                     if (p.status === 'done') { badgeClass = 'status-badge-v3-active'; label = 'HOÀN THÀNH'; }
 

@@ -139,9 +139,22 @@
                             </button>
                             <div class="pj-dropdown" id="filterDropdown">
                                 <div class="pj-dropdown-item active" onclick="setFilter('', 'Tất cả trạng thái', this)">Tất cả</div>
-                                <div class="pj-dropdown-item" onclick="setFilter('doing', 'Đang Thực Hiện', this)">Đang Thực Hiện</div>
-                                <div class="pj-dropdown-item" onclick="setFilter('testing', 'Chờ Nghiệm Thu', this)">Chờ Nghiệm Thu</div>
-                                <div class="pj-dropdown-item" onclick="setFilter('done', 'Hoàn Thành', this)">Hoàn Thành</div>
+                                <div class="pj-dropdown-item" onclick="setFilter('planning', 'Lên Kế Hoạch', this)">
+                                    <i class="ph ph-calendar-blank color-blue"></i>
+                                    <span>Lên Kế Hoạch</span>
+                                </div>
+                                <div class="pj-dropdown-item" onclick="setFilter('doing', 'Đang Thực Hiện', this)">
+                                    <i class="ph ph-clock color-gray"></i>
+                                    <span>Đang Thực Hiện</span>
+                                </div>
+                                <div class="pj-dropdown-item" onclick="setFilter('testing', 'Chờ Nghiệm Thu', this)">
+                                    <i class="ph ph-circle-dashed color-orange"></i>
+                                    <span>Chờ Nghiệm Thu</span>
+                                </div>
+                                <div class="pj-dropdown-item" onclick="setFilter('done', 'Hoàn Thành', this)">
+                                    <i class="ph ph-check-circle color-green"></i>
+                                    <span>Hoàn Thành</span>
+                                </div>
                             </div>
                         </div>
                         <button class="pj-add-btn" onclick="openAddProjectModal()">
