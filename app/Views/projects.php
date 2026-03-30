@@ -841,7 +841,7 @@ function submitProjectForm() {
     }
 }
 
-function addProject() {
+async function addProject() {
     const data = getFormData();
     if (!data) return;
 
@@ -865,7 +865,7 @@ function addProject() {
     }
 }
 
-function updateProject() {
+async function updateProject() {
     const data = getFormData();
     if (!data || !currentRowToEdit) return;
     
