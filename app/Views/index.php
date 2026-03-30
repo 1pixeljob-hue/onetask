@@ -619,7 +619,7 @@
         // Layer 1: Stat cards V2
         if (document.getElementById('statTotalHosting')) {
             document.getElementById('statTotalHosting').textContent = stats.totalHostings;
-            document.getElementById('statActiveHosting').textContent = `${stats.activeHostings} cụm đang chạy`;
+            document.getElementById('statActiveHosting').textContent = `cụm đang chạy`;
             document.getElementById('statExpiring').textContent = stats.expiringSoon;
             // "Dự án đang thực hiện" counts both doing and testing
             document.getElementById('statDoing').textContent = stats.doingProjects.length + stats.testingProjects.length;
