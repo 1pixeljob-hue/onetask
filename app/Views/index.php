@@ -15,7 +15,9 @@
             projects: <?php echo json_encode($projects); ?>,
             hostings: <?php echo json_encode($hostings); ?>,
             monthlyRevenue: <?php echo json_encode($monthlyRevenue); ?>,
-            recentLogs: <?php echo json_encode($recentLogs ?? []); ?>
+            recentLogs: <?php echo json_encode($recentLogs ?? []); ?>,
+            password_categories: <?php echo json_encode($password_categories ?? []); ?>,
+            snippet_categories: <?php echo json_encode($snippet_categories ?? []); ?>
         };
     </script>
     <script src="/js/shared-data.js"></script>
@@ -301,6 +303,276 @@
 
             </div>
         </main>
+    </div>
+
+    <!-- DASHBOARD QUICK ACTION MODALS -->
+    <!-- Modal Thêm Hosting Mới (Dashboard) -->
+    <div class="modal-overlay" id="hostingModal" onclick="closeHostingModal(event)">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <div class="modal-icon-brand"><i id="modalBrandIcon" class="ph-fill ph-hard-drives"></i></div>
+                    <h3 class="modal-title" id="modalTitle">Thêm Hosting Mới</h3>
+                </div>
+                <button class="modal-close" onclick="closeHostingModalBtn()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-field full">
+                    <label class="modal-label">Tên Hosting <span class="req">*</span></label>
+                    <input type="text" class="modal-input" id="mHostingName" placeholder="VD: Website Chính">
+                </div>
+                <div class="modal-row">
+                    <div class="modal-field">
+                        <label class="modal-label">Tên Miền <span class="req">*</span></label>
+                        <input type="text" class="modal-input" id="mDomain" placeholder="VD: example.com">
+                    </div>
+                    <div class="modal-field">
+                        <label class="modal-label">Nhà Cung Cấp <span class="req">*</span></label>
+                        <input type="text" class="modal-input" id="mProvider" placeholder="iNet" value="iNet">
+                    </div>
+                </div>
+                <div class="modal-row">
+                    <div class="modal-field">
+                        <label class="modal-label">Ngày Đăng Ký <span class="req">*</span></label>
+                        <input type="date" class="modal-input" id="mRegDate">
+                    </div>
+                    <div class="modal-field">
+                        <label class="modal-label">Ngày Hết Hạn <span class="req">*</span></label>
+                        <input type="date" class="modal-input" id="mExpDate">
+                    </div>
+                </div>
+                <div class="modal-field full">
+                    <label class="modal-label">Giá (VNĐ) <span class="req">*</span></label>
+                    <input type="number" class="modal-input" id="hostingPrice" value="1100000" oninput="formatPrice()">
+                    <div class="modal-price-hint" id="priceHint">1.100.000 VNĐ</div>
+                </div>
+                <div class="modal-field full">
+                    <label class="modal-label">Ghi Chú</label>
+                    <textarea class="modal-textarea" id="mHostingNotes" placeholder="Thêm ghi chú về hosting này..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn-cancel" onclick="closeHostingModalBtn()">Hủy</button>
+                <button class="modal-btn-submit" id="modalSubmitBtn" onclick="submitHostingForm()"><i class="ph ph-plus"></i> Thêm Mới</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Thêm Project Mới (Dashboard) -->
+    <div class="modal-overlay" id="addProjectModal" onclick="closeAddProjectModalOverlay(event)">
+        <div class="modal-box scrollable">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <div class="modal-icon-brand"><i class="ph-fill ph-folders"></i></div>
+                    <h3 class="modal-title">Thêm Project Mới</h3>
+                </div>
+                <button class="modal-close" onclick="closeAddProjectModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section-header"><span class="modal-section-title">Thông Tin Project</span></div>
+                <div class="modal-field full">
+                    <label class="modal-label">Tên Project <span class="req">*</span></label>
+                    <input type="text" class="modal-input" id="mProjectName" placeholder="VD: Website Thương Mại Điện Tử">
+                </div>
+                <div class="modal-field full">
+                    <label class="modal-label">Trạng Thái <span class="req">*</span></label>
+                    <div class="pj-modal-select" id="mProjectStatusSelect" data-input-id="mProjectStatus">
+                        <div class="pj-modal-select-trigger" onclick="togglePjModalSelect(this)">
+                            <span>Lên Kế Hoạch</span>
+                            <i class="ph ph-caret-down trigger-chevron"></i>
+                        </div>
+                        <div class="pj-modal-select-menu pj-dropdown" style="width: 100%; right: auto; left: 0;">
+                            <div class="pj-dropdown-item active" data-value="planning"><span>Lên Kế Hoạch</span></div>
+                            <div class="pj-dropdown-item" data-value="doing"><span>Đang Thực Hiện</span></div>
+                            <div class="pj-dropdown-item" data-value="testing"><span>Chờ Nghiệm Thu</span></div>
+                            <div class="pj-dropdown-item" data-value="done"><span>Hoàn Thành</span></div>
+                            <div class="pj-dropdown-item" data-value="paused"><span>Tạm Dừng</span></div>
+                        </div>
+                        <input type="hidden" id="mProjectStatus" value="planning">
+                    </div>
+                </div>
+                <div class="modal-field full">
+                    <label class="modal-label">Mô Tả</label>
+                    <textarea class="modal-textarea" id="mProjectDesc" placeholder="Mô tả chi tiết về project..."></textarea>
+                </div>
+                <div class="modal-field full">
+                    <label class="modal-label">Ngày Tạo <span class="req">*</span></label>
+                    <input type="date" class="modal-input" id="mProjectDate">
+                </div>
+                <div class="modal-section-header with-border"><span class="modal-section-title">Thông Tin Khách Hàng</span></div>
+                <div class="modal-row">
+                    <div class="modal-field">
+                        <label class="modal-label">Tên Khách Hàng <span class="req">*</span></label>
+                        <input type="text" class="modal-input" id="mCustomerName" placeholder="VD: Nguyễn Văn A">
+                    </div>
+                    <div class="modal-field">
+                        <label class="modal-label">Số Điện Thoại</label>
+                        <input type="text" class="modal-input" id="mCustomerPhone" placeholder="VD: 0912345678">
+                    </div>
+                </div>
+                <div class="modal-section-header with-border"><span class="modal-section-title">Thông Tin Quản Trị</span></div>
+                <div class="modal-field full">
+                    <label class="modal-label">Đường Dẫn Admin</label>
+                    <input type="text" class="modal-input" id="mAdminLink" placeholder="VD: https://example.com/admin">
+                </div>
+                <div class="modal-row">
+                    <div class="modal-field">
+                        <label class="modal-label">Tài Khoản Admin</label>
+                        <input type="text" class="modal-input" id="mAdminUser" placeholder="VD: admin">
+                    </div>
+                    <div class="modal-field">
+                        <label class="modal-label">Mật Khẩu Admin</label>
+                        <div class="modal-input-group">
+                            <input type="password" class="modal-input" id="adminPassword" placeholder="********">
+                            <button type="button" class="modal-input-icon-btn" onclick="togglePasswordVisibility('adminPassword', this)">
+                                <i class="ph ph-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-section-header with-border"><span class="modal-section-title">Thông Tin Tài Chính</span></div>
+                <div class="modal-field full">
+                    <label class="modal-label">Giá Trị Dự Án (VNĐ)</label>
+                    <div class="modal-input-group">
+                        <i class="ph ph-currency-circle-dollar modal-input-prefix"></i>
+                        <input type="number" class="modal-input with-prefix" id="projectValue" value="0" oninput="updateProjectValueDisplay(this)">
+                    </div>
+                    <div id="projectValueDisplay" class="modal-price-hint">0 VNĐ</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn-cancel" onclick="closeAddProjectModal()">Hủy</button>
+                <button class="modal-btn-submit" onclick="submitProjectForm()">Thêm Mới</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Thêm Mật Khẩu Mới (Dashboard) -->
+    <div class="modal-overlay" id="addPasswordModal" onclick="closeAddPasswordModalOverlay(event)">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <div class="modal-icon-brand"><i class="ph-fill ph-key"></i></div>
+                    <h3 class="modal-title">Lưu Mật Khẩu Mới</h3>
+                </div>
+                <button class="modal-close" onclick="closeAddPwdModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <form id="addPasswordForm" onsubmit="submitAddPwdForm(event)">
+                <div class="modal-body">
+                    <div class="modal-field full">
+                        <label class="modal-label">Tiêu Đề <span class="req">*</span></label>
+                        <input type="text" class="modal-input" id="mPwdTitle" placeholder="VD: Gmail - Công Ty" required>
+                    </div>
+                    <div class="modal-field full">
+                        <label class="modal-label">Website</label>
+                        <input type="text" class="modal-input" id="mPwdUrl" placeholder="VD: https://gmail.com">
+                    </div>
+                    <div class="modal-field full">
+                        <label class="modal-label">Danh Mục <span class="req">*</span></label>
+                        <div class="pj-modal-select" id="mPwdCategorySelect" data-input-id="mPwdCategory">
+                            <div class="pj-modal-select-trigger" onclick="togglePjModalSelect(this)">
+                                <span>Khác</span>
+                                <i class="ph ph-caret-down trigger-chevron"></i>
+                            </div>
+                            <div class="pj-modal-select-menu pj-dropdown" style="width: 100%; right: auto; left: 0;">
+                                <?php foreach ($password_categories as $cat): ?>
+                                    <div class="pj-dropdown-item" data-value="<?php echo htmlspecialchars($cat['name']); ?>"><?php echo htmlspecialchars($cat['name']); ?></div>
+                                <?php endforeach; ?>
+                            </div>
+                            <input type="hidden" id="mPwdCategory" value="Khác" required>
+                        </div>
+                    </div>
+                    <div class="modal-field full">
+                        <label class="modal-label">Tài Khoản <span class="req">*</span></label>
+                        <input type="text" class="modal-input" id="mPwdUser" placeholder="VD: user@example.com" required>
+                    </div>
+                    <div class="modal-field full">
+                        <div class="label-with-action">
+                            <label class="modal-label">Mật Khẩu <span class="req">*</span></label>
+                            <a href="javascript:void(0)" class="label-link" onclick="generateStrongPwd()">Tạo mật khẩu mạnh</a>
+                        </div>
+                        <div class="pwd-input-wrapper">
+                            <input type="password" class="modal-input" id="mPwdPass" placeholder="••••••••" required>
+                            <button type="button" class="btn-toggle-pwd" onclick="toggleAddPwdVisibility()">
+                                <i class="ph ph-eye" id="mPwdEyeIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal-field full">
+                        <label class="modal-label">Ghi Chú</label>
+                        <textarea class="modal-textarea" id="mPwdNotes" placeholder="Ghi chú bổ sung (tùy chọn)..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="modal-btn-cancel" onclick="closeAddPwdModal()">Hủy</button>
+                    <button type="submit" class="modal-btn-submit">Lưu Mật Khẩu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Thêm Code Snippet (Dashboard) -->
+    <div id="cxModal" class="modal-overlay">
+        <div class="modal-box cx-modal-box">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <div class="cx-modal-icon"><i class="ph ph-code-simple"></i></div>
+                    <span>Tạo Snippet Mới</span>
+                </div>
+                <button class="modal-close" onclick="closeCxModal()">&times;</button>
+            </div>
+            <form id="cxForm" onsubmit="submitCxForm(event)">
+                <div class="modal-body">
+                    <div class="modal-row">
+                        <div class="modal-field">
+                            <label class="modal-label">Tên Code <span class="req">*</span></label>
+                            <input type="text" name="title" id="cxTitle" class="modal-input" placeholder="VD: React useEffect" required>
+                        </div>
+                        <div class="modal-field">
+                            <label class="modal-label">Loại Code <span class="req">*</span></label>
+                            <div class="pj-modal-select" data-input-id="cxLangInput" id="cxLangSelect">
+                                <div class="cx-badge-select-trigger pj-modal-select-trigger" onclick="togglePjModalSelect(this)">
+                                    <span class="cx-lang-badge" id="cxLangBadge">JavaScript</span>
+                                    <i class="ph ph-caret-down"></i>
+                                </div>
+                                <div class="pj-dropdown">
+                                    <div class="pj-dropdown-list">
+                                        <?php foreach ($snippet_categories as $cat): ?>
+                                            <div class="pj-dropdown-item" data-value="<?php echo htmlspecialchars($cat['name']); ?>"><span><?php echo htmlspecialchars($cat['name']); ?></span></div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="language" id="cxLangInput" value="JavaScript">
+                        </div>
+                    </div>
+                    <div class="modal-field full">
+                        <label class="modal-label">Mô Tả</label>
+                        <input type="text" name="description" id="cxDesc" class="modal-input" placeholder="VD: Hook React">
+                    </div>
+                    <div class="modal-field full">
+                        <label class="modal-label">Nội Dung Code <span class="req">*</span></label>
+                        <div class="cx-code-editor-wrapper">
+                            <textarea name="code" id="cxCodeArea" class="cx-code-textarea" placeholder="// Nhập code..." required oninput="updateCxStats()"></textarea>
+                            <div class="cx-code-status-bar">
+                                <span id="statLines">1 dòng</span> <span class="cx-dot">•</span> <span id="statChars">0 ký tự</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cx-cancel" onclick="closeCxModal()">Hủy</button>
+                    <button type="submit" class="btn-cx-submit">Tạo Snippet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast (Dashboard) -->
+    <div class="delete-toast" id="deleteToast">
+        <div class="toast-spinner" id="dtSpinner"></div>
+        <div id="dtSuccessIcon" style="display:none; color: #10b981; font-size: 20px; display: flex; align-items: center;"><i class="ph-fill ph-check-circle"></i></div>
+        <span id="dtMessage">Đang xử lý...</span>
     </div>
 </body>
 <script>
@@ -603,6 +875,244 @@
         }
     })();
 
+    // --- DASHBOARD QUICK ACTION MODAL LOGIC ---
+    function showToast(msg, icon = 'dtSpinner') {
+        const t = document.getElementById('deleteToast');
+        const m = document.getElementById('dtMessage');
+        const s = document.getElementById('dtSpinner');
+        const succ = document.getElementById('dtSuccessIcon');
+        if (!t) return;
+        m.textContent = msg;
+        t.classList.add('active');
+        if (icon === 'success') {
+            s.style.display = 'none';
+            succ.style.display = 'flex';
+        } else {
+            s.style.display = 'block';
+            succ.style.display = 'none';
+        }
+    }
+    function hideToast() {
+        const t = document.getElementById('deleteToast');
+        if (t) t.classList.remove('active');
+    }
+
+    // Modal Dropdown Helper
+    function togglePjModalSelect(trigger) {
+        const select = trigger.closest('.pj-modal-select');
+        const menu = select.querySelector('.pj-dropdown');
+        const isOpen = menu.classList.contains('active');
+        document.querySelectorAll('.pj-dropdown.active').forEach(m => m.classList.remove('active'));
+        if (!isOpen) menu.classList.add('active');
+    }
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.pj-modal-select')) {
+            document.querySelectorAll('.pj-dropdown.active').forEach(m => m.classList.remove('active'));
+        }
+    });
+
+    // Hosting Logic
+    function openHostingModal() { 
+        document.getElementById('hostingModal').classList.add('active'); 
+        document.getElementById('mRegDate').value = new Date().toISOString().split('T')[0];
+    }
+    function closeHostingModal(e) { if (e.target.id === 'hostingModal') closeHostingModalBtn(); }
+    function closeHostingModalBtn() { document.getElementById('hostingModal').classList.remove('active'); }
+    function formatPrice() {
+        const p = document.getElementById('hostingPrice').value;
+        const h = document.getElementById('priceHint');
+        if (!p) { h.textContent = '0 VNĐ'; return; }
+        h.textContent = new Intl.NumberFormat('vi-VN').format(p) + ' VNĐ';
+    }
+    async function submitHostingForm() {
+        const data = {
+            name: document.getElementById('mHostingName').value,
+            domain: document.getElementById('mDomain').value,
+            provider: document.getElementById('mProvider').value,
+            regDate: document.getElementById('mRegDate').value,
+            expDate: document.getElementById('mExpDate').value,
+            price: document.getElementById('hostingPrice').value,
+            notes: document.getElementById('mHostingNotes').value
+        };
+        if (!data.name || !data.domain) { alert('Vui lòng điền đầy đủ thông tin bắt buộc!'); return; }
+        showToast('Đang tạo hosting...');
+        try {
+            const resp = await fetch('/hostings/save', { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const res = await resp.json();
+            if (res.success) {
+                showToast('Thêm hosting thành công!', 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                alert(res.message || 'Lỗi khi lưu.');
+                hideToast();
+            }
+        } catch (e) {
+            alert('Lỗi kết nối!');
+            hideToast();
+        }
+    }
+
+    // Projects Logic
+    function openAddProjectModal() { 
+        document.getElementById('addProjectModal').classList.add('active'); 
+        document.getElementById('mProjectDate').value = new Date().toISOString().split('T')[0];
+    }
+    function closeAddProjectModal() { document.getElementById('addProjectModal').classList.remove('active'); }
+    function closeAddProjectModalOverlay(e) { if (e.target.id === 'addProjectModal') closeAddProjectModal(); }
+    function updateProjectValueDisplay(input) {
+        document.getElementById('projectValueDisplay').textContent = new Intl.NumberFormat('vi-VN').format(input.value || 0) + ' VNĐ';
+    }
+    async function submitProjectForm() {
+        const data = {
+            name: document.getElementById('mProjectName').value,
+            status: document.getElementById('mProjectStatus').value,
+            desc: document.getElementById('mProjectDesc').value,
+            date: document.getElementById('mProjectDate').value,
+            customerName: document.getElementById('mCustomerName').value,
+            customerPhone: document.getElementById('mCustomerPhone').value,
+            admin_url: document.getElementById('mAdminLink').value,
+            admin_user: document.getElementById('mAdminUser').value,
+            admin_pass: document.getElementById('adminPassword').value,
+            value: document.getElementById('projectValue').value
+        };
+        if (!data.name || !data.customerName) { alert('Vui lòng điền tên project và khách hàng!'); return; }
+        showToast('Đang tạo dự án...');
+        try {
+            const resp = await fetch('/projects/save', { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const res = await resp.json();
+            if (res.success) {
+                showToast('Thêm dự án thành công!', 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                alert(res.message || 'Lỗi khi lưu.');
+                hideToast();
+            }
+        } catch (e) {
+            alert('Lỗi kết nối!');
+            hideToast();
+        }
+    }
+
+    // Passwords Logic
+    function openPasswordModal() { document.getElementById('addPasswordModal').classList.add('active'); }
+    function closeAddPwdModal() { document.getElementById('addPasswordModal').classList.remove('active'); }
+    function closeAddPasswordModalOverlay(e) { if (e.target.id === 'addPasswordModal') closeAddPwdModal(); }
+    function toggleAddPwdVisibility() {
+        const p = document.getElementById('mPwdPass');
+        const i = document.getElementById('mPwdEyeIcon');
+        if (p.type === 'password') { p.type = 'text'; i.className = 'ph ph-eye-slash'; }
+        else { p.type = 'password'; i.className = 'ph ph-eye'; }
+    }
+    function generateStrongPwd() {
+        const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+        let pwd = "";
+        for (let i = 0; i < 16; i++) pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+        document.getElementById('mPwdPass').value = pwd;
+        document.getElementById('mPwdPass').type = 'text';
+        document.getElementById('mPwdEyeIcon').className = 'ph ph-eye-slash';
+    }
+    async function submitAddPwdForm(e) {
+        e.preventDefault();
+        const data = {
+            title: document.getElementById('mPwdTitle').value,
+            url: document.getElementById('mPwdUrl').value,
+            category: document.getElementById('mPwdCategory').value,
+            username: document.getElementById('mPwdUser').value,
+            password: document.getElementById('mPwdPass').value,
+            notes: document.getElementById('mPwdNotes').value
+        };
+        showToast('Đang lưu mật khẩu...');
+        try {
+            const resp = await fetch('/passwords/save', { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const res = await resp.json();
+            if (res.success) {
+                showToast('Đã lưu mật khẩu!', 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                alert(res.message);
+                hideToast();
+            }
+        } catch (err) {
+            alert('Lỗi hệ thống!');
+            hideToast();
+        }
+    }
+
+    // Snippets Logic
+    function openAddSnippetModal() { document.getElementById('cxModal').classList.add('active'); }
+    function closeCxModal() { document.getElementById('cxModal').classList.remove('active'); }
+    function updateCxStats() {
+        const code = document.getElementById('cxCodeArea').value;
+        document.getElementById('statLines').textContent = (code.split('\n').length) + ' dòng';
+        document.getElementById('statChars').textContent = code.length + ' ký tự';
+    }
+    async function submitCxForm(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        formData.append('line_count', document.getElementById('cxCodeArea').value.split('\n').length);
+        formData.append('char_count', document.getElementById('cxCodeArea').value.length);
+        
+        showToast('Đang tạo snippet...');
+        try {
+            const resp = await fetch('/codex/save', { 
+                method: 'POST', 
+                body: formData
+            });
+            const res = await resp.json();
+            if (res.success) {
+                showToast('Tạo snippet thành công!', 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                alert(res.message);
+                hideToast();
+            }
+        } catch (err) {
+            alert('Lỗi kết nối!');
+            hideToast();
+        }
+    }
+
+    // Shared UI initialization
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.pj-modal-select').forEach(sel => {
+            const inputId = sel.getAttribute('data-input-id');
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const triggerText = sel.querySelector('.pj-modal-select-trigger span');
+            sel.querySelectorAll('.pj-dropdown-item').forEach(item => {
+                item.onclick = function() {
+                    const val = this.getAttribute('data-value');
+                    input.value = val;
+                    triggerText.textContent = this.textContent.trim();
+                    sel.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    sel.querySelector('.pj-dropdown').classList.remove('active');
+                    if (inputId === 'cxLangInput') {
+                        document.getElementById('cxLangBadge').textContent = val;
+                    }
+                };
+            });
+        });
+    });
+
+    function togglePasswordVisibility(id, btn) {
+        const p = document.getElementById(id);
+        const i = btn.querySelector('i');
+        if (p.type === 'password') { p.type = 'text'; i.className = 'ph ph-eye-slash'; }
+        else { p.type = 'password'; i.className = 'ph ph-eye'; }
+    }
 </script>
 
 </html>

@@ -32,7 +32,9 @@ class MainController extends BaseController {
             'projects' => $this->projectModel->getAll(),
             'hostings' => $this->hostingModel->getAll(),
             'monthlyRevenue' => $this->projectModel->getMonthlyRevenue($currentYear),
-            'recentLogs' => $this->logModel->getAll([], 5, 0)
+            'recentLogs' => $this->logModel->getAll([], 5, 0),
+            'password_categories' => $this->categoryModel->getAll(),
+            'snippet_categories' => $this->codeCategoryModel->getAll()
         ];
         $this->view('index', $data);
     }
