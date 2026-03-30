@@ -120,14 +120,22 @@ class MainController extends BaseController {
             ]);
             $success_id = $id;
         } else {
-            // Check if exists first for simple "Add New" from dropdown
+            // Kiểm tra xem đã tồn tại chưa (cho trường hợp thêm nhanh từ dropdown)
             $existing = $this->codeCategoryModel->findByName($name);
             if ($existing) {
                 echo json_encode(['success' => true, 'id' => $existing['id'], 'name' => $existing['name'], 'exists' => true]);
                 return;
             }
 
-            $success_id = $this->codeCategoryModel->create($name);
+            // Lấy màu từ input, nếu không có thì dùng mặc định
+            $color = $input['color'] ?? ($input['hex'] ?? '#fef9c3');
+            $text_color = $input['text_color'] ?? '#854d0e';
+
+            $success_id = $this->codeCategoryModel->create([
+                'name' => $name,
+                'color' => $color,
+                'text_color' => $text_color
+            ]);
             $success = $success_id !== false;
         }
 
