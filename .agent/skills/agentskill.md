@@ -20,6 +20,8 @@ File này định nghĩa các Skills (Kỹ năng) mà Agent tự động kích h
 - "Tạo trang/tính năng mới..."
 - "Viết cho tôi hàm xử lý/giao diện..."
 - "Tạo bảng MySQL cho module..."
+- "Thêm chức năng..."
+- "Thêm/tạo module..."
 
 **Workflow (Quy trình thực thi):**
 1. **Analyze (Phân tích):** Đọc yêu cầu và tham chiếu chuẩn dự án để biết vị trí đặt file (VD: thư mục `app/Views` cho HTML/CSS, `app/Models` hoặc `app/Controllers` cho PHP xử lý logic).
@@ -130,6 +132,7 @@ File này định nghĩa các Skills (Kỹ năng) mà Agent tự động kích h
 **Triggers:**
 - "Viết commit message cho đống code vừa rồi"
 - "đẩy lên git"
+- Lệnh `/commit` git
 - Lệnh `/commit`
 
 **Workflow (Quy trình thực thi):**
