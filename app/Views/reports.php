@@ -487,7 +487,7 @@
                         <td>${projCell}</td>
                         <td>${hostCell}</td>
                         <td><strong class="color-green">${formatVNDShort(m.total)}</strong></td>
-                        <td class="text-center"><button class="btn-sm btn-teal"><i class="ph ph-eye"></i> Xem Chi Tiết</button></td>
+                        <td class="text-center"><button class="btn-sm btn-teal" onclick="openMonthDetail(${m.month}, ${currentYear})"><i class="ph ph-eye"></i> Xem Chi Tiết</button></td>
                     </tr>`;
             });
 
@@ -564,7 +564,144 @@
 
         populateYearFilter();
         renderAll();
+
+        // ===== Modal Logic =====
+        function openMonthDetail(month, year) {
+            const modal = document.getElementById('reportDetailModal');
+            const projects = PROJECTS.filter(p => getYear(p.date) === year && getMonth(p.date) === month);
+            const hostings = HOSTINGS.filter(h => getYear(h.regDate) === year && getMonth(h.regDate) === month);
+            
+            const totalProj = projects.reduce((s, p) => s + p.value, 0);
+            const totalHost = hostings.reduce((s, h) => s + h.price, 0);
+            const totalRevenue = totalProj + totalHost;
+
+            // 1. Update Header
+            document.getElementById('rmTitle').textContent = `Chi Tiết Tháng ${month} / ${year}`;
+            
+            // 2. Summary Cards
+            document.getElementById('rmSummaryCards').innerHTML = `
+                <div class="rm-stat-card green">
+                    <div class="rm-stat-label">Tổng Doanh Thu</div>
+                    <div class="rm-stat-value color-green">${formatVNDFull(totalRevenue)}</div>
+                </div>
+                <div class="rm-stat-card teal">
+                    <div class="rm-stat-label">Projects (${projects.length})</div>
+                    <div class="rm-stat-value color-teal">${formatVNDFull(totalProj)}</div>
+                </div>
+                <div class="rm-stat-card blue">
+                    <div class="rm-stat-label">Hosting (${hostings.length})</div>
+                    <div class="rm-stat-value color-blue">${formatVNDFull(totalHost)}</div>
+                </div>
+            `;
+
+            // 3. Project List
+            let projHtml = '';
+            if (projects.length > 0) {
+                projHtml = `
+                    <div class="rm-section-title"><i class="ph ph-folder"></i> Projects (${projects.length})</div>
+                    <table class="rm-table">
+                        <thead>
+                            <tr>
+                                <th>Tên Project</th>
+                                <th>Khách Hàng</th>
+                                <th>Ngày Tạo</th>
+                                <th class="text-right">Giá Trị</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${projects.map(p => `
+                                <tr>
+                                    <td>
+                                        <div class="rm-project-name">${p.name}</div>
+                                        <div class="rm-project-desc">${p.desc || ''}</div>
+                                    </td>
+                                    <td>
+                                        <div class="rm-customer">
+                                            <div class="rm-c-info"><i class="ph ph-user"></i> ${p.customer}</div>
+                                            ${p.phone && p.phone !== 'N/A' ? `<div class="rm-c-phone"><i class="ph ph-phone"></i> ${p.phone}</div>` : ''}
+                                        </div>
+                                    </td>
+                                    <td class="rm-date">${formatDateVN(p.date)}</td>
+                                    <td class="rm-value color-teal text-right">${formatVNDFull(p.value)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            // 4. Hosting List
+            let hostHtml = '';
+            if (hostings.length > 0) {
+                hostHtml = `
+                    <div class="rm-section-title"><i class="ph ph-hard-drives"></i> Hosting (${hostings.length})</div>
+                    <table class="rm-table">
+                        <thead>
+                            <tr>
+                                <th>Tên Hosting / Domain</th>
+                                <th>Nhà Cung Cấp</th>
+                                <th>Ngày ĐK</th>
+                                <th class="text-right">Giá</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${hostings.map(h => `
+                                <tr>
+                                    <td>
+                                        <div class="rm-project-name">${h.name}</div>
+                                        <div class="rm-project-desc">${h.domain}</div>
+                                    </td>
+                                    <td><div class="rm-c-info"><i class="ph ph-cloud"></i> ${h.provider}</div></td>
+                                    <td class="rm-date">${formatDateVN(h.regDate)}</td>
+                                    <td class="rm-value color-blue text-right">${formatVNDFull(h.price)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            document.getElementById('rmContent').innerHTML = projHtml + hostHtml;
+            
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeReportModal() {
+            document.getElementById('reportDetailModal').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // Close on escape
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeReportModal();
+        });
     </script>
+
+    <!-- Report Modal -->
+    <div class="report-modal" id="reportDetailModal">
+        <div class="rm-container">
+            <div class="rm-header">
+                <div class="rm-h-left">
+                    <div class="rm-h-icon"><i class="ph ph-calendar-blank"></i></div>
+                    <div class="rm-h-info">
+                        <h2 id="rmTitle">Chi Tiết Tháng</h2>
+                        <p>Danh sách đầy đủ projects và hosting trong tháng</p>
+                    </div>
+                </div>
+                <div class="rm-close" onclick="closeReportModal()"><i class="ph ph-x"></i></div>
+            </div>
+            <div class="rm-body">
+                <div class="rm-summary-cards" id="rmSummaryCards">
+                    <!-- Stat cards here -->
+                </div>
+                <div id="rmContent">
+                    <!-- Lists here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <?php include APP_DIR . '/Views/partials/footer.php'; ?>
 </body>
 </html>
