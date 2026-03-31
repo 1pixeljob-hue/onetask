@@ -29,6 +29,7 @@ class AuthController extends BaseController {
      * Xử lý đăng nhập
      */
     public function login() {
+        ob_start();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $identity = $_POST['identity'] ?? '';
             $password = $_POST['password'] ?? '';
