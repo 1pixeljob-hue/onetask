@@ -350,8 +350,9 @@ body {
     border-radius: 16px;
     box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 5px 20px -5px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(226, 232, 240, 0.8);
-    visibility: hidden;
+    display: none;
     opacity: 0;
+    pointer-events: none;
     transform: translateY(10px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
@@ -359,8 +360,9 @@ body {
 }
 
 .profile-dropdown-menu.active {
-    visibility: visible;
+    display: block;
     opacity: 1;
+    pointer-events: auto;
     transform: translateY(0);
 }
 

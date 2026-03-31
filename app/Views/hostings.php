@@ -1023,5 +1023,6 @@ function closeDetailModal(e) {
         <div id="dtErrorIcon" style="display:none; color: #ef4444; font-size: 22px; align-items: center; justify-content: center;"><i class="ph-fill ph-x-circle"></i></div>
         <span id="dtMessage" style="color: #1e293b; font-weight: 600;">Đang xử lý...</span>
     </div>
+    <?php include APP_DIR . '/Views/partials/footer.php'; ?>
 </body>
 </html>

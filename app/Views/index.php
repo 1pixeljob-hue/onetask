@@ -1094,7 +1094,9 @@
         const code = document.getElementById('cxCodeArea').value;
         document.getElementById('statLines').textContent = (code.split('\n').length) + ' dòng';
         document.getElementById('statChars').textContent = code.length + ' ký tự';
-    }
+        <?php include APP_DIR . '/Views/partials/footer.php'; ?>
+</body>
+</html>
     async function submitCxForm(e) {
         e.preventDefault();
         clearErrors();
@@ -1107,17 +1109,6 @@
         if (!lang) { showToast('Vui lòng chọn ngôn ngữ!', 'error'); markError('cxLangInput', true); return; }
         if (!code) { showToast('Vui lòng nhập nội dung code!', 'error'); markError('cxCodeArea'); return; }
 
-          <?php include APP_DIR . '/Views/partials/footer.php'; ?>
-</body>
-
-</html>
-ist.remove('active'));
-                    this.classList.add('active');
-                    sel.querySelector('.pj-dropdown').classList.remove('active');
-                    if (inputId === 'cxLangInput') {
-                        document.getElementById('cxLangBadge').textContent = val;
-                    }
-                };
             });
         });
     });
