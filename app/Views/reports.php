@@ -219,7 +219,7 @@
                                 <p>Thống kê đầy đủ các chỉ số</p>
                             </div>
                         </div>
-                        <button class="btn-primary btn-add"><i class="ph ph-download-simple"></i> Xuất Excel</button>
+                        <button class="btn-add" style="height: 38px; padding: 0 16px; font-size: 13px;"><i class="ph ph-download-simple"></i> Xuất Excel</button>
                     </div>
                     <div class="table-container pt-0">
                         <table class="data-table report-table">
