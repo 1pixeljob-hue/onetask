@@ -1,7 +1,5 @@
 <?php
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 // Define absolute paths
 define('ROOT_DIR', __DIR__);
 define('APP_DIR', ROOT_DIR . '/app');
