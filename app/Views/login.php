@@ -12,9 +12,15 @@
         <div class="icon-wrapper">
             <!-- Icon: Compass/Divider SVG -->
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m11 11-7 7a2 2 0 0 0 0 2.8s.2.2.8.8a2 2 0 0 0 2.8 0l7-7"></path>
-                <path d="m11 11 7-7a2 2 0 0 1 0-2.8s-.2-.2-.8-.8a2 2 0 0 1-2.8 0l-7 7"></path>
-                <circle cx="11" cy="11" r="2"></circle>
+                <path d="M12 2v2"></path>
+                <path d="m4.93 4.93 1.41 1.41"></path>
+                <path d="M2 12h2"></path>
+                <path d="m6.34 17.66-1.41 1.41"></path>
+                <path d="M12 20v2"></path>
+                <path d="m19.07 19.07-1.41-1.41"></path>
+                <path d="M22 12h-2"></path>
+                <path d="m17.66 6.34 1.41-1.41"></path>
+                <path d="M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"></path>
             </svg>
         </div>
 
@@ -29,12 +35,12 @@
 
         <form action="/authenticate" method="POST">
             <div class="form-group">
-                <label for="identity">Tên đăng nhập / Email</label>
-                <input type="text" id="identity" name="identity" placeholder="quydev hoặc email@example.com" required autofocus>
+                <label for="identity">Email Address</label>
+                <input type="text" id="identity" name="identity" placeholder="name@company.com" required autofocus>
             </div>
 
             <div class="form-group">
-                <label for="password">Mật khẩu</label>
+                <label for="password">Password</label>
                 <div class="password-wrapper">
                     <input type="password" id="password" name="password" placeholder="••••••••" required>
                     <button type="button" class="password-toggle" onclick="togglePassword()">

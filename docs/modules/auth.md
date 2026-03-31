@@ -22,6 +22,12 @@
 - **Mật khẩu**: ``
 
 ## 4. Lịch sử thay đổi (Changelog)
+- **[2026-03-31]**: 
+    - Triển khai bắt buộc đăng nhập toàn hệ thống thông qua `BaseController`.
+    - Thiết kế lại giao diện trang Login theo phong cách "Project Hub" (Giao diện hiện đại, tối giản).
+    - Tích hợp thông tin người dùng động (Tên, Avatar initials, Vai trò) từ Session vào toàn bộ các View.
+    - Thêm tính năng Đăng xuất (Logout) vào Sidebar.
+    - Cập nhật Logging để ghi nhận danh tính người dùng thực hiện thao tác.
 - **[2026-03-31]** Khởi tạo hệ thống đăng nhập bảo mật cho Onetask.
 - **[2026-03-31]** Thiết kế giao diện Login dựa trên Project Hub.
 - **[2026-03-31]** Triển khai cơ chế Remember Me 24h.

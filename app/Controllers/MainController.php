@@ -23,8 +23,7 @@ class MainController extends BaseController {
     private $logModel;
 
     public function __construct() {
-        // Kiểm tra đăng nhập
-        AuthController::checkAuth();
+        parent::__construct();
         
         $this->projectModel = new ProjectModel();
         $this->hostingModel = new HostingModel();
@@ -103,7 +102,7 @@ class MainController extends BaseController {
 
                 if ($this->snippetModel->save($data)) {
                     $action = $data['id'] ? 'Cập nhật' : 'Tạo mới';
-                    $this->logModel->addLog('CodeX', $action, $data['title'], 'quydev', $oldData ? json_encode($oldData) : null);
+                    $this->logModel->addLog('CodeX', $action, $data['title'], $_SESSION['user_name'] ?? 'System', $oldData ? json_encode($oldData) : null);
                     echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Lưu snippet thành công']);
                 } else {
                     echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi lưu snippet']);
@@ -122,7 +121,7 @@ class MainController extends BaseController {
                 $snippet = $this->snippetModel->find($_POST['id']);
                 if ($this->snippetModel->delete($_POST['id'])) {
                     $snippetTitle = ($snippet && isset($snippet['title'])) ? $snippet['title'] : 'Snippet #' . $_POST['id'];
-                    $this->logModel->addLog('CodeX', 'Xoá', $snippetTitle, 'quydev', json_encode($snippet));
+                    $this->logModel->addLog('CodeX', 'Xoá', $snippetTitle, $_SESSION['user_name'] ?? 'System', json_encode($snippet));
                     echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá snippet thành công']);
                 } else {
                     echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá snippet']);
@@ -179,7 +178,7 @@ class MainController extends BaseController {
                 $cat = $this->codeCategoryModel->find($success_id);
                 $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $success_id;
                 $action = $id ? 'Cập nhật' : 'Tạo mới';
-                $this->logModel->addLog('CodeX', $action, 'Danh mục: ' . $catName);
+                $this->logModel->addLog('CodeX', $action, 'Danh mục: ' . $catName, $_SESSION['user_name'] ?? 'System');
                 echo json_encode([
                     'status' => 'success', 
                     'success' => true,
@@ -216,7 +215,7 @@ class MainController extends BaseController {
             $success = $this->codeCategoryModel->delete($input['id']);
             if ($success) {
                 $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $input['id'];
-                $this->logModel->addLog('CodeX', 'Xoá', 'Danh mục: ' . $catName, 'quydev', json_encode($cat));
+                $this->logModel->addLog('CodeX', 'Xoá', 'Danh mục: ' . $catName, $_SESSION['user_name'] ?? 'System', json_encode($cat));
                 echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá danh mục thành công']);
             } else {
                 echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá danh mục']);
@@ -312,10 +311,10 @@ class MainController extends BaseController {
             if (isset($input['id']) && $input['id']) {
                 $oldData = $this->projectModel->find($input['id']);
                 $success = $this->projectModel->update($input['id'], $input);
-                if ($success) $this->logModel->addLog('Project', 'Cập nhật', $input['name'], 'quydev', json_encode($oldData));
+                if ($success) $this->logModel->addLog('Project', 'Cập nhật', $input['name'], $_SESSION['user_name'] ?? 'System', json_encode($oldData));
             } else {
                 $success = $this->projectModel->create($input);
-                if ($success) $this->logModel->addLog('Project', 'Tạo mới', $input['name']);
+                if ($success) $this->logModel->addLog('Project', 'Tạo mới', $input['name'], $_SESSION['user_name'] ?? 'System');
             }
 
             if ($success) {
@@ -346,7 +345,7 @@ class MainController extends BaseController {
             $success = $this->projectModel->delete($input['id']);
             if ($success) {
                 $projectName = ($project && isset($project['name'])) ? $project['name'] : 'Project #' . $input['id'];
-                $this->logModel->addLog('Project', 'Xoá', $projectName, 'quydev', json_encode($project));
+                $this->logModel->addLog('Project', 'Xoá', $projectName, $_SESSION['user_name'] ?? 'System', json_encode($project));
                 echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá dự án thành công']);
             } else {
                 echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá dự án']);
@@ -373,10 +372,10 @@ class MainController extends BaseController {
             if (isset($input['id']) && $input['id']) {
                 $oldData = $this->hostingModel->find($input['id']);
                 $success = $this->hostingModel->update($input['id'], $input);
-                if ($success) $this->logModel->addLog('Hosting', 'Cập nhật', $input['name'], 'quydev', json_encode($oldData));
+                if ($success) $this->logModel->addLog('Hosting', 'Cập nhật', $input['name'], $_SESSION['user_name'] ?? 'System', json_encode($oldData));
             } else {
                 $success = $this->hostingModel->create($input);
-                if ($success) $this->logModel->addLog('Hosting', 'Tạo mới', $input['name']);
+                if ($success) $this->logModel->addLog('Hosting', 'Tạo mới', $input['name'], $_SESSION['user_name'] ?? 'System');
             }
 
             if ($success) {
@@ -407,7 +406,7 @@ class MainController extends BaseController {
             $success = $this->hostingModel->delete($input['id']);
             if ($success) {
                 $hostingName = ($hosting && isset($hosting['name'])) ? $hosting['name'] : 'Hosting #' . $input['id'];
-                $this->logModel->addLog('Hosting', 'Xoá', $hostingName, 'quydev', json_encode($hosting));
+                $this->logModel->addLog('Hosting', 'Xoá', $hostingName, $_SESSION['user_name'] ?? 'System', json_encode($hosting));
                 echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá hosting thành công']);
             } else {
                 echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá hosting']);
@@ -434,7 +433,7 @@ class MainController extends BaseController {
             $count = count($input['ids']);
             $success = $this->projectModel->deleteBulk($input['ids']);
             if ($success) {
-                $this->logModel->addLog('Project', 'Xoá nhiều', "Đã xoá $count dự án");
+                $this->logModel->addLog('Project', 'Xoá nhiều', "Đã xoá $count dự án", $_SESSION['user_name'] ?? 'System');
                 echo json_encode(['status' => 'success', 'success' => true, 'message' => "Đã xoá $count dự án"]);
             } else {
                 echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá hàng loạt']);
@@ -461,7 +460,7 @@ class MainController extends BaseController {
             $count = count($input['ids']);
             $success = $this->hostingModel->deleteBulk($input['ids']);
             if ($success) {
-                $this->logModel->addLog('Hosting', 'Xoá nhiều', "Đã xoá $count hosting");
+                $this->logModel->addLog('Hosting', 'Xoá nhiều', "Đã xoá $count hosting", $_SESSION['user_name'] ?? 'System');
                 echo json_encode(['status' => 'success', 'success' => true, 'message' => "Đã xoá $count hosting"]);
             } else {
                 echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá hàng loạt']);
@@ -488,10 +487,10 @@ class MainController extends BaseController {
             if (isset($input['id']) && $input['id']) {
                 $oldData = $this->passwordModel->find($input['id']);
                 $success = $this->passwordModel->update($input['id'], $input);
-                if ($success) $this->logModel->addLog('Passwords', 'Cập nhật', $input['title'], 'quydev', json_encode($oldData));
+                if ($success) $this->logModel->addLog('Passwords', 'Cập nhật', $input['title'], $_SESSION['user_name'] ?? 'System', json_encode($oldData));
             } else {
                 $success = $this->passwordModel->create($input);
-                if ($success) $this->logModel->addLog('Passwords', 'Tạo mới', $input['title']);
+                if ($success) $this->logModel->addLog('Passwords', 'Tạo mới', $input['title'], $_SESSION['user_name'] ?? 'System');
             }
 
             if ($success) {
@@ -522,7 +521,7 @@ class MainController extends BaseController {
             $success = $this->passwordModel->delete($input['id']);
             if ($success) {
                 $passwordTitle = ($password && isset($password['title'])) ? $password['title'] : 'Mật khẩu #' . $input['id'];
-                $this->logModel->addLog('Passwords', 'Xoá', $passwordTitle, 'quydev', json_encode($password));
+                $this->logModel->addLog('Passwords', 'Xoá', $passwordTitle, $_SESSION['user_name'] ?? 'System', json_encode($password));
                 echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá mật khẩu thành công']);
             } else {
                 echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá mật khẩu']);
@@ -548,10 +547,10 @@ class MainController extends BaseController {
 
             if (isset($input['id']) && $input['id']) {
                 $success = $this->categoryModel->update($input['id'], $input);
-                if ($success) $this->logModel->addLog('Passwords', 'Cập nhật', 'Danh mục: ' . $input['name']);
+                if ($success) $this->logModel->addLog('Passwords', 'Cập nhật', 'Danh mục: ' . $input['name'], $_SESSION['user_name'] ?? 'System');
             } else {
                 $success = $this->categoryModel->create($input);
-                if ($success) $this->logModel->addLog('Passwords', 'Tạo mới', 'Danh mục: ' . $input['name']);
+                if ($success) $this->logModel->addLog('Passwords', 'Tạo mới', 'Danh mục: ' . $input['name'], $_SESSION['user_name'] ?? 'System');
             }
 
             if ($success) {
@@ -582,7 +581,7 @@ class MainController extends BaseController {
             $success = $this->categoryModel->delete($input['id']);
             if ($success) {
                 $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $input['id'];
-                $this->logModel->addLog('Passwords', 'Xoá', 'Danh mục: ' . $catName, 'quydev', json_encode($cat));
+                $this->logModel->addLog('Passwords', 'Xoá', 'Danh mục: ' . $catName, $_SESSION['user_name'] ?? 'System', json_encode($cat));
                 echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá danh mục thành công']);
             } else {
                 echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá danh mục']);
@@ -671,7 +670,7 @@ class MainController extends BaseController {
             }
 
             if ($success) {
-                $this->logModel->addLog($module, 'Khôi phục', $itemName);
+                $this->logModel->addLog($module, 'Khôi phục', $itemName, $_SESSION['user_name'] ?? 'System');
                 echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Khôi phục dữ liệu thành công']);
             } else {
                 echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi ghi đè dữ liệu vào Database']);

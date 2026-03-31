@@ -76,6 +76,10 @@
                     <i class="ph ph-gear"></i>
                     <span>Settings</span>
                 </a>
+                <a href="/logout" class="nav-item logout-nav" style="margin-top: auto; color: #ef4444;">
+                    <i class="ph ph-sign-out"></i>
+                    <span>Đăng xuất</span>
+                </a>
             </nav>
 
             <div class="sidebar-footer">
@@ -101,10 +105,17 @@
                         <span class="badge">1</span>
                     </button>
                     <div class="user-profile">
-                        <div class="avatar">QD</div>
+                        <?php 
+                            $fullName = $_SESSION['user_name'] ?? 'Admin User';
+                            $nameParts = explode(' ', $fullName);
+                            $initials = count($nameParts) >= 2 
+                                ? strtoupper(substr($nameParts[0], 0, 1) . substr(end($nameParts), 0, 1))
+                                : strtoupper(substr($nameParts[0], 0, 2));
+                        ?>
+                        <div class="avatar"><?php echo $initials; ?></div>
                         <div class="user-info">
-                            <span class="user-name">Quy Dev</span>
-                            <span class="user-role">Administrator</span>
+                            <span class="user-name"><?php echo htmlspecialchars($fullName); ?></span>
+                            <span class="user-role"><?php echo htmlspecialchars($_SESSION['user_role'] ?? 'Administrator'); ?></span>
                         </div>
                     </div>
                 </div>
@@ -113,7 +124,7 @@
             <div class="content-body">
                 <!-- Welcome Section -->
                 <div class="welcome-section">
-                    <h2 id="greetingText">Chào buổi tối, <span class="highlight">Quydev</span></h2>
+                    <h2 id="greetingText">Chào buổi tối, <span class="highlight"><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Bạn'); ?></span></h2>
                     <p>Đây là những gì đang diễn ra trong hệ thống hôm nay</p>
                 </div>
 
@@ -127,7 +138,7 @@
 
                         const greetingElement = document.getElementById('greetingText');
                         if (greetingElement) {
-                            greetingElement.innerHTML = `${greeting}, <span class="highlight">Quydev</span>`;
+                            greetingElement.innerHTML = `${greeting}, <span class="highlight"><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Bạn'); ?></span>`;
                         }
                     }
                     updateGreeting();
