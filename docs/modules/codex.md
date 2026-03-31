@@ -16,6 +16,8 @@
 - **Code Editor Wrapper**: Giao diện nhập liệu code chuyên nghiệp với thanh trạng thái hiển thị số dòng và ký tự theo thời gian thực.
 
 ## 3. Lịch sử thay đổi (Changelog)
+- **[2026-04-01]** **Hợp nhất Dropdown Logic**: Chuyển toàn bộ logic xử lý `.pj-modal-select` về `shared-data.js`, hỗ trợ tự động cập nhật label và đồng bộ ngôn ngữ lập trình cho Modal thêm mới Snippet.
+- **[2026-03-31]** Triển khai hệ thống **Toast Notifications**: Thông báo trạng thái Loading, Success, Error cho mọi thao tác.
 - **[2026-03-31]** Triển khai hệ thống **Phân trang chuẩn (Standardized Pagination)** cho danh sách Snippet.
 - **[2026-03-30]** Nâng cấp **Quản lý Danh Mục Snippet**: Đồng bộ giao diện 2 bước và tính năng xem trước màu sắc Tag.
 - **[2026-03-29]** Thiết kế giao diện 3 cột chuyên nghiệp dành cho quản lý code (Sidebar/List/Preview).

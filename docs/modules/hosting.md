@@ -20,6 +20,7 @@
   - Flow Action Toast: Mỗi hành động Thêm/Sửa/Xóa đều gọi UI Toast Loading (`1.2s`) -> Toast Success Anim (`2.0s`) trượt mượt mà từ góc phải dưới màn hình.
 
 ## 3. Lịch sử thay đổi (Changelog)
+- **[2026-04-01]** **Hợp nhất Dropdown Logic**: Chuyển toàn bộ logic xử lý `.pj-modal-select` về `shared-data.js`, hỗ trợ tự động cập nhật label và đồng bộ hidden input cho các Modal Thêm/Sửa hosting.
 - **[2026-03-31]** Triển khai hệ thống **Phân trang chuẩn (Standardized Pagination)** cho danh sách Hosting.
 - **[2026-03-30]** Đồng bộ màu sắc badge **Sắp hết hạn**: Chuyển sang màu Vàng/Cam (Amber) nhất quán toàn Dashboard.
 - **[2026-03-29]** Xây dựng Layout giao diện danh sách xuất bản, search bar full-width và filter dropdown chuẩn thiết kế.

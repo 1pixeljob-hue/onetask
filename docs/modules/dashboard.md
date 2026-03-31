@@ -18,6 +18,9 @@
 - **Hành Động Nhanh (Quick Actions)**: Các phím tắt để mở Modal thêm mới ở bất kỳ đâu.
 
 ## 3. Lịch sử thay đổi (Changelog)
+- **[2026-04-01]** **Hợp nhất Dropdown Logic**: Chuyển toàn bộ logic xử lý `.pj-modal-select` về `shared-data.js`, hỗ trợ tự động cập nhật label và đồng bộ hidden input.
+- **[2026-04-01]** **Real-time Digital Clock**: Thêm đồng hồ kỹ thuật số 24h vào phần chào mừng Dashboard.
+- **[2026-04-01]** **Sidebar Cleanup**: Loại bỏ nút Đăng xuất khỏi Sidebar, chuyển chức năng đăng xuất hoàn toàn lên Header Dropdown.
 - **[2026-03-31]** Cập nhật **Stats Grid V2**: Nâng cấp giao diện hiển thị Hosting, Expiring, Project và Revenue với Badge trạng thái đồng bộ.
 - **[2026-03-31]** Tích hợp **Quick Action Modals**: Cho phép thêm Hosting, Project, Password và Snippet trực tiếp từ Dashboard.
 - **[2026-03-31]** Tối ưu hóa **Greeting Logic**: Lời chào động dựa trên thời gian thực (Sáng/Trưa/Chiều/Tối).

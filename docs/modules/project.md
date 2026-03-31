@@ -21,6 +21,7 @@
 - **Phân Trang**: Tăng cường hiệu năng với hệ thống phân trang chuẩn hóa (Pagination).
 
 ## 3. Lịch sử thay đổi (Changelog)
+- **[2026-04-01]** **Hợp nhất Dropdown Logic**: Chuyển toàn bộ logic xử lý `.pj-modal-select` về `shared-data.js`, hỗ trợ tự động cập nhật label và đồng bộ hidden input cho các Modal Thêm/Sửa dự án.
 - **[2026-03-31]** Triển khai hệ thống **Phân trang chuẩn (Standardized Pagination)** cho danh sách dự án.
 - **[2026-03-30]** Bổ sung trạng thái `Tạm Dừng` (Paused) và đồng bộ logic lọc tại Dashboard.
 - **[2026-03-30]** Sửa lỗi **Modal Scrolling**: Cho phép cuộn nội dung trong Modal "Thêm Dự Án Mới" khi vượt quá chiều cao màn hình.

@@ -17,13 +17,14 @@
 - **Tìm kiếm & Phân trang**: Hỗ trợ tìm kiếm real-time và hệ thống phân trang chuẩn hóa (Pagination).
 
 ## 3. Lịch sử thay đổi (Changelog)
+- **[2026-04-01]** **Hợp nhất Dropdown Logic**: Chuyển toàn bộ logic xử lý `.pj-modal-select` về `shared-data.js`, hỗ trợ tự động cập nhật label và đồng bộ danh mục cho Modal thêm mới mật khẩu.
 - **[2026-03-31]** Triển khai hệ thống **Phân trang chuẩn (Standardized Pagination)** cho danh sách mật khẩu.
+- **[2026-03-31]** Triển khai hệ thống **Toast Notifications**: Thông báo trạng thái cho các hành động Copy, Save, Delete.
 - **[2026-03-30]** Nâng cấp **Quản lý Danh Mục**: Chuyển sang giao diện 2 bước (Danh sách & Biểu mẫu) với tính năng Color Preview cao cấp.
 - **[2026-03-29]** Xây dựng **PasswordModel** và **CategoryModel** chuẩn MVC, thực hiện CRUD an toàn bằng PDO.
 - **[2026-03-29]** Triển khai API Endpoints đồng bộ dữ liệu qua Fetch API cho cả Mật khẩu và Danh mục.
 - **[2026-03-29]** Hoàn thiện **Modal Quản Lý Danh Mục** với tính năng chọn màu sắc tùy biến và xem trước Tag trực quan bám sát thiết kế.
 - **[2026-03-29]** Chuyển đổi Grid hiển thị sang cơ chế **State-based Rendering**: Tự động cập nhật giao diện ngay khi lưu/xóa dữ liệu mà không cần tải lại trang (Zero-reload UX).
-- **[2026-03-29]** Tích hợp hệ thống **Toast Notifications** đồng bộ.
 - **[2026-03-29]** Chuẩn hóa giao diện **Modal Header**: Chuyển style cục bộ sang global cho toàn hệ thống.
 - **[2026-03-29]** Đồng bộ hệ thống **Dropdown Select**: Cập nhật Danh mục Password bằng UI cao cấp mới.
 
