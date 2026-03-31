@@ -32,137 +32,19 @@
 
     <div class="app-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <span class="logo-icon">1P</span>
-                    <div class="logo-text">
-                        <h2>1Pixel</h2>
-                        <p>Quản lý công việc tập trung</p>
-                    </div>
-                </div>
-            </div>
-
-            <nav class="sidebar-nav">
-                <a href="/" class="nav-item active">
-                    <i class="ph ph-squares-four"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/hostings" class="nav-item">
-                    <i class="ph ph-hard-drives"></i>
-                    <span>Hostings</span>
-                </a>
-                <a href="/projects" class="nav-item">
-                    <i class="ph ph-folders"></i>
-                    <span>Projects</span>
-                </a>
-                <a href="/reports" class="nav-item">
-                    <i class="ph ph-chart-bar"></i>
-                    <span>B&#225;o C&#225;o</span>
-                </a>
-                <a href="/passwords" class="nav-item">
-                    <i class="ph ph-key"></i>
-                    <span>Passwords</span>
-                </a>
-                <a href="/codex" class="nav-item">
-                    <i class="ph ph-code"></i>
-                    <span>CodeX</span>
-                </a>
-                <a href="/logs" class="nav-item">
-                    <i class="ph ph-file-text"></i>
-                    <span>Logs</span>
-                </a>
-                <a href="/settings" class="nav-item">
-                    <i class="ph ph-gear"></i>
-                    <span>Settings</span>
-                </a>
-                <a href="/logout" class="nav-item logout-nav" style="margin-top: auto; color: #ef4444;">
-                    <i class="ph ph-sign-out"></i>
-                    <span>Đăng xuất</span>
-                </a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <div class="support-box">
-                    <h4>Cần hỗ trợ?</h4>
-                    <p>Liên hệ với chúng tôi để được hỗ trợ</p>
-                    <button class="btn-primary">Liên Hệ</button>
-                </div>
-            </div>
-        </aside>
+        <?php 
+            $activePage = 'dashboard';
+            include APP_DIR . '/Views/partials/sidebar.php'; 
+        ?>
 
         <!-- Main Content -->
         <main class="main-content">
             <!-- Header -->
-            <header class="header">
-                <div class="header-left">
-                    <h1>Dashboard</h1>
-                    <p>Tổng quan hệ thống quản lý công việc</p>
-                </div>
-                <div class="header-right">
-                    <button class="btn-icon">
-                        <i class="ph ph-bell"></i>
-                        <span class="badge">1</span>
-                    </button>
-                    <div class="user-dropdown-wrapper" id="userDropdownWrapper">
-                        <div class="user-profile" id="userProfileTrigger">
-                            <?php 
-                                $fullName = $_SESSION['user_name'] ?? 'Admin User';
-                                $nameParts = explode(' ', $fullName);
-                                $initials = count($nameParts) >= 2 
-                                    ? strtoupper(substr($nameParts[0], 0, 1) . substr(end($nameParts), 0, 1))
-                                    : strtoupper(substr($nameParts[0], 0, 2));
-                            ?>
-                            <div class="avatar"><?php echo $initials; ?></div>
-                            <div class="user-info">
-                                <span class="user-name"><?php echo htmlspecialchars($fullName); ?></span>
-                                <span class="user-role"><?php echo htmlspecialchars($_SESSION['user_role'] ?? 'Administrator'); ?></span>
-                            </div>
-                        </div>
-
-                        <!-- Profile Dropdown Menu -->
-                        <div class="profile-dropdown-menu" id="profileDropdown">
-                            <div class="dropdown-header">
-                                <div class="avatar-large"><?php echo $initials; ?></div>
-                                <div class="header-info">
-                                    <span class="name"><?php echo htmlspecialchars($fullName); ?></span>
-                                    <span class="username">@<?php echo strtolower(str_replace(' ', '', $fullName)); ?></span>
-                                </div>
-                            </div>
-                            <div class="dropdown-body">
-                                <a href="/settings" class="dropdown-item">
-                                    <div class="item-icon-box bg-light-blue">
-                                        <i class="ph ph-user"></i>
-                                    </div>
-                                    <div class="item-text">
-                                        <span class="title">Thông Tin Tài Khoản</span>
-                                        <span class="sub">Xem và chỉnh sửa thông tin</span>
-                                    </div>
-                                </a>
-                                <a href="/settings#password" class="dropdown-item">
-                                    <div class="item-icon-box bg-light-orange">
-                                        <i class="ph ph-key"></i>
-                                    </div>
-                                    <div class="item-text">
-                                        <span class="title">Đổi Mật Khẩu</span>
-                                        <span class="sub">Cập nhật mật khẩu bảo mật</span>
-                                    </div>
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a href="/logout" class="dropdown-item logout-item">
-                                    <div class="item-icon-box bg-light-red">
-                                        <i class="ph ph-sign-out"></i>
-                                    </div>
-                                    <div class="item-text">
-                                        <span class="title">Đăng Xuất</span>
-                                        <span class="sub">Thoát khỏi hệ thống</span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <?php 
+                $pageTitle = 'Dashboard';
+                $pageSubtitle = 'Tổng quan hệ thống quản lý công việc';
+                include APP_DIR . '/Views/partials/header.php'; 
+            ?>
 
             <div class="content-body">
                 <!-- Welcome Section -->
@@ -1225,58 +1107,11 @@
         if (!lang) { showToast('Vui lòng chọn ngôn ngữ!', 'error'); markError('cxLangInput', true); return; }
         if (!code) { showToast('Vui lòng nhập nội dung code!', 'error'); markError('cxCodeArea'); return; }
 
-        formData.append('line_count', code.split('\n').length);
-        formData.append('char_count', code.length);
+          <?php include APP_DIR . '/Views/partials/footer.php'; ?>
+</body>
 
-        showToast('Đang thêm snippet...');
-        try {
-            const resp = await fetch('/codex/save', {
-                method: 'POST',
-                body: formData
-            });
-            const res = await resp.json();
-            if (res.success) {
-                showToast('Tạo snippet thành công!', 'success');
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                showToast(res.message, 'error');
-            }
-        } catch (err) {
-            showToast('Lỗi kết nối!', 'error');
-        }
-    }
-
-    // Shared UI initialization
-    document.addEventListener('DOMContentLoaded', () => {
-        // User Profile Dropdown Logic
-        const profileTrigger = document.getElementById('userProfileTrigger');
-        const profileDropdown = document.getElementById('profileDropdown');
-        const dropdownWrapper = document.getElementById('userDropdownWrapper');
-
-        if (profileTrigger && profileDropdown) {
-            profileTrigger.addEventListener('click', (e) => {
-                e.stopPropagation();
-                profileDropdown.classList.toggle('active');
-            });
-
-            document.addEventListener('click', (e) => {
-                if (dropdownWrapper && !dropdownWrapper.contains(e.target)) {
-                    profileDropdown.classList.remove('active');
-                }
-            });
-        }
-
-        document.querySelectorAll('.pj-modal-select').forEach(sel => {
-            const inputId = sel.getAttribute('data-input-id');
-            const input = document.getElementById(inputId);
-            if (!input) return;
-            const triggerText = sel.querySelector('.pj-modal-select-trigger span');
-            sel.querySelectorAll('.pj-dropdown-item').forEach(item => {
-                item.onclick = function () {
-                    const val = this.getAttribute('data-value');
-                    input.value = val;
-                    triggerText.textContent = this.textContent.trim();
-                    sel.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
+</html>
+ist.remove('active'));
                     this.classList.add('active');
                     sel.querySelector('.pj-dropdown').classList.remove('active');
                     if (inputId === 'cxLangInput') {

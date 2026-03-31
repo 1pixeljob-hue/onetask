@@ -141,94 +141,19 @@
 
     <div class="app-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <span class="logo-icon">1P</span>
-                    <div class="logo-text">
-                        <h2>1Pixel</h2>
-                        <p>Quản lý công việc tập trung</p>
-                    </div>
-                </div>
-            </div>
-
-            <nav class="sidebar-nav">
-                <a href="/" class="nav-item">
-                    <i class="ph ph-squares-four"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/hostings" class="nav-item">
-                    <i class="ph ph-hard-drives"></i>
-                    <span>Hostings</span>
-                </a>
-                <a href="/projects" class="nav-item">
-                    <i class="ph ph-folders"></i>
-                    <span>Projects</span>
-                </a>
-                <a href="/reports" class="nav-item">
-                    <i class="ph ph-chart-bar"></i>
-                    <span>B&#225;o C&#225;o</span>
-                </a>
-                <a href="/passwords" class="nav-item active">
-                    <i class="ph ph-key"></i>
-                    <span>Passwords</span>
-                </a>
-                <a href="/codex" class="nav-item">
-                    <i class="ph ph-code"></i>
-                    <span>CodeX</span>
-                </a>
-                <a href="/logs" class="nav-item">
-                    <i class="ph ph-file-text"></i>
-                    <span>Logs</span>
-                </a>
-                <a href="/settings" class="nav-item">
-                    <i class="ph ph-gear"></i>
-                    <span>Settings</span>
-                </a>
-                <a href="/logout" class="nav-item logout-nav" style="margin-top: auto; color: #ef4444;">
-                    <i class="ph ph-sign-out"></i>
-                    <span>Đăng xuất</span>
-                </a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <div class="support-box">
-                    <h4>Cần hỗ trợ?</h4>
-                    <p>Liên hệ với chúng tôi để được hỗ trợ</p>
-                    <button class="btn-primary">Liên Hệ</button>
-                </div>
-            </div>
-        </aside>
+        <?php 
+            $activePage = 'passwords';
+            include APP_DIR . '/Views/partials/sidebar.php'; 
+        ?>
 
         <!-- Main Content -->
         <main class="main-content">
             <!-- Header -->
-            <header class="header">
-                <div class="header-left">
-                    <h1>Password Manager</h1>
-                    <p>Quản lý mật khẩu an toàn</p>
-                </div>
-                <div class="header-right">
-                    <button class="btn-icon">
-                        <i class="ph ph-bell"></i>
-                        <span class="badge">1</span>
-                    </button>
-                    <div class="user-profile">
-                        <?php 
-                            $fullName = $_SESSION['user_name'] ?? 'Admin User';
-                            $nameParts = explode(' ', $fullName);
-                            $initials = count($nameParts) >= 2 
-                                ? strtoupper(substr($nameParts[0], 0, 1) . substr(end($nameParts), 0, 1))
-                                : strtoupper(substr($nameParts[0], 0, 2));
-                        ?>
-                        <div class="avatar"><?php echo $initials; ?></div>
-                        <div class="user-info">
-                            <span class="user-name"><?php echo htmlspecialchars($fullName); ?></span>
-                            <span class="user-role"><?php echo htmlspecialchars($_SESSION['user_role'] ?? 'Administrator'); ?></span>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <?php 
+                $pageTitle = 'Password Manager';
+                $pageSubtitle = 'Quản lý mật khẩu an toàn';
+                include APP_DIR . '/Views/partials/header.php'; 
+            ?>
 
             <div class="content-body">
                 <!-- Browser Honeypot for anti-autofill -->
@@ -1122,5 +1047,6 @@ async function confirmDeletePwdAction() {
         showPwdToast('Lỗi kết nối máy chủ', 'error');
     }
 }
-</script>
+    <?php include APP_DIR . '/Views/partials/footer.php'; ?>
+</body>
 </html>
