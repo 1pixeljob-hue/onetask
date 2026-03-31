@@ -172,4 +172,6 @@ File này định nghĩa các Skills (Kỹ năng) mà Agent tự động kích h
 
 **Ghi chép Thay đổi (Documentation Sync):** Mọi thay đổi (sửa lỗi, cập nhật tính năng, điều chỉnh giao diện/logic) tại bất kỳ module nào **BẮT BUỘC** phải được ghi lại ngay lập tức vào phần `Lịch sử thay đổi (Changelog)` trong file `.md` tương ứng tại thư mục `docs/modules/`. Điều này đảm bảo tài liệu luôn song hành cùng mã nguồn.
 
+**Tuân thủ Cấu trúc Dự án (Structure Compliance):** Mọi thao tác tạo file, tổ chức thư mục và bố trí code (MVC, CSS, JS, Assets) **BẮT BUỘC** phải tuân thủ nghiêm ngặt các quy định tại file `project-structure.md`. Tuyệt đối không tự ý thay đổi kiến trúc thư mục đã đề ra.
+
 **Bảo mật Tối đa:** KHÔNG BAO GIỜ hardcode MySQL credentials (root / password) hoặc API Keys. Mọi input (POST/GET) đều phải coi là rủi ro và cần validate/sanitize nghiêm ngặt.
