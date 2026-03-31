@@ -22,10 +22,12 @@
     - Bảng tổng hợp các chỉ số theo từng năm hoạt động.
 
 ## 3. Lịch sử thay đổi (Changelog)
-- **[Mới hoàn thành]** Xây dựng Layout Báo cáo với các thẻ chỉ số (KPI Cards).
-- **[Mới hoàn thành]** Tích hợp `Chart.js` và render 3 biểu đồ dữ liệu thực từ backend.
-- **[Mới hoàn thành]** Triển khai tính năng **Lọc theo Năm** (Year Filter) đồng bộ toàn bộ báo cáo.
-- **[Mới hoàn thành]** Hoàn thiện các bảng thống kê chi tiết tháng/năm.
+- **[2026-03-31]** Đồng bộ logic tính toán doanh thu với Dashboard V2 qua `shared-data.js`.
+- **[2026-03-30]** Cập nhật hệ thống biểu đồ: Chuyển sang giao diện Gradient và hỗ trợ 3 đường dữ liệu (Total, Projects, Hosting).
+- **[2026-03-29]** Xây dựng Layout Báo cáo với các thẻ chỉ số (KPI Cards).
+- **[2026-03-29]** Tích hợp `Chart.js` và render 3 biểu đồ dữ liệu thực từ backend.
+- **[2026-03-29]** Triển khai tính năng **Lọc theo Năm** (Year Filter) đồng bộ toàn bộ báo cáo.
+- **[2026-03-29]** Hoàn thiện các bảng thống kê chi tiết tháng/năm.
 
 ## 4. Gợi ý Tối ưu (Future Optimizations)
 1. **Xuất Báo Cáo**: Triển khai tính năng xuất dữ liệu ra file Excel hoặc PDF.

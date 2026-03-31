@@ -2,7 +2,7 @@
 description: "Định nghĩa các bộ kỹ năng (Skills) và luồng công việc (Workflows) tự động cho AI Agent trong dự án Antigravity."
 version: "1.5.0"
 project: "Antigravity"
-author: "AI Core Team"
+author: "1Pixel Team"
 tech_stack: "PHP, MySQL, CSS, JavaScript"
 ---
 
@@ -33,7 +33,7 @@ File này định nghĩa các Skills (Kỹ năng) mà Agent tự động kích h
 
 ---
 
-## 🐛 SKILL 2: ZERO_GRAVITY_DEBUG (Săn Bug Không Không Gian)
+## 🐛 SKILL 2: ZERO_GRAVITY_DEBUG
 
 **Mô tả:** Kỹ năng phân tích log PHP, gỡ lỗi truy vấn MySQL, hoặc fix JS/CSS, tìm nguyên nhân gốc rễ và đưa ra giải pháp triệt để.
 
@@ -68,7 +68,7 @@ File này định nghĩa các Skills (Kỹ năng) mà Agent tự động kích h
 
 ---
 
-## 🛡️ SKILL 4: ARCHITECTURE_REVIEW (Thẩm Định Mã Nguồn)
+## 🛡️ SKILL 4: ARCHITECTURE_REVIEW
 
 **Mô tả:** Review code PHP/JS, tối ưu hóa Database MySQL, dọn dẹp CSS.
 
@@ -90,13 +90,14 @@ File này định nghĩa các Skills (Kỹ năng) mà Agent tự động kích h
 
 ---
 
-## 📝 SKILL 5: MODULE_DOCUMENTATION (Lưu Vết Module)
+## 📝 SKILL 5: MODULE_DOCUMENTATION
 
 **Mô tả:** Kỹ năng tự động tạo, cập nhật và quản lý file `.md` cho từng module riêng biệt để Agent hiểu rõ chức năng, lịch sử thay đổi và có cơ sở đề xuất tối ưu.
 
 **Triggers:**
 - "Tạo module mới [Tên Module]..."
 - "Cập nhật tài liệu cho module..."
+- "Skill 5 [Tên Module]"
 - Lệnh `/doc` hoặc `/update-doc`
 
 **Workflow (Quy trình thực thi):**
@@ -122,12 +123,13 @@ File này định nghĩa các Skills (Kỹ năng) mà Agent tự động kích h
 
 ---
 
-## 🌿 SKILL 7: GIT_MASTER (Chúa Tể Phiên Bản)
+## 🌿 SKILL 7: GIT_MASTER
 
 **Mô tả:** Chuẩn hóa quy trình commit và quản lý phiên bản source code chuyên nghiệp.
 
 **Triggers:**
 - "Viết commit message cho đống code vừa rồi"
+- "đẩy lên git"
 - Lệnh `/commit`
 
 **Workflow (Quy trình thực thi):**
@@ -167,5 +169,7 @@ File này định nghĩa các Skills (Kỹ năng) mà Agent tự động kích h
 - **JavaScript:** Biến/Hàm dùng `camelCase` (VD: `fetchData`, `handleButtonClick`). Class dùng `PascalCase`.
 
 **Nhận thức Context qua Module:** Trước khi sửa code của một module bất kỳ, Agent PHẢI chủ động đọc file `.md` của module đó trong thư mục `docs/modules/` (nếu có).
+
+**Ghi chép Thay đổi (Documentation Sync):** Mọi thay đổi (sửa lỗi, cập nhật tính năng, điều chỉnh giao diện/logic) tại bất kỳ module nào **BẮT BUỘC** phải được ghi lại ngay lập tức vào phần `Lịch sử thay đổi (Changelog)` trong file `.md` tương ứng tại thư mục `docs/modules/`. Điều này đảm bảo tài liệu luôn song hành cùng mã nguồn.
 
 **Bảo mật Tối đa:** KHÔNG BAO GIỜ hardcode MySQL credentials (root / password) hoặc API Keys. Mọi input (POST/GET) đều phải coi là rủi ro và cần validate/sanitize nghiêm ngặt.

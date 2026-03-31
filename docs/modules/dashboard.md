@@ -18,6 +18,9 @@
 - **Hành Động Nhanh (Quick Actions)**: Các phím tắt để mở Modal thêm mới ở bất kỳ đâu.
 
 ## 3. Lịch sử thay đổi (Changelog)
+- **[2026-03-31]** Cập nhật **Stats Grid V2**: Nâng cấp giao diện hiển thị Hosting, Expiring, Project và Revenue với Badge trạng thái đồng bộ.
+- **[2026-03-31]** Tích hợp **Quick Action Modals**: Cho phép thêm Hosting, Project, Password và Snippet trực tiếp từ Dashboard.
+- **[2026-03-31]** Tối ưu hóa **Greeting Logic**: Lời chào động dựa trên thời gian thực (Sáng/Trưa/Chiều/Tối).
 - **[2026-03-29]** Đồng bộ toàn diện biểu đồ với module Báo cáo: Hiển thị 3 đường (**Projects, Hosting, Tổng**) thay vì chỉ Projects.
 - **[2026-03-29]** Tích hợp logic xử lý `getMonthlyBreakdown` từ `shared-data.js` để đảm bảo số liệu nhất quán 100% giữa Dashboard và Reports.
 - **[2026-03-29]** Chuyển đổi biểu đồ doanh thu sang dạng **Đường (Line Chart)** với hiệu ứng Gradient Teal cao cấp.
@@ -27,8 +30,8 @@
 - **[2026-03-29]** Thêm thẻ **Milestone Footer cao cấp** trang trí góc dưới màn hình tiến độ.
 - **[2026-03-29]** Tối ưu hóa layout Dashboard với tỉ lệ vàng (biểu đồ doanh thu rộng nhỉnh hơn 2 lần danh sách tiến độ).
 - **[2026-03-29]** Chuẩn hóa định dạng giá trị tài chính sang định dạng rút gọn ($1.2M, $0.5B) trong biểu đồ.
-- **[Mới hoàn thành]** Tích hợp lời chào động (Chào buổi sáng/trưa/chiều/tối) dựa trên giờ hệ thống.
-- **[Mới hoàn thành]** Sửa lỗi tràn giao diện (horizontal overflow) bằng cách áp dụng Responsive Grid (`auto-fit`) và khóa tràn toàn hệ thống.
+- **[2026-03-29]** Tích hợp lời chào động (Chào buổi sáng/trưa/chiều/tối) dựa trên giờ hệ thống.
+- **[2026-03-29]** Sửa lỗi tràn giao diện (horizontal overflow) bằng cách áp dụng Responsive Grid (`auto-fit`) và khóa tràn toàn hệ thống.
 
 ## 4. Gợi ý Tối ưu (Future Optimizations)
 1. **Dynamic Activity Feed**: Chuyển "Hoạt Động Gần Đây" từ mockup sang dữ liệu thực từ bảng `logs`.
