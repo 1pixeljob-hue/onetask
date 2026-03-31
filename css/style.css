@@ -5362,6 +5362,24 @@ body {
 .color-blue { color: #2b7495; }
 .color-green { color: #10b981; }
 
+/* Table Alignment Fixes */
+.report-table td {
+    vertical-align: middle !important;
+    height: 64px; /* Standardize height for all cells */
+}
+
+.td-year, .td-month {
+    font-weight: 700;
+    color: #1e293b;
+    display: table-cell; /* Ensure standard table cell behavior */
+}
+
+.td-month i, .td-year i {
+    margin-right: 8px;
+    color: #94a3b8;
+    font-size: 16px;
+}
+
 /* --- Report Monthly Detail Modal --- */
 .report-modal {
     position: fixed;
