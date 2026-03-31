@@ -43,19 +43,39 @@
                         <i class="ph ph-magnifying-glass pj-search-icon"></i>
                         <input type="text" class="pj-search-input" id="logsSearchInput" placeholder="Tìm kiếm theo tên item hoặc user..." value="<?= htmlspecialchars($filters['search']) ?>">
                     </div>
-                    <select class="logs-select" id="logsModuleSelect" onchange="applyFilters()">
-                        <option value="">Tất cả Module</option>
-                        <option value="Project" <?= $filters['module'] == 'Project' ? 'selected' : '' ?>>Project</option>
-                        <option value="Hosting" <?= $filters['module'] == 'Hosting' ? 'selected' : '' ?>>Hosting</option>
-                        <option value="CodeX" <?= $filters['module'] == 'CodeX' ? 'selected' : '' ?>>CodeX</option>
-                        <option value="Passwords" <?= $filters['module'] == 'Passwords' ? 'selected' : '' ?>>Passwords</option>
-                    </select>
-                    <select class="logs-select" id="logsActionSelect" onchange="applyFilters()">
-                        <option value="">Tất cả Hành động</option>
-                        <option value="Cập nhật" <?= $filters['action'] == 'Cập nhật' ? 'selected' : '' ?>>Cập nhật</option>
-                        <option value="Tạo mới" <?= $filters['action'] == 'Tạo mới' ? 'selected' : '' ?>>Tạo mới</option>
-                        <option value="Xoá" <?= $filters['action'] == 'Xoá' ? 'selected' : '' ?>>Xoá</option>
-                    </select>
+                    
+                    <!-- Module Filter -->
+                    <div class="pj-filter-wrapper">
+                        <button class="pj-filter-btn" onclick="toggleLogDropdown('logsModuleDropdown')">
+                            <i class="ph ph-funnel-simple"></i>
+                            <span id="labelModule"><?= $filters['module'] ?: 'Tất cả Module' ?></span>
+                            <i class="ph ph-caret-down"></i>
+                        </button>
+                        <div class="pj-dropdown" id="logsModuleDropdown">
+                            <div class="pj-dropdown-item <?= !$filters['module'] ? 'active' : '' ?>" onclick="setLogFilter('module', '', 'Tất cả Module', this)">Tất cả Module</div>
+                            <div class="pj-dropdown-item <?= $filters['module'] == 'Project' ? 'active' : '' ?>" onclick="setLogFilter('module', 'Project', 'Project', this)">Project</div>
+                            <div class="pj-dropdown-item <?= $filters['module'] == 'Hosting' ? 'active' : '' ?>" onclick="setLogFilter('module', 'Hosting', 'Hosting', this)">Hosting</div>
+                            <div class="pj-dropdown-item <?= $filters['module'] == 'CodeX' ? 'active' : '' ?>" onclick="setLogFilter('module', 'CodeX', 'CodeX', this)">CodeX</div>
+                            <div class="pj-dropdown-item <?= $filters['module'] == 'Passwords' ? 'active' : '' ?>" onclick="setLogFilter('module', 'Passwords', 'Passwords', this)">Passwords</div>
+                        </div>
+                        <input type="hidden" id="logsModuleSelect" value="<?= htmlspecialchars($filters['module']) ?>">
+                    </div>
+
+                    <!-- Action Filter -->
+                    <div class="pj-filter-wrapper">
+                        <button class="pj-filter-btn" onclick="toggleLogDropdown('logsActionDropdown')">
+                            <i class="ph ph-funnel-simple"></i>
+                            <span id="labelAction"><?= $filters['action'] ?: 'Tất cả Hành động' ?></span>
+                            <i class="ph ph-caret-down"></i>
+                        </button>
+                        <div class="pj-dropdown" id="logsActionDropdown">
+                            <div class="pj-dropdown-item <?= !$filters['action'] ? 'active' : '' ?>" onclick="setLogFilter('action', '', 'Tất cả Hành động', this)">Tất cả Hành động</div>
+                            <div class="pj-dropdown-item <?= $filters['action'] == 'Cập nhật' ? 'active' : '' ?>" onclick="setLogFilter('action', 'Cập nhật', 'Cập nhật', this)">Cập nhật</div>
+                            <div class="pj-dropdown-item <?= $filters['action'] == 'Tạo mới' ? 'active' : '' ?>" onclick="setLogFilter('action', 'Tạo mới', 'Tạo mới', this)">Tạo mới</div>
+                            <div class="pj-dropdown-item <?= $filters['action'] == 'Xoá' ? 'active' : '' ?>" onclick="setLogFilter('action', 'Xoá', 'Xoá', this)">Xoá</div>
+                        </div>
+                        <input type="hidden" id="logsActionSelect" value="<?= htmlspecialchars($filters['action']) ?>">
+                    </div>
                 </div>
 
                 <!-- Data Table -->
@@ -315,6 +335,45 @@
             }, 3000);
         }
     }
+
+    // Toggle custom dropddowns for filters
+    function toggleLogDropdown(id) {
+        const dd = document.getElementById(id);
+        const isOpen = dd.classList.contains('open');
+        
+        // Close others
+        document.querySelectorAll('.pj-dropdown').forEach(d => d.classList.remove('open'));
+        
+        if (!isOpen) {
+            dd.classList.add('open');
+        }
+    }
+
+    function setLogFilter(type, value, label, el) {
+        if (type === 'module') {
+            document.getElementById('logsModuleSelect').value = value;
+            document.getElementById('labelModule').textContent = label;
+        } else {
+            document.getElementById('logsActionSelect').value = value;
+            document.getElementById('labelAction').textContent = label;
+        }
+        
+        // Highlight active item
+        el.closest('.pj-dropdown').querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        
+        // Close dropdown and apply filter
+        el.closest('.pj-dropdown').classList.remove('open');
+        applyFilters();
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.pj-filter-wrapper')) {
+            document.querySelectorAll('.pj-dropdown').forEach(d => d.classList.remove('open'));
+        }
+    });
+
 function viewLogDetail(id) {
     const log = LOGS.find(l => l.id == id);
     if (!log) return;
