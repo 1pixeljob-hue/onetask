@@ -7,14 +7,21 @@
         const dropdownWrapper = document.getElementById('userDropdownWrapper');
 
         if (profileTrigger && profileDropdown) {
-            profileTrigger.addEventListener('click', (e) => {
+            // Force close on load
+            profileDropdown.classList.remove('active');
+            
+            profileTrigger.onclick = (e) => {
                 e.stopPropagation();
+                const isActive = profileDropdown.classList.contains('active');
+                // Close all other dropdowns if any (optional)
                 profileDropdown.classList.toggle('active');
-            });
+                console.log('Profile dropdown toggled:', !isActive);
+            };
 
             document.addEventListener('click', (e) => {
-                if (dropdownWrapper && !dropdownWrapper.contains(e.target)) {
+                if (profileDropdown.classList.contains('active') && !dropdownWrapper.contains(e.target)) {
                     profileDropdown.classList.remove('active');
+                    console.log('Profile dropdown closed by outside click');
                 }
             });
         }
