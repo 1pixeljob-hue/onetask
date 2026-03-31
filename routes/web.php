@@ -1,3 +1,4 @@
+<?php
 // Auth routes
 $router->add('/login', 'App\Controllers\AuthController', 'showLogin');
 $router->add('/authenticate', 'App\Controllers\AuthController', 'login'); // Handle POST
