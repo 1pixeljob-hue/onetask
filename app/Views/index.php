@@ -936,20 +936,8 @@
         if (t) t.classList.remove('show');
     }
 
-    // Modal Dropdown Helper
-    function togglePjModalSelect(trigger) {
-        clearErrors(); // Also clear errors when interacting
-        const select = trigger.closest('.pj-modal-select');
-        const menu = select.querySelector('.pj-dropdown');
-        const isOpen = menu.classList.contains('active');
-        document.querySelectorAll('.pj-dropdown.active').forEach(m => m.classList.remove('active'));
-        if (!isOpen) menu.classList.add('active');
-    }
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.pj-modal-select')) {
-            document.querySelectorAll('.pj-dropdown.active').forEach(m => m.classList.remove('active'));
-        }
-    });
+    // Note: togglePjModalSelect and global click handlers for dropdowns 
+    // are now handled globally in shared-data.js to prevent conflicts.
 
     // Hosting Logic
     function openHostingModal() {
@@ -1105,9 +1093,35 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
+           function updateCxStats() {
+        const code = document.getElementById('cxCodeArea').value;
+        if (code) {
+            document.getElementById('statLines').textContent = (code.split('\n').length) + ' dòng';
+            document.getElementById('statChars').textContent = code.length + ' ký tự';
+        }
+    }
+
+    async function submitCxForm(e) {
+        e.preventDefault();
+        clearErrors();
+        const code = document.getElementById('cxCodeArea').value;
+        const title = document.getElementById('cxTitle').value;
+        const lang = document.getElementById('cxLangInput').value;
+
+        if (!title) { showToast('Vui lòng nhập tên code!', 'error'); markError('cxTitle'); return; }
+        if (!lang) { showToast('Vui lòng chọn ngôn ngữ!', 'error'); markError('cxLangInput', true); return; }
+        if (!code) { showToast('Vui lòng nhập nội dung code!', 'error'); markError('cxCodeArea'); return; }
+
+        showToast('Đang tạo snippet...');
+        try {
+            const resp = await fetch('/codex/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, language: lang, code, description: document.getElementById('cxDesc').value })
+            });
             const res = await resp.json();
             if (res.success) {
-                showToast('Đã lưu mật khẩu!', 'success');
+                showToast('Đã tạo snippet!', 'success');
                 setTimeout(() => location.reload(), 1500);
             } else {
                 showToast(res.message, 'error');
@@ -1117,38 +1131,6 @@
         }
     }
 
-    // Snippets Logic
-    function openAddSnippetModal() {
-        clearErrors();
-        document.getElementById('cxModal').classList.add('active');
-    }
-    function closeCxModal() {
-        document.getElementById('cxModal').classList.remove('active');
-        clearErrors();
-    }
-    function updateCxStats() {
-        const code = document.getElementById('cxCodeArea').value;
-        document.getElementById('statLines').textContent = (code.split('\n').length) + ' dòng';
-        document.getElementById('statChars').textContent = code.length + ' ký tự';
-        <?php include APP_DIR . '/Views/partials/footer.php'; ?>
-</body>
-</html>
-    async function submitCxForm(e) {
-        e.preventDefault();
-        clearErrors();
-        const formData = new FormData(e.target);
-        const code = document.getElementById('cxCodeArea').value;
-        const title = document.getElementById('cxTitle').value;
-        const lang = document.getElementById('cxLangInput').value;
-
-        if (!title) { showToast('Vui lòng nhập tên code!', 'error'); markError('cxTitle'); return; }
-        if (!lang) { showToast('Vui lòng chọn ngôn ngữ!', 'error'); markError('cxLangInput', true); return; }
-        if (!code) { showToast('Vui lòng nhập nội dung code!', 'error'); markError('cxCodeArea'); return; }
-
-            });
-        });
-    });
-
     function togglePasswordVisibility(id, btn) {
         const p = document.getElementById(id);
         const i = btn.querySelector('i');
@@ -1157,4 +1139,6 @@
     }
 </script>
 
+<?php include APP_DIR . '/Views/partials/footer.php'; ?>
+</body>
 </html>

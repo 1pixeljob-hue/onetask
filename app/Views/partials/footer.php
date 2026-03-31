@@ -26,23 +26,8 @@
             });
         }
 
-        // Global Select Logic
-        document.querySelectorAll('.pj-modal-select').forEach(sel => {
-            const inputId = sel.getAttribute('data-input-id');
-            const input = document.getElementById(inputId);
-            if (!input) return;
-            const triggerText = sel.querySelector('.pj-modal-select-trigger span');
-            sel.querySelectorAll('.pj-dropdown-item').forEach(item => {
-                item.onclick = function () {
-                    const val = this.getAttribute('data-value');
-                    input.value = val;
-                    triggerText.textContent = this.textContent.trim();
-                    sel.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                    sel.querySelector('.pj-dropdown').classList.remove('active');
-                };
-            });
-        });
+        // Note: Global Select Logic for .pj-modal-select is now 
+        // centralized in shared-data.js to prevent conflicts.
 
         // Global Loader handler
         const loader = document.getElementById('global-loader');

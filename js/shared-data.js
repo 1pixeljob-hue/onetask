@@ -474,84 +474,12 @@ function formatDateVN(dateStr) {
 /**
  * Page Loader & Transition Management
  */
-document.addEventListener('DOMContentLoaded', () => {
-    const loader = document.getElementById('global-loader');
-
-    // 1. Hide loader when everything is ready (including images and data rendering)
-    window.addEventListener('load', () => {
-        if (loader) {
-            setTimeout(() => {
-                loader.classList.add('hide');
-                document.body.style.overflow = '';
-            }, 300); // Small delay for visual comfort
-        }
-    });
-
-    // 2. Intercept sidebar navigation to show loader immediately
-    // This provides instant feedback before the browser starts fetching the next page
-    document.querySelectorAll('.nav-item, .logo, .pj-add-btn, .action-btn').forEach(link => {
-        link.addEventListener('click', function (e) {
-            const href = this.getAttribute('href');
-            // Only for internal links (starts with / or is relative, not #)
-            if (href && href !== '#' && !href.startsWith('http') && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
-                if (loader) {
-                    loader.classList.remove('hide');
-                    // Ensure it stays visible while navigating
-                    loader.style.opacity = '1';
-                    loader.style.visibility = 'visible';
-                }
-            }
-        });
-    });
-    // 3. Clear all search inputs on every module change (including Back/Forward cache)
-    const clearSearchInputs = () => {
-        const inputs = document.querySelectorAll('.pj-search-input');
-        if (inputs.length === 0) return;
-
-        inputs.forEach(input => {
-            // Force clear if it contains typical autofill patterns or the specific "quy"
-            if (input.value.toLowerCase().includes('quy') || input.value.length > 0) {
-                input.value = '';
-                input.dispatchEvent(new Event('input'));
-            }
-        });
-    };
-
-    // Run multiple times to catch late browser-side injections
-    clearSearchInputs();
-    let clearAttempts = 0;
-    const clearLoop = setInterval(() => {
-        clearSearchInputs();
-        if (++clearAttempts > 10) clearInterval(clearLoop);
-    }, 200);
-
-    // Extra guard on first focus
-    document.addEventListener('focusin', (e) => {
-        if (e.target.classList.contains('pj-search-input')) {
-            if (e.target.dataset.firstFocus !== 'true') {
-                if (e.target.value.toLowerCase().includes('quy')) {
-                    e.target.value = '';
-                    e.target.dispatchEvent(new Event('input'));
-                }
-                e.target.dataset.firstFocus = 'true';
-            }
-        }
-    });
-
-    window.addEventListener('pageshow', (event) => {
-        if (event.persisted) {
-            clearSearchInputs();
-        }
-    });
-
 /**
  * Global toggle for .pj-modal-select components
  */
 window.togglePjModalSelect = function(trigger) {
     const dropdown = trigger.closest('.pj-modal-select');
     if (!dropdown) return;
-    
-    const isOpen = dropdown.classList.contains('open');
     
     // Close all others
     document.querySelectorAll('.pj-modal-select.open').forEach(d => {
@@ -562,18 +490,61 @@ window.togglePjModalSelect = function(trigger) {
     dropdown.classList.toggle('open');
 };
 
-    // 4. Universal Modal Select (Dropdown) Logic (Synchronized)
+document.addEventListener('DOMContentLoaded', () => {
+    const loader = document.getElementById('global-loader');
+
+    // 1. Hide loader when everything is ready
+    window.addEventListener('load', () => {
+        if (loader) {
+            setTimeout(() => {
+                loader.classList.add('hide');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+    });
+
+    // 2. Intercept navigation for loader
+    document.querySelectorAll('.nav-item, .logo, .pj-add-btn, .action-btn').forEach(link => {
+        link.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href && href !== '#' && !href.startsWith('http') && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
+                if (loader) {
+                    loader.classList.remove('hide');
+                    loader.style.opacity = '1';
+                    loader.style.visibility = 'visible';
+                }
+            }
+        });
+    });
+
+    // 3. Clear search inputs
+    const clearSearchInputs = () => {
+        const inputs = document.querySelectorAll('.pj-search-input');
+        inputs.forEach(input => {
+            if (input.value.toLowerCase().includes('quy') || input.value.length > 0) {
+                input.value = '';
+                input.dispatchEvent(new Event('input'));
+            }
+        });
+    };
+    clearSearchInputs();
+    
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) clearSearchInputs();
+    });
+
+    // 4. Universal Modal Select (Dropdown) Logic
     document.addEventListener('click', (e) => {
         const trigger = e.target.closest('.pj-modal-select-trigger');
         const selectItem = e.target.closest('.pj-modal-select-item') || e.target.closest('.pj-dropdown-item');
         
-        // If clicking outside any .pj-modal-select, close all
+        // Handle Outside Click
         if (!trigger && !selectItem && !e.target.closest('.pj-modal-select')) {
             document.querySelectorAll('.pj-modal-select.open').forEach(d => d.classList.remove('open'));
             return;
         }
 
-        // Handle Toggle Dropdown (only if not handled by onclick)
+        // Handle Trigger Click
         if (trigger) {
             const dropdown = trigger.closest('.pj-modal-select');
             // If the element has onclick, we let onclick handle it to avoid double-toggle
@@ -588,69 +559,31 @@ window.togglePjModalSelect = function(trigger) {
             return;
         }
 
-        // Handle Option Selection (Supports both old and new synchronized classes)
-        const option = e.target.closest('.pj-modal-select-item') || e.target.closest('.pj-dropdown-item');
-        if (option && option.closest('.pj-modal-select')) {
-            const dropdown = option.closest('.pj-modal-select');
-            const trigger = dropdown.querySelector('.pj-modal-select-trigger');
+        // Handle Option Selection
+        if (selectItem && selectItem.closest('.pj-modal-select')) {
+            const dropdown = selectItem.closest('.pj-modal-select');
+            const triggerText = dropdown.querySelector('.pj-modal-select-trigger span');
             const hiddenInputId = dropdown.dataset.inputId;
-            const value = option.dataset.value;
+            const value = selectItem.dataset.value;
 
-            console.log('Dropdown Selected:', { id: hiddenInputId, value: value });
-
-            // Extract label and icon
-            const span = option.querySelector('span');
-            const labelText = span ? span.textContent : option.textContent.trim();
-            const icon = option.querySelector('i');
-
-            // Update Trigger UI
-            if (trigger) {
-                const triggerLabel = trigger.querySelector('span');
-                if (triggerLabel) triggerLabel.textContent = labelText;
-
-                const triggerIcon = trigger.querySelector('i:first-child');
-                if (triggerIcon && icon) {
-                    triggerIcon.className = icon.className;
-                    if (icon.style.color) triggerIcon.style.color = icon.style.color;
-                }
+            // Update UI
+            if (triggerText) {
+                const label = selectItem.querySelector('span');
+                triggerText.textContent = label ? label.textContent : selectItem.textContent.trim();
             }
 
-            // Update Active State
-            dropdown.querySelectorAll('.pj-modal-select-item, .pj-dropdown-item').forEach(i => i.classList.remove('active'));
-            option.classList.add('active');
-
-            // Update Hidden Input (CRITICAL FIX)
+            // Sync Hidden Input
             if (hiddenInputId) {
                 const input = document.getElementById(hiddenInputId);
                 if (input) {
                     input.value = value;
-                    // Trigger events for reactive frameworks or other listeners
                     input.dispatchEvent(new Event('change', { bubbles: true }));
-                    input.dispatchEvent(new Event('input', { bubbles: true }));
-                    console.log(`Updated #${hiddenInputId} to "${value}"`);
-                } else {
-                    console.error(`Could not find hidden input with ID: ${hiddenInputId}`);
                 }
             }
 
-            // Custom Callback if defined
-            const callbackName = dropdown.dataset.callback;
-            if (callbackName && typeof window[callbackName] === 'function') {
-                window[callbackName](value, labelText, option);
-            }
-
-            // Close dropdown
+            // Close
             dropdown.classList.remove('open');
-            dropdown.classList.remove('active');
-            
-            e.preventDefault();
             e.stopPropagation();
-            return;
-        }
-
-        // Close on Click Outside
-        if (!e.target.closest('.pj-modal-select')) {
-            document.querySelectorAll('.pj-modal-select.open').forEach(d => d.classList.remove('open'));
         }
     });
 });
