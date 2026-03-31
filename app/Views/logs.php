@@ -41,7 +41,7 @@
                 <div class="logs-toolbar-row">
                     <div class="pj-search-wrap logs-search">
                         <i class="ph ph-magnifying-glass pj-search-icon"></i>
-                        <input type="text" class="pj-search-input" id="logsSearchInput" placeholder="Tìm kiếm theo tên item hoặc user..." value="<?= htmlspecialchars($filters['search']) ?>">
+                        <input type="text" class="pj-search-input" id="logsSearchInput" placeholder="Tìm kiếm theo tên item hoặc user..." value="<?= htmlspecialchars($filters['search']) ?>" oninput="applyFilters(false)">
                     </div>
                     
                     <!-- Module Filter -->
@@ -523,25 +523,36 @@ function closeLogModalOverlay(e) {
     if (e.target === document.getElementById('logDetailModal')) closeLogModal();
 }
 
-function applyFilters() {
-    const module = document.getElementById('logsModuleSelect').value;
-    const action = document.getElementById('logsActionSelect').value;
-    const search = document.getElementById('logsSearchInput').value;
-    
-    let url = new URL(window.location.href);
-    url.searchParams.set('module', module);
-    url.searchParams.set('action', action);
-    url.searchParams.set('search', search);
-    url.searchParams.set('page', 1); // Reset to first page when filtering
-    
-    window.location.href = url.toString();
-}
+    let filterTimer;
+    function applyFilters(immediate = true) {
+        clearTimeout(filterTimer);
+        
+        const apply = () => {
+            const module = document.getElementById('logsModuleSelect').value;
+            const action = document.getElementById('logsActionSelect').value;
+            const search = document.getElementById('logsSearchInput').value;
+            
+            let url = new URL(window.location.href);
+            url.searchParams.set('module', module);
+            url.searchParams.set('action', action);
+            url.searchParams.set('search', search);
+            url.searchParams.set('page', 1);
+            
+            window.location.href = url.toString();
+        };
 
-document.getElementById('logsSearchInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        applyFilters();
+        if (immediate) {
+            apply();
+        } else {
+            filterTimer = setTimeout(apply, 500);
+        }
     }
-});
+
+    document.getElementById('logsSearchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            applyFilters(true);
+        }
+    });
 
 async function restoreLog(id) {
     if (!confirm('Bạn có chắc chắn muốn khôi phục dữ liệu này?')) return;

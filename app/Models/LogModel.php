@@ -138,8 +138,9 @@ class LogModel
         }
 
         if (!empty($filters['search'])) {
-            $where[] = "(item_name LIKE :search OR user_name LIKE :search)";
-            $params[':search'] = "%" . $filters['search'] . "%";
+            $where[] = "(item_name LIKE :s1 OR user_name LIKE :s2)";
+            $params[':s1'] = "%" . $filters['search'] . "%";
+            $params[':s2'] = "%" . $filters['search'] . "%";
         }
 
         $sql = "SELECT * FROM activity_logs";
@@ -180,8 +181,9 @@ class LogModel
         }
 
         if (!empty($filters['search'])) {
-            $where[] = "(item_name LIKE :search OR user_name LIKE :search)";
-            $params[':search'] = "%" . $filters['search'] . "%";
+            $where[] = "(item_name LIKE :s1 OR user_name LIKE :s2)";
+            $params[':s1'] = "%" . $filters['search'] . "%";
+            $params[':s2'] = "%" . $filters['search'] . "%";
         }
 
         $sql = "SELECT COUNT(*) as total FROM activity_logs";
