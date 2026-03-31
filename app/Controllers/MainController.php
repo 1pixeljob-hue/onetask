@@ -1,4 +1,6 @@
 <?php
+use App\Controllers\AuthController;
+use App\Core\BaseController;
 use App\Models\ProjectModel;
 use App\Models\HostingModel;
 use App\Models\PasswordModel;
@@ -17,6 +19,9 @@ class MainController extends BaseController {
     private $logModel;
 
     public function __construct() {
+        // Kiểm tra đăng nhập
+        AuthController::checkAuth();
+        
         $this->projectModel = new ProjectModel();
         $this->hostingModel = new HostingModel();
         $this->passwordModel = new PasswordModel();

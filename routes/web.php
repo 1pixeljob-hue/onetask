@@ -1,4 +1,8 @@
-<?php
+// Auth routes
+$router->add('/login', 'AuthController', 'showLogin');
+$router->add('/authenticate', 'AuthController', 'login'); // Handle POST
+$router->add('/logout', 'AuthController', 'logout');
+
 // Default dashboard route
 $router->add('/', 'MainController', 'dashboard');
 $router->add('/index', 'MainController', 'dashboard');

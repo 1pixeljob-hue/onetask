@@ -1,4 +1,6 @@
 <?php
+namespace App\Core;
+
 class BaseController {
     public function view($viewName, $data = []) {
         $viewPath = APP_DIR . '/Views/' . $viewName . '.php';
