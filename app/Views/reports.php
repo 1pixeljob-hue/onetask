@@ -279,7 +279,10 @@
         // ===== Populate Year Filter Dropdown =====
         function populateYearFilter() {
             const dropdown = document.getElementById('yearFilterDropdown');
-            const years = getAllYears();
+            const years = [];
+            const thisYear = new Date().getFullYear();
+            for (let y = thisYear; y >= thisYear - 5; y--) years.push(y);
+            
             dropdown.innerHTML = '';
             years.forEach(y => {
                 const active = y === currentYear ? ' active' : '';
@@ -552,9 +555,8 @@
             tbody.innerHTML = html;
         }
 
-        // ===== INIT =====
         populateYearFilter();
-        renderAll();        }
+        renderAll();
     </script>
     <?php include APP_DIR . '/Views/partials/footer.php'; ?>
 </body>
