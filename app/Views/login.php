@@ -27,7 +27,7 @@
             </div>
         <?php endif; ?>
 
-        <form action="/login" method="POST">
+        <form action="/authenticate" method="POST">
             <div class="form-group">
                 <label for="identity">Tên đăng nhập / Email</label>
                 <input type="text" id="identity" name="identity" placeholder="quydev hoặc email@example.com" required autofocus>
