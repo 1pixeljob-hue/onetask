@@ -495,7 +495,8 @@
                                 <?php foreach ($password_categories as $cat): ?>
                                     <div class="pj-dropdown-item"
                                         data-value="<?php echo htmlspecialchars($cat['name']); ?>">
-                                        <?php echo htmlspecialchars($cat['name']); ?></div>
+                                        <?php echo htmlspecialchars($cat['name']); ?>
+                                    </div>
                                 <?php endforeach; ?>
                             </div>
                             <input type="hidden" id="mPwdCategory" value="Email" required>
@@ -566,7 +567,8 @@
                                         <?php foreach ($snippet_categories as $cat): ?>
                                             <div class="pj-dropdown-item"
                                                 data-value="<?php echo htmlspecialchars($cat['name']); ?>">
-                                                <span><?php echo htmlspecialchars($cat['name']); ?></span></div>
+                                                <span><?php echo htmlspecialchars($cat['name']); ?></span>
+                                            </div>
                                         <?php endforeach; ?>
                                     </div>
                                 </div>
