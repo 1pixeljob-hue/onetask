@@ -460,29 +460,28 @@
             let html = '';
             let totalProjVal = 0, totalHostVal = 0, totalProjCount = 0, totalHostCount = 0;
 
-            monthly.forEach(m => {
+            const activeMonths = monthly.filter(m => m.total > 0);
+
+            if (activeMonths.length === 0) {
+                html = `<tr><td colspan="5" class="text-center py-4 text-muted">Không có dữ liệu doanh thu trong năm ${currentYear}</td></tr>`;
+                tbody.innerHTML = html;
+                return;
+            }
+
+            activeMonths.forEach(m => {
                 totalProjVal += m.projectValue;
                 totalHostVal += m.hostingValue;
                 totalProjCount += m.projectCount;
                 totalHostCount += m.hostingCount;
 
-                if (m.total === 0) {
-                    html += `<tr>
-                        <td class="td-month"><i class="ph ph-calendar-blank"></i> Tháng ${m.month}</td>
-                        <td><div class="cell-sub text-muted">0 VNĐ<br>0 projects</div></td>
-                        <td><div class="cell-sub text-muted">0 VNĐ<br>0 hosting</div></td>
-                        <td><strong class="text-muted">0 VNĐ</strong></td>
-                        <td class="text-center"><span class="text-muted text-sm">Không có dữ liệu</span></td>
-                    </tr>`;
-                } else {
-                    const projCell = m.projectValue > 0
-                        ? `<div class="cell-main color-teal">${formatVNDShort(m.projectValue)}</div><div class="cell-sub">${m.projectCount} projects</div>`
-                        : `<div class="cell-sub text-muted">0 VNĐ<br>0 projects</div>`;
-                    const hostCell = m.hostingValue > 0
-                        ? `<div class="cell-main color-blue">${formatVNDShort(m.hostingValue)}</div><div class="cell-sub">${m.hostingCount} hosting</div>`
-                        : `<div class="cell-sub text-muted">0 VNĐ<br>0 hosting</div>`;
-                    html += `<tr>
-                        <td class="td-month"><i class="ph ph-calendar-blank"></i> Tháng ${m.month}</td>
+                const projCell = m.projectValue > 0
+                    ? `<div class="cell-main color-teal">${formatVNDShort(m.projectValue)}</div><div class="cell-sub">${m.projectCount} projects</div>`
+                    : `<div class="cell-sub text-muted">0 VNĐ<br>0 projects</div>`;
+                const hostCell = m.hostingValue > 0
+                    ? `<div class="cell-main color-blue">${formatVNDShort(m.hostingValue)}</div><div class="cell-sub">${m.hostingCount} hosting</div>`
+                    : `<div class="cell-sub text-muted">0 VNĐ<br>0 hosting</div>`;
+                html += `<tr>
+                    <td class="td-month"><i class="ph ph-calendar-blank"></i> Tháng ${m.month}</td>
                         <td>${projCell}</td>
                         <td>${hostCell}</td>
                         <td><strong class="color-green">${formatVNDShort(m.total)}</strong></td>
@@ -525,25 +524,25 @@
                 grandHostCount += hs.count;
 
                 const isViewing = y === currentYear;
-                const yearBadge = isViewing ? ` <span class="status-badge teal-badge">Đang xem</span>` : '';
+                const yearBadge = isViewing ? ` <span class="teal-badge">Đang xem</span>` : '';
                 
                 const growthCell = growth !== null
-                    ? `<td class="color-green"><i class="ph ph-arrow-up-right"></i> ${growth}%</td>`
+                    ? `<td class="color-green font-bold"><i class="ph ph-arrow-up-right"></i> ${growth}%</td>`
                     : `<td class="text-muted">N/A</td>`;
 
                 const projCell = ps.totalValue > 0
-                    ? `<div class="cell-main color-teal">${formatVNDShort(ps.totalValue)}</div><div class="cell-sub">${ps.count} projects</div>`
+                    ? `<div class="cell-main color-teal font-bold">${formatVNDShort(ps.totalValue)}</div><div class="cell-sub">${ps.count} projects</div>`
                     : `<div class="cell-sub text-muted">0 VNĐ<br>0 projects</div>`;
                 const hostCell = hs.totalPrice > 0
-                    ? `<div class="cell-main color-blue">${formatVNDShort(hs.totalPrice)}</div><div class="cell-sub">${hs.count} hosting</div>`
+                    ? `<div class="cell-main color-blue font-bold">${formatVNDShort(hs.totalPrice)}</div><div class="cell-sub">${hs.count} hosting</div>`
                     : `<div class="cell-sub text-muted">0 VNĐ<br>0 hosting</div>`;
 
                 html += `<tr>
-                    <td class="td-year"><i class="ph ph-calendar-blank"></i> ${y}${yearBadge}</td>
+                    <td class="td-year font-bold"><i class="ph ph-calendar-blank"></i> ${y}${yearBadge}</td>
                     <td>${projCell}</td>
                     <td>${hostCell}</td>
-                    <td><strong class="color-green">${formatVNDShort(total)}</strong></td>
-                    <td><strong>${formatVNDShort(avg)}</strong></td>
+                    <td><strong class="color-green font-bold">${formatVNDShort(total)}</strong></td>
+                    <td><strong class="font-bold">${formatVNDShort(avg)}</strong></td>
                     ${growthCell}
                 </tr>`;
             });
@@ -551,12 +550,12 @@
             // Summary
             const grandTotal = grandProjVal + grandHostVal;
             html += `<tr class="table-summary-row">
-                <td>TỔNG CỘNG</td>
-                <td><div class="cell-main color-teal">${formatVNDShort(grandProjVal)}</div><div class="cell-sub">${grandProjCount} projects</div></td>
-                <td><div class="cell-main color-blue">${formatVNDShort(grandHostVal)}</div><div class="cell-sub">${grandHostCount} hosting</div></td>
-                <td><strong class="color-green">${formatVNDShort(grandTotal)}</strong></td>
+                <td class="font-bold">TỔNG CỘNG</td>
+                <td><div class="cell-main color-teal font-bold">${formatVNDShort(grandProjVal)}</div><div class="cell-sub">${grandProjCount} projects</div></td>
+                <td><div class="cell-main color-blue font-bold">${formatVNDShort(grandHostVal)}</div><div class="cell-sub">${grandHostCount} hosting</div></td>
+                <td><strong class="color-green font-bold">${formatVNDShort(grandTotal)}</strong></td>
                 <td></td>
-                <td><span class="text-muted text-sm">${years.length} năm hoạt động</span></td>
+                <td class="text-right"><span class="text-muted text-sm">${years.length} năm hoạt động</span></td>
             </tr>`;
 
             tbody.innerHTML = html;
