@@ -894,18 +894,24 @@ body {
     height: 44px;
     padding: 0 20px;
     background-color: #2fab91;
-    /* Teal-ish green like in screenshot */
+    color: #ffffff;
+    border: 1px solid #2fab91;
     border-radius: var(--radius-md);
     font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .btn-add:hover {
     background-color: #248c76;
+    border-color: #248c76;
     box-shadow: 0 4px 12px rgba(47, 171, 145, 0.3);
+    color: #ffffff;
 }
 
 .btn-add i {
     font-size: 18px;
+    color: #ffffff;
 }
 
 /* Data Table */

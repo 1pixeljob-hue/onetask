@@ -184,11 +184,13 @@
 
                 <!-- Monthly Table -->
                 <div class="report-table-panel">
-                    <div class="chart-header">
-                        <div class="ch-icon"><i class="ph ph-eye"></i></div>
-                        <div>
-                            <h3 id="monthlyTableTitle">Chi Tiết Tháng - 2026</h3>
-                            <p>Click để xem chi tiết</p>
+                    <div class="chart-header flex-align">
+                        <div class="flex-align">
+                            <div class="ch-icon"><i class="ph ph-eye"></i></div>
+                            <div>
+                                <h3 id="monthlyTableTitle">Chi Tiết Tháng - 2026</h3>
+                                <p>Click để xem chi tiết</p>
+                            </div>
                         </div>
                     </div>
                     <div class="table-container pt-0">
