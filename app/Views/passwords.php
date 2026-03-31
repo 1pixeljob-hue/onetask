@@ -1047,6 +1047,7 @@ async function confirmDeletePwdAction() {
         showPwdToast('Lỗi kết nối máy chủ', 'error');
     }
 }
+</script>
     <?php include APP_DIR . '/Views/partials/footer.php'; ?>
 </body>
 </html>

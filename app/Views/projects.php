@@ -1163,6 +1163,7 @@ function togglePasswordVisibility(id, btn) {
         icon.classList.add('ph-eye');
     }
 }
+</script>
     <?php include APP_DIR . '/Views/partials/footer.php'; ?>
 </body>
 </html>

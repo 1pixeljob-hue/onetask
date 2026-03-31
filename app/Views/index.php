@@ -1061,14 +1061,7 @@
         if (p.type === 'password') { p.type = 'text'; i.className = 'ph ph-eye-slash'; }
         else { p.type = 'password'; i.className = 'ph ph-eye'; }
     }
-    function generateStrongPwd() {
-        const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
-        let pwd = "";
-        for (let i = 0; i < 16; i++) pwd += chars.charAt(Math.floor(Math.random() * chars.length));
-        document.getElementById('mPwdPass').value = pwd;
-        document.getElementById('mPwdPass').type = 'text';
-        document.getElementById('mPwdEyeIcon').className = 'ph ph-eye-slash';
-    }
+
     async function submitAddPwdForm(e) {
         e.preventDefault();
         clearErrors();
@@ -1093,7 +1086,19 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-           function updateCxStats() {
+            const res = await resp.json();
+            if (res.success) {
+                showToast('Thêm mật khẩu thành công!', 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast(res.message || 'Lỗi khi lưu.', 'error');
+            }
+        } catch (e) {
+            showToast('Lỗi kết nối!', 'error');
+        }
+    }
+
+    function updateCxStats() {
         const code = document.getElementById('cxCodeArea').value;
         if (code) {
             document.getElementById('statLines').textContent = (code.split('\n').length) + ' dòng';

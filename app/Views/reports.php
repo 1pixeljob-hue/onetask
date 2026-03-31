@@ -554,7 +554,8 @@
 
         // ===== INIT =====
         populateYearFilter();
-        renderAll();
+        renderAll();        }
+    </script>
     <?php include APP_DIR . '/Views/partials/footer.php'; ?>
 </body>
 </html>
