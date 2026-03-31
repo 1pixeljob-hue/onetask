@@ -245,7 +245,8 @@
     </div>
 
     <script>
-        let currentYear = 2026;
+        // Initial year based on data
+        let currentYear = getAllYears()[0] || new Date().getFullYear();
         let donutChartInstance = null;
         let barChartInstance = null;
         let lineChartInstance = null;
@@ -279,15 +280,21 @@
         // ===== Populate Year Filter Dropdown =====
         function populateYearFilter() {
             const dropdown = document.getElementById('yearFilterDropdown');
-            const years = [];
-            const thisYear = new Date().getFullYear();
-            for (let y = thisYear; y >= thisYear - 5; y--) years.push(y);
+            const years = getAllYears();
             
             dropdown.innerHTML = '';
             years.forEach(y => {
-                const active = y === currentYear ? ' active' : '';
+                const active = (y === currentYear) ? ' active' : '';
                 dropdown.innerHTML += `<div class="pj-dropdown-item${active}" onclick="setYearFilter('${y}', this)">Năm ${y}</div>`;
             });
+
+            // Đồng bộ nhãn nút lọc đầu tiên
+            document.getElementById('yearFilterLabel').textContent = 'Năm ' + currentYear;
+            
+            // Cập nhật các tiêu đề có gắn năm
+            document.getElementById('rcTotalSub').textContent = 'Năm ' + currentYear;
+            document.getElementById('lineChartTitle').textContent = 'Xu Hướng Tháng - ' + currentYear;
+            document.getElementById('monthlyTableTitle').textContent = 'Chi Tiết Tháng - ' + currentYear;
         }
 
         // ===== Render All =====

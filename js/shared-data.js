@@ -298,12 +298,15 @@ function getMonth(dateStr) {
  */
 function getAllYears() {
     const years = new Set();
+    // Luôn bao gồm năm hiện tại
+    years.add(new Date().getFullYear());
+    
     PROJECTS.forEach(p => {
         const y = getYear(p.date);
         if (!isNaN(y)) years.add(y);
     });
     HOSTINGS.forEach(h => {
-        const y = getYear(h.expDate);
+        const y = getYear(h.regDate);
         if (!isNaN(y)) years.add(y);
     });
     return Array.from(years).sort((a, b) => b - a);
