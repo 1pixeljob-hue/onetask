@@ -480,6 +480,13 @@ body {
     gap: 24px;
 }
 
+.welcome-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
 .welcome-section h2 {
     font-size: 24px;
     font-weight: 700;
@@ -493,6 +500,59 @@ body {
 .welcome-section p {
     font-size: 14px;
     color: var(--text-muted);
+}
+
+/* Dashboard Clock */
+.welcome-clock {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    padding: 12px 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.clock-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 45px;
+}
+
+.clock-number {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.clock-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.clock-divider {
+    font-size: 20px;
+    font-weight: 700;
+    color: #cbd5e1;
+    margin-bottom: 16px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.highlight-orange {
+    color: #f97316;
 }
 
 /* Stats Grid */

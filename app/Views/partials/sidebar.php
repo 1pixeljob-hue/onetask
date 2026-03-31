@@ -45,10 +45,6 @@ $activePage = $activePage ?? '';
             <i class="ph ph-gear"></i>
             <span>Settings</span>
         </a>
-        <a href="/logout" class="nav-item logout-nav" style="margin-top: auto; color: #ef4444;">
-            <i class="ph ph-sign-out"></i>
-            <span>Đăng xuất</span>
-        </a>
     </nav>
 
     <div class="sidebar-footer">

@@ -49,8 +49,26 @@
             <div class="content-body">
                 <!-- Welcome Section -->
                 <div class="welcome-section">
-                    <h2 id="greetingText">Chào buổi tối, <span class="highlight"><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Bạn'); ?></span></h2>
-                    <p>Đây là những gì đang diễn ra trong hệ thống hôm nay</p>
+                    <div class="welcome-text">
+                        <h2 id="greetingText">Chào buổi tối, <span class="highlight"><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Bạn'); ?></span></h2>
+                        <p>Đây là những gì đang diễn ra trong hệ thống hôm nay</p>
+                    </div>
+                    <div class="welcome-clock" id="dashboardClock">
+                        <div class="clock-item">
+                            <span class="clock-number" id="clock-hours">00</span>
+                            <span class="clock-label">GIỜ</span>
+                        </div>
+                        <div class="clock-divider">:</div>
+                        <div class="clock-item">
+                            <span class="clock-number" id="clock-minutes">00</span>
+                            <span class="clock-label">PHÚT</span>
+                        </div>
+                        <div class="clock-divider">:</div>
+                        <div class="clock-item">
+                            <span class="clock-number highlight-orange" id="clock-seconds">00</span>
+                            <span class="clock-label">GIÂY</span>
+                        </div>
+                    </div>
                 </div>
 
                 <script>
@@ -66,7 +84,25 @@
                             greetingElement.innerHTML = `${greeting}, <span class="highlight"><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Bạn'); ?></span>`;
                         }
                     }
+
+                    function updateClock() {
+                        const now = new Date();
+                        const h = String(now.getHours()).padStart(2, '0');
+                        const m = String(now.getMinutes()).padStart(2, '0');
+                        const s = String(now.getSeconds()).padStart(2, '0');
+                        
+                        const hElem = document.getElementById('clock-hours');
+                        const mElem = document.getElementById('clock-minutes');
+                        const sElem = document.getElementById('clock-seconds');
+                        
+                        if (hElem) hElem.textContent = h;
+                        if (mElem) mElem.textContent = m;
+                        if (sElem) sElem.textContent = s;
+                    }
+
                     updateGreeting();
+                    updateClock();
+                    setInterval(updateClock, 1000);
                 </script>
 
                 <!-- Layer 1: Stats Grid V2 -->
