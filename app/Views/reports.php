@@ -487,7 +487,6 @@
                         <td><strong class="color-green">${formatVNDShort(m.total)}</strong></td>
                         <td class="text-center"><button class="btn-sm btn-teal"><i class="ph ph-eye"></i> Xem Chi Tiết</button></td>
                     </tr>`;
-                }
             });
 
             // Summary row
