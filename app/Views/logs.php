@@ -46,7 +46,7 @@
                     
                     <!-- Module Filter -->
                     <div class="pj-filter-wrapper">
-                        <button class="pj-filter-btn" onclick="toggleLogDropdown('logsModuleDropdown')">
+                        <button class="pj-filter-btn" onclick="event.stopPropagation(); toggleLogDropdown('logsModuleDropdown')">
                             <i class="ph ph-funnel-simple"></i>
                             <span id="labelModule"><?= $filters['module'] ?: 'Tất cả Module' ?></span>
                             <i class="ph ph-caret-down"></i>
@@ -63,7 +63,7 @@
 
                     <!-- Action Filter -->
                     <div class="pj-filter-wrapper">
-                        <button class="pj-filter-btn" onclick="toggleLogDropdown('logsActionDropdown')">
+                        <button class="pj-filter-btn" onclick="event.stopPropagation(); toggleLogDropdown('logsActionDropdown')">
                             <i class="ph ph-funnel-simple"></i>
                             <span id="labelAction"><?= $filters['action'] ?: 'Tất cả Hành động' ?></span>
                             <i class="ph ph-caret-down"></i>
@@ -339,14 +339,17 @@
     // Toggle custom dropddowns for filters
     function toggleLogDropdown(id) {
         const dd = document.getElementById(id);
+        if (!dd) return;
+        
         const isOpen = dd.classList.contains('open');
         
-        // Close others
-        document.querySelectorAll('.pj-dropdown').forEach(d => d.classList.remove('open'));
+        // Close all dropdowns first
+        document.querySelectorAll('.pj-dropdown').forEach(d => {
+            if (d.id !== id) d.classList.remove('open');
+        });
         
-        if (!isOpen) {
-            dd.classList.add('open');
-        }
+        // Toggle current dropdown
+        dd.classList.toggle('open', !isOpen);
     }
 
     function setLogFilter(type, value, label, el) {
