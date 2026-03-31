@@ -275,7 +275,7 @@ function initHostingsTable() {
         const row = document.createElement('tr');
         row.setAttribute('data-id', h.id);
         const status = getStatusFromDate(h.expDate);
-        row.innerHTML = generateRowHTML(h.name, h.domain, h.provider, h.expDate, status, h.usage);
+        row.innerHTML = generateRowHTML(h.name, h.domain, h.provider, h.expDate, status, h.regDate);
         tbody.appendChild(row);
     });
 }
@@ -467,7 +467,7 @@ document.addEventListener('click', function(e) {
             expDateEl.className = 'dgc-val ' + (statusBadgeEl.classList.contains('warning') ? 'warning-text' : (statusBadgeEl.classList.contains('expired') ? 'danger-text' : 'success-text'));
             
             document.getElementById('dModalRegDate').textContent = regDateText;
-            document.getElementById('dModalUsage').textContent = usage || '1 năm';
+            document.getElementById('dModalUsage').textContent = calculateUsageTime(regMatch ? `${regMatch[3]}-${regMatch[2]}-${regMatch[1]}` : null);
             
             const daysLeftContainer = document.getElementById('dModalDaysLeft');
             daysLeftContainer.className = 'dgc-val ' + (statusBadgeEl.classList.contains('warning') ? 'warning-text' : (statusBadgeEl.classList.contains('expired') ? 'danger-text' : 'success-text'));
@@ -851,6 +851,33 @@ function formatDateVN(dateStr) {
     return `${d}/${m}/${y}`;
 }
 
+/**
+ * Tính thời gian sử dụng dựa trên ngày đăng ký
+ */
+function calculateUsageTime(regDateStr) {
+    if (!regDateStr) return 'Đang cập nhật';
+    
+    const regDate = new Date(regDateStr);
+    const today = new Date();
+    
+    let years = today.getFullYear() - regDate.getFullYear();
+    let months = today.getMonth() - regDate.getMonth();
+    
+    if (months < 0 || (months === 0 && today.getDate() < regDate.getDate())) {
+        years--;
+        months += 12;
+    }
+    
+    if (years >= 1) {
+        return `Sử dụng ${years} năm`;
+    } else if (months >= 1) {
+        return `Sử dụng ${months} tháng`;
+    } else {
+        const diffDays = Math.floor((today - regDate) / (1000 * 60 * 60 * 24));
+        return diffDays > 0 ? `Sử dụng ${diffDays} ngày` : 'Mới đăng ký';
+    }
+}
+
 function submitHostingForm() {
     if (currentActionMode === 'add') {
         addHosting();
@@ -944,7 +971,7 @@ function updateHosting() {
             const result = await response.json();
             if (result.success) {
                 const status = getStatusFromDate(expDate);
-                currentRowToEdit.innerHTML = generateRowHTML(name, domain, provider, expDate, status, data.usage);
+                currentRowToEdit.innerHTML = generateRowHTML(name, domain, provider, expDate, status, regDate);
                 closeHostingModalBtn();
                 applyFilters();
             } else {
@@ -957,17 +984,18 @@ function updateHosting() {
     });
 }
 
-function generateRowHTML(name, domain, provider, expDate, status) {
+function generateRowHTML(name, domain, provider, expDate, status, regDate) {
     const daysText = status.days !== null
         ? `<div class="date-sub ${status.cls === 'warning' ? 'warning-text' : (status.cls === 'success' ? 'success-text' : '')}"><i class="ph ph-clock"></i> Còn ${status.days} ngày</div>`
         : `<div class="date-sub danger-text"><i class="ph ph-clock"></i> Đã hết hạn</div>`;
 
+    const usageText = calculateUsageTime(regDate);
 
     return `
         <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
         <td>
             <div class="cell-main">${name}</div>
-            <div class="cell-sub">Sử dụng 1 năm</div>
+            <div class="cell-sub">${usageText}</div>
         </td>
         <td>
             <div class="domain-info">
