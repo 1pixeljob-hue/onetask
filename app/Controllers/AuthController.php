@@ -16,7 +16,7 @@ class AuthController extends BaseController {
      * Hiển thị trang đăng nhập
      */
     public function showLogin() {
-        if (self::isLoggedIn()) {
+        if (self::checkAuth(false)) {
             header('Location: /');
             exit;
         }
@@ -44,6 +44,7 @@ class AuthController extends BaseController {
                 if ($remember) {
                     $token = bin2hex(random_bytes(32));
                     $this->userModel->updateRememberToken($user['id'], $token);
+                    // Cookie lưu trong 24h
                     setcookie('remember_me', $token, time() + (24 * 60 * 60), '/', '', false, true);
                 }
 
@@ -66,6 +67,7 @@ class AuthController extends BaseController {
         }
 
         // Xóa Session
+        session_unset();
         session_destroy();
 
         // Xóa Cookie
@@ -79,8 +81,9 @@ class AuthController extends BaseController {
 
     /**
      * Kiểm tra trạng thái đăng nhập (được gọi từ Controllers khác)
+     * @param bool $redirect Nếu true sẽ redirect về login nếu chưa đăng nhập
      */
-    public static function checkAuth() {
+    public static function checkAuth($redirect = true) {
         if (self::isLoggedIn()) {
             return true;
         }
@@ -98,8 +101,12 @@ class AuthController extends BaseController {
             }
         }
 
-        header('Location: /login');
-        exit;
+        if ($redirect) {
+            header('Location: /login');
+            exit;
+        }
+        
+        return false;
     }
 
     /**

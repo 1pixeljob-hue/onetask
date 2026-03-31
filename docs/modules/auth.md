@@ -19,7 +19,7 @@
 ## 3. Thông tin tài khoản mặc định
 - **Tên tài khoản**: `quydev`
 - **Email**: `1pixel.job@gmail.vn`
-- **Mật khẩu**: `Spencil@123`
+- **Mật khẩu**: ``
 
 ## 4. Lịch sử thay đổi (Changelog)
 - **[2026-03-31]** Khởi tạo hệ thống đăng nhập bảo mật cho Onetask.
