@@ -1,39 +1,39 @@
 // Auth routes
-$router->add('/login', 'AuthController', 'showLogin');
-$router->add('/authenticate', 'AuthController', 'login'); // Handle POST
-$router->add('/logout', 'AuthController', 'logout');
+$router->add('/login', 'App\Controllers\AuthController', 'showLogin');
+$router->add('/authenticate', 'App\Controllers\AuthController', 'login'); // Handle POST
+$router->add('/logout', 'App\Controllers\AuthController', 'logout');
 
 // Default dashboard route
-$router->add('/', 'MainController', 'dashboard');
-$router->add('/index', 'MainController', 'dashboard');
+$router->add('/', 'App\Controllers\MainController', 'dashboard');
+$router->add('/index', 'App\Controllers\MainController', 'dashboard');
 
 // Modules routing
-$router->add('/hostings', 'MainController', 'hostings');
-$router->add('/projects', 'MainController', 'projects');
-$router->add('/reports', 'MainController', 'reports');
-$router->add('/passwords', 'MainController', 'passwords');
-$router->add('/codex', 'MainController', 'codex');
-$router->add('/logs', 'MainController', 'logs');
-$router->add('/settings', 'MainController', 'settings');
+$router->add('/hostings', 'App\Controllers\MainController', 'hostings');
+$router->add('/projects', 'App\Controllers\MainController', 'projects');
+$router->add('/reports', 'App\Controllers\MainController', 'reports');
+$router->add('/passwords', 'App\Controllers\MainController', 'passwords');
+$router->add('/codex', 'App\Controllers\MainController', 'codex');
+$router->add('/logs', 'App\Controllers\MainController', 'logs');
+$router->add('/settings', 'App\Controllers\MainController', 'settings');
 
 // API/Action Routes
-$router->add('/projects/save', 'MainController', 'saveProject');
-$router->add('/projects/delete', 'MainController', 'deleteProject');
-$router->add('/projects/bulk-delete', 'MainController', 'deleteProjectsBulk');
-$router->add('/hostings/save', 'MainController', 'saveHosting');
-$router->add('/hostings/delete', 'MainController', 'deleteHosting');
-$router->add('/hostings/bulk-delete', 'MainController', 'deleteHostingsBulk');
-$router->add('/passwords/save', 'MainController', 'savePassword');
-$router->add('/passwords/delete', 'MainController', 'deletePassword');
-$router->add('/passwords/categories/save', 'MainController', 'saveCategory');
-$router->add('/passwords/categories/delete', 'MainController', 'deleteCategory');
+$router->add('/projects/save', 'App\Controllers\MainController', 'saveProject');
+$router->add('/projects/delete', 'App\Controllers\MainController', 'deleteProject');
+$router->add('/projects/bulk-delete', 'App\Controllers\MainController', 'deleteProjectsBulk');
+$router->add('/hostings/save', 'App\Controllers\MainController', 'saveHosting');
+$router->add('/hostings/delete', 'App\Controllers\MainController', 'deleteHosting');
+$router->add('/hostings/bulk-delete', 'App\Controllers\MainController', 'deleteHostingsBulk');
+$router->add('/passwords/save', 'App\Controllers\MainController', 'savePassword');
+$router->add('/passwords/delete', 'App\Controllers\MainController', 'deletePassword');
+$router->add('/passwords/categories/save', 'App\Controllers\MainController', 'saveCategory');
+$router->add('/passwords/categories/delete', 'App\Controllers\MainController', 'deleteCategory');
 
 // Codex Snippet Routes
-$router->add('/codex/save', 'MainController', 'saveSnippet');
-$router->add('/codex/delete', 'MainController', 'deleteSnippet');
-$router->add('/codex/categories/save', 'MainController', 'saveCodeCategory');
-$router->add('/codex/categories/delete', 'MainController', 'deleteCodeCategory');
+$router->add('/codex/save', 'App\Controllers\MainController', 'saveSnippet');
+$router->add('/codex/delete', 'App\Controllers\MainController', 'deleteSnippet');
+$router->add('/codex/categories/save', 'App\Controllers\MainController', 'saveCodeCategory');
+$router->add('/codex/categories/delete', 'App\Controllers\MainController', 'deleteCodeCategory');
 
 // Log Routes
-$router->add('/logs/delete', 'MainController', 'deleteLog');
-$router->add('/logs/restore', 'MainController', 'restoreLog');
+$router->add('/logs/delete', 'App\Controllers\MainController', 'deleteLog');
+$router->add('/logs/restore', 'App\Controllers\MainController', 'restoreLog');
