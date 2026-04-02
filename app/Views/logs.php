@@ -406,7 +406,10 @@ function viewLogDetail(id) {
         if (actionStr.includes('tạo')) badgeClass = 'badge-action-create';
         else if (actionStr.includes('xo') || actionStr.includes('xóa')) badgeClass = 'badge-action-delete';
 
-        let dataTitle = (actionStr.includes('xo') || actionStr.includes('xóa')) ? 'Dữ liệu đã xóa' : 'Dữ liệu trước khi cập nhật';
+        let dataTitle = 'Chi tiết dữ liệu';
+        if (actionStr.includes('xo') || actionStr.includes('xóa')) dataTitle = 'Dữ liệu đã xóa';
+        else if (actionStr.includes('tạo') || actionStr.includes('thêm')) dataTitle = 'Dữ liệu mới';
+        
         let dataHtml = '';
 
         if (log.data) {
@@ -415,17 +418,31 @@ function viewLogDetail(id) {
                 if (typeof dataObj === 'string') {
                     dataObj = JSON.parse(dataObj); // handle double stringification
                 }
-                dataHtml = `
-                    <div class="log-data-card">
-                        <span class="log-data-title">${dataTitle}</span>
-                        <div class="log-data-grid">
+                
+                // If it's an update and we have 'old' and 'new' objects
+                if (actionStr.includes('cập nhật') && dataObj && dataObj.old && dataObj.new) {
+                    dataTitle = 'Thay đổi';
+                    dataHtml = `
+                        <div class="log-data-title" style="margin-top: 20px;">${dataTitle}</div>
+                        <div class="log-data-card">
+                            ${renderUpdateChanges(dataObj.old, dataObj.new, log.module)}
+                        </div>
+                    `;
+                } else {
+                    // Fallback to regular format if it's an old update log or standard log
+                    if (actionStr.includes('cập nhật') && dataTitle === 'Chi tiết dữ liệu') {
+                        dataTitle = 'Dữ liệu trước khi cập nhật';
+                    }
+                    dataHtml = `
+                        <div class="log-data-title" style="margin-top: 20px;">${dataTitle}</div>
+                        <div class="log-data-card">
                             ${renderLogDataFields(dataObj, log.module)}
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             } catch (e) {
                 console.error("Parse JSON error:", e);
-                dataHtml = `<div class="log-data-card"><span class="log-data-label">Dữ liệu thô:</span><pre style="font-size:12px; overflow:auto;">${log.data}</pre></div>`;
+                dataHtml = `<div class="log-data-title" style="margin-top: 20px;">Dữ liệu thô</div><div class="log-data-card"><pre style="font-size:12px; overflow:auto;">${log.data}</pre></div>`;
             }
         }
 
@@ -475,6 +492,76 @@ function viewLogDetail(id) {
     }
 }
 
+function renderUpdateChanges(oldData, newData, module) {
+    let html = '';
+    const labelMap = {
+        'name': 'Tên', 'title': 'Tiêu đề', 'domain': 'Domain', 'provider': 'Nhà cung cấp',
+        'reg_date': 'Ngày đăng ký', 'exp_date': 'Ngày hết hạn', 'price': 'Giá',
+        'status': 'Trạng thái', 'url': 'Website', 'username': 'Tên đăng nhập',
+        'password': 'Mật khẩu', 'language': 'Ngôn ngữ', 'description': 'Mô tả', 'type': 'Loại',
+        'admin_url': 'Link Admin', 'admin_user': 'Admin User', 'admin_pass': 'Admin Pass',
+        'color': 'Màu nền', 'text_color': 'Màu chữ', 'desc': 'Mô tả'
+    };
+
+    const statusMap = {
+        'planning': 'Lên kế hoạch',
+        'doing': 'Đang thực hiện',
+        'done': 'Hoàn thành',
+        'active': 'Hoạt động',
+        'expired': 'Hết hạn',
+        'suspend': 'Tạm ngưng'
+    };
+
+    let hasChanges = false;
+    for (let key in newData) {
+        if (key === 'id' || key === 'created_at' || key === 'updated_at') continue;
+        
+        let oldVal = oldData[key] || '';
+        let newVal = newData[key] || '';
+        
+        if (oldVal !== newVal) {
+            hasChanges = true;
+            let label = labelMap[key] || key;
+            
+            // Format status mapping
+            if (key === 'status') {
+                oldVal = statusMap[oldVal] || oldVal;
+                newVal = statusMap[newVal] || newVal;
+            }
+
+            // Format passwords
+            if (key === 'password' || key === 'pass' || key === 'admin_pass') {
+                oldVal = "••••••••";
+                newVal = "••••••••";
+            }
+            if (oldVal === '') oldVal = 'Trống';
+
+            html += `
+                <div class="diff-block">
+                    <div class="diff-label">${label}</div>
+                    <div class="diff-row">
+                        <div class="diff-before">
+                            <span class="diff-tag-before">Trước</span>
+                            <span class="diff-text">${oldVal}</span>
+                        </div>
+                        <div class="diff-arrow"><i class="ph ph-arrow-right"></i></div>
+                        <div class="diff-after">
+                            <span class="diff-tag-after">Sau</span>
+                            <span class="diff-text">${newVal}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    if (!hasChanges) {
+        return '<div style="padding: 15px; color: #64748b; font-size: 14px;">Không phát hiện thay đổi cụ thể.</div>';
+    }
+    
+    return html;
+}
+
 function renderLogDataFields(data, module) {
     if (!data || typeof data !== 'object') return '';
     let fields = '';
@@ -521,14 +608,31 @@ function renderLogDataFields(data, module) {
             const num = parseInt(val);
             if (!isNaN(num)) val = num.toLocaleString('vi-VN') + ' VNĐ';
         }
-        if (key === 'status' && val === 'active') val = '<span class="status-badge badge-green">Hoạt động</span>';
+        
+        let isLink = false;
+        if (key === 'url' || key === 'domain' || key === 'admin_url') {
+            val = `<a href="${val}" target="_blank" style="color: #3b82f6; text-decoration: none;">${val} <i class="ph ph-link"></i></a>`;
+            isLink = true;
+        } else if (key === 'password' || key === 'pass' || key === 'admin_pass') {
+            val = '<span style="letter-spacing: 2px; font-weight: bold; color: #94a3b8;">••••••••</span>';
+        } else if (key === 'status') {
+            const statusMap = {
+                'planning': '<span class="status-badge badge-blue">Lên kế hoạch</span>',
+                'doing': '<span class="status-badge badge-yellow">Đang thực hiện</span>',
+                'done': '<span class="status-badge badge-green">Hoàn thành</span>',
+                'active': '<span class="status-badge badge-green">Hoạt động</span>',
+                'expired': '<span class="status-badge badge-red">Hết hạn</span>',
+                'suspend': '<span class="status-badge badge-gray">Tạm ngưng</span>'
+            };
+            val = statusMap[val] || val;
+        }
 
         fields += `
             <div class="log-data-field">
                 <i class="ph ${icon} log-data-icon"></i>
                 <div class="log-data-info">
                     <span class="log-data-label">${label}</span>
-                    <span class="log-data-val">${val}</span>
+                    <span class="log-data-val ${isLink?'is-link':''}">${val}</span>
                 </div>
             </div>
         `;

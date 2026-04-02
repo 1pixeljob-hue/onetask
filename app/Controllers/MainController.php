@@ -155,12 +155,17 @@ class MainController extends BaseController {
             }
 
             if ($id) {
+                $oldData = $this->codeCategoryModel->find($id);
                 $success = $this->codeCategoryModel->update($id, [
                     'name' => $name,
                     'color' => $input['color'] ?? '#fef9c3',
                     'text_color' => $input['text_color'] ?? '#854d0e'
                 ]);
                 $success_id = $id;
+                if ($success) {
+                    $newData = $this->codeCategoryModel->find($id);
+                    $this->logModel->addLog('CodeX', 'Cập nhật', 'Danh mục: ' . $name, $_SESSION['user_name'] ?? 'System', json_encode(['old' => $oldData, 'new' => $newData]));
+                }
             } else {
                 $existing = $this->codeCategoryModel->findByName($name);
                 if ($existing) {
@@ -182,8 +187,9 @@ class MainController extends BaseController {
             if ($success) {
                 $cat = $this->codeCategoryModel->find($success_id);
                 $catName = ($cat && isset($cat['name'])) ? $cat['name'] : 'ID #' . $success_id;
-                $action = $id ? 'Cập nhật' : 'Tạo mới';
-                $this->logModel->addLog('CodeX', $action, 'Danh mục: ' . $catName, $_SESSION['user_name'] ?? 'System');
+                if (!$id) {
+                    $this->logModel->addLog('CodeX', 'Tạo mới', 'Danh mục: ' . $catName, $_SESSION['user_name'] ?? 'System');
+                }
                 echo json_encode([
                     'status' => 'success', 
                     'success' => true,
@@ -316,7 +322,10 @@ class MainController extends BaseController {
             if (isset($input['id']) && $input['id']) {
                 $oldData = $this->projectModel->find($input['id']);
                 $success = $this->projectModel->update($input['id'], $input);
-                if ($success) $this->logModel->addLog('Project', 'Cập nhật', $input['name'], $_SESSION['user_name'] ?? 'System', json_encode($oldData));
+                if ($success) {
+                    $newData = $this->projectModel->find($input['id']);
+                    $this->logModel->addLog('Project', 'Cập nhật', $input['name'], $_SESSION['user_name'] ?? 'System', json_encode(['old' => $oldData, 'new' => $newData]));
+                }
             } else {
                 $success = $this->projectModel->create($input);
                 if ($success) $this->logModel->addLog('Project', 'Tạo mới', $input['name'], $_SESSION['user_name'] ?? 'System');
@@ -377,7 +386,10 @@ class MainController extends BaseController {
             if (isset($input['id']) && $input['id']) {
                 $oldData = $this->hostingModel->find($input['id']);
                 $success = $this->hostingModel->update($input['id'], $input);
-                if ($success) $this->logModel->addLog('Hosting', 'Cập nhật', $input['name'], $_SESSION['user_name'] ?? 'System', json_encode($oldData));
+                if ($success) {
+                    $newData = $this->hostingModel->find($input['id']);
+                    $this->logModel->addLog('Hosting', 'Cập nhật', $input['name'], $_SESSION['user_name'] ?? 'System', json_encode(['old' => $oldData, 'new' => $newData]));
+                }
             } else {
                 $success = $this->hostingModel->create($input);
                 if ($success) $this->logModel->addLog('Hosting', 'Tạo mới', $input['name'], $_SESSION['user_name'] ?? 'System');
@@ -492,7 +504,10 @@ class MainController extends BaseController {
             if (isset($input['id']) && $input['id']) {
                 $oldData = $this->passwordModel->find($input['id']);
                 $success = $this->passwordModel->update($input['id'], $input);
-                if ($success) $this->logModel->addLog('Passwords', 'Cập nhật', $input['title'], $_SESSION['user_name'] ?? 'System', json_encode($oldData));
+                if ($success) {
+                    $newData = $this->passwordModel->find($input['id']);
+                    $this->logModel->addLog('Passwords', 'Cập nhật', $input['title'], $_SESSION['user_name'] ?? 'System', json_encode(['old' => $oldData, 'new' => $newData]));
+                }
             } else {
                 $success = $this->passwordModel->create($input);
                 if ($success) $this->logModel->addLog('Passwords', 'Tạo mới', $input['title'], $_SESSION['user_name'] ?? 'System');
@@ -551,8 +566,12 @@ class MainController extends BaseController {
             }
 
             if (isset($input['id']) && $input['id']) {
+                $oldData = $this->categoryModel->find($input['id']);
                 $success = $this->categoryModel->update($input['id'], $input);
-                if ($success) $this->logModel->addLog('Passwords', 'Cập nhật', 'Danh mục: ' . $input['name'], $_SESSION['user_name'] ?? 'System');
+                if ($success) {
+                    $newData = $this->categoryModel->find($input['id']);
+                    $this->logModel->addLog('Passwords', 'Cập nhật', 'Danh mục: ' . $input['name'], $_SESSION['user_name'] ?? 'System', json_encode(['old' => $oldData, 'new' => $newData]));
+                }
             } else {
                 $success = $this->categoryModel->create($input);
                 if ($success) $this->logModel->addLog('Passwords', 'Tạo mới', 'Danh mục: ' . $input['name'], $_SESSION['user_name'] ?? 'System');
@@ -616,6 +635,10 @@ class MainController extends BaseController {
             }
 
             $data = json_decode($log['data'], true);
+            if (isset($data['old']) && is_array($data['old'])) {
+                $data = $data['old'];
+            }
+            
             $module = $log['module'];
             $success = false;
             $itemName = $log['item_name'];
