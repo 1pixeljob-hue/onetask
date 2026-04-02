@@ -549,6 +549,20 @@ function initProjectsTable() {
         return matchesStatus && matchesSearch;
     });
 
+    // Sort by status priority then by date (Newest first)
+    const statusPriority = { 'planning': 1, 'doing': 2, 'testing': 3, 'done': 4, 'paused': 5 };
+    filteredProjects.sort((a, b) => {
+        const pA = statusPriority[(a.status || '').toLowerCase()] || 99;
+        const pB = statusPriority[(b.status || '').toLowerCase()] || 99;
+        
+        if (pA !== pB) return pA - pB;
+        
+        // Secondary sort: Date (Descending - Newest first)
+        const dateA = a.date || '0000-00-00';
+        const dateB = b.date || '0000-00-00';
+        return dateB.localeCompare(dateA);
+    });
+
     const totalItems = filteredProjects.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     

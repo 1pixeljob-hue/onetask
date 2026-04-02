@@ -731,15 +731,16 @@
         const noProgressReminder = document.getElementById('noProgressReminder');
 
         if (sideProjectContainer) {
-            // Priority: doing (1), testing (2), planning (3), paused (4), done (5)
-            const statusPriority = { 'doing': 1, 'testing': 2, 'planning': 3, 'paused': 4, 'done': 5 };
+            // Priority: planning (1), doing (2), testing (3), done (4), paused (5)
+            const statusPriority = { 'planning': 1, 'doing': 2, 'testing': 3, 'done': 4, 'paused': 5 };
             const activeProjects = PROJECTS.filter(p => {
                 const s = (p.status || '').toLowerCase().trim();
                 return ['planning', 'doing', 'testing', 'paused'].includes(s); // Focus on non-completed
             }).sort((a, b) => {
-                const sA = (a.status || '').toLowerCase().trim();
-                const sB = (b.status || '').toLowerCase().trim();
-                return (statusPriority[sA] || 99) - (statusPriority[sB] || 99);
+                const pA = statusPriority[(a.status || '').toLowerCase().trim()] || 99;
+                const pB = statusPriority[(b.status || '').toLowerCase().trim()] || 99;
+                if (pA !== pB) return pA - pB;
+                return new Date(b.date) - new Date(a.date);
             });
 
             const displayProjects = activeProjects.slice(0, 10);
