@@ -703,6 +703,9 @@ async function restoreLog(id) {
         showLogToast('Đã xảy ra lỗi khi kết nối với máy chủ.', 'error');
     }
 }
+    </script>
     <?php include APP_DIR . '/Views/partials/footer.php'; ?>
+
+
 </body>
 </html>
