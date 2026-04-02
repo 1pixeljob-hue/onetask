@@ -34,6 +34,26 @@
         
         .renewal-history-list::-webkit-scrollbar { width: 4px; }
         .renewal-history-list::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+        /* Price Badge Style */
+        .price-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: #0891b2;
+            font-weight: 700;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .price-badge i {
+            font-size: 14px;
+            color: #0891b2;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -116,6 +136,7 @@
                                 <th>TÊN HOSTING</th>
                                 <th>DOMAIN</th>
                                 <th>NHÀ CUNG CẤP</th>
+                                <th>GIÁ TRỊ</th>
                                 <th>NGÀY HẾT HẠN</th>
                                 <th>TRẠNG THÁI</th>
                                 <th width="80" class="text-center">THAO TÁC</th>
@@ -320,8 +341,9 @@ function initHostingsTable() {
             const expDate = h.expDate || h.exp_date;
             const regDate = h.regDate || h.reg_date;
             const status = getStatusFromDate(expDate);
+            const price = h.price || h.currentPrice || 0;
             
-            row.innerHTML = generateRowHTML(h.name, h.domain, h.provider, expDate, status, regDate);
+            row.innerHTML = generateRowHTML(h.name, h.domain, h.provider, expDate, status, regDate, price);
             tbody.appendChild(row);
         } catch (err) {
             console.error('Error rendering hosting row:', err, h);
@@ -1092,7 +1114,7 @@ function updateHosting() {
             const result = await response.json();
             if (result.success) {
                 const status = getStatusFromDate(expDate);
-                currentRowToEdit.innerHTML = generateRowHTML(name, domain, provider, expDate, status, regDate);
+                currentRowToEdit.innerHTML = generateRowHTML(name, domain, provider, expDate, status, regDate, price);
                 
                 // Update data attributes
                 currentRowToEdit.setAttribute('data-price', price);
@@ -1111,7 +1133,7 @@ function updateHosting() {
     });
 }
 
-function generateRowHTML(name, domain, provider, expDate, status, regDate) {
+function generateRowHTML(name, domain, provider, expDate, status, regDate, price) {
     // Defensive check for status
     if (!status) {
         status = { cls: 'text-muted', label: 'N/A', icon: 'ph-question', days: null };
@@ -1145,6 +1167,12 @@ function generateRowHTML(name, domain, provider, expDate, status, regDate) {
             <div class="provider-info">
                 <i class="ph ph-hard-drives color-gray"></i>
                 <span>${provider}</span>
+            </div>
+        </td>
+        <td>
+            <div class="price-badge">
+                <i class="ph-fill ph-currency-circle-dollar"></i>
+                <span>${formatVNDShortNoVND(price)}</span>
             </div>
         </td>
         <td>
