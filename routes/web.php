@@ -24,6 +24,8 @@ $router->add('/projects/bulk-delete', 'App\Controllers\MainController', 'deleteP
 $router->add('/hostings/save', 'App\Controllers\MainController', 'saveHosting');
 $router->add('/hostings/delete', 'App\Controllers\MainController', 'deleteHosting');
 $router->add('/hostings/bulk-delete', 'App\Controllers\MainController', 'deleteHostingsBulk');
+$router->add('/hostings/renew', 'App\Controllers\MainController', 'renewHosting');
+$router->add('/hostings/renewals', 'App\Controllers\MainController', 'getHostingRenewals');
 $router->add('/passwords/save', 'App\Controllers\MainController', 'savePassword');
 $router->add('/passwords/delete', 'App\Controllers\MainController', 'deletePassword');
 $router->add('/passwords/categories/save', 'App\Controllers\MainController', 'saveCategory');
