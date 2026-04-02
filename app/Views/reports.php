@@ -415,7 +415,7 @@
                     maintainAspectRatio: false,
                     scales: {
                         x: { grid: { display: false } },
-                        y: { border: { dash: [4, 4] }, grid: { color: gridColor, drawBorder: false }, ticks: { callback: v => v + 'M' } }
+                        y: { border: { dash: [4, 4] }, grid: { color: gridColor, drawBorder: false }, ticks: { callback: v => v + 'M VNĐ' } }
                     }
                 }
             });
@@ -448,7 +448,7 @@
                     maintainAspectRatio: false,
                     scales: {
                         x: { grid: { borderDash: [4,4], color: gridColor } },
-                        y: { grid: { borderDash: [4,4], color: gridColor }, ticks: { callback: v => v + 'M' } }
+                        y: { grid: { borderDash: [4,4], color: gridColor }, ticks: { callback: v => v + 'M VNĐ' } }
                     }
                 }
             });

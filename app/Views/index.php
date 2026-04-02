@@ -154,10 +154,10 @@
                         <div class="icon-box icon-purple">
                             <i class="ph ph-currency-dollar"></i>
                         </div>
-                        <div class="stat-label">Doanh thu hoàn tất</div>
+                        <div class="stat-label">Doanh thu năm nay</div>
                         <div class="stat-main">
                             <span class="stat-value-big" id="statRevenue">0</span>
-                            <span class="stat-sub">+14%</span>
+                            <span class="stat-sub">Đã hoàn tất</span>
                         </div>
                     </div>
                 </div>
@@ -616,18 +616,10 @@
             const hostData = monthlyData.map(m => m.hostingValue);
             const totalData = monthlyData.map(m => m.total);
 
-            // Formatter for Y axis / Totals
-            const formatM = (val) => {
-                if (val >= 1000000000) return '$' + (val / 1000000000).toFixed(1) + 'B';
-                if (val >= 1000000) return '$' + (val / 1000000).toFixed(1) + 'M';
-                if (val >= 1000) return '$' + (val / 1000).toFixed(0) + 'K';
-                return '$' + val;
-            };
-
-            // Update Total Display in header (Grand Total for the year)
+            // Update Total Display in header (Grand Total for the current year)
             const totalRev = totalData.reduce((a, b) => a + b, 0);
             if (document.getElementById('chartTotalValue')) {
-                document.getElementById('chartTotalValue').textContent = formatM(totalRev);
+                document.getElementById('chartTotalValue').textContent = formatVNDShort(totalRev);
             }
 
             new Chart(ctx, {
@@ -715,7 +707,7 @@
                                 color: '#94a3b8',
                                 font: { size: 10, weight: '600' },
                                 callback: function (value) {
-                                    return formatM(value);
+                                    return formatVNDShort(value);
                                 }
                             }
                         },

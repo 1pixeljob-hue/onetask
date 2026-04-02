@@ -259,6 +259,10 @@ const HOSTINGS = RAW_HOSTINGS.map(h => ({ ...h, price: parseFloat(h.price) || 0 
  * Định dạng giá trị VND ở dạng rút gọn (VD: 3.5M, 200K)
  */
 function formatVNDShort(value) {
+    if (value >= 1000000000) {
+        const b = value / 1000000000;
+        return (b % 1 === 0 ? b.toFixed(0) : b.toFixed(1)) + 'B VNĐ';
+    }
     if (value >= 1000000) {
         const m = value / 1000000;
         return (m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)) + 'M VNĐ';
@@ -267,7 +271,7 @@ function formatVNDShort(value) {
         const k = value / 1000;
         return (k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)) + 'K VNĐ';
     }
-    return value.toLocaleString('vi-VN') + ' VNĐ';
+    return Math.floor(value).toLocaleString('vi-VN') + ' VNĐ';
 }
 
 /**
@@ -371,8 +375,9 @@ function getMonthlyBreakdown(year) {
 function getDashboardStats() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const currentYear = today.getFullYear();
 
-    // Hosting stats
+    // Hosting stats (Global/Status based)
     const totalHostings = HOSTINGS.length;
     let expiringSoon = 0;
     let activeHostings = 0;
@@ -400,33 +405,31 @@ function getDashboardStats() {
     expiredList.sort((a, b) => new Date(a.expDate) - new Date(b.expDate));
     expiringSoonList.sort((a, b) => a.diffDays - b.diffDays);
 
-    // Project stats
+    // Project stats (Status based)
     const planningProjects = PROJECTS.filter(p => p.status === 'planning');
     const doingProjects = PROJECTS.filter(p => p.status === 'doing');
     const testingProjects = PROJECTS.filter(p => p.status === 'testing');
     const doneProjects = PROJECTS.filter(p => p.status === 'done');
     const pausedProjects = PROJECTS.filter(p => p.status === 'paused');
 
-    // Total revenue (Refined Logic)
-    // 1. Only include completed projects
-    const totalProjectRevenue = doneProjects.reduce((s, p) => s + p.value, 0);
+    // --- REVENUE CALCULATION (Current Year Focus) ---
+    // 1. Projects for the current year (all non-cancelled projects contribute to value)
+    const currentYearProjects = PROJECTS.filter(p => getYear(p.date) === currentYear);
+    const totalProjectRevenue = currentYearProjects.reduce((s, p) => s + (Number(p.value) || 0), 0);
 
-    // 2. Only include hostings that haven't expired
-    const activeAndExpiringHostings = HOSTINGS.filter(h => {
-        const exp = new Date(h.expDate);
-        exp.setHours(0, 0, 0, 0);
-        return exp >= today;
-    });
-    const totalHostingRevenue = activeAndExpiringHostings.reduce((s, h) => s + h.price, 0);
+    // 2. Hostings registered in the current year
+    const currentYearHostings = HOSTINGS.filter(h => getYear(h.regDate) === currentYear);
+    const totalHostingRevenue = currentYearHostings.reduce((s, h) => s + (Number(h.price) || 0), 0);
 
     const totalRevenue = totalProjectRevenue + totalHostingRevenue;
 
-    // Potential project value (all except done and paused)
-    const activeValue = PROJECTS.filter(p => ['planning', 'doing', 'testing'].includes(p.status))
-                                .reduce((s, p) => s + p.value, 0);
+    // Potential project value (all except done and paused - Current Year)
+    const activeValue = currentYearProjects.filter(p => ['planning', 'doing', 'testing'].includes(p.status))
+                                           .reduce((s, p) => s + (Number(p.value) || 0), 0);
 
-    // Total Potential Revenue (Global)
-    const totalPotentialRevenue = PROJECTS.reduce((s, p) => s + p.value, 0) + HOSTINGS.reduce((s, h) => s + h.price, 0);
+    // Total Potential Revenue (Lifetime for total comparison)
+    const totalPotentialRevenue = PROJECTS.reduce((s, p) => s + (Number(p.value) || 0), 0) + 
+                                  HOSTINGS.reduce((s, h) => s + (Number(h.price) || 0), 0);
 
     return {
         totalHostings,
