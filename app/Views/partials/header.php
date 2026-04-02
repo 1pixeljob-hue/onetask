@@ -34,7 +34,7 @@ $initials = count($nameParts) >= 2
                     </div>
                 </div>
                 <div class="dropdown-body">
-                    <a href="/settings" class="dropdown-item">
+                    <a href="javascript:void(0)" onclick="openAccountModal('info')" class="dropdown-item">
                         <div class="item-icon-box bg-light-blue">
                             <i class="ph ph-user"></i>
                         </div>
@@ -43,7 +43,7 @@ $initials = count($nameParts) >= 2
                             <span class="sub">Xem và chỉnh sửa thông tin</span>
                         </div>
                     </a>
-                    <a href="/settings#password" class="dropdown-item">
+                    <a href="javascript:void(0)" onclick="openAccountModal('password')" class="dropdown-item">
                         <div class="item-icon-box bg-light-orange">
                             <i class="ph ph-key"></i>
                         </div>
@@ -52,6 +52,7 @@ $initials = count($nameParts) >= 2
                             <span class="sub">Cập nhật mật khẩu bảo mật</span>
                         </div>
                     </a>
+
                     <div class="dropdown-divider"></div>
                     <a href="/logout" class="dropdown-item logout-item">
                         <div class="item-icon-box bg-light-red">
