@@ -378,8 +378,14 @@
     });
 
 function viewLogDetail(id) {
-    const log = LOGS.find(l => l.id == id);
-    if (!log) return;
+    // Safety check for LOGS (handle both Array and Object from PHP)
+    const logList = Array.isArray(LOGS) ? LOGS : Object.values(LOGS);
+    const log = logList.find(l => l.id == id);
+    
+    if (!log) {
+        console.error('Log not found for ID:', id);
+        return;
+    }
 
     const modalBody = document.getElementById('logModalBody');
     const modalFooter = document.getElementById('logModalFooter');
