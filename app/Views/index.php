@@ -602,7 +602,7 @@
             document.getElementById('statDoing').textContent = stats.doingProjects.length + stats.testingProjects.length;
             document.getElementById('statRevenue').textContent = formatVNDShort(stats.totalRevenue).replace(' VNĐ', '');
             if (document.getElementById('chartTotalValue')) {
-                document.getElementById('chartTotalValue').textContent = formatVNDShort(stats.totalPotentialRevenue);
+                document.getElementById('chartTotalValue').textContent = formatVNDShort(stats.totalRevenue);
             }
         }
 
@@ -618,7 +618,7 @@
             const totalData = monthlyData.map(m => m.total);
 
             // Update Total Display in header (Grand Total for the current year)
-            const totalRev = totalData.reduce((a, b) => a + b, 0) * 1000000;
+            const totalRev = totalData.reduce((a, b) => a + b, 0);
             if (document.getElementById('chartTotalValue')) {
                 document.getElementById('chartTotalValue').textContent = formatVNDShort(totalRev);
             }
@@ -691,7 +691,7 @@
                             intersect: false,
                             callbacks: {
                                 label: function (context) {
-                                    return ` ${context.dataset.label}: ${formatVNDShort(context.raw * 1000000)}`;
+                                    return ` ${context.dataset.label}: ${formatVNDShort(context.raw)}`;
                                 }
                             }
                         }
