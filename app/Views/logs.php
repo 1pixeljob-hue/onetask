@@ -115,7 +115,8 @@
                                     <td><input type="checkbox" class="cb-custom"></td>
                                     <td><div class="log-module"><i class="ph <?= $icon ?>"></i> <?= htmlspecialchars($log['module']) ?></div></td>
                                     <td><span class="status-badge <?= $badgeClass ?>"><?= htmlspecialchars($log['action']) ?></span></td>
-                                    <td><?= htmlspecialchars($log['item_name']) ?></td>
+                                    <td class="log-item-name"><?= htmlspecialchars($log['item_name']) ?></td>
+
                                     <td class="text-muted"><?= htmlspecialchars($log['user_name']) ?></td>
                                     <td class="text-muted"><?= date('d/m/Y H:i', strtotime($log['created_at'])) ?></td>
                                     <td class="text-center">
@@ -284,6 +285,20 @@
     .badge-action-delete, .badge-red { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
     .badge-blue { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
     .badge-action-renew { background: #f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe; }
+
+    .log-module {
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #475569;
+    }
+    .log-item-name {
+        font-size: 13.5px;
+        color: #334155;
+        font-weight: 500;
+    }
+
 
 
     /* Toast Notification Styles */
