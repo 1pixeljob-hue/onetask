@@ -445,7 +445,18 @@
                     ]
                 },
                 options: {
-                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } },
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function (context) {
+                                    return ` ${context.dataset.label}: ${formatVNDShort(context.raw * 1000000)}`;
+                                }
+                            }
+                        }
+                    },
                     maintainAspectRatio: false,
                     scales: {
                         x: { grid: { borderDash: [4,4], color: gridColor } },
@@ -570,10 +581,10 @@
         function openMonthDetail(month, year) {
             const modal = document.getElementById('reportDetailModal');
             const projects = PROJECTS.filter(p => getYear(p.date) === year && getMonth(p.date) === month);
-            const hostings = HOSTINGS.filter(h => getYear(h.regDate) === year && getMonth(h.regDate) === month);
+            const hostings = HOSTING_RENEWALS.filter(r => getYear(r.reg_date) === year && getMonth(r.reg_date) === month);
             
             const totalProj = projects.reduce((s, p) => s + p.value, 0);
-            const totalHost = hostings.reduce((s, h) => s + h.price, 0);
+            const totalHost = hostings.reduce((s, h) => s + h.amount, 0);
             const totalRevenue = totalProj + totalHost;
 
             // 1. Update Header
@@ -646,17 +657,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            ${hostings.map(h => `
-                                <tr>
-                                    <td>
-                                        <div class="rm-project-name">${h.name}</div>
-                                        <div class="rm-project-desc">${h.domain}</div>
-                                    </td>
-                                    <td><div class="rm-c-info"><i class="ph ph-cloud"></i> ${h.provider}</div></td>
-                                    <td class="rm-date">${formatDateVN(h.regDate)}</td>
-                                    <td class="rm-value color-blue text-right">${formatVNDFull(h.price)}</td>
-                                </tr>
-                            `).join('')}
+                            ${hostings.map(h => {
+                                const hMaster = RAW_HOSTINGS.find(m => m.id == h.hosting_id);
+                                const hName = hMaster ? hMaster.name : 'Hosting #' + h.hosting_id;
+                                const hDomain = hMaster ? hMaster.domain : 'N/A';
+                                const hProvider = hMaster ? hMaster.provider : 'N/A';
+                                return `
+                                    <tr>
+                                        <td>
+                                            <div class="rm-project-name">${hName}</div>
+                                            <div class="rm-project-desc">${hDomain}</div>
+                                        </td>
+                                        <td><div class="rm-c-info"><i class="ph ph-cloud"></i> ${hProvider}</div></td>
+                                        <td class="rm-date">${formatDateVN(h.reg_date)}</td>
+                                        <td class="rm-value color-blue text-right">${formatVNDFull(h.amount)}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
                         </tbody>
                     </table>
                 `;

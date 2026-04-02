@@ -365,7 +365,7 @@ function getMonthlyBreakdown(year) {
             projectValue: projValue,
             projectCount: projectsInMonth.length,
             hostingValue: hostValue,
-            renewalCount: renewalsInMonth.length,
+            hostingCount: renewalsInMonth.length,
             total: projValue + hostValue
         });
     }
