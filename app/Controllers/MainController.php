@@ -714,10 +714,9 @@ class MainController extends BaseController {
             ];
             $this->hostingModel->addRenewal($id, $renewalData);
 
-            // 2. Update hosting status (New exp date)
+            // 2. Update hosting status (New exp date) - Keep original regDate
             $updateData = $hosting;
             $updateData['price'] = $input['amount']; // Update current price if changed
-            $updateData['regDate'] = $input['regDate']; 
             $updateData['expDate'] = $input['expDate']; 
             if (isset($input['usage'])) $updateData['usage'] = $input['usage'];
 
