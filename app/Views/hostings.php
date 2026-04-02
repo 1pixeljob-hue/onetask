@@ -9,7 +9,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
         // Data injected from PHP Models
-        const PHP_DATA = {
+        var PHP_DATA = {
             projects: <?php echo json_encode($projects ?? []); ?>,
             hostings: <?php echo json_encode($hostings ?? []); ?>,
             hosting_renewals: <?php echo json_encode($hosting_renewals ?? []); ?>
@@ -293,18 +293,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initHostingsTable() {
     const tbody = document.getElementById('hostingTableBody');
+    if (!tbody) return;
     tbody.innerHTML = '';
     
+    // Check if HOSTINGS is defined
+    if (typeof HOSTINGS === 'undefined' || !HOSTINGS) {
+        console.error('HOSTINGS is not defined or empty. Check shared-data.js');
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center">Dữ liệu Hosting đang tải hoặc không khả dụng.</td></tr>';
+        return;
+    }
+
+    if (HOSTINGS.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center">Chưa có hosting nào được thêm.</td></tr>';
+        return;
+    }
+
     HOSTINGS.forEach(h => {
-        const row = document.createElement('tr');
-        row.setAttribute('data-id', h.id);
-        row.setAttribute('data-price', h.price || 0);
-        row.setAttribute('data-reg-date', h.regDate || '');
-        row.setAttribute('data-notes', h.notes || '');
-        const status = getStatusFromDate(h.expDate);
-        row.innerHTML = generateRowHTML(h.name, h.domain, h.provider, h.expDate, status, h.regDate);
-        tbody.appendChild(row);
+        try {
+            const row = document.createElement('tr');
+            row.setAttribute('data-id', h.id);
+            row.setAttribute('data-price', h.price || h.currentPrice || 0);
+            row.setAttribute('data-reg-date', h.regDate || h.reg_date || '');
+            row.setAttribute('data-notes', h.notes || '');
+            
+            const expDate = h.expDate || h.exp_date;
+            const regDate = h.regDate || h.reg_date;
+            const status = getStatusFromDate(expDate);
+            
+            row.innerHTML = generateRowHTML(h.name, h.domain, h.provider, expDate, status, regDate);
+            tbody.appendChild(row);
+        } catch (err) {
+            console.error('Error rendering hosting row:', err, h);
+        }
     });
+    
+    applyFilters();
 }
 
 function applyFilters() {
@@ -922,9 +945,15 @@ function formatPrice() {
 }
 
 function getStatusFromDate(expDateStr) {
-    if (!expDateStr) return null;
+    if (!expDateStr) return { cls: 'text-muted', label: 'N/A', icon: 'ph-question', days: null };
     const today = new Date(); today.setHours(0,0,0,0);
-    const exp = new Date(expDateStr); exp.setHours(0,0,0,0);
+    const exp = new Date(expDateStr); 
+    
+    if (isNaN(exp.getTime())) {
+        return { cls: 'text-muted', label: 'N/A', icon: 'ph-question', days: null };
+    }
+
+    exp.setHours(0,0,0,0);
     const diffDays = Math.ceil((exp - today) / (1000 * 60 * 60 * 24));
     if (diffDays < 0)   return { cls: 'expired',  label: 'Hết hạn',    icon: 'ph-x-circle',       days: null };
     if (diffDays <= 15) return { cls: 'warning',  label: 'Sắp hết hạn', icon: 'ph-warning-circle',  days: diffDays };
@@ -945,6 +974,8 @@ function calculateUsageTime(regDateStr, expDateStr) {
     
     const regDate = new Date(regDateStr);
     const endDate = expDateStr ? new Date(expDateStr) : new Date();
+    
+    if (isNaN(regDate.getTime()) || isNaN(endDate.getTime())) return 'Đang cập nhật';
     
     let years = endDate.getFullYear() - regDate.getFullYear();
     let months = endDate.getMonth() - regDate.getMonth();
