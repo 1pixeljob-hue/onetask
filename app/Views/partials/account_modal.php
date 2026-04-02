@@ -74,25 +74,25 @@
             <!-- Tab: Đổi Mật Khẩu -->
             <div id="tab-password" class="account-tab-content">
                 <form id="changePasswordForm" class="account-form">
-                    <div class="form-group mb-20">
-                        <label class="form-label">Mật khẩu hiện tại</label>
+                    <div class="modal-field mb-20">
+                        <label class="modal-label">Mật khẩu hiện tại <span class="req">*</span></label>
                         <div class="input-with-icon">
                             <i class="ph ph-lock"></i>
-                            <input type="password" name="current_password" class="form-control" placeholder="••••••••" required>
+                            <input type="password" name="current_password" class="modal-input" placeholder="••••••••" required>
                         </div>
                     </div>
-                    <div class="form-group mb-20">
-                        <label class="form-label">Mật khẩu mới</label>
+                    <div class="modal-field mb-20">
+                        <label class="modal-label">Mật khẩu mới <span class="req">*</span></label>
                         <div class="input-with-icon">
                             <i class="ph ph-shield-check"></i>
-                            <input type="password" name="new_password" class="form-control" placeholder="Nhập mật khẩu mới" required>
+                            <input type="password" name="new_password" class="modal-input" placeholder="Nhập mật khẩu mới" required>
                         </div>
                     </div>
-                    <div class="form-group mb-24">
-                        <label class="form-label">Xác nhận mật khẩu mới</label>
+                    <div class="modal-field mb-24">
+                        <label class="modal-label">Xác nhận mật khẩu mới <span class="req">*</span></label>
                         <div class="input-with-icon">
                             <i class="ph ph-shield-check"></i>
-                            <input type="password" name="confirm_password" class="form-control" placeholder="Nhập lại mật khẩu mới" required>
+                            <input type="password" name="confirm_password" class="modal-input" placeholder="Nhập lại mật khẩu mới" required>
                         </div>
                     </div>
                     
@@ -101,6 +101,7 @@
                     </button>
                 </form>
             </div>
+
         </div>
 
         <!-- Modal Footer (Hidden by screenshot but useful for spacing) -->

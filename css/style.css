@@ -5949,11 +5949,8 @@ body {
     text-align: left;
 }
 
-.account-form .form-label {
+.account-form .modal-label {
     display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: #475569;
     margin-bottom: 8px;
 }
 
@@ -5969,9 +5966,10 @@ body {
     transform: translateY(-50%);
     color: #94a3b8;
     font-size: 18px;
+    z-index: 1;
 }
 
-.input-with-icon .form-control {
+.input-with-icon .modal-input {
     padding-left: 42px !important;
     width: 100%;
     box-sizing: border-box;
@@ -5995,6 +5993,7 @@ body {
     box-shadow: 0 4px 12px rgba(47, 171, 145, 0.2);
     margin-top: 20px;
 }
+
 
 .btn-submit-premium:hover {
     background: #258e78;
