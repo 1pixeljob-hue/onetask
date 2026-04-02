@@ -49,7 +49,10 @@ class MainController extends BaseController {
     }
 
     public function hostings() {
-        $data = ['hostings' => $this->hostingModel->getAll()];
+        $data = [
+            'hostings' => $this->hostingModel->getAll(),
+            'hosting_renewals' => $this->hostingModel->getAllRenewals()
+        ];
         $this->view('hostings', $data);
     }
 
