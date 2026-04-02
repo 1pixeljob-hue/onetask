@@ -339,8 +339,10 @@ function applyFilters() {
         let showStatus = true;
         
         if (currentSearchTerm) {
-            const name = row.querySelector('.cell-main').textContent.toLowerCase();
-            const domain = row.querySelector('.domain-info span').textContent.toLowerCase();
+            const nameEl = row.querySelector('.cell-main');
+            const domainEl = row.querySelector('.domain-info span');
+            const name = nameEl ? nameEl.textContent.toLowerCase() : '';
+            const domain = domainEl ? domainEl.textContent.toLowerCase() : '';
             if (!name.includes(currentSearchTerm) && !domain.includes(currentSearchTerm)) {
                 showSearch = false;
             }
@@ -1114,11 +1116,17 @@ function generateRowHTML(name, domain, provider, expDate, status, regDate) {
         status = { cls: 'text-muted', label: 'N/A', icon: 'ph-question', days: null };
     }
     
+    // Defensive check for string fields
+    name = name || 'Chưa Đặt Tên';
+    domain = domain || '';
+    provider = provider || 'Khác';
+    
     const daysText = status.days !== null
         ? `<div class="date-sub ${status.cls === 'warning' ? 'warning-text' : (status.cls === 'success' ? 'success-text' : '')}"><i class="ph ph-clock"></i> Còn ${status.days} ngày</div>`
         : `<div class="date-sub danger-text"><i class="ph ph-clock"></i> Đã hết hạn</div>`;
 
     const usageText = calculateUsageTime(regDate, expDate);
+    const domainDisplay = domain.startsWith('http') ? domain : (domain ? 'https://' + domain : 'Chưa có domain');
 
     return `
         <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
@@ -1129,7 +1137,7 @@ function generateRowHTML(name, domain, provider, expDate, status, regDate) {
         <td>
             <div class="domain-info">
                 <i class="ph ph-globe color-gray"></i>
-                <span>${domain.startsWith('http') ? domain : 'https://' + domain}</span>
+                <span>${domainDisplay}</span>
             </div>
         </td>
         <td>
