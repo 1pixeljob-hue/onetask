@@ -320,12 +320,12 @@ function initHostingsTable() {
     // Check if HOSTINGS is defined
     if (typeof HOSTINGS === 'undefined' || !HOSTINGS) {
         console.error('HOSTINGS is not defined or empty. Check shared-data.js');
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center">Dữ liệu Hosting đang tải hoặc không khả dụng.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center">Dữ liệu Hosting đang tải hoặc không khả dụng.</td></tr>';
         return;
     }
 
     if (HOSTINGS.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center">Chưa có hosting nào được thêm.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center">Chưa có hosting nào được thêm.</td></tr>';
         return;
     }
 
@@ -1081,6 +1081,11 @@ function addHosting() {
 function updateHosting() {
     if (!currentRowToEdit) return;
     
+    const id       = currentRowToEdit.getAttribute('data-id');
+    const name     = document.getElementById('mHostingName').value.trim();
+    const domain   = document.getElementById('mDomain').value.trim();
+    const provider = document.getElementById('mProvider').value.trim();
+    const expDate  = document.getElementById('mExpDate').value;
     const regDate  = document.getElementById('mRegDate').value;
     const price    = document.getElementById('hostingPrice').value;
     const notes    = document.getElementById('mHostingNotes').value.trim();
@@ -1319,6 +1324,21 @@ async function submitRenewHosting() {
             showToast('Lỗi kết nối máy chủ', 'error');
         }
     });
+}
+
+/**
+ * Format VND Short without " VNĐ" suffix for the badge
+ */
+function formatVNDShortNoVND(value) {
+    if (value >= 1000000) {
+        const m = value / 1000000;
+        return (m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)) + 'M';
+    }
+    if (value >= 1000) {
+        const k = value / 1000;
+        return (k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)) + 'K';
+    }
+    return Math.floor(value).toLocaleString('vi-VN');
 }
 </script>
     <!-- Notification Toast -->
