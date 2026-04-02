@@ -253,6 +253,9 @@ const RAW_HOSTINGS = (typeof PHP_DATA !== 'undefined' && PHP_DATA.hostings) ? PH
 const PROJECTS = RAW_PROJECTS.map(p => ({ ...p, value: parseFloat(p.value) || 0 }));
 const HOSTINGS = RAW_HOSTINGS.map(h => ({ ...h, price: parseFloat(h.price) || 0 }));
 
+const RAW_RENEWALS = (typeof PHP_DATA !== 'undefined' && PHP_DATA.hosting_renewals) ? PHP_DATA.hosting_renewals : [];
+const HOSTING_RENEWALS = RAW_RENEWALS.map(r => ({ ...r, amount: parseFloat(r.amount) || 0 }));
+
 // ===================== HELPER FUNCTIONS =====================
 
 /**
@@ -339,8 +342,8 @@ function getProjectStats(year) {
  * Thống kê Hostings theo năm (dựa trên năm đăng ký - regDate)
  */
 function getHostingStats(year) {
-    const filtered = HOSTINGS.filter(h => getYear(h.regDate) === year);
-    const totalPrice = filtered.reduce((sum, h) => sum + h.price, 0);
+    const filtered = HOSTING_RENEWALS.filter(r => getYear(r.reg_date) === year);
+    const totalPrice = filtered.reduce((sum, r) => sum + r.amount, 0);
     const count = filtered.length;
     return { filtered, totalPrice, count };
 }
@@ -352,17 +355,17 @@ function getMonthlyBreakdown(year) {
     const months = [];
     for (let m = 1; m <= 12; m++) {
         const projectsInMonth = PROJECTS.filter(p => getYear(p.date) === year && getMonth(p.date) === m);
-        const hostingsInMonth = HOSTINGS.filter(h => getYear(h.regDate) === year && getMonth(h.regDate) === m);
+        const renewalsInMonth = HOSTING_RENEWALS.filter(r => getYear(r.reg_date) === year && getMonth(r.reg_date) === m);
 
         const projValue = projectsInMonth.reduce((s, p) => s + p.value, 0);
-        const hostValue = hostingsInMonth.reduce((s, h) => s + h.price, 0);
+        const hostValue = renewalsInMonth.reduce((s, r) => s + r.amount, 0);
 
         months.push({
             month: m,
             projectValue: projValue,
             projectCount: projectsInMonth.length,
             hostingValue: hostValue,
-            hostingCount: hostingsInMonth.length,
+            renewalCount: renewalsInMonth.length,
             total: projValue + hostValue
         });
     }
@@ -417,9 +420,9 @@ function getDashboardStats() {
     const currentYearProjects = PROJECTS.filter(p => getYear(p.date) === currentYear);
     const totalProjectRevenue = currentYearProjects.reduce((s, p) => s + (Number(p.value) || 0), 0);
 
-    // 2. Hostings registered in the current year
-    const currentYearHostings = HOSTINGS.filter(h => getYear(h.regDate) === currentYear);
-    const totalHostingRevenue = currentYearHostings.reduce((s, h) => s + (Number(h.price) || 0), 0);
+    // 2. Hostings renewals in the current year
+    const currentYearRenewals = HOSTING_RENEWALS.filter(r => getYear(r.reg_date) === currentYear);
+    const totalHostingRevenue = currentYearRenewals.reduce((s, r) => s + (Number(r.amount) || 0), 0);
 
     const totalRevenue = totalProjectRevenue + totalHostingRevenue;
 

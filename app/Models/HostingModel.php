@@ -37,18 +37,31 @@ class HostingModel {
      * Thêm hosting mới
      */
     public function create($data) {
-        $sql = "INSERT INTO hostings (name, domain, provider, price, reg_date, exp_date, usage_period) 
-                VALUES (:name, :domain, :provider, :price, :reg_date, :exp_date, :usage_period)";
+        $sql = "INSERT INTO hostings (name, domain, provider, price, reg_date, exp_date, usage_period, notes) 
+                VALUES (:name, :domain, :provider, :price, :reg_date, :exp_date, :usage_period, :notes)";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
+        $success = $stmt->execute([
             ':name' => $data['name'],
             ':domain' => $data['domain'] ?? '',
             ':provider' => $data['provider'] ?? '',
             ':price' => $data['price'] ?? 0,
             ':reg_date' => $data['regDate'] ?? null,
             ':exp_date' => $data['expDate'] ?? null,
-            ':usage_period' => $data['usage'] ?? ''
+            ':usage_period' => $data['usage'] ?? '',
+            ':notes' => $data['notes'] ?? ''
         ]);
+
+        if ($success) {
+            $hostingId = $this->db->lastInsertId();
+            // Ghi nhận lần thanh toán đầu tiên
+            $this->addRenewal($hostingId, [
+                'amount' => $data['price'],
+                'regDate' => $data['regDate'],
+                'expDate' => $data['expDate'],
+                'notes' => 'Khởi tạo hosting'
+            ]);
+        }
+        return $success;
     }
 
     /**
@@ -102,5 +115,38 @@ class HostingModel {
         $stmt = $this->db->prepare("SELECT * FROM hostings WHERE id = :id");
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Lấy toàn bộ lịch sử gia hạn (cho Reports)
+     */
+    public function getAllRenewals() {
+        $stmt = $this->db->query("SELECT * FROM hosting_renewals ORDER BY reg_date DESC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Lấy lịch sử gia hạn của 1 hosting
+     */
+    public function getRenewals($hostingId) {
+        $stmt = $this->db->prepare("SELECT * FROM hosting_renewals WHERE hosting_id = :hid ORDER BY reg_date DESC");
+        $stmt->execute([':hid' => $hostingId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Thêm bản ghi gia hạn mới
+     */
+    public function addRenewal($hostingId, $data) {
+        $sql = "INSERT INTO hosting_renewals (hosting_id, amount, reg_date, exp_date, notes) 
+                VALUES (:hid, :amount, :rdate, :edate, :notes)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':hid' => $hostingId,
+            ':amount' => $data['amount'] ?? 0,
+            ':rdate' => $data['regDate'] ?? null,
+            ':edate' => $data['expDate'] ?? null,
+            ':notes' => $data['notes'] ?? ''
+        ]);
     }
 }

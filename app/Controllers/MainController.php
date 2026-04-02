@@ -39,6 +39,7 @@ class MainController extends BaseController {
         $data = [
             'projects' => $this->projectModel->getAll(),
             'hostings' => $this->hostingModel->getAll(),
+            'hosting_renewals' => $this->hostingModel->getAllRenewals(),
             'monthlyRevenue' => $this->projectModel->getMonthlyRevenue($currentYear),
             'recentLogs' => $this->logModel->getAll([], 5, 0),
             'password_categories' => $this->categoryModel->getAll(),
@@ -61,6 +62,7 @@ class MainController extends BaseController {
         $data = [
             'projects' => $this->projectModel->getAll(),
             'hostings' => $this->hostingModel->getAll(),
+            'hosting_renewals' => $this->hostingModel->getAllRenewals(),
         ];
         $this->view('reports', $data);
     }
@@ -678,6 +680,73 @@ class MainController extends BaseController {
         } catch (\Exception $e) {
             error_log("Error restoring from log: " . $e->getMessage());
             echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * API: Gia hạn Hosting
+     */
+    public function renewHosting() {
+        header('Content-Type: application/json');
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            if (!$input || !isset($input['id'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ']);
+                return;
+            }
+
+            $id = $input['id'];
+            $hosting = $this->hostingModel->find($id);
+            if (!$hosting) {
+                echo json_encode(['status' => 'error', 'message' => 'Không tìm thấy hosting']);
+                return;
+            }
+
+            // 1. Log payment in renewals table
+            $renewalData = [
+                'amount' => $input['amount'],
+                'regDate' => $input['regDate'],
+                'expDate' => $input['expDate'],
+                'notes' => $input['notes'] ?? 'Gia hạn dịch vụ'
+            ];
+            $this->hostingModel->addRenewal($id, $renewalData);
+
+            // 2. Update hosting status (New exp date)
+            $updateData = $hosting;
+            $updateData['price'] = $input['amount']; // Update current price if changed
+            $updateData['regDate'] = $input['regDate']; 
+            $updateData['expDate'] = $input['expDate']; 
+            if (isset($input['usage'])) $updateData['usage'] = $input['usage'];
+
+            $success = $this->hostingModel->update($id, $updateData);
+
+            if ($success) {
+                $this->logModel->addLog('Hosting', 'Gia hạn', $hosting['name'], $_SESSION['user_name'] ?? 'System', json_encode($renewalData));
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Gia hạn thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi cập nhật trạng thái hosting']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error renewing hosting: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
+        }
+    }
+
+    /**
+     * API: Lấy lịch sử gia hạn
+     */
+    public function getHostingRenewals() {
+        header('Content-Type: application/json');
+        try {
+            $id = $_GET['id'] ?? null;
+            if (!$id) {
+                echo json_encode(['status' => 'error', 'message' => 'ID không hợp lệ']);
+                return;
+            }
+            $renewals = $this->hostingModel->getRenewals($id);
+            echo json_encode(['status' => 'success', 'success' => true, 'data' => $renewals]);
+        } catch (\Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
 }

@@ -11,10 +11,30 @@
         // Data injected from PHP Models
         const PHP_DATA = {
             projects: <?php echo json_encode($projects ?? []); ?>,
-            hostings: <?php echo json_encode($hostings ?? []); ?>
+            hostings: <?php echo json_encode($hostings ?? []); ?>,
+            hosting_renewals: <?php echo json_encode($hosting_renewals ?? []); ?>
         };
     </script>
     <script src="/js/shared-data.js"></script>
+    <style>
+        /* Renewal History Styles */
+        .renewal-history-section { border-top: 1px dashed var(--border-color); padding-top: 20px; }
+        .renewal-history-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; max-height: 200px; overflow-y: auto; padding-right: 4px; }
+        .renewal-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+        .renewal-item:hover { border-color: var(--primary-color); background: #fff; }
+        .ri-left { display: flex; flex-direction: column; gap: 2px; }
+        .ri-date { font-size: 12px; font-weight: 700; color: var(--text-main); }
+        .ri-period { font-size: 11px; color: var(--text-muted); }
+        .ri-right { text-align: right; }
+        .ri-amount { font-size: 13px; font-weight: 700; color: #10b981; }
+        .ri-notes { font-size: 10px; color: var(--text-muted); margin-top: 2px; font-style: italic; }
+        
+        .btn-renew-full { flex: 1; background: #f0f9ff; color: #0ea5e9; border: 1px solid #bae6fd; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+        .btn-renew-full:hover { background: #0ea5e9; color: #fff; border-color: #0ea5e9; }
+        
+        .renewal-history-list::-webkit-scrollbar { width: 4px; }
+        .renewal-history-list::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    </style>
 </head>
 <body>
     <!-- Global Loader -->
@@ -464,6 +484,9 @@ document.addEventListener('click', function(e) {
             document.getElementById('dModalUsage').textContent = calculateUsageTime(regDate);
             document.getElementById('dModalNotes').textContent = notes || 'Không có ghi chú.';
             
+            // Populate Renewal History
+            renderRenewalHistory(tr.getAttribute('data-id'));
+
             const expDateEl = document.getElementById('dModalExpDate');
             expDateEl.className = 'dgc-val ' + (statusBadgeEl.classList.contains('warning') ? 'warning-text' : (statusBadgeEl.classList.contains('expired') ? 'danger-text' : 'success-text'));
             
@@ -625,12 +648,21 @@ document.addEventListener('click', function(e) {
 
             <div class="detail-group" style="margin-top: 20px;">
                 <span class="detail-label">Ghi Chú</span>
-                <div class="detail-desc-box" id="dModalNotes" style="min-height: 60px; background: #f8fafc; padding: 12px; border-radius: 8px; font-size: 14px; color: #475569; line-height: 1.6;">
+                <div class="detail-desc-box" id="dModalNotes" style="min-height: 40px; background: #f8fafc; padding: 12px; border-radius: 8px; font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 20px;">
                     Không có ghi chú.
+                </div>
+            </div>
+
+            <!-- Lịch sử gia hạn -->
+            <div class="renewal-history-section">
+                <div class="dgc-title" style="margin-bottom: 12px;"><i class="ph ph-clock-counter-clockwise"></i> Lịch sử gia hạn</div>
+                <div id="renewalHistoryList" class="renewal-history-list">
+                    <!-- Populated by JS -->
                 </div>
             </div>
         </div>
         <div class="detail-footer">
+            <button class="btn-renew-full" onclick="openRenewModalFromDetail()"><i class="ph ph-arrows-counter-clockwise"></i> Gia Hạn</button>
             <button class="btn-edit-full" onclick="editFromDetail()"><i class="ph ph-pencil-simple"></i> Chỉnh Sửa</button>
             <button class="btn-delete-outline" onclick="deleteFromDetail()"><i class="ph ph-trash"></i></button>
         </div>
@@ -663,6 +695,51 @@ document.addEventListener('click', function(e) {
     <div class="toast-spinner" id="dtSpinner"></div>
     <div id="dtSuccessIcon" style="display:none; color: #10b981; font-size: 20px; display: flex; align-items: center;"><i class="ph-fill ph-check-circle"></i></div>
     <span id="dtMessage">Đang xóa hosting...</span>
+</div>
+
+<!-- Modal Gia Hạn Hosting -->
+<div class="modal-overlay" id="renewModal" onclick="closeRenewModal(event)">
+    <div class="modal-box" style="max-width: 480px;">
+        <div class="modal-header">
+            <div class="modal-title-wrap">
+                <div class="modal-icon-brand" style="background-color: #f0f9ff; color: #0ea5e9;">
+                    <i class="ph-fill ph-arrows-counter-clockwise"></i>
+                </div>
+                <h3 class="modal-title">Gia Hạn Hosting</h3>
+            </div>
+            <button class="modal-close" onclick="closeRenewModalBtn()"><i class="ph ph-x"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="detail-group" style="margin-bottom: 20px; background: #f8fafc; padding: 12px; border-radius: 8px;">
+                <span class="detail-label">Đang gia hạn cho</span>
+                <span class="detail-val" id="rmHostingName" style="font-size: 16px;">Photoeditor 24h</span>
+            </div>
+
+            <div class="modal-row">
+                <div class="modal-field">
+                    <label class="modal-label">Ngày Gia Hạn (Từ) <span class="req">*</span></label>
+                    <input type="date" class="modal-input" id="rmRegDate">
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Ngày Hết Hạn Mới <span class="req">*</span></label>
+                    <input type="date" class="modal-input" id="rmExpDate">
+                </div>
+            </div>
+            <div class="modal-field full">
+                <label class="modal-label">Số Tiền Thanh Toán (VNĐ) <span class="req">*</span></label>
+                <input type="number" class="modal-input" id="rmPrice" value="1100000" oninput="formatRenewPrice()">
+                <div class="modal-price-hint" id="rmPriceHint">1.100.000 VNĐ</div>
+            </div>
+            <div class="modal-field full">
+                <label class="modal-label">Ghi Chú</label>
+                <input type="text" class="modal-input" id="rmNotes" placeholder="VD: Khách gia hạn thêm 1 năm">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn-cancel" onclick="closeRenewModalBtn()">Hủy</button>
+            <button class="modal-btn-submit" style="background: #0ea5e9;" onclick="submitRenewHosting()"><i class="ph ph-check"></i> Xác Nhận Gia Hạn</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -1055,6 +1132,116 @@ function closeDetailModalBtn() {
 }
 function closeDetailModal(e) {
     if (e.target === document.getElementById('detailModal')) closeDetailModalBtn();
+}
+
+/**
+ * Hiển thị lịch sử gia hạn
+ */
+function renderRenewalHistory(hostingId) {
+    const list = document.getElementById('renewalHistoryList');
+    list.innerHTML = '<div class="text-center py-2"><div class="toast-spinner" style="width:16px;height:16px;border-width:2px;"></div></div>';
+    
+    // Lấy từ PHP_DATA.hosting_renewals trước (Local Cache)
+    const history = PHP_DATA.hosting_renewals.filter(r => r.hosting_id == hostingId).sort((a,b) => new Date(b.reg_date) - new Date(a.reg_date));
+    
+    if (history.length === 0) {
+        list.innerHTML = '<div class="text-center py-4 text-muted" style="font-size: 13px;">Chưa có lịch sử gia hạn</div>';
+        return;
+    }
+
+    let html = '';
+    history.forEach(r => {
+        html += `
+            <div class="renewal-item">
+                <div class="ri-left">
+                    <div class="ri-date">${formatDateVN(r.reg_date)}</div>
+                    <div class="ri-period">${formatDateVN(r.reg_date)} - ${formatDateVN(r.exp_date)}</div>
+                    ${r.notes ? `<div class="ri-notes">${r.notes}</div>` : ''}
+                </div>
+                <div class="ri-right">
+                    <div class="ri-amount">${formatVNDFull(parseFloat(r.amount))}</div>
+                </div>
+            </div>
+        `;
+    });
+    list.innerHTML = html;
+}
+
+function openRenewModalFromDetail() {
+    if (!currentRowToEdit) return;
+    const hId = currentRowToEdit.getAttribute('data-id');
+    const hName = document.getElementById('dModalName').textContent;
+    const currentExp = currentRowToEdit.querySelector('.date-info').textContent.trim();
+    
+    // Convert current exp to YYYY-MM-DD
+    const expMatch = currentExp.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+    let nextReg = new Date().toISOString().split('T')[0];
+    let nextExp = '';
+
+    if (expMatch) {
+       nextReg = `${expMatch[3]}-${expMatch[2]}-${expMatch[1]}`;
+       nextExp = `${parseInt(expMatch[3])+1}-${expMatch[2]}-${expMatch[1]}`;
+    }
+
+    document.getElementById('rmHostingName').textContent = hName;
+    document.getElementById('rmRegDate').value = nextReg;
+    document.getElementById('rmExpDate').value = nextExp;
+    document.getElementById('rmPrice').value = currentRowToEdit.getAttribute('data-price') || 0;
+    document.getElementById('rmNotes').value = '';
+    formatRenewPrice();
+
+    document.getElementById('renewModal').classList.add('active');
+}
+
+function closeRenewModalBtn() {
+    document.getElementById('renewModal').classList.remove('active');
+}
+
+function closeRenewModal(e) {
+    if (e.target === document.getElementById('renewModal')) closeRenewModalBtn();
+}
+
+function formatRenewPrice() {
+    const val = parseInt(document.getElementById('rmPrice').value) || 0;
+    document.getElementById('rmPriceHint').textContent = val.toLocaleString('vi-VN') + ' VNĐ';
+}
+
+async function submitRenewHosting() {
+    if (!currentRowToEdit) return;
+    const hId = currentRowToEdit.getAttribute('data-id');
+    
+    const data = {
+        id: hId,
+        amount: document.getElementById('rmPrice').value,
+        regDate: document.getElementById('rmRegDate').value,
+        expDate: document.getElementById('rmExpDate').value,
+        notes: document.getElementById('rmNotes').value.trim()
+    };
+
+    if (!data.regDate || !data.expDate || !data.amount) {
+        showToast('Vui lòng điền đủ thông tin gia hạn!', 'error');
+        return;
+    }
+
+    showActionToast('Đang thực hiện gia hạn...', 'Gia hạn thành công!', async () => {
+        try {
+            const response = await fetch('/hostings/renew', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (result.success) {
+                // Refresh Page to update everything (including Shared Data Cache)
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                showToast(result.message || 'Lỗi khi gia hạn', 'error');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Lỗi kết nối máy chủ', 'error');
+        }
+    });
 }
 </script>
     <!-- Notification Toast -->
