@@ -260,6 +260,8 @@
     .badge-action-update, .badge-yellow { background: #fefce8; color: #854d0e; border: 1px solid #fef08a; }
     .badge-action-delete, .badge-red { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
     .badge-blue { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+    .badge-action-renew { background: #f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe; }
+
 
     /* Toast Notification Styles */
     .toast {
@@ -405,6 +407,8 @@ function viewLogDetail(id) {
         let badgeClass = 'badge-action-update';
         if (actionStr.includes('tạo')) badgeClass = 'badge-action-create';
         else if (actionStr.includes('xo') || actionStr.includes('xóa')) badgeClass = 'badge-action-delete';
+        else if (actionStr.includes('gia hạn')) badgeClass = 'badge-action-renew';
+
 
         let dataTitle = 'Chi tiết dữ liệu';
         if (actionStr.includes('xo') || actionStr.includes('xóa')) dataTitle = 'Dữ liệu đã xóa';
@@ -578,8 +582,13 @@ function renderLogDataFields(data, module) {
         'username': 'ph-user',
         'password': 'ph-key',
         'language': 'ph-code',
-        'description': 'ph-note'
+        'description': 'ph-note',
+        'amount': 'ph-currency-circle-dollar',
+        'regDate': 'ph-calendar-blank',
+        'expDate': 'ph-calendar-blank',
+        'notes': 'ph-note'
     };
+
 
     const labelMap = {
         'name': 'Tên',
@@ -594,8 +603,13 @@ function renderLogDataFields(data, module) {
         'username': 'Tài khoản',
         'password': 'Mật khẩu',
         'language': 'Ngôn ngữ',
-        'description': 'Mô tả'
+        'description': 'Mô tả',
+        'amount': 'Số tiền gia hạn',
+        'regDate': 'Ngày đăng ký',
+        'expDate': 'Hạn sử dụng mới',
+        'notes': 'Ghi chú'
     };
+
 
     for (let key in data) {
         if (key === 'id' || key === 'created_at' || key === 'updated_at') continue;
@@ -604,10 +618,11 @@ function renderLogDataFields(data, module) {
         let icon = iconMap[key] || 'ph-dot';
         let val = data[key] || '---';
 
-        if (key === 'price') {
+        if (key === 'price' || key === 'amount') {
             const num = parseInt(val);
             if (!isNaN(num)) val = num.toLocaleString('vi-VN') + ' VNĐ';
         }
+
         
         let isLink = false;
         if (key === 'url' || key === 'domain' || key === 'admin_url') {
