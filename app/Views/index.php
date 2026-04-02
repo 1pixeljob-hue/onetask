@@ -690,7 +690,7 @@
                             intersect: false,
                             callbacks: {
                                 label: function (context) {
-                                    return ` ${context.dataset.label}: ${formatM(context.raw)}`;
+                                    return ` ${context.dataset.label}: ${formatVNDShort(context.raw)}`;
                                 }
                             }
                         }
