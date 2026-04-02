@@ -12,7 +12,8 @@
         // Data injected from PHP Models
         const PHP_DATA = {
             projects: <?php echo json_encode($projects); ?>,
-            hostings: <?php echo json_encode($hostings); ?>
+            hostings: <?php echo json_encode($hostings); ?>,
+            hosting_renewals: <?php echo json_encode($hosting_renewals); ?>
         };
     </script>
     <script src="/js/shared-data.js"></script>

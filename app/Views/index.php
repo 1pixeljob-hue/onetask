@@ -14,6 +14,7 @@
         const PHP_DATA = {
             projects: <?php echo json_encode($projects); ?>,
             hostings: <?php echo json_encode($hostings); ?>,
+            hosting_renewals: <?php echo json_encode($hosting_renewals ?? []); ?>,
             monthlyRevenue: <?php echo json_encode($monthlyRevenue); ?>,
             recentLogs: <?php echo json_encode($recentLogs ?? []); ?>,
             password_categories: <?php echo json_encode($password_categories ?? []); ?>,
