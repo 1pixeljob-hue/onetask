@@ -190,6 +190,29 @@
         gap: 24px;
         margin-bottom: 24px;
     }
+    .modal-box.scrollable {
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+    }
+    .modal-box.scrollable .modal-body {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 12px;
+        margin-right: 4px;
+    }
+    .modal-box.scrollable .modal-body::-webkit-scrollbar {
+        width: 6px;
+    }
+    .modal-box.scrollable .modal-body::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 10px;
+    }
+    .modal-box.scrollable .modal-body::-webkit-scrollbar-track {
+        background-color: #f1f5f9;
+        border-radius: 10px;
+    }
+
     .log-detail-item {
         display: flex;
         flex-direction: column;
@@ -586,8 +609,11 @@ function renderLogDataFields(data, module) {
         'amount': 'ph-currency-circle-dollar',
         'regDate': 'ph-calendar-blank',
         'expDate': 'ph-calendar-blank',
-        'notes': 'ph-note'
+        'notes': 'ph-note',
+        'usage_period': 'ph-hourglass',
+        'usage': 'ph-hourglass'
     };
+
 
 
     const labelMap = {
@@ -604,11 +630,14 @@ function renderLogDataFields(data, module) {
         'password': 'Mật khẩu',
         'language': 'Ngôn ngữ',
         'description': 'Mô tả',
+        'usage_period': 'Thời hạn sử dụng',
+        'usage': 'Thời hạn',
         'amount': 'Số tiền gia hạn',
         'regDate': 'Ngày đăng ký',
         'expDate': 'Hạn sử dụng mới',
         'notes': 'Ghi chú'
     };
+
 
 
     for (let key in data) {
@@ -652,8 +681,9 @@ function renderLogDataFields(data, module) {
             </div>
         `;
     }
-    return fields;
+    return `<div class="log-data-grid">${fields}</div>`;
 }
+
 
 function closeLogModal() {
     document.getElementById('logDetailModal').classList.remove('active');
