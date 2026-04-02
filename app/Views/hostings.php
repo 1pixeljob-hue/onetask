@@ -481,7 +481,8 @@ document.addEventListener('click', function(e) {
             document.getElementById('dModalExpDate').textContent = expDate;
             document.getElementById('dModalPrice').textContent = formatVNDFull(parseFloat(price));
             document.getElementById('dModalRegDate').textContent = formatDateVN(regDate);
-            document.getElementById('dModalUsage').textContent = calculateUsageTime(regDate);
+            const expDate = row.getAttribute('data-exp-date');
+            document.getElementById('dModalUsage').textContent = calculateUsageTime(regDate, expDate);
             document.getElementById('dModalNotes').textContent = notes || 'Không có ghi chú.';
             
             // Populate Renewal History
@@ -938,26 +939,28 @@ function formatDateVN(dateStr) {
 /**
  * Tính thời gian sử dụng dựa trên ngày đăng ký
  */
-function calculateUsageTime(regDateStr) {
+function calculateUsageTime(regDateStr, expDateStr) {
     if (!regDateStr) return 'Đang cập nhật';
     
     const regDate = new Date(regDateStr);
-    const today = new Date();
+    const endDate = expDateStr ? new Date(expDateStr) : new Date();
     
-    let years = today.getFullYear() - regDate.getFullYear();
-    let months = today.getMonth() - regDate.getMonth();
+    let years = endDate.getFullYear() - regDate.getFullYear();
+    let months = endDate.getMonth() - regDate.getMonth();
     
-    if (months < 0 || (months === 0 && today.getDate() < regDate.getDate())) {
+    if (months < 0 || (months === 0 && endDate.getDate() < regDate.getDate())) {
         years--;
         months += 12;
     }
     
     if (years >= 1) {
-        return `Sử dụng ${years} năm`;
+        let text = `Sử dụng ${years} năm`;
+        if (months > 0) text += ` ${months} tháng`;
+        return text;
     } else if (months >= 1) {
         return `Sử dụng ${months} tháng`;
     } else {
-        const diffDays = Math.floor((today - regDate) / (1000 * 60 * 60 * 24));
+        const diffDays = Math.floor((endDate - regDate) / (1000 * 60 * 60 * 24));
         return diffDays > 0 ? `Sử dụng ${diffDays} ngày` : 'Mới đăng ký';
     }
 }
@@ -1078,7 +1081,7 @@ function generateRowHTML(name, domain, provider, expDate, status, regDate) {
         ? `<div class="date-sub ${status.cls === 'warning' ? 'warning-text' : (status.cls === 'success' ? 'success-text' : '')}"><i class="ph ph-clock"></i> Còn ${status.days} ngày</div>`
         : `<div class="date-sub danger-text"><i class="ph ph-clock"></i> Đã hết hạn</div>`;
 
-    const usageText = calculateUsageTime(regDate);
+    const usageText = calculateUsageTime(regDate, expDate);
 
     return `
         <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
