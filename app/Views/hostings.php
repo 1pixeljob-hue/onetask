@@ -314,6 +314,7 @@ function initHostingsTable() {
             row.setAttribute('data-id', h.id);
             row.setAttribute('data-price', h.price || h.currentPrice || 0);
             row.setAttribute('data-reg-date', h.regDate || h.reg_date || '');
+            row.setAttribute('data-exp-date', h.expDate || h.exp_date || '');
             row.setAttribute('data-notes', h.notes || '');
             
             const expDate = h.expDate || h.exp_date;
@@ -507,8 +508,8 @@ document.addEventListener('click', function(e) {
             document.getElementById('dModalExpDate').textContent = expDate;
             document.getElementById('dModalPrice').textContent = formatVNDFull(parseFloat(price));
             document.getElementById('dModalRegDate').textContent = formatDateVN(regDate);
-            const expDate = row.getAttribute('data-exp-date');
-            document.getElementById('dModalUsage').textContent = calculateUsageTime(regDate, expDate);
+            const rawExpDate = tr.getAttribute('data-exp-date');
+            document.getElementById('dModalUsage').textContent = calculateUsageTime(regDate, rawExpDate);
             document.getElementById('dModalNotes').textContent = notes || 'Không có ghi chú.';
             
             // Populate Renewal History
