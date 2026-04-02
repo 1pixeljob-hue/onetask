@@ -34,31 +34,32 @@
                         <div class="account-avatar-large"><?php echo $initials; ?></div>
                     </div>
                     <div class="account-profile-info">
-                        <h4 class="profile-display-name"><?php echo strtolower(str_replace(' ', '', $fullName)); ?></h4>
-                        <p class="profile-email"><?php echo htmlspecialchars($_SESSION['user_email'] ?? 'quydev@1pixel.vn'); ?></p>
+                        <h4 class="profile-display-name"><?php echo htmlspecialchars($currentUser['name'] ?? 'Admin User'); ?></h4>
+                        <p class="profile-email"><?php echo htmlspecialchars($currentUser['email'] ?? 'quydev@1pixel.vn'); ?></p>
                     </div>
                 </div>
 
                 <div class="account-fields-list">
                     <div class="account-field-card">
                         <span class="field-card-label">TÊN ĐĂNG NHẬP</span>
-                        <span class="field-card-value"><?php echo strtolower(str_replace(' ', '', $fullName)); ?></span>
+                        <span class="field-card-value"><?php echo htmlspecialchars($currentUser['username'] ?? 'admin'); ?></span>
                     </div>
 
                     <div class="account-field-card">
                         <span class="field-card-label">EMAIL</span>
-                        <span class="field-card-value"><?php echo htmlspecialchars($_SESSION['user_email'] ?? 'quydev@1pixel.vn'); ?></span>
+                        <span class="field-card-value"><?php echo htmlspecialchars($currentUser['email'] ?? 'quydev@1pixel.vn'); ?></span>
                     </div>
 
                     <div class="account-field-card">
                         <span class="field-card-label">VAI TRÒ</span>
                         <div class="field-card-value mt-8">
                             <span class="badge-role-admin">
-                                <span class="badge-dot"></span> Administrator
+                                <span class="badge-dot"></span> <?php echo htmlspecialchars($currentUser['role'] ?? 'Administrator'); ?>
                             </span>
                         </div>
                     </div>
                 </div>
+
 
                 <div class="account-note-box">
                     <div class="note-icon">

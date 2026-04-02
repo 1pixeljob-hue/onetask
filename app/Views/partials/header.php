@@ -1,5 +1,9 @@
 <?php
-$fullName = $_SESSION['user_name'] ?? 'Admin User';
+$user = $currentUser ?? [
+    'name' => $_SESSION['user_name'] ?? 'Admin User',
+    'role' => $_SESSION['user_role'] ?? 'Administrator'
+];
+$fullName = $user['name'];
 $nameParts = explode(' ', $fullName);
 $initials = count($nameParts) >= 2 
     ? strtoupper(substr($nameParts[0], 0, 1) . substr(end($nameParts), 0, 1))

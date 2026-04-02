@@ -12,14 +12,21 @@ class UserModel {
         $this->db = Database::getInstance()->getConnection();
     }
 
-    /**
-     * Tìm user bằng username hoặc email
-     */
     public function findByLogin($identity) {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE (username = :user OR email = :mail) LIMIT 1");
         $stmt->execute([':user' => $identity, ':mail' => $identity]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Tìm user bằng ID
+     */
+    public function find($id) {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :id LIMIT 1");
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
 
     /**
      * Cập nhật Remember Token
