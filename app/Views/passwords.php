@@ -481,6 +481,7 @@ function openEditPwdModal(id) {
     
     document.getElementById('mPwdTitle').value = pwd.title;
     document.getElementById('mPwdUrl').value = pwd.url || '';
+    document.getElementById('mPwdUser').value = pwd.username || '';
     document.getElementById('mPwdPass').value = pwd.password || '';
     document.getElementById('mPwdNotes').value = pwd.notes || '';
 
