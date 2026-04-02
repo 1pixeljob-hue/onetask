@@ -378,92 +378,105 @@
     });
 
 function viewLogDetail(id) {
-    // Safety check for LOGS (handle both Array and Object from PHP)
-    const logList = Array.isArray(LOGS) ? LOGS : Object.values(LOGS);
-    const log = logList.find(l => l.id == id);
-    
-    if (!log) {
-        console.error('Log not found for ID:', id);
-        return;
-    }
-
-    const modalBody = document.getElementById('logModalBody');
-    const modalFooter = document.getElementById('logModalFooter');
-    
-    // Icon mapping
-    let icon = 'ph-file-text';
-    if (log.module == 'Project') icon = 'ph-folder';
-    else if (log.module == 'Hosting') icon = 'ph-hard-drives';
-    else if (log.module == 'CodeX') icon = 'ph-code';
-    else if (log.module == 'Passwords') icon = 'ph-key';
-
-    // Badge mapping
-    let badgeClass = 'badge-action-update';
-    if (log.action == 'Tạo mới') badgeClass = 'badge-action-create';
-    else if (log.action == 'Xoá') badgeClass = 'badge-action-delete';
-
-    let dataTitle = log.action == 'Xoá' ? 'Dữ liệu đã xóa' : 'Dữ liệu trước khi cập nhật';
-    let dataHtml = '';
-
-    if (log.data) {
-        try {
-            const data = JSON.parse(log.data);
-            dataHtml = `
-                <div class="log-data-card">
-                    <span class="log-data-title">${dataTitle}</span>
-                    <div class="log-data-grid">
-                        ${renderLogDataFields(data, log.module)}
-                    </div>
-                </div>
-            `;
-        } catch (e) {
-            dataHtml = `<div class="log-data-card"><span class="log-data-label">Dữ liệu thô:</span><pre style="font-size:12px; overflow:auto;">${log.data}</pre></div>`;
+    try {
+        const logList = Array.isArray(LOGS) ? LOGS : Object.values(LOGS || {});
+        const log = logList.find(l => l.id == id);
+        
+        if (!log) {
+            console.error('Log not found for ID:', id);
+            alert("Không tìm thấy dữ liệu log.");
+            return;
         }
-    }
 
-    modalBody.innerHTML = `
-        <div class="log-detail-grid">
-            <div class="log-detail-item">
-                <span class="log-detail-label">Module</span>
-                <span class="log-detail-value"><i class="ph ${icon}"></i> ${log.module}</span>
-            </div>
-            <div class="log-detail-item">
-                <span class="log-detail-label">Hành động</span>
-                <span class="log-detail-value"><span class="badge-log ${badgeClass}">${log.action}</span></span>
-            </div>
-            <div class="log-detail-item">
-                <span class="log-detail-label">Item</span>
-                <span class="log-detail-value">${log.item_name}</span>
-            </div>
-            <div class="log-detail-item">
-                <span class="log-detail-label">User</span>
-                <span class="log-detail-value">${log.user_name}</span>
-            </div>
-            <div class="log-detail-item" style="grid-column: span 2;">
-                <span class="log-detail-label">Thời gian</span>
-                <span class="log-detail-value">${new Date(log.created_at).toLocaleString('vi-VN')}</span>
-            </div>
-        </div>
-        ${dataHtml}
-    `;
+        const modalBody = document.getElementById('logModalBody');
+        const modalFooter = document.getElementById('logModalFooter');
+        
+        // Icon mapping
+        let icon = 'ph-file-text';
+        if (log.module == 'Project') icon = 'ph-folder';
+        else if (log.module == 'Hosting') icon = 'ph-hard-drives';
+        else if (log.module == 'CodeX') icon = 'ph-code';
+        else if (log.module == 'Passwords') icon = 'ph-key';
 
-    // Footer buttons
-    let footerHtml = `<button class="modal-btn-cancel" onclick="closeLogModal()">Đóng</button>`;
-    if ((log.action == 'Xoá' || log.action == 'Cập nhật') && log.data) {
-        footerHtml = `
-            <button class="modal-btn-submit" style="background: #10b981; border: none; min-width: 120px;" onclick="restoreLog(${log.id})">
-                <i class="ph ph-arrows-counter-clockwise"></i> Restore
-            </button>
-            <button class="modal-btn-cancel" onclick="closeLogModal()">Đóng</button>
+        // Normalize action string to handle different utf-8 spaces and accents
+        let actionStr = log.action ? log.action.toLowerCase() : '';
+        
+        // Badge mapping
+        let badgeClass = 'badge-action-update';
+        if (actionStr.includes('tạo')) badgeClass = 'badge-action-create';
+        else if (actionStr.includes('xo') || actionStr.includes('xóa')) badgeClass = 'badge-action-delete';
+
+        let dataTitle = (actionStr.includes('xo') || actionStr.includes('xóa')) ? 'Dữ liệu đã xóa' : 'Dữ liệu trước khi cập nhật';
+        let dataHtml = '';
+
+        if (log.data) {
+            try {
+                let dataObj = JSON.parse(log.data);
+                if (typeof dataObj === 'string') {
+                    dataObj = JSON.parse(dataObj); // handle double stringification
+                }
+                dataHtml = `
+                    <div class="log-data-card">
+                        <span class="log-data-title">${dataTitle}</span>
+                        <div class="log-data-grid">
+                            ${renderLogDataFields(dataObj, log.module)}
+                        </div>
+                    </div>
+                `;
+            } catch (e) {
+                console.error("Parse JSON error:", e);
+                dataHtml = `<div class="log-data-card"><span class="log-data-label">Dữ liệu thô:</span><pre style="font-size:12px; overflow:auto;">${log.data}</pre></div>`;
+            }
+        }
+
+        modalBody.innerHTML = `
+            <div class="log-detail-grid">
+                <div class="log-detail-item">
+                    <span class="log-detail-label">Module</span>
+                    <span class="log-detail-value"><i class="ph ${icon}"></i> ${log.module || ''}</span>
+                </div>
+                <div class="log-detail-item">
+                    <span class="log-detail-label">Hành động</span>
+                    <span class="log-detail-value"><span class="badge-log ${badgeClass}">${log.action || ''}</span></span>
+                </div>
+                <div class="log-detail-item">
+                    <span class="log-detail-label">Item</span>
+                    <span class="log-detail-value">${log.item_name || ''}</span>
+                </div>
+                <div class="log-detail-item">
+                    <span class="log-detail-label">User</span>
+                    <span class="log-detail-value">${log.user_name || ''}</span>
+                </div>
+                <div class="log-detail-item" style="grid-column: span 2;">
+                    <span class="log-detail-label">Thời gian</span>
+                    <span class="log-detail-value">${log.created_at ? new Date(log.created_at).toLocaleString('vi-VN') : ''}</span>
+                </div>
+            </div>
+            ${dataHtml}
         `;
-    }
-    modalFooter.innerHTML = footerHtml;
 
-    document.getElementById('logDetailModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
+        // Footer buttons
+        let footerHtml = `<button class="modal-btn-cancel" onclick="closeLogModal()">Đóng</button>`;
+        if ((actionStr.includes('xo') || actionStr.includes('xóa') || actionStr.includes('cập nhật')) && log.data) {
+            footerHtml = `
+                <button class="modal-btn-submit" style="background: #10b981; border: none; min-width: 120px;" onclick="restoreLog(${log.id})">
+                    <i class="ph ph-arrows-counter-clockwise"></i> Restore
+                </button>
+                <button class="modal-btn-cancel" onclick="closeLogModal()">Đóng</button>
+            `;
+        }
+        modalFooter.innerHTML = footerHtml;
+
+        document.getElementById('logDetailModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    } catch (err) {
+        console.error("Critical error in viewLogDetail:", err);
+        alert("Đã xảy ra lỗi khi mở modal. Vui lòng kiểm tra console.");
+    }
 }
 
 function renderLogDataFields(data, module) {
+    if (!data || typeof data !== 'object') return '';
     let fields = '';
     const iconMap = {
         'name': 'ph-identification-badge',
@@ -504,7 +517,10 @@ function renderLogDataFields(data, module) {
         let icon = iconMap[key] || 'ph-dot';
         let val = data[key] || '---';
 
-        if (key === 'price') val = parseInt(val).toLocaleString('vi-VN') + ' VNĐ';
+        if (key === 'price') {
+            const num = parseInt(val);
+            if (!isNaN(num)) val = num.toLocaleString('vi-VN') + ' VNĐ';
+        }
         if (key === 'status' && val === 'active') val = '<span class="status-badge badge-green">Hoạt động</span>';
 
         fields += `
