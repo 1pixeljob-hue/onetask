@@ -154,7 +154,15 @@ class ProjectModel {
      * Tìm dự án theo ID
      */
     public function find($id) {
-        $stmt = $this->db->prepare("SELECT * FROM projects WHERE id = :id");
+        $stmt = $this->db->prepare("SELECT 
+            id, name, link, customer, phone, 
+            value, 
+            date, status, 
+            description as `desc`, 
+            admin_url as adminUrl, 
+            admin_user as adminUser, 
+            admin_pass as adminPass 
+            FROM projects WHERE id = :id");
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }

@@ -112,7 +112,13 @@ class HostingModel {
      * Tìm hosting theo ID
      */
     public function find($id) {
-        $stmt = $this->db->prepare("SELECT * FROM hostings WHERE id = :id");
+        $stmt = $this->db->prepare("SELECT 
+            id, name, domain, provider, price, 
+            reg_date as regDate, 
+            exp_date as expDate, 
+            usage_period as `usage`,
+            notes
+            FROM hostings WHERE id = :id");
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }

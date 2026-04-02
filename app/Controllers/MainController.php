@@ -624,6 +624,7 @@ class MainController extends BaseController {
             switch ($module) {
                 case 'Project':
                     $mappedData = $data;
+                    // Map old snake_case if present
                     if (isset($data['description'])) $mappedData['desc'] = $data['description'];
                     if (isset($data['admin_url'])) $mappedData['adminUrl'] = $data['admin_url'];
                     if (isset($data['admin_user'])) $mappedData['adminUser'] = $data['admin_user'];
@@ -638,6 +639,7 @@ class MainController extends BaseController {
 
                 case 'Hosting':
                     $mappedData = $data;
+                    // Map old snake_case if present
                     if (isset($data['reg_date'])) $mappedData['regDate'] = $data['reg_date'];
                     if (isset($data['exp_date'])) $mappedData['expDate'] = $data['exp_date'];
                     if (isset($data['usage_period'])) $mappedData['usage'] = $data['usage_period'];
