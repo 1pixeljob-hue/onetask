@@ -281,10 +281,14 @@ document.addEventListener('DOMContentLoaded', () => {
     initHostingsTable();
     
     // Search input event
-    document.getElementById('hostingSearchInput').addEventListener('input', (e) => {
-        currentSearchTerm = e.target.value.toLowerCase().trim();
-        applyFilters();
-    });
+    const searchInput = document.getElementById('h_search_v2');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            currentSearchTerm = e.target.value.toLowerCase().trim();
+            currentPage = 1;
+            applyFilters();
+        });
+    }
 });
 
 function initHostingsTable() {
@@ -424,10 +428,7 @@ function setHostingFilter(val, label, el) {
     applyFilters();
 }
 
-document.getElementById('h_search_v2').addEventListener('input', function(e) {
-    currentSearchTerm = e.target.value.toLowerCase().trim();
-    applyFilters();
-});
+// The input listener is now handled in the main DOMContentLoaded block above
 
 document.addEventListener('click', function(e) {
     const menu = document.getElementById('rowActionMenu');
@@ -1077,6 +1078,11 @@ function updateHosting() {
 }
 
 function generateRowHTML(name, domain, provider, expDate, status, regDate) {
+    // Defensive check for status
+    if (!status) {
+        status = { cls: 'text-muted', label: 'N/A', icon: 'ph-question', days: null };
+    }
+    
     const daysText = status.days !== null
         ? `<div class="date-sub ${status.cls === 'warning' ? 'warning-text' : (status.cls === 'success' ? 'success-text' : '')}"><i class="ph ph-clock"></i> Còn ${status.days} ngày</div>`
         : `<div class="date-sub danger-text"><i class="ph ph-clock"></i> Đã hết hạn</div>`;

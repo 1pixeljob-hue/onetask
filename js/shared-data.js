@@ -251,7 +251,12 @@ const RAW_HOSTINGS = (typeof PHP_DATA !== 'undefined' && PHP_DATA.hostings) ? PH
 
 // Định dạng lại giá trị số vì PHP json_encode có thể trả về string cho DECIMAL
 const PROJECTS = RAW_PROJECTS.map(p => ({ ...p, value: parseFloat(p.value) || 0 }));
-const HOSTINGS = RAW_HOSTINGS.map(h => ({ ...h, price: parseFloat(h.price) || 0 }));
+const HOSTINGS = RAW_HOSTINGS.map(h => ({ 
+    ...h, 
+    price: parseFloat(h.price) || 0,
+    expDate: h.expDate || h.exp_date,
+    regDate: h.regDate || h.reg_date
+}));
 
 const RAW_RENEWALS = (typeof PHP_DATA !== 'undefined' && PHP_DATA.hosting_renewals) ? PHP_DATA.hosting_renewals : [];
 const HOSTING_RENEWALS = RAW_RENEWALS.map(r => ({ ...r, amount: parseFloat(r.amount) || 0 }));
