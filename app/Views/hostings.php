@@ -136,10 +136,11 @@
                                 <th>TÊN HOSTING</th>
                                 <th>DOMAIN</th>
                                 <th>NHÀ CUNG CẤP</th>
-                                <th>GIÁ TRỊ</th>
                                 <th>NGÀY HẾT HẠN</th>
                                 <th>TRẠNG THÁI</th>
+                                <th>GIÁ TRỊ</th>
                                 <th width="80" class="text-center">THAO TÁC</th>
+
                             </tr>
                         </thead>
                         <tbody id="hostingTableBody">
@@ -1175,12 +1176,6 @@ function generateRowHTML(name, domain, provider, expDate, status, regDate, price
             </div>
         </td>
         <td>
-            <div class="price-badge">
-                <i class="ph-fill ph-currency-circle-dollar"></i>
-                <span>${formatVNDShortNoVND(price)}</span>
-            </div>
-        </td>
-        <td>
             <div class="date-info ${status.cls === 'warning' ? 'warning-text' : (status.cls === 'expired' ? 'danger-text' : 'text-main')}">
                 <i class="ph ph-calendar-blank"></i> ${formatDateVN(expDate)}
             </div>
@@ -1193,7 +1188,15 @@ function generateRowHTML(name, domain, provider, expDate, status, regDate, price
                 ${status.label}
             </span>
         </td>
+
+        <td>
+            <div class="price-badge">
+                <i class="ph-fill ph-currency-circle-dollar"></i>
+                <span>${formatVNDShortNoVND(price)}</span>
+            </div>
+        </td>
         <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
+
     `;
 }
 
