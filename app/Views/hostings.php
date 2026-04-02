@@ -274,6 +274,9 @@ function initHostingsTable() {
     HOSTINGS.forEach(h => {
         const row = document.createElement('tr');
         row.setAttribute('data-id', h.id);
+        row.setAttribute('data-price', h.price || 0);
+        row.setAttribute('data-reg-date', h.regDate || '');
+        row.setAttribute('data-notes', h.notes || '');
         const status = getStatusFromDate(h.expDate);
         row.innerHTML = generateRowHTML(h.name, h.domain, h.provider, h.expDate, status, h.regDate);
         tbody.appendChild(row);
@@ -433,11 +436,9 @@ document.addEventListener('click', function(e) {
         menu.classList.remove('open');
         if (menu._trigger) {
             const tr = menu._trigger.closest('tr');
-            currentRowToEdit = tr; // Store reference for Detail Modal actions
+            currentRowToEdit = tr;
             
-            // Extract data from table row
             const name = tr.querySelector('.cell-main').textContent.trim();
-            const usage = tr.querySelector('.cell-sub').textContent.trim().replace('l', 'l');
             const domain = tr.querySelector('.domain-info span').textContent.trim();
             const provider = tr.querySelector('.provider-info span').textContent.trim();
             const expDate = tr.querySelector('.date-info').textContent.trim();
@@ -445,34 +446,30 @@ document.addEventListener('click', function(e) {
             const daysLeft = daysLeftEl ? daysLeftEl.textContent.trim() : 'Đã hết hạn';
             const statusBadgeEl = tr.querySelector('.status-badge');
             
+            const price = tr.getAttribute('data-price') || 0;
+            const regDate = tr.getAttribute('data-reg-date') || '';
+            const notes = tr.getAttribute('data-notes') || '';
+            
             // Populate Detail Modal
             const sBadge = document.getElementById('dModalStatus');
-            sBadge.className = statusBadgeEl.className; // copy warning/success/etc
+            sBadge.className = statusBadgeEl.className;
             sBadge.innerHTML = statusBadgeEl.innerHTML;
 
-            // Generate mock registration date
-            let regDateText = "Đang cập nhật";
-            const expMatch = expDate.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-            if (expMatch) {
-                const year = parseInt(expMatch[3]) - 1;
-                regDateText = `${expMatch[1]}/${expMatch[2]}/${year}`;
-            }
-
-            // Fill elements
             document.getElementById('dModalName').textContent = name;
             document.getElementById('dModalDomain').innerHTML = `<i class="ph ph-globe color-gray"></i> ${domain}`;
             document.getElementById('dModalProvider').innerHTML = `<i class="ph ph-hard-drives color-gray"></i> ${provider}`;
             document.getElementById('dModalExpDate').textContent = expDate;
+            document.getElementById('dModalPrice').textContent = formatVNDFull(parseFloat(price));
+            document.getElementById('dModalRegDate').textContent = formatDateVN(regDate);
+            document.getElementById('dModalUsage').textContent = calculateUsageTime(regDate);
+            document.getElementById('dModalNotes').textContent = notes || 'Không có ghi chú.';
+            
             const expDateEl = document.getElementById('dModalExpDate');
             expDateEl.className = 'dgc-val ' + (statusBadgeEl.classList.contains('warning') ? 'warning-text' : (statusBadgeEl.classList.contains('expired') ? 'danger-text' : 'success-text'));
-            
-            document.getElementById('dModalRegDate').textContent = regDateText;
-            document.getElementById('dModalUsage').textContent = calculateUsageTime(regMatch ? `${regMatch[3]}-${regMatch[2]}-${regMatch[1]}` : null);
             
             const daysLeftContainer = document.getElementById('dModalDaysLeft');
             daysLeftContainer.className = 'dgc-val ' + (statusBadgeEl.classList.contains('warning') ? 'warning-text' : (statusBadgeEl.classList.contains('expired') ? 'danger-text' : 'success-text'));
             daysLeftContainer.innerHTML = daysLeft.includes('Còn') ? `<i class="ph ph-clock"></i> ${daysLeft}` : daysLeft;
-
             
             document.getElementById('detailModal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -561,7 +558,7 @@ document.addEventListener('click', function(e) {
             </div>
             <div class="modal-field full">
                 <label class="modal-label">Ghi Chú</label>
-                <textarea class="modal-textarea" placeholder="Thêm ghi chú về hosting này..."></textarea>
+                <textarea class="modal-textarea" id="mHostingNotes" placeholder="Thêm ghi chú về hosting này..."></textarea>
             </div>
         </div>
         <div class="modal-footer">
@@ -623,6 +620,13 @@ document.addEventListener('click', function(e) {
                         <span class="detail-label" style="text-align: right;">Còn Lại</span>
                         <span class="dgc-val orange" style="justify-content: flex-end;" id="dModalDaysLeft"><i class="ph ph-clock"></i> 17 ngày</span>
                     </div>
+                </div>
+            </div>
+
+            <div class="detail-group" style="margin-top: 20px;">
+                <span class="detail-label">Ghi Chú</span>
+                <div class="detail-desc-box" id="dModalNotes" style="min-height: 60px; background: #f8fafc; padding: 12px; border-radius: 8px; font-size: 14px; color: #475569; line-height: 1.6;">
+                    Không có ghi chú.
                 </div>
             </div>
         </div>
@@ -702,6 +706,9 @@ function openEditModal(tr) {
     document.getElementById('mProvider').value = provider;
     document.getElementById('mExpDate').value = expDate;
     document.getElementById('mRegDate').value = regDate;
+    document.getElementById('hostingPrice').value = tr.getAttribute('data-price') || 0;
+    document.getElementById('mHostingNotes').value = tr.getAttribute('data-notes') || '';
+    formatPrice();
     
     document.getElementById('hostingModal').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -893,6 +900,7 @@ function addHosting() {
     const expDate  = document.getElementById('mExpDate').value;
     const regDate  = document.getElementById('mRegDate').value;
     const price    = document.getElementById('hostingPrice').value;
+    const notes    = document.getElementById('mHostingNotes').value.trim();
 
     clearErrors();
     if (!name) { showToast('Vui lòng nhập tên hosting!', 'error'); markError('mHostingName'); return; }
@@ -908,6 +916,7 @@ function addHosting() {
         expDate, 
         regDate, 
         price,
+        notes,
         usage: '1 năm' // Mặc định
     };
 
@@ -935,13 +944,9 @@ function addHosting() {
 function updateHosting() {
     if (!currentRowToEdit) return;
     
-    const id       = currentRowToEdit.getAttribute('data-id');
-    const name     = document.getElementById('mHostingName').value.trim();
-    const domain   = document.getElementById('mDomain').value.trim();
-    const provider = document.getElementById('mProvider').value.trim();
-    const expDate  = document.getElementById('mExpDate').value;
     const regDate  = document.getElementById('mRegDate').value;
     const price    = document.getElementById('hostingPrice').value;
+    const notes    = document.getElementById('mHostingNotes').value.trim();
 
     clearErrors();
     if (!name) { showToast('Vui lòng nhập tên hosting!', 'error'); markError('mHostingName'); return; }
@@ -958,6 +963,7 @@ function updateHosting() {
         expDate, 
         regDate, 
         price,
+        notes,
         usage: '1 năm' 
     };
 
@@ -972,6 +978,12 @@ function updateHosting() {
             if (result.success) {
                 const status = getStatusFromDate(expDate);
                 currentRowToEdit.innerHTML = generateRowHTML(name, domain, provider, expDate, status, regDate);
+                
+                // Update data attributes
+                currentRowToEdit.setAttribute('data-price', price);
+                currentRowToEdit.setAttribute('data-reg-date', regDate);
+                currentRowToEdit.setAttribute('data-notes', notes);
+                
                 closeHostingModalBtn();
                 applyFilters();
             } else {
@@ -1033,6 +1045,7 @@ function resetModalForm() {
     document.getElementById('mRegDate').value = '';
     document.getElementById('mExpDate').value = '';
     document.getElementById('hostingPrice').value = '1100000';
+    document.getElementById('mHostingNotes').value = '';
     document.getElementById('priceHint').textContent = '1.100.000 VNĐ';
 }
 

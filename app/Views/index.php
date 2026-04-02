@@ -32,25 +32,27 @@
 
     <div class="app-container">
         <!-- Sidebar -->
-        <?php 
-            $activePage = 'dashboard';
-            include APP_DIR . '/Views/partials/sidebar.php'; 
+        <?php
+        $activePage = 'dashboard';
+        include APP_DIR . '/Views/partials/sidebar.php';
         ?>
 
         <!-- Main Content -->
         <main class="main-content">
             <!-- Header -->
-            <?php 
-                $pageTitle = 'Dashboard';
-                $pageSubtitle = 'Tổng quan hệ thống quản lý công việc';
-                include APP_DIR . '/Views/partials/header.php'; 
+            <?php
+            $pageTitle = 'Dashboard';
+            $pageSubtitle = 'Tổng quan hệ thống quản lý công việc';
+            include APP_DIR . '/Views/partials/header.php';
             ?>
 
             <div class="content-body">
                 <!-- Welcome Section -->
                 <div class="welcome-section">
                     <div class="welcome-text">
-                        <h2 id="greetingText">Chào buổi tối, <span class="highlight"><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Bạn'); ?></span></h2>
+                        <h2 id="greetingText">Chào buổi tối, <span
+                                class="highlight"><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Bạn'); ?></span>
+                        </h2>
                         <p>Đây là những gì đang diễn ra trong hệ thống hôm nay</p>
                     </div>
                     <div class="welcome-clock" id="dashboardClock">
@@ -90,11 +92,11 @@
                         const h = String(now.getHours()).padStart(2, '0');
                         const m = String(now.getMinutes()).padStart(2, '0');
                         const s = String(now.getSeconds()).padStart(2, '0');
-                        
+
                         const hElem = document.getElementById('clock-hours');
                         const mElem = document.getElementById('clock-minutes');
                         const sElem = document.getElementById('clock-seconds');
-                        
+
                         if (hElem) hElem.textContent = h;
                         if (mElem) mElem.textContent = m;
                         if (sElem) sElem.textContent = s;
@@ -143,7 +145,7 @@
                         <div class="stat-label">Dự án đang thực hiện</div>
                         <div class="stat-main">
                             <span class="stat-value-big" id="statDoing">0</span>
-                            <span class="stat-sub" id="statSprint">Sprint hiện tại</span>
+                            <span class="stat-sub" id="statSprint">dự án</span>
                         </div>
                     </div>
 
@@ -173,7 +175,7 @@
                             </div>
                             <div class="chart-total">
                                 <span>TỔNG DOANH THU</span>
-                                <h2 id="chartTotalValue" style="color: #2ab89c;">$0</h2>
+                                <h2 id="chartTotalValue" style="color: #2ab89c;">0</h2>
                             </div>
                         </div>
                         <div class="chart-wrapper" style="height: 320px; position: relative;">
@@ -1146,4 +1148,5 @@
 
 <?php include APP_DIR . '/Views/partials/footer.php'; ?>
 </body>
+
 </html>
