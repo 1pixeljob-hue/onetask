@@ -58,11 +58,22 @@ $initials = count($nameParts) >= 2
                             </div>
                             <div class="item-details">
                                 <h4 class="item-title"><?php echo htmlspecialchars($notif['title']); ?></h4>
-                                <p class="item-name"><?php echo nl2br(htmlspecialchars($notif['message'])); ?></p>
+                                <?php 
+                                    $lines = explode("\n", $notif['message']);
+                                    $name = $lines[0];
+                                    $meta = isset($lines[1]) ? $lines[1] : '';
+                                ?>
+                                <span class="item-name"><?php echo htmlspecialchars($name); ?></span>
+                                <?php if ($meta): ?>
                                 <p class="item-meta">
-                                    <i class="ph ph-clock"></i>
-                                    <?php echo date('d/m/Y H:i', strtotime($notif['created_at'])); ?>
+                                    <?php if (strpos($meta, 'Hết hạn') !== false): ?>
+                                        <i class="ph ph-calendar"></i>
+                                    <?php else: ?>
+                                        <i class="ph ph-clock"></i>
+                                    <?php endif; ?>
+                                    <?php echo htmlspecialchars($meta); ?>
                                 </p>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <?php endforeach; ?>

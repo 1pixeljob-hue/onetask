@@ -49,11 +49,13 @@ class NotificationService {
             
             if ($isPast) {
                 // Đã hết hạn
-                $title = "Hosting đã hết hạn: " . $h['name'];
-                if (!$this->notifModel->exists('hosting_expired', $h['id'], $title)) {
+                $title = "Hosting đã hết hạn";
+                $message = $h['name'] . "\n" . "Hết hạn: " . date('d/m/Y', strtotime($h['expDate']));
+                
+                if (!$this->notifModel->exists('hosting_expired', $h['id'], $h['name'] . ' expired')) {
                     $this->notifModel->create([
                         'title' => $title,
-                        'message' => "Dịch vụ " . $h['name'] . " đã hết hạn vào ngày " . date('d/m/Y', strtotime($h['expDate'])) . ". Vui lòng gia hạn ngay!",
+                        'message' => $message,
                         'type' => 'error',
                         'category' => 'hosting_expired',
                         'item_id' => $h['id'],
@@ -62,14 +64,13 @@ class NotificationService {
                 }
             } else if (in_array($days, $milestones)) {
                 // Sắp hết hạn
-                $title = "Hosting sắp hết hạn: " . $h['name'];
-                // Thêm mốc thời gian vào tiêu đề để tránh trùng lặp cho các mốc khác nhau
-                $milestoneTitle = "$title (Còn $days ngày)";
+                $title = "Hosting sắp hết hạn";
+                $message = $h['name'] . "\n" . "Hết hạn: " . date('d/m/Y', strtotime($h['expDate']));
                 
-                if (!$this->notifModel->exists('hosting_warning', $h['id'], $milestoneTitle)) {
+                if (!$this->notifModel->exists('hosting_warning', $h['id'], $h['name'] . ' warning ' . $days)) {
                     $this->notifModel->create([
-                        'title' => $milestoneTitle,
-                        'message' => "Dịch vụ " . $h['name'] . " sẽ hết hạn trong $days ngày tới (" . date('d/m/Y', strtotime($h['expDate'])) . ").",
+                        'title' => $title,
+                        'message' => $message,
                         'type' => 'warning',
                         'category' => 'hosting_warning',
                         'item_id' => $h['id'],
