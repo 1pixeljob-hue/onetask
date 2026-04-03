@@ -54,16 +54,24 @@ class BaseController {
         $viewPath = APP_DIR . '/Views/' . $viewName . '.php';
         if (file_exists($viewPath)) {
             // Khởi tạo các model cần thiết cho phần Header (Thông báo)
-            $notifModel = new \App\Models\NotificationModel();
-            $notifService = new \App\Services\NotificationService();
+            try {
+                $notifModel = new \App\Models\NotificationModel();
+                $notifService = new \App\Services\NotificationService();
+                
+                // Cập nhật thông báo mới (Logic có thể tối ưu bằng cách chỉ quét 1 lần/ngày)
+                $notifService->refresh();
+                
+                // Thêm dữ liệu bổ sung cho view
+                $data['notifications'] = $notifModel->getAll(8);
+                $data['unreadCount'] = $notifModel->getUnreadCount();
+            } catch (\Exception $e) {
+                // Fallback nếu database chưa sẵn sàng hoặc có lỗi
+                error_log("Notification System Error: " . $e->getMessage());
+                $data['notifications'] = [];
+                $data['unreadCount'] = 0;
+            }
             
-            // Cập nhật thông báo mới (Logic có thể tối ưu bằng cách chỉ quét 1 lần/ngày)
-            $notifService->refresh();
-            
-            // Thêm dữ liệu bổ sung cho view
             $data['currentUser'] = $this->currentUser;
-            $data['notifications'] = $notifModel->getAll(8);
-            $data['unreadCount'] = $notifModel->getUnreadCount();
             
             // Giải nén dữ liệu để biến số có sẵn trong view
             extract($data);
