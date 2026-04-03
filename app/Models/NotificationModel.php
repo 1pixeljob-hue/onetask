@@ -82,4 +82,14 @@ class NotificationModel {
         $stmt = $this->db->prepare("DELETE FROM notifications WHERE id = :id");
         return $stmt->execute([':id' => $id]);
     }
+
+    /**
+     * Xóa nhiều thông báo cùng lúc
+     */
+    public function deleteBulk($ids) {
+        if (empty($ids)) return false;
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $stmt = $this->db->prepare("DELETE FROM notifications WHERE id IN ($placeholders)");
+        return $stmt->execute($ids);
+    }
 }

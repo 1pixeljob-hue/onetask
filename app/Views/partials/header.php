@@ -33,9 +33,14 @@ $initials = count($nameParts) >= 2
                         <span class="notif-count-badge"><?php echo $unreadCount; ?></span>
                         <?php endif; ?>
                     </div>
-                    <button class="notif-close-btn" id="notifCloseBtn">
-                        <i class="ph ph-x"></i>
-                    </button>
+                    <div class="header-right-actions">
+                        <button class="notif-action-btn delete-btn" id="notifBulkDelete" title="Xóa đã chọn" style="display: none;">
+                            <i class="ph ph-trash"></i>
+                        </button>
+                        <button class="notif-close-btn" id="notifCloseBtn">
+                            <i class="ph ph-x"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="notif-content">
                     <?php if (empty($notifications)): ?>
@@ -53,6 +58,11 @@ $initials = count($nameParts) >= 2
                         ?>
                         <div class="notif-item <?php echo $typeClass; ?> <?php echo $notif['is_read'] ? '' : 'unread'; ?>" 
                              onclick="markNotifAsRead(<?php echo $notif['id']; ?>, '<?php echo $notif['link'] ?? 'javascript:void(0)'; ?>')">
+                            
+                            <div class="item-checkbox-wrapper" onclick="event.stopPropagation()">
+                                <input type="checkbox" class="notif-checkbox" value="<?php echo $notif['id']; ?>">
+                            </div>
+
                             <div class="item-icon-box">
                                 <i class="ph <?php echo $iconClass; ?>"></i>
                             </div>

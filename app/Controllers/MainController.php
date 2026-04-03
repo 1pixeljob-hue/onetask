@@ -797,4 +797,25 @@ class MainController extends BaseController {
             echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
+
+    /**
+     * API: Xóa thông báo (Hỗ trợ xóa nhiều)
+     */
+    public function deleteNotifications() {
+        header('Content-Type: application/json');
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            if (!$input || !isset($input['ids']) || !is_array($input['ids'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ']);
+                return;
+            }
+
+            $notifModel = new \App\Models\NotificationModel();
+            $success = $notifModel->deleteBulk($input['ids']);
+
+            echo json_encode(['status' => 'success', 'success' => $success]);
+        } catch (\Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
 }
