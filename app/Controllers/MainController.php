@@ -799,6 +799,20 @@ class MainController extends BaseController {
     }
 
     /**
+     * API: Đánh dấu tất cả thông báo đã đọc
+     */
+    public function markAllNotifsAsRead() {
+        header('Content-Type: application/json');
+        try {
+            $notifModel = new \App\Models\NotificationModel();
+            $success = $notifModel->markAllAsRead();
+            echo json_encode(['status' => 'success', 'success' => $success !== false]);
+        } catch (\Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+    /**
      * API: Xóa thông báo (Hỗ trợ xóa nhiều)
      */
     public function deleteNotifications() {

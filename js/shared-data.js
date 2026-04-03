@@ -675,51 +675,28 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
-     * LOGIC XỬ LÝ CHỌN VÀ XÓA THÔNG BÁO HÀNG LOẠT
+     * LOGIC XỬ LÝ ĐÁNH DẤU TẤT CẢ ĐÃ ĐỌC
      */
-    const bulkDeleteBtn = document.getElementById('notifBulkDelete');
-    const checkboxes = document.querySelectorAll('.notif-checkbox');
-
-    // Cập nhật trạng thái hiển thị nút xóa
-    function updateBulkDeleteVisibility() {
-        const checkedCount = document.querySelectorAll('.notif-checkbox:checked').length;
-        if (bulkDeleteBtn) {
-            bulkDeleteBtn.style.display = checkedCount > 0 ? 'flex' : 'none';
-        }
-    }
-
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', updateBulkDeleteVisibility);
-    });
-
-    if (bulkDeleteBtn) {
-        bulkDeleteBtn.addEventListener('click', function(e) {
+    const markAllBtn = document.getElementById('notifMarkAll');
+    if (markAllBtn) {
+        markAllBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            const selectedIds = Array.from(document.querySelectorAll('.notif-checkbox:checked'))
-                                    .map(cb => parseInt(cb.value));
-
-            if (selectedIds.length === 0) return;
-
-            if (confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.length} thông báo đã chọn?`)) {
-                fetch('/notifications/delete', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ids: selectedIds })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        // Reload trang để cập nhật danh sách và badge
-                        window.location.reload();
-                    } else {
-                        alert('Có lỗi xảy ra: ' + (data.message || 'Không thể xóa'));
-                    }
-                })
-                .catch(err => {
-                    console.error('Lỗi khi xóa thông báo:', err);
-                    alert('Lỗi kết nối hệ thống.');
-                });
-            }
+            
+            fetch('/notifications/mark-all-read', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    window.location.reload();
+                } else {
+                    console.error('Lỗi khi đánh dấu tất cả:', data.message);
+                }
+            })
+            .catch(err => {
+                console.error('Lỗi kết nối:', err);
+            });
         });
     }
 });

@@ -43,4 +43,5 @@ $router->add('/logs/restore', 'App\Controllers\MainController', 'restoreLog');
 
 // Notification Routes
 $router->add('/notifications/mark-read', 'App\Controllers\MainController', 'markNotifAsRead');
+$router->add('/notifications/mark-all-read', 'App\Controllers\MainController', 'markAllNotifsAsRead');
 $router->add('/notifications/delete', 'App\Controllers\MainController', 'deleteNotifications');

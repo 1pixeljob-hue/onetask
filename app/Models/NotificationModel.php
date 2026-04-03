@@ -72,7 +72,7 @@ class NotificationModel {
      * Đánh dấu tất cả đã đọc
      */
     public function markAllAsRead() {
-        return $this->db->query("UPDATE notifications SET is_read = 1")->execute();
+        return $this->db->exec("UPDATE notifications SET is_read = 1");
     }
 
     /**

@@ -25,28 +25,16 @@ $initials = count($nameParts) >= 2
             <div class="notification-dropdown" id="notifDropdown">
                 <div class="notif-header">
                     <div class="header-left-content">
-                        <div class="notif-title-icon">
-                            <i class="ph ph-warning-circle"></i>
-                        </div>
-                        <span class="notif-title">Thông Báo</span>
-                        <?php if ($unreadCount > 0): ?>
-                        <span class="notif-count-badge"><?php echo $unreadCount; ?></span>
-                        <?php endif; ?>
+                        <span class="notif-title">Notifications</span>
+                        <span class="notif-subtitle"><?php echo $unreadCount; ?> Unread Alerts</span>
                     </div>
-                    <div class="header-right-actions">
-                        <button class="notif-action-btn delete-btn" id="notifBulkDelete" title="Xóa đã chọn" style="display: none;">
-                            <i class="ph ph-trash"></i>
-                        </button>
-                        <button class="notif-close-btn" id="notifCloseBtn">
-                            <i class="ph ph-x"></i>
-                        </button>
-                    </div>
+                    <button class="notif-mark-all" id="notifMarkAll">Mark all as read</button>
                 </div>
                 <div class="notif-content">
                     <?php if (empty($notifications)): ?>
-                        <div class="no-notif-msg" style="padding: 20px; text-align: center; color: var(--text-muted);">
-                            <i class="ph ph-bell-slash" style="font-size: 32px; margin-bottom: 10px; display: block;"></i>
-                            Chưa có thông báo nào.
+                        <div class="no-notif-msg" style="padding: 30px 20px; text-align: center; color: #94a3b8;">
+                            <i class="ph ph-bell-slash" style="font-size: 38px; margin-bottom: 12px; display: block; color: #cbd5e1;"></i>
+                            <p style="font-size: 14px; font-weight: 500;">No notifications yet</p>
                         </div>
                     <?php else: ?>
                         <?php foreach ($notifications as $notif): 
@@ -55,39 +43,47 @@ $initials = count($nameParts) >= 2
                             if ($notif['type'] == 'warning') { $iconClass = 'ph-warning'; $typeClass = 'warning'; }
                             if ($notif['type'] == 'error') { $iconClass = 'ph-warning-octagon'; $typeClass = 'error'; }
                             if ($notif['type'] == 'success') { $iconClass = 'ph-check-circle'; $typeClass = 'success'; }
+
+                            // Tính toán thời gian tương đối
+                            $timeStr = 'JUST NOW';
+                            $diff = time() - strtotime($notif['created_at']);
+                            if ($diff > 3600*24) $timeStr = floor($diff/86400) . 'D AGO';
+                            else if ($diff > 3600) $timeStr = floor($diff/3600) . 'H AGO';
+                            else if ($diff > 60) $timeStr = floor($diff/60) . 'M AGO';
                         ?>
                         <div class="notif-item <?php echo $typeClass; ?> <?php echo $notif['is_read'] ? '' : 'unread'; ?>" 
                              onclick="markNotifAsRead(<?php echo $notif['id']; ?>, '<?php echo $notif['link'] ?? 'javascript:void(0)'; ?>')">
                             
-                            <div class="item-checkbox-wrapper" onclick="event.stopPropagation()">
-                                <input type="checkbox" class="notif-checkbox" value="<?php echo $notif['id']; ?>">
-                            </div>
-
                             <div class="item-icon-box">
                                 <i class="ph <?php echo $iconClass; ?>"></i>
                             </div>
+
                             <div class="item-details">
-                                <h4 class="item-title"><?php echo htmlspecialchars($notif['title']); ?></h4>
-                                <?php 
-                                    $lines = explode("\n", $notif['message']);
-                                    $name = $lines[0];
-                                    $meta = isset($lines[1]) ? $lines[1] : '';
-                                ?>
-                                <span class="item-name"><?php echo htmlspecialchars($name); ?></span>
-                                <?php if ($meta): ?>
+                                <div class="item-top-row">
+                                    <h4 class="item-title"><?php echo htmlspecialchars($notif['title']); ?></h4>
+                                    <span class="item-time"><?php echo $timeStr; ?></span>
+                                </div>
+                                <span class="item-message">
+                                    <?php 
+                                        $lines = explode("\n", $notif['message']);
+                                        echo htmlspecialchars($lines[0]); 
+                                    ?>
+                                </span>
+                                <?php if (isset($lines[1])): ?>
                                 <p class="item-meta">
-                                    <?php if (strpos($meta, 'Hết hạn') !== false): ?>
-                                        <i class="ph ph-calendar"></i>
-                                    <?php else: ?>
-                                        <i class="ph ph-clock"></i>
-                                    <?php endif; ?>
-                                    <?php echo htmlspecialchars($meta); ?>
+                                    <i class="ph <?php echo (strpos($lines[1], 'Hết hạn') !== false) ? 'ph-calendar' : 'ph-clock'; ?>"></i>
+                                    <?php echo htmlspecialchars($lines[1]); ?>
                                 </p>
                                 <?php endif; ?>
                             </div>
                         </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
+                </div>
+                <div class="notif-footer">
+                    <a href="/logs" class="view-all-link">
+                        View All Activity <i class="ph ph-arrow-right"></i>
+                    </a>
                 </div>
             </div>
         </div>
