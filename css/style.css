@@ -6131,6 +6131,33 @@ body {
     border: 1px solid #ffedd5;
 }
 
+.notif-item.error {
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+}
+
+.notif-item.error .item-icon-box {
+    background: #ef4444;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+.notif-item.error .item-title {
+    color: #991b1b;
+}
+
+.notif-item.error .item-name {
+    color: #b91c1c;
+}
+
+.notif-item.error .item-meta {
+    color: #ef4444;
+}
+
+.notif-item.unread {
+    border-left: 4px solid #3b82f6;
+    background-color: rgba(59, 130, 246, 0.03);
+}
+
 .notif-item.warning:hover {
     transform: scale(1.02);
     box-shadow: 0 4px 12px rgba(249, 115, 22, 0.1);

@@ -53,9 +53,19 @@ class BaseController {
     public function view($viewName, $data = []) {
         $viewPath = APP_DIR . '/Views/' . $viewName . '.php';
         if (file_exists($viewPath)) {
-            // Add current user to data
+            // Khởi tạo các model cần thiết cho phần Header (Thông báo)
+            $notifModel = new \App\Models\NotificationModel();
+            $notifService = new \App\Services\NotificationService();
+            
+            // Cập nhật thông báo mới (Logic có thể tối ưu bằng cách chỉ quét 1 lần/ngày)
+            $notifService->refresh();
+            
+            // Thêm dữ liệu bổ sung cho view
             $data['currentUser'] = $this->currentUser;
-            // Extract data so variables are available in the view
+            $data['notifications'] = $notifModel->getAll(8);
+            $data['unreadCount'] = $notifModel->getUnreadCount();
+            
+            // Giải nén dữ liệu để biến số có sẵn trong view
             extract($data);
             require_once $viewPath;
         } else {

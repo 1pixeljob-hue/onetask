@@ -776,4 +776,25 @@ class MainController extends BaseController {
             echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
+
+    /**
+     * API: Đánh dấu thông báo đã đọc
+     */
+    public function markNotifAsRead() {
+        header('Content-Type: application/json');
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            if (!$input || !isset($input['id'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ']);
+                return;
+            }
+
+            $notifModel = new \App\Models\NotificationModel();
+            $success = $notifModel->markAsRead($input['id']);
+
+            echo json_encode(['status' => 'success', 'success' => $success]);
+        } catch (\Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
 }

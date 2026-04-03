@@ -18,7 +18,9 @@ $initials = count($nameParts) >= 2
         <div class="notif-dropdown-wrapper" id="notifDropdownWrapper">
             <button class="btn-icon" id="notifTrigger">
                 <i class="ph ph-bell"></i>
-                <span class="badge">1</span>
+                <?php if ($unreadCount > 0): ?>
+                <span class="badge"><?php echo $unreadCount; ?></span>
+                <?php endif; ?>
             </button>
             <div class="notification-dropdown" id="notifDropdown">
                 <div class="notif-header">
@@ -27,27 +29,44 @@ $initials = count($nameParts) >= 2
                             <i class="ph ph-warning-circle"></i>
                         </div>
                         <span class="notif-title">Thông Báo</span>
-                        <span class="notif-count-badge">1</span>
+                        <?php if ($unreadCount > 0): ?>
+                        <span class="notif-count-badge"><?php echo $unreadCount; ?></span>
+                        <?php endif; ?>
                     </div>
                     <button class="notif-close-btn" id="notifCloseBtn">
                         <i class="ph ph-x"></i>
                     </button>
                 </div>
                 <div class="notif-content">
-                    <!-- Ví dụ thông báo hosting sắp hết hạn -->
-                    <div class="notif-item warning">
-                        <div class="item-icon-box">
-                            <i class="ph ph-warning"></i>
+                    <?php if (empty($notifications)): ?>
+                        <div class="no-notif-msg" style="padding: 20px; text-align: center; color: var(--text-muted);">
+                            <i class="ph ph-bell-slash" style="font-size: 32px; margin-bottom: 10px; display: block;"></i>
+                            Chưa có thông báo nào.
                         </div>
-                        <div class="item-details">
-                            <h4 class="item-title">Hosting sắp hết hạn</h4>
-                            <p class="item-name">Photoeditor 24h</p>
-                            <p class="item-meta">
-                                <i class="ph ph-calendar"></i>
-                                Hết hạn: 12/04/2026
-                            </p>
+                    <?php else: ?>
+                        <?php foreach ($notifications as $notif): 
+                            $iconClass = 'ph-info';
+                            $typeClass = 'info';
+                            if ($notif['type'] == 'warning') { $iconClass = 'ph-warning'; $typeClass = 'warning'; }
+                            if ($notif['type'] == 'error') { $iconClass = 'ph-warning-octagon'; $typeClass = 'error'; }
+                            if ($notif['type'] == 'success') { $iconClass = 'ph-check-circle'; $typeClass = 'success'; }
+                        ?>
+                        <div class="notif-item <?php echo $typeClass; ?> <?php echo $notif['is_read'] ? '' : 'unread'; ?>" 
+                             onclick="markNotifAsRead(<?php echo $notif['id']; ?>, '<?php echo $notif['link'] ?? 'javascript:void(0)'; ?>')">
+                            <div class="item-icon-box">
+                                <i class="ph <?php echo $iconClass; ?>"></i>
+                            </div>
+                            <div class="item-details">
+                                <h4 class="item-title"><?php echo htmlspecialchars($notif['title']); ?></h4>
+                                <p class="item-name"><?php echo nl2br(htmlspecialchars($notif['message'])); ?></p>
+                                <p class="item-meta">
+                                    <i class="ph ph-clock"></i>
+                                    <?php echo date('d/m/Y H:i', strtotime($notif['created_at'])); ?>
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

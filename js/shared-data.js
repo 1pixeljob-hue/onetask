@@ -640,7 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Close all dropdowns when clicking outside
     document.addEventListener('click', (e) => {
-        if (notifDropdown && !notifWrapper.contains(e.target)) {
+        if (notifDropdown && notifWrapper && !notifWrapper.contains(e.target)) {
             notifDropdown.classList.remove('active');
         }
         
@@ -649,4 +649,28 @@ document.addEventListener('DOMContentLoaded', () => {
             userDropdown.classList.remove('active');
         }
     });
+
+    /**
+     * Hàm gọi API đánh dấu thông báo đã đọc
+     */
+    window.markNotifAsRead = function(id, link) {
+        fetch('/notifications/mark-read', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (link && link !== 'javascript:void(0)') {
+                window.location.href = link;
+            } else {
+                // Nếu không có link, chỉ cần reload hoặc cập nhật UI
+                window.location.reload();
+            }
+        })
+        .catch(err => {
+            console.error('Lỗi khi đánh dấu thông báo:', err);
+            if (link) window.location.href = link;
+        });
+    };
 });

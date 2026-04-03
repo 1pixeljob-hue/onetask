@@ -40,3 +40,6 @@ $router->add('/codex/categories/delete', 'App\Controllers\MainController', 'dele
 // Log Routes
 $router->add('/logs/delete', 'App\Controllers\MainController', 'deleteLog');
 $router->add('/logs/restore', 'App\Controllers\MainController', 'restoreLog');
+
+// Notification Routes
+$router->add('/notifications/mark-read', 'App\Controllers\MainController', 'markNotifAsRead');
