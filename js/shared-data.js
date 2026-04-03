@@ -600,4 +600,53 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
         }
     });
+
+    // 5. Notification Dropdown Logic
+    const notifTrigger = document.getElementById('notifTrigger');
+    const notifDropdown = document.getElementById('notifDropdown');
+    const notifCloseBtn = document.getElementById('notifCloseBtn');
+    const notifWrapper = document.getElementById('notifDropdownWrapper');
+
+    if (notifTrigger && notifDropdown) {
+        notifTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notifDropdown.classList.toggle('active');
+            
+            // Close other dropdowns if open
+            const userDropdown = document.getElementById('profileDropdown');
+            if (userDropdown) userDropdown.classList.remove('active');
+        });
+    }
+
+    if (notifCloseBtn && notifDropdown) {
+        notifCloseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notifDropdown.classList.remove('active');
+        });
+    }
+
+    // Handle User Profile Dropdown (assuming it's similar)
+    const userTrigger = document.getElementById('userProfileTrigger');
+    const userDropdown = document.getElementById('profileDropdown');
+    if (userTrigger && userDropdown) {
+        userTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('active');
+            
+            // Close notif dropdown if open
+            if (notifDropdown) notifDropdown.classList.remove('active');
+        });
+    }
+
+    // Close all dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+        if (notifDropdown && !notifWrapper.contains(e.target)) {
+            notifDropdown.classList.remove('active');
+        }
+        
+        const userWrapper = document.getElementById('userDropdownWrapper');
+        if (userDropdown && userWrapper && !userWrapper.contains(e.target)) {
+            userDropdown.classList.remove('active');
+        }
+    });
 });

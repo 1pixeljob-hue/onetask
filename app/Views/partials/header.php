@@ -15,10 +15,42 @@ $initials = count($nameParts) >= 2
         <p><?php echo $pageSubtitle ?? 'Quản lý công việc tập trung'; ?></p>
     </div>
     <div class="header-right">
-        <button class="btn-icon">
-            <i class="ph ph-bell"></i>
-            <span class="badge">1</span>
-        </button>
+        <div class="notif-dropdown-wrapper" id="notifDropdownWrapper">
+            <button class="btn-icon" id="notifTrigger">
+                <i class="ph ph-bell"></i>
+                <span class="badge">1</span>
+            </button>
+            <div class="notification-dropdown" id="notifDropdown">
+                <div class="notif-header">
+                    <div class="header-left-content">
+                        <div class="notif-title-icon">
+                            <i class="ph ph-warning-circle"></i>
+                        </div>
+                        <span class="notif-title">Thông Báo</span>
+                        <span class="notif-count-badge">1</span>
+                    </div>
+                    <button class="notif-close-btn" id="notifCloseBtn">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                <div class="notif-content">
+                    <!-- Ví dụ thông báo hosting sắp hết hạn -->
+                    <div class="notif-item warning">
+                        <div class="item-icon-box">
+                            <i class="ph ph-warning"></i>
+                        </div>
+                        <div class="item-details">
+                            <h4 class="item-title">Hosting sắp hết hạn</h4>
+                            <p class="item-name">Photoeditor 24h</p>
+                            <p class="item-meta">
+                                <i class="ph ph-calendar"></i>
+                                Hết hạn: 12/04/2026
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="user-dropdown-wrapper" id="userDropdownWrapper">
             <div class="user-profile" id="userProfileTrigger">
                 <div class="avatar"><?php echo $initials; ?></div>
