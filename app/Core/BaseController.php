@@ -60,11 +60,12 @@ class BaseController {
                 
                 // Cập nhật thông báo mới (Tối ưu: chỉ quét mỗi 30 phút một lần)
                 $currentTime = time();
-                // Temporarily disabled for cleanup: 
-                // if (!isset($_SESSION['last_notif_refresh']) || ($currentTime - $_SESSION['last_notif_refresh'] > 1800)) {
+                // Cập nhật thông báo mới (Tối ưu: chỉ quét mỗi 30 phút một lần)
+                $currentTime = time();
+                if (!isset($_SESSION['last_notif_refresh']) || ($currentTime - $_SESSION['last_notif_refresh'] > 1800)) {
                     $notifService->refresh();
                     $_SESSION['last_notif_refresh'] = $currentTime;
-                // }
+                }
                 
                 // Thêm dữ liệu bổ sung cho view (Mặc định mảng rỗng để tránh lỗi foreach)
                 $data['notifications'] = $notifModel->getAll(8) ?: [];
