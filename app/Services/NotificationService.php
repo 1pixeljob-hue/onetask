@@ -22,62 +22,84 @@ class NotificationService {
      * Chạy toàn bộ tiến trình quét thông báo
      */
     public function refresh() {
+        $this->cleanupDuplicates(); // Dọn dẹp bản ghi trùng lặp (nếu có)
         $this->checkHostingExpirations();
         $this->generateWeeklyReport();
     }
 
     /**
-     * Kiểm tra và tạo thông báo Hosting hết hạn
+     * Quét và tạo thông báo hết hạn Hosting
      */
-    public function checkHostingExpirations() {
-        $hostings = $this->hostingModel->getAll();
-        $today = new DateTime();
-        $today->setTime(0, 0, 0);
+    private function checkHostingExpirations() {
+        $hostingModel = new \App\Models\HostingModel();
+        $hostings = $hostingModel->getAll();
+        $today = new \DateTime();
+
+        // Các mốc thời gian cảnh báo (Sắp xếp tăng dần để break ở mốc nhỏ nhất/cấp bách nhất)
+        $milestones = [1, 3, 7, 15, 30];
 
         foreach ($hostings as $h) {
-            if (empty($h['expDate'])) continue;
+            if (empty($h['exp_date'])) continue;
 
-            $expDate = new DateTime($h['expDate']);
-            $expDate->setTime(0, 0, 0);
-            
-            $diff = $today->diff($expDate);
-            $days = $diff->days;
-            $isPast = $diff->invert;
+            $expDate = new \DateTime($h['exp_date']);
+            $interval = $today->diff($expDate);
+            $daysDiff = $interval->days;
 
-            // Các mốc cần thông báo: 30, 15, 7, 1 ngày
-            $milestones = [30, 15, 7, 1];
-            
-            if ($isPast) {
-                // Đã hết hạn
+            // Nếu đã hết hạn (invert == 1)
+            if ($interval->invert == 1) {
                 $title = "Hosting đã hết hạn";
-                $message = $h['name'] . "\n" . "Hết hạn: " . date('d/m/Y', strtotime($h['expDate']));
-                
-                if (!$this->notifModel->exists('hosting_expired', $h['id'], $h['name'] . ' expired')) {
+                if (!$this->notifModel->exists('hosting_warning', $h['id'], $title)) {
                     $this->notifModel->create([
                         'title' => $title,
-                        'message' => $message,
+                        'message' => "Hosting {$h['name']} ({$h['domain']}) đã hết hạn vào ngày " . $expDate->format('d/m/Y') . ".\nVui lòng gia hạn ngay để tránh gián đoạn dịch vụ.",
                         'type' => 'error',
-                        'category' => 'hosting_expired',
-                        'item_id' => $h['id'],
-                        'link' => '/hostings'
-                    ]);
-                }
-            } else if (in_array($days, $milestones)) {
-                // Sắp hết hạn
-                $title = "Hosting sắp hết hạn";
-                $message = $h['name'] . "\n" . "Hết hạn: " . date('d/m/Y', strtotime($h['expDate']));
-                
-                if (!$this->notifModel->exists('hosting_warning', $h['id'], $h['name'] . ' warning ' . $days)) {
-                    $this->notifModel->create([
-                        'title' => $title,
-                        'message' => $message,
-                        'type' => 'warning',
                         'category' => 'hosting_warning',
                         'item_id' => $h['id'],
                         'link' => '/hostings'
                     ]);
                 }
+                continue;
             }
+
+            // Kiểm tra các mốc cảnh báo (chọn mốc cấp bách nhất hiện có)
+            foreach ($milestones as $m) {
+                if ($daysDiff <= $m) {
+                    $title = "Hosting sắp hết hạn ($m ngày)";
+                    if (!$this->notifModel->exists('hosting_warning', $h['id'], $title)) {
+                        $this->notifModel->create([
+                            'title' => $title,
+                            'message' => "Hosting {$h['name']} ({$h['domain']}) sẽ hết hạn trong $daysDiff ngày tới.\nNgày hết hạn: " . $expDate->format('d/m/Y'),
+                            'type' => 'warning',
+                            'category' => 'hosting_warning',
+                            'item_id' => $h['id'],
+                            'link' => '/hostings'
+                        ]);
+                    }
+                    // Dừng lại sau mốc đầu tiên (quan trọng nhất) thỏa mãn điều kiện
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Dọn dẹp các thông báo bị trùng lặp (nếu có lỗi logic cũ)
+     */
+    private function cleanupDuplicates() {
+        try {
+            $db = \App\Core\Database::getInstance()->getConnection();
+            
+            // Xóa các thông báo trùng cùng item_id, category, title (giữ lại id thấp nhất)
+            // Sử dụng <=> (NULL-safe equality) trong MySQL
+            $sql = "DELETE n1 FROM notifications n1
+                    INNER JOIN notifications n2 ON TRIM(n1.title) = TRIM(n2.title) 
+                        AND n1.category = n2.category 
+                        AND (n1.item_id <=> n2.item_id)
+                    WHERE n1.id > n2.id";
+            
+            $db->exec($sql);
+        } catch (\Exception $e) {
+            error_log("Cleanup Duplicates Error: " . $e->getMessage());
         }
     }
 

@@ -51,10 +51,13 @@ class NotificationModel {
      */
     public function exists($category, $item_id, $title) {
         $stmt = $this->db->prepare("SELECT COUNT(*) FROM notifications 
-                                   WHERE category = :cat AND item_id = :item AND title = :title");
+                                   WHERE category = :cat 
+                                   AND (item_id = :item OR (item_id IS NULL AND :item_null IS NULL)) 
+                                   AND TRIM(title) = TRIM(:title)");
         $stmt->execute([
             ':cat' => $category,
             ':item' => $item_id,
+            ':item_null' => $item_id,
             ':title' => $title
         ]);
         return $stmt->fetchColumn() > 0;

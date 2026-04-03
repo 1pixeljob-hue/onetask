@@ -18,8 +18,8 @@ $initials = count($nameParts) >= 2
         <div class="notif-dropdown-wrapper" id="notifDropdownWrapper">
             <button class="btn-icon" id="notifTrigger">
                 <i class="ph ph-bell"></i>
-                <?php if ($unreadCount > 0): ?>
-                <span class="badge"><?php echo $unreadCount; ?></span>
+                <?php if (isset($unreadCount) && $unreadCount > 0): ?>
+                <span class="badge"><?php echo (int)$unreadCount; ?></span>
                 <?php endif; ?>
             </button>
             <div class="notification-dropdown" id="notifDropdown">
@@ -65,11 +65,12 @@ $initials = count($nameParts) >= 2
                                 </div>
                                 <span class="item-message">
                                     <?php 
-                                        $lines = explode("\n", $notif['message']);
-                                        echo htmlspecialchars($lines[0]); 
+                                        $msg = $notif['message'] ?? '';
+                                        $lines = explode("\n", $msg);
+                                        echo htmlspecialchars($lines[0] ?? ''); 
                                     ?>
                                 </span>
-                                <?php if (isset($lines[1])): ?>
+                                <?php if (isset($lines[1]) && !empty($lines[1])): ?>
                                 <p class="item-meta">
                                     <i class="ph <?php echo (strpos($lines[1], 'Hết hạn') !== false) ? 'ph-calendar' : 'ph-clock'; ?>"></i>
                                     <?php echo htmlspecialchars($lines[1]); ?>
@@ -140,3 +141,48 @@ $initials = count($nameParts) >= 2
         </div>
     </div>
 </header>
+
+<!-- Toggle Script for Notifications -->
+<script>
+(function() {
+    console.log('Notification script initialized');
+    console.log('Session ID:', '<?php echo session_id(); ?>');
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const notifTrigger = document.getElementById('notifTrigger');
+        const notifDropdown = document.getElementById('notifDropdown');
+        const notifWrapper = document.getElementById('notifDropdownWrapper');
+        
+        console.log('Notification elements:', {
+            trigger: !!notifTrigger,
+            dropdown: !!notifDropdown,
+            wrapper: !!notifWrapper
+        });
+
+        if (notifTrigger && notifDropdown) {
+            notifTrigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Close other dropdowns
+                document.querySelectorAll('.profile-dropdown-menu, .notification-dropdown').forEach(d => {
+                    if (d !== notifDropdown) d.classList.remove('active');
+                });
+                
+                notifDropdown.classList.toggle('active');
+                console.log('Notification modal toggled. Current state:', notifDropdown.classList.contains('active'));
+            });
+        }
+
+        // Close when clicking outside
+        document.addEventListener('click', function(e) {
+            if (notifDropdown && notifWrapper && !notifWrapper.contains(e.target)) {
+                if (notifDropdown.classList.contains('active')) {
+                    notifDropdown.classList.remove('active');
+                    console.log('Notification modal closed (clicked outside)');
+                }
+            }
+        });
+    });
+})();
+</script>

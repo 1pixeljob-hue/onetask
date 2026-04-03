@@ -601,22 +601,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 5. Notification Dropdown Logic
-    const notifTrigger = document.getElementById('notifTrigger');
+    // 5. Notification Dropdown Logic - Handled inline in header.php for robustness
     const notifDropdown = document.getElementById('notifDropdown');
-    const notifCloseBtn = document.getElementById('notifCloseBtn');
     const notifWrapper = document.getElementById('notifDropdownWrapper');
 
-    if (notifTrigger && notifDropdown) {
-        notifTrigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            notifDropdown.classList.toggle('active');
-            
-            // Close other dropdowns if open
-            const userDropdown = document.getElementById('profileDropdown');
-            if (userDropdown) userDropdown.classList.remove('active');
-        });
-    }
 
     if (notifCloseBtn && notifDropdown) {
         notifCloseBtn.addEventListener('click', (e) => {

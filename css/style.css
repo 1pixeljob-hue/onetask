@@ -262,6 +262,13 @@ body {
     cursor: pointer;
     position: relative;
     transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon i {
+    pointer-events: none;
 }
 
 .btn-icon:hover {
@@ -6015,7 +6022,7 @@ body {
 .mt-8 { margin-top: 8px; }
 
 /* Notification Dropdown Styles - Minimalist Professional */
-.notif-dropdown-wrapper {
+#notifDropdownWrapper {
     position: relative;
 }
 

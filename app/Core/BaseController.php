@@ -58,12 +58,17 @@ class BaseController {
                 $notifModel = new \App\Models\NotificationModel();
                 $notifService = new \App\Services\NotificationService();
                 
-                // Cập nhật thông báo mới (Logic có thể tối ưu bằng cách chỉ quét 1 lần/ngày)
-                $notifService->refresh();
+                // Cập nhật thông báo mới (Tối ưu: chỉ quét mỗi 30 phút một lần)
+                $currentTime = time();
+                // Temporarily disabled for cleanup: 
+                // if (!isset($_SESSION['last_notif_refresh']) || ($currentTime - $_SESSION['last_notif_refresh'] > 1800)) {
+                    $notifService->refresh();
+                    $_SESSION['last_notif_refresh'] = $currentTime;
+                // }
                 
-                // Thêm dữ liệu bổ sung cho view
-                $data['notifications'] = $notifModel->getAll(8);
-                $data['unreadCount'] = $notifModel->getUnreadCount();
+                // Thêm dữ liệu bổ sung cho view (Mặc định mảng rỗng để tránh lỗi foreach)
+                $data['notifications'] = $notifModel->getAll(8) ?: [];
+                $data['unreadCount'] = (int)($notifModel->getUnreadCount() ?: 0);
             } catch (\Exception $e) {
                 // Fallback nếu database chưa sẵn sàng hoặc có lỗi
                 error_log("Notification System Error: " . $e->getMessage());
@@ -72,6 +77,8 @@ class BaseController {
             }
             
             $data['currentUser'] = $this->currentUser;
+            $data['notifications'] = $data['notifications'] ?? [];
+            $data['unreadCount'] = $data['unreadCount'] ?? 0;
             
             // Giải nén dữ liệu để biến số có sẵn trong view
             extract($data);
