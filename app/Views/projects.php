@@ -529,6 +529,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial data setup
     filteredProjects = [...(typeof PROJECTS !== 'undefined' ? PROJECTS : [])];
     initProjectsTable();
+    
+    // Initialize DatePicker
+    initDatePicker('mProjectDate');
 });
 
 function initProjectsTable() {

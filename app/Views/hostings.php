@@ -302,6 +302,12 @@ function toggleHostingFilter() {
 document.addEventListener('DOMContentLoaded', () => {
     initHostingsTable();
     
+    // Initialize DatePickers
+    initDatePicker('mRegDate');
+    initDatePicker('mExpDate');
+    initDatePicker('rmRegDate');
+    initDatePicker('rmExpDate');
+    
     // Search input event
     const searchInput = document.getElementById('h_search_v2');
     if (searchInput) {

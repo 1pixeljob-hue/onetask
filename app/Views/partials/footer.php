@@ -1,4 +1,5 @@
 <?php include APP_DIR . '/Views/partials/account_modal.php'; ?>
+<script src="/js/datepicker.js?v=<?php echo time(); ?>"></script>
 <script>
     // Global Account Modal Logic
     function openAccountModal(tab = 'info') {
