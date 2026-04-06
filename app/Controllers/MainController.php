@@ -327,6 +327,22 @@ class MainController extends BaseController {
 
             $projectId = $input['id'] ?? null;
             $milestones = $input['milestones'] ?? [];
+            $projectValue = (int)($input['value'] ?? 0);
+
+            // Kiểm tra tổng giá trị các đợt thanh toán không vượt quá giá trị dự án
+            $totalMilestones = 0;
+            foreach ($milestones as $ms) {
+                $totalMilestones += (int)($ms['amount'] ?? 0);
+            }
+
+            if ($totalMilestones > $projectValue) {
+                echo json_encode([
+                    'status' => 'error', 
+                    'success' => false, 
+                    'message' => 'Tổng giá trị các đợt thanh toán (' . number_format($totalMilestones, 0, ',', '.') . ' VNĐ) không được vượt quá giá trị dự án (' . number_format($projectValue, 0, ',', '.') . ' VNĐ)!'
+                ]);
+                return;
+            }
 
             if ($projectId) {
                 $oldData = $this->projectModel->find($projectId);

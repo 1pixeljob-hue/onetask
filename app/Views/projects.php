@@ -236,7 +236,7 @@
                 <label class="modal-label">Giá Trị Dự Án (VNĐ)</label>
                 <div class="modal-input-group">
                     <i class="ph ph-currency-circle-dollar modal-input-prefix"></i>
-                    <input type="number" class="modal-input with-prefix" id="projectValue" value="0" oninput="updateProjectValueDisplay(this)">
+                    <input type="number" class="modal-input with-prefix" id="projectValue" value="0" oninput="updateProjectValueDisplay(this); updateMilestoneTotal();">
                 </div>
                 <div id="projectValueDisplay" class="modal-price-hint">0 VNĐ</div>
             </div>
@@ -980,6 +980,13 @@ function getFormData() {
     if (!customer) { showToast('Vui lòng nhập tên khách hàng!', 'error'); markError('mCustomerName'); return null; }
 
     const milestones = getMilestoneData();
+    const milestoneTotal = milestones.reduce((sum, ms) => sum + ms.amount, 0);
+
+    if (milestoneTotal > value) {
+        showToast('Tổng các đợt thanh toán không được vượt quá giá trị dự án!', 'error');
+        markError('projectValue');
+        return null;
+    }
 
     return { 
         name, 
@@ -1294,11 +1301,22 @@ function addMilestoneRow(data = {}) {
 
 function updateMilestoneTotal() {
     const amounts = document.querySelectorAll('.ms-amount');
+    const projectValue = parseInt(document.getElementById('projectValue').value) || 0;
+    const totalEl = document.getElementById('milestoneTotalValue');
+    
     let total = 0;
     amounts.forEach(input => {
         total += parseInt(input.value) || 0;
     });
-    document.getElementById('milestoneTotalValue').textContent = `Tổng: ${total.toLocaleString('vi-VN')} VNĐ`;
+    
+    totalEl.textContent = `Tổng: ${total.toLocaleString('vi-VN')} VNĐ`;
+    
+    if (total > projectValue) {
+        totalEl.style.color = '#ef4444'; // Red danger color
+        totalEl.style.fontWeight = '700';
+    } else {
+        totalEl.style.color = 'var(--primary-color)';
+    }
 }
 
 function getMilestoneData() {
