@@ -15,6 +15,8 @@
             project_payments: <?php echo json_encode($project_payments ?? []); ?>,
             customers: <?php echo json_encode($customers ?? []); ?>
         };
+        const PROJECTS = PHP_DATA.projects;
+        const CUSTOMERS = PHP_DATA.customers;
     </script>
     <script src="/js/shared-data.js?v=<?php echo time(); ?>"></script>
 </head>
