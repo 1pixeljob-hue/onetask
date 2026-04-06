@@ -72,8 +72,9 @@
                             <tr>
                                 <th width="40"><input type="checkbox" class="cb-custom" id="selectAllCustomers" onclick="toggleSelectAll(this)"></th>
                                 <th>TÊN KHÁCH HÀNG</th>
+                                <th>LOẠI</th>
                                 <th>THÔNG TIN LIÊN HỆ</th>
-                                <th>CÔNG TY</th>
+                                <th>CÔNG TY / MST</th>
                                 <th>NGÀY TẠO</th>
                                 <th width="80" class="text-center">THAO TÁC</th>
                             </tr>
@@ -109,12 +110,45 @@
         </div>
         <div class="modal-body">
             <div class="modal-section-header">
-                <span class="modal-section-title">Thông Tin Cơ Bản</span>
+                <span class="modal-section-title">Phân Loại & Thông Tin</span>
+            </div>
+
+            <div class="modal-field full">
+                <label class="modal-label">Loại Khách Hàng</label>
+                <div class="type-selector-wrap">
+                    <label class="type-option">
+                        <input type="radio" name="customer_type" value="individual" checked onchange="toggleCustomerTypeFields()">
+                        <div class="type-card">
+                            <i class="ph ph-user"></i>
+                            <span>Cá Nhân</span>
+                        </div>
+                    </label>
+                    <label class="type-option">
+                        <input type="radio" name="customer_type" value="company" onchange="toggleCustomerTypeFields()">
+                        <div class="type-card">
+                            <i class="ph ph-buildings"></i>
+                            <span>Công Ty</span>
+                        </div>
+                    </label>
+                </div>
             </div>
             
             <div class="modal-field full">
-                <label class="modal-label">Tên Khách Hàng <span class="req">*</span></label>
+                <label id="nameLabel" class="modal-label">Tên Khách Hàng <span class="req">*</span></label>
                 <input type="text" class="modal-input" id="mCustomerName" placeholder="VD: Nguyễn Văn A">
+            </div>
+
+            <div id="companyFields" style="display: none;">
+                <div class="modal-row">
+                    <div class="modal-field">
+                        <label class="modal-label">Người Đại Diện</label>
+                        <input type="text" class="modal-input" id="mCustomerRepresentative" placeholder="VD: Ông Nguyễn Văn B">
+                    </div>
+                    <div class="modal-field">
+                        <label class="modal-label">Mã Số Thuế</label>
+                        <input type="text" class="modal-input" id="mCustomerTaxId" placeholder="VD: 0101234567">
+                    </div>
+                </div>
             </div>
 
             <div class="modal-row">
@@ -175,7 +209,23 @@
                     </div>
                 </div>
 
-                <div class="detail-group">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="detail-group">
+                        <span class="detail-label-flex"><i class="ph ph-identification-card"></i> Loại</span>
+                        <span class="dgc-val" id="dcTypeBadge">N/A</span>
+                    </div>
+                    <div class="detail-group" id="dcTaxIdGroup">
+                        <span class="detail-label-flex"><i class="ph ph-hash"></i> Mã Số Thuế</span>
+                        <span class="dgc-val" id="dcTaxId">N/A</span>
+                    </div>
+                </div>
+
+                <div class="detail-group" id="dcRepGroup">
+                    <span class="detail-label-flex"><i class="ph ph-user-gear"></i> Người Đại Diện</span>
+                    <span class="dgc-val" id="dcRepresentative">N/A</span>
+                </div>
+
+                <div class="detail-group" id="dcCompanyGroup">
                     <span class="detail-label-flex"><i class="ph ph-buildings"></i> Công Ty</span>
                     <span class="dgc-val" id="dcCompany">N/A</span>
                 </div>
@@ -318,20 +368,31 @@ function populateRow(row, data) {
     }
 
     row.setAttribute('data-id', data.id);
+    row.setAttribute('data-type', data.type || 'individual');
     row.setAttribute('data-phone', data.phone || '');
     row.setAttribute('data-email', data.email || '');
+    row.setAttribute('data-tax-id', data.tax_id || '');
+    row.setAttribute('data-representative', data.representative || '');
     row.setAttribute('data-address', data.address || '');
     row.setAttribute('data-company', data.company || '');
     row.setAttribute('data-notes', data.notes || '');
 
+    const typeBadge = data.type === 'company' 
+        ? '<span class="badge-type company"><i class="ph ph-buildings"></i> Công Ty</span>'
+        : '<span class="badge-type individual"><i class="ph ph-user"></i> Cá Nhân</span>';
+
     row.innerHTML = `
         <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
         <td><div class="cell-main">${data.name}</div></td>
+        <td>${typeBadge}</td>
         <td>
             <div class="cell-sub" style="margin-bottom: 4px;"><i class="ph ph-phone"></i> ${data.phone || 'N/A'}</div>
             <div class="cell-sub"><i class="ph ph-envelope"></i> ${data.email || 'N/A'}</div>
         </td>
-        <td><div class="text-main">${data.company || 'N/A'}</div></td>
+        <td>
+            <div class="text-main">${data.company || 'N/A'}</div>
+            ${data.tax_id ? `<div class="cell-sub" style="font-size: 11px; margin-top: 2px;">MST: ${data.tax_id}</div>` : ''}
+        </td>
         <td><div class="date-info"><i class="ph ph-calendar-blank"></i> ${formattedDate}</div></td>
         <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
     `;
@@ -429,9 +490,15 @@ function openEditCustomerModal(tr) {
     currentActionMode = 'edit';
     currentRowToEdit = tr;
     
+    const type = tr.getAttribute('data-type') || 'individual';
+    document.querySelector(`input[name="customer_type"][value="${type}"]`).checked = true;
+    toggleCustomerTypeFields();
+
     document.getElementById('mCustomerName').value = tr.querySelector('.cell-main').textContent;
     document.getElementById('mCustomerPhone').value = tr.getAttribute('data-phone');
     document.getElementById('mCustomerEmail').value = tr.getAttribute('data-email');
+    document.getElementById('mCustomerTaxId').value = tr.getAttribute('data-tax-id');
+    document.getElementById('mCustomerRepresentative').value = tr.getAttribute('data-representative');
     document.getElementById('mCustomerCompany').value = tr.getAttribute('data-company');
     document.getElementById('mCustomerAddress').value = tr.getAttribute('data-address');
     document.getElementById('mCustomerNotes').value = tr.getAttribute('data-notes');
@@ -453,20 +520,55 @@ function closeAddCustomerModalOverlay(e) {
 }
 
 function resetCustomerForm() {
+    document.querySelector('input[name="customer_type"][value="individual"]').checked = true;
+    toggleCustomerTypeFields();
     document.getElementById('mCustomerName').value = '';
     document.getElementById('mCustomerPhone').value = '';
     document.getElementById('mCustomerEmail').value = '';
+    document.getElementById('mCustomerTaxId').value = '';
+    document.getElementById('mCustomerRepresentative').value = '';
     document.getElementById('mCustomerCompany').value = '';
     document.getElementById('mCustomerAddress').value = '';
     document.getElementById('mCustomerNotes').value = '';
 }
 
+function toggleCustomerTypeFields() {
+    const type = document.querySelector('input[name="customer_type"]:checked').value;
+    const companyFields = document.getElementById('companyFields');
+    const companyInput = document.getElementById('mCustomerCompany').closest('.modal-field');
+    const nameLabel = document.getElementById('nameLabel');
+
+    if (type === 'company') {
+        companyFields.style.display = 'block';
+        companyInput.style.display = 'block';
+        nameLabel.textContent = 'Tên Công Ty *';
+    } else {
+        companyFields.style.display = 'none';
+        companyInput.style.display = 'none';
+        nameLabel.textContent = 'Họ Và Tên *';
+    }
+}
+
 function openCustomerDetail(tr) {
     currentRowToEdit = tr;
+    const type = tr.getAttribute('data-type');
     document.getElementById('dcName').textContent = tr.querySelector('.cell-main').textContent;
     document.getElementById('dcPhone').textContent = tr.getAttribute('data-phone') || 'N/A';
     document.getElementById('dcEmail').textContent = tr.getAttribute('data-email') || 'N/A';
+    
+    document.getElementById('dcTaxId').textContent = tr.getAttribute('data-tax-id') || 'N/A';
+    document.getElementById('dcRepresentative').textContent = tr.getAttribute('data-representative') || 'N/A';
     document.getElementById('dcCompany').textContent = tr.getAttribute('data-company') || 'N/A';
+    
+    document.getElementById('dcTypeBadge').innerHTML = type === 'company' 
+        ? '<span class="badge-type company" style="margin-left:0;"><i class="ph ph-buildings"></i> Công Ty</span>'
+        : '<span class="badge-type individual" style="margin-left:0;"><i class="ph ph-user"></i> Cá Nhân</span>';
+
+    // Show/Hide groups based on type
+    document.getElementById('dcTaxIdGroup').style.display = type === 'company' ? 'block' : 'none';
+    document.getElementById('dcRepGroup').style.display = type === 'company' ? 'block' : 'none';
+    document.getElementById('dcCompanyGroup').style.display = type === 'company' ? 'block' : 'none';
+
     document.getElementById('dcAddress').textContent = tr.getAttribute('data-address') || 'N/A';
     document.getElementById('dcDate').textContent = tr.querySelector('.date-info').textContent;
     document.getElementById('dcNotes').textContent = tr.getAttribute('data-notes') || 'Không có ghi chú.';
@@ -494,9 +596,12 @@ async function submitCustomerForm() {
 
     const data = {
         id: currentRowToEdit ? currentRowToEdit.getAttribute('data-id') : null,
+        type: document.querySelector('input[name="customer_type"]:checked').value,
         name: name,
         phone: document.getElementById('mCustomerPhone').value.trim(),
         email: document.getElementById('mCustomerEmail').value.trim(),
+        tax_id: document.getElementById('mCustomerTaxId').value.trim(),
+        representative: document.getElementById('mCustomerRepresentative').value.trim(),
         company: document.getElementById('mCustomerCompany').value.trim(),
         address: document.getElementById('mCustomerAddress').value.trim(),
         notes: document.getElementById('mCustomerNotes').value.trim()

@@ -33,13 +33,16 @@ class CustomerModel {
      * Thêm khách hàng mới
      */
     public function create($data) {
-        $sql = "INSERT INTO customers (name, phone, email, address, company, notes) 
-                VALUES (:name, :phone, :email, :address, :company, :notes)";
+        $sql = "INSERT INTO customers (type, name, phone, email, tax_id, representative, address, company, notes) 
+                VALUES (:type, :name, :phone, :email, :tax_id, :representative, :address, :company, :notes)";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
+            ':type' => $data['type'] ?? 'individual',
             ':name' => $data['name'],
             ':phone' => $data['phone'] ?? '',
             ':email' => $data['email'] ?? '',
+            ':tax_id' => $data['tax_id'] ?? '',
+            ':representative' => $data['representative'] ?? '',
             ':address' => $data['address'] ?? '',
             ':company' => $data['company'] ?? '',
             ':notes' => $data['notes'] ?? ''
@@ -51,9 +54,12 @@ class CustomerModel {
      */
     public function update($id, $data) {
         $sql = "UPDATE customers SET 
+                type = :type,
                 name = :name, 
                 phone = :phone, 
                 email = :email, 
+                tax_id = :tax_id,
+                representative = :representative,
                 address = :address, 
                 company = :company, 
                 notes = :notes 
@@ -61,9 +67,12 @@ class CustomerModel {
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             ':id' => $id,
+            ':type' => $data['type'] ?? 'individual',
             ':name' => $data['name'],
             ':phone' => $data['phone'] ?? '',
             ':email' => $data['email'] ?? '',
+            ':tax_id' => $data['tax_id'] ?? '',
+            ':representative' => $data['representative'] ?? '',
             ':address' => $data['address'] ?? '',
             ':company' => $data['company'] ?? '',
             ':notes' => $data['notes'] ?? ''

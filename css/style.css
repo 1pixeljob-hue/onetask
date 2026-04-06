@@ -6476,3 +6476,90 @@ body {
     color: var(--text-muted);
     margin-top: 2px;
 }
+
+/* Customer Type Styles */
+.type-selector-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.type-option {
+    cursor: pointer;
+    position: relative;
+}
+
+.type-option input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.type-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.type-card i {
+    font-size: 24px;
+    color: #64748b;
+}
+
+.type-card span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.type-option input:checked + .type-card {
+    background: #e6f0f5;
+    border-color: #2b7495;
+}
+
+.type-option input:checked + .type-card i {
+    color: #2b7495;
+}
+
+.type-option input:checked + .type-card span {
+    color: #2b7495;
+}
+
+.type-card:hover {
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+}
+
+.badge-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-type.individual {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.badge-type.company {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.badge-type i {
+    font-size: 14px;
+}
+
