@@ -21,6 +21,8 @@ $router->add('/settings', 'App\Controllers\MainController', 'settings');
 $router->add('/projects/save', 'App\Controllers\MainController', 'saveProject');
 $router->add('/projects/delete', 'App\Controllers\MainController', 'deleteProject');
 $router->add('/projects/bulk-delete', 'App\Controllers\MainController', 'deleteProjectsBulk');
+$router->add('/projects/payments', 'App\Controllers\MainController', 'getProjectPayments');
+$router->add('/projects/payments/confirm', 'App\Controllers\MainController', 'confirmProjectPayment');
 $router->add('/hostings/save', 'App\Controllers\MainController', 'saveHosting');
 $router->add('/hostings/delete', 'App\Controllers\MainController', 'deleteHosting');
 $router->add('/hostings/bulk-delete', 'App\Controllers\MainController', 'deleteHostingsBulk');

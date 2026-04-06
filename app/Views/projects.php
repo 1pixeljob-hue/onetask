@@ -980,7 +980,20 @@ function getFormData() {
 
     const milestones = getMilestoneData();
 
-    return { name, link: adminUrl, status, desc, date, customer, phone, adminUrl, adminUser, adminPass, value, milestones };
+    return { 
+        name, 
+        link: adminUrl, 
+        status, 
+        desc, 
+        date, 
+        customer, 
+        phone, 
+        admin_url: adminUrl, 
+        admin_user: adminUser, 
+        admin_pass: adminPass, 
+        value, 
+        milestones 
+    };
 }
 
 function populateRow(row, data) {
