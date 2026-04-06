@@ -450,7 +450,7 @@ function getDashboardStats() {
     const totalRevenue = totalProjectRevenue + totalHostingRevenue;
 
     // Potential project value (all except done and paused - Current Year)
-    const activeValue = currentYearProjects.filter(p => ['planning', 'doing', 'testing'].includes(p.status))
+    const activeValue = PROJECTS.filter(p => ['planning', 'doing', 'testing'].includes(p.status))
                                            .reduce((s, p) => s + (Number(p.value) || 0), 0);
 
     // Total Potential Revenue (Lifetime for total comparison)

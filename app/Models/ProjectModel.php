@@ -17,45 +17,25 @@ class ProjectModel {
      */
     public function getAll() {
         try {
-            // Thử lấy query mới (có liên kết khách hàng)
-            $stmt = $this->db->query("SELECT 
-                p.id, p.name, p.link, p.customer, p.phone, p.customer_id,
-                p.value, 
-                p.date, p.status, 
-                p.description as `desc`, 
-                p.admin_url as adminUrl, 
-                p.admin_user as adminUser, 
-                p.admin_pass as adminPass,
-                c.name as customer_name,
-                c.phone as customer_phone,
-                c.email as customer_email,
-                c.type as customer_type,
-                c.company as customer_company,
-                COALESCE(SUM(CASE WHEN pay.status = 'paid' THEN pay.amount ELSE 0 END), 0) as total_paid,
-                COALESCE(SUM(pay.amount), 0) as total_milestone_value
-                FROM projects p
-                LEFT JOIN customers c ON p.customer_id = c.id
-                LEFT JOIN project_payments pay ON p.id = pay.project_id
-                GROUP BY p.id
-                ORDER BY p.date DESC");
+            $sql = "SELECT 
+                        p.id, p.name, p.link, p.customer, p.phone, p.customer_id,
+                        p.value, 
+                        p.date, p.status, 
+                        p.description as `desc`, 
+                        p.admin_url as adminUrl, 
+                        p.admin_user as adminUser, 
+                        p.admin_pass as adminPass,
+                        c.name as customer_name,
+                        p.date as created_at_alt,
+                        (SELECT COALESCE(SUM(amount), 0) FROM project_payments WHERE project_id = p.id AND status = 'paid') as total_paid
+                    FROM projects p
+                    LEFT JOIN customers c ON p.customer_id = c.id
+                    ORDER BY p.date DESC";
+            $stmt = $this->db->query($sql);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            // Nếu lỗi (thường là do thiếu cột customer_id), fallback về query cũ
-            $stmt = $this->db->query("SELECT 
-                p.id, p.name, p.link, p.customer, p.phone, 
-                p.value, 
-                p.date, p.status, 
-                p.description as `desc`, 
-                p.admin_url as adminUrl, 
-                p.admin_user as adminUser, 
-                p.admin_pass as adminPass,
-                COALESCE(SUM(CASE WHEN pay.status = 'paid' THEN pay.amount ELSE 0 END), 0) as total_paid,
-                COALESCE(SUM(pay.amount), 0) as total_milestone_value
-                FROM projects p
-                LEFT JOIN project_payments pay ON p.id = pay.project_id
-                GROUP BY p.id
-                ORDER BY p.date DESC");
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("Error in ProjectModel::getAll: " . $e->getMessage());
+            return [];
         }
     }
 

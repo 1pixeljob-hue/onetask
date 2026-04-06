@@ -1203,6 +1203,11 @@ function openProjectDetail(tr) {
         dpCustPhone.innerHTML = `<i class="ph ph-phone"></i> ${tr.getAttribute('data-phone') || 'N/A'}`;
         dpCustDetails.style.display = 'none';
     }
+    // Admin Info
+    const adminUrl = tr.getAttribute('data-admin-url') || 'N/A';
+    const adminUser = tr.getAttribute('data-admin-user') || 'N/A';
+    const adminPass = tr.getAttribute('data-admin-pass') || '********';
+
     document.getElementById('dpAdminUrl').textContent = adminUrl;
     document.getElementById('dpAdminUser').textContent = adminUser;
     document.getElementById('dpAdminPass').textContent = adminPass;
