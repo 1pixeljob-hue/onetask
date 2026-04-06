@@ -11,6 +11,7 @@ $router->add('/index', 'App\Controllers\MainController', 'dashboard');
 // Modules routing
 $router->add('/hostings', 'App\Controllers\MainController', 'hostings');
 $router->add('/projects', 'App\Controllers\MainController', 'projects');
+$router->add('/customers', 'App\Controllers\MainController', 'customers');
 $router->add('/reports', 'App\Controllers\MainController', 'reports');
 $router->add('/passwords', 'App\Controllers\MainController', 'passwords');
 $router->add('/codex', 'App\Controllers\MainController', 'codex');
@@ -23,6 +24,9 @@ $router->add('/projects/delete', 'App\Controllers\MainController', 'deleteProjec
 $router->add('/projects/bulk-delete', 'App\Controllers\MainController', 'deleteProjectsBulk');
 $router->add('/projects/payments', 'App\Controllers\MainController', 'getProjectPayments');
 $router->add('/projects/payments/confirm', 'App\Controllers\MainController', 'confirmProjectPayment');
+$router->add('/customers/save', 'App\Controllers\MainController', 'saveCustomer');
+$router->add('/customers/delete', 'App\Controllers\MainController', 'deleteCustomer');
+$router->add('/customers/bulk-delete', 'App\Controllers\MainController', 'deleteCustomersBulk');
 $router->add('/hostings/save', 'App\Controllers\MainController', 'saveHosting');
 $router->add('/hostings/delete', 'App\Controllers\MainController', 'deleteHosting');
 $router->add('/hostings/bulk-delete', 'App\Controllers\MainController', 'deleteHostingsBulk');

@@ -12,6 +12,7 @@ use App\Models\CategoryModel;
 use App\Models\SnippetModel;
 use App\Models\CodeCategoryModel;
 use App\Models\LogModel;
+use App\Models\CustomerModel;
 
 class MainController extends BaseController {
     private $projectModel;
@@ -21,6 +22,7 @@ class MainController extends BaseController {
     private $snippetModel;
     private $codeCategoryModel;
     private $logModel;
+    private $customerModel;
 
     public function __construct() {
         parent::__construct();
@@ -32,6 +34,7 @@ class MainController extends BaseController {
         $this->snippetModel = new SnippetModel();
         $this->codeCategoryModel = new CodeCategoryModel();
         $this->logModel = new LogModel();
+        $this->customerModel = new CustomerModel();
     }
 
     public function dashboard() {
@@ -64,6 +67,13 @@ class MainController extends BaseController {
             'hostings' => $this->hostingModel->getAll()
         ];
         $this->view('projects', $data);
+    }
+
+    public function customers() {
+        $data = [
+            'customers' => $this->customerModel->getAll(),
+        ];
+        $this->view('customers', $data);
     }
 
     public function reports() {
@@ -397,6 +407,97 @@ class MainController extends BaseController {
             }
         } catch (\Exception $e) {
             error_log("Error deleting project: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
+        }
+    }
+
+    /**
+     * API: Lưu Khách hàng (Thêm mới hoặc Cập nhật)
+     */
+    public function saveCustomer() {
+        header('Content-Type: application/json');
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['name'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ']);
+                return;
+            }
+
+            if (isset($input['id']) && $input['id']) {
+                $oldData = $this->customerModel->find($input['id']);
+                $success = $this->customerModel->update($input['id'], $input);
+                if ($success) {
+                    $newData = $this->customerModel->find($input['id']);
+                    $this->logModel->addLog('Customer', 'Cập nhật', $input['name'], $_SESSION['user_name'] ?? 'System', json_encode(['old' => $oldData, 'new' => $newData]));
+                }
+            } else {
+                $success = $this->customerModel->create($input);
+                if ($success) $this->logModel->addLog('Customer', 'Tạo mới', $input['name'], $_SESSION['user_name'] ?? 'System');
+            }
+
+            if ($success) {
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Lưu khách hàng thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi lưu khách hàng']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error saving customer: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
+        }
+    }
+
+    /**
+     * API: Xóa Khách hàng
+     */
+    public function deleteCustomer() {
+        header('Content-Type: application/json');
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['id'])) {
+                echo json_encode(['status' => 'error', 'message' => 'ID không hợp lệ']);
+                return;
+            }
+
+            $customer = $this->customerModel->find($input['id']);
+            $success = $this->customerModel->delete($input['id']);
+            if ($success) {
+                $customerName = ($customer && isset($customer['name'])) ? $customer['name'] : 'Customer #' . $input['id'];
+                $this->logModel->addLog('Customer', 'Xoá', $customerName, $_SESSION['user_name'] ?? 'System', json_encode($customer));
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xoá khách hàng thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá khách hàng']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error deleting customer: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
+        }
+    }
+
+    /**
+     * API: Xóa nhiều Khách hàng cùng lúc
+     */
+    public function deleteCustomersBulk() {
+        header('Content-Type: application/json');
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['ids']) || !is_array($input['ids'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ']);
+                return;
+            }
+
+            $count = count($input['ids']);
+            $success = $this->customerModel->deleteBulk($input['ids']);
+            if ($success) {
+                $this->logModel->addLog('Customer', 'Xoá nhiều', "Đã xoá $count khách hàng", $_SESSION['user_name'] ?? 'System');
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => "Đã xoá $count khách hàng"]);
+            } else {
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi xoá hàng loạt']);
+            }
+        } catch (\Exception $e) {
+            error_log("Error bulk deleting customers: " . $e->getMessage());
             echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
         }
     }

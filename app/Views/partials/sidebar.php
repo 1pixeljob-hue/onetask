@@ -25,6 +25,10 @@ $activePage = $activePage ?? '';
             <i class="ph ph-folders"></i>
             <span>Projects</span>
         </a>
+        <a href="/customers" class="nav-item <?php echo $activePage === 'customers' ? 'active' : ''; ?>">
+            <i class="ph ph-user-circle"></i>
+            <span>Khách hàng</span>
+        </a>
         <a href="/reports" class="nav-item <?php echo $activePage === 'reports' ? 'active' : ''; ?>">
             <i class="ph ph-chart-bar"></i>
             <span>Báo Cáo</span>
