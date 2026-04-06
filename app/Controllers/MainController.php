@@ -64,7 +64,8 @@ class MainController extends BaseController {
         $data = [
             'projects' => $this->projectModel->getAll(),
             'project_payments' => $this->projectModel->getAllPaidPayments(),
-            'hostings' => $this->hostingModel->getAll()
+            'hostings' => $this->hostingModel->getAll(),
+            'customers' => $this->customerModel->getAll()
         ];
         $this->view('projects', $data);
     }

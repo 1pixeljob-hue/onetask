@@ -17,16 +17,22 @@ class ProjectModel {
      */
     public function getAll() {
         $stmt = $this->db->query("SELECT 
-            p.id, p.name, p.link, p.customer, p.phone, 
+            p.id, p.name, p.link, p.customer, p.phone, p.customer_id,
             p.value, 
             p.date, p.status, 
             p.description as `desc`, 
             p.admin_url as adminUrl, 
             p.admin_user as adminUser, 
             p.admin_pass as adminPass,
+            c.name as customer_name,
+            c.phone as customer_phone,
+            c.email as customer_email,
+            c.type as customer_type,
+            c.company as customer_company,
             COALESCE(SUM(CASE WHEN pay.status = 'paid' THEN pay.amount ELSE 0 END), 0) as total_paid,
             COALESCE(SUM(pay.amount), 0) as total_milestone_value
             FROM projects p
+            LEFT JOIN customers c ON p.customer_id = c.id
             LEFT JOIN project_payments pay ON p.id = pay.project_id
             GROUP BY p.id
             ORDER BY p.date DESC");
@@ -64,8 +70,8 @@ class ProjectModel {
      * Thêm dự án mới
      */
     public function create($data) {
-        $sql = "INSERT INTO projects (name, link, status, description, date, customer, phone, admin_url, admin_user, admin_pass, value) 
-                VALUES (:name, :link, :status, :description, :date, :customer, :phone, :admin_url, :admin_user, :admin_pass, :value)";
+        $sql = "INSERT INTO projects (name, link, status, description, date, customer, phone, customer_id, admin_url, admin_user, admin_pass, value) 
+                VALUES (:name, :link, :status, :description, :date, :customer, :phone, :customer_id, :admin_url, :admin_user, :admin_pass, :value)";
         $stmt = $this->db->prepare($sql);
         // Lấy admin_url từ nhiều nguồn để tránh bị rỗng (ưu tiên admin_url -> adminUrl -> link)
         $adminUrl = !empty($data['admin_url']) ? $data['admin_url'] : (!empty($data['adminUrl']) ? $data['adminUrl'] : ($data['link'] ?? ''));
@@ -78,8 +84,9 @@ class ProjectModel {
             ':status' => $data['status'],
             ':description' => $data['desc'] ?? '',
             ':date' => $data['date'],
-            ':customer' => $data['customer'],
+            ':customer' => $data['customer'] ?? '',
             ':phone' => $data['phone'] ?? '',
+            ':customer_id' => !empty($data['customer_id']) ? $data['customer_id'] : null,
             ':admin_url' => $adminUrl,
             ':admin_user' => $adminUser,
             ':admin_pass' => $adminPass,
@@ -99,6 +106,7 @@ class ProjectModel {
                 date = :date, 
                 customer = :customer, 
                 phone = :phone, 
+                customer_id = :customer_id,
                 admin_url = :admin_url, 
                 admin_user = :admin_user, 
                 admin_pass = :admin_pass, 
@@ -117,8 +125,9 @@ class ProjectModel {
             ':status' => $data['status'],
             ':description' => $data['desc'] ?? '',
             ':date' => $data['date'],
-            ':customer' => $data['customer'],
+            ':customer' => $data['customer'] ?? '',
             ':phone' => $data['phone'] ?? '',
+            ':customer_id' => !empty($data['customer_id']) ? $data['customer_id'] : null,
             ':admin_url' => $adminUrl,
             ':admin_user' => $adminUser,
             ':admin_pass' => $adminPass,
@@ -170,14 +179,21 @@ class ProjectModel {
      */
     public function find($id) {
         $stmt = $this->db->prepare("SELECT 
-            id, name, link, customer, phone, 
-            value, 
-            date, status, 
-            description as `desc`, 
-            admin_url as adminUrl, 
-            admin_user as adminUser, 
-            admin_pass as adminPass 
-            FROM projects WHERE id = :id");
+            p.id, p.name, p.link, p.customer, p.phone, p.customer_id,
+            p.value, 
+            p.date, p.status, 
+            p.description as `desc`, 
+            p.admin_url as adminUrl, 
+            p.admin_user as adminUser, 
+            p.admin_pass as adminPass,
+            c.name as customer_name,
+            c.phone as customer_phone,
+            c.email as customer_email,
+            c.type as customer_type,
+            c.company as customer_company
+            FROM projects p
+            LEFT JOIN customers c ON p.customer_id = c.id
+            WHERE p.id = :id");
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }

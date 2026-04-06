@@ -12,7 +12,8 @@
         const PHP_DATA = {
             projects: <?php echo json_encode($projects ?? []); ?>,
             hostings: <?php echo json_encode($hostings ?? []); ?>,
-            project_payments: <?php echo json_encode($project_payments ?? []); ?>
+            project_payments: <?php echo json_encode($project_payments ?? []); ?>,
+            customers: <?php echo json_encode($customers ?? []); ?>
         };
     </script>
     <script src="/js/shared-data.js?v=<?php echo time(); ?>"></script>
@@ -190,9 +191,33 @@
                 <span class="modal-section-title">Thông Tin Khách Hàng</span>
             </div>
             
-            <div class="modal-row">
+            <div class="modal-field full">
+                <label class="modal-label">Chọn Khách Hàng <span class="req">*</span></label>
+                <div class="pj-modal-select" id="mProjectCustomerSelect" data-input-id="mProjectCustomerId">
+                    <div class="pj-modal-select-trigger" onclick="togglePjModalSelect(this)">
+                        <span>Chọn khách hàng...</span>
+                        <i class="ph ph-caret-down trigger-chevron"></i>
+                    </div>
+                    <div class="pj-modal-select-menu pj-dropdown" style="width: 100%; right: auto; left: 0; max-height: 250px; overflow-y: auto;">
+                        <div class="pj-dropdown-item active" data-value="">
+                            <span>-- Không chọn --</span>
+                        </div>
+                        <?php foreach (($customers ?? []) as $cust): ?>
+                            <div class="pj-dropdown-item" data-value="<?php echo $cust['id']; ?>">
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-weight: 600;"><?php echo htmlspecialchars($cust['name']); ?></span>
+                                    <span style="font-size: 11px; color: var(--text-muted);"><?php echo $cust['phone'] ?? 'N/A'; ?> <?php echo !empty($cust['company']) ? ' - ' . $cust['company'] : ''; ?></span>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <input type="hidden" id="mProjectCustomerId" value="">
+                </div>
+            </div>
+            
+            <div class="modal-row" id="legacyCustomerFields">
                 <div class="modal-field">
-                    <label class="modal-label">Tên Khách Hàng <span class="req">*</span></label>
+                    <label class="modal-label">Tên Khách Hàng (Dự phòng)</label>
                     <input type="text" class="modal-input" id="mCustomerName" placeholder="VD: Nguyễn Văn A">
                 </div>
                 <div class="modal-field">
@@ -301,14 +326,27 @@
                     </div>
                 </div>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div class="detail-group">
-                        <span class="detail-label-flex"><i class="ph ph-user"></i> Khách Hàng</span>
-                        <span class="dgc-val" id="dpCustomer">Khách hàng...</span>
-                    </div>
-                    <div class="detail-group">
-                        <span class="detail-label-flex"><i class="ph ph-phone"></i> Số Điện Thoại</span>
-                        <span class="dgc-val" id="dpPhone">N/A</span>
+                <div class="detail-group">
+                    <span class="detail-label-flex"><i class="ph ph-user-circle"></i> Thông Tin Khách Hàng</span>
+                    <div id="dpCustomerCard" class="customer-info-card">
+                        <!-- Populated by JS -->
+                        <div class="cic-main">
+                            <span id="dpCustomerName" style="font-weight: 700; font-size: 15px; display: block; margin-bottom: 4px;">Khách hàng...</span>
+                            <div class="cic-meta">
+                                <span id="dpCustomerTypeBadge"></span>
+                                <span id="dpCustomerPhone"><i class="ph ph-phone"></i> N/A</span>
+                            </div>
+                        </div>
+                        <div id="dpCustomerDetails" class="cic-details" style="display: none;">
+                            <div class="cic-detail-item">
+                                <span class="cic-label">Email</span>
+                                <span class="cic-val" id="dpCustomerEmail">N/A</span>
+                            </div>
+                            <div class="cic-detail-item">
+                                <span class="cic-label">Công ty</span>
+                                <span class="cic-val" id="dpCustomerCompany">N/A</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -726,13 +764,28 @@ function openEditProjectModal(tr) {
     document.getElementById('adminPassword').value = adminPass;
     document.getElementById('projectValue').value = value;
     
-    // Update Custom Select UI
+    // Set customer selection
+    const customerId = tr.getAttribute('data-customer-id') || '';
+    const customerSelect = document.getElementById('mProjectCustomerSelect');
+    const customerHiddenInput = document.getElementById('mProjectCustomerId');
+    customerHiddenInput.value = customerId;
+    
+    const customerOption = customerSelect.querySelector(`.pj-dropdown-item[data-value="${customerId}"]`);
+    const customerTrigger = customerSelect.querySelector('.pj-modal-select-trigger span');
+    if (customerOption) {
+        customerTrigger.textContent = customerOption.querySelector('span').textContent.trim();
+        customerSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
+        customerOption.classList.add('active');
+    } else {
+        customerTrigger.textContent = '-- Không chọn --';
+    }
+
+    // Update Custom Select UI for Status
     const customSelect = document.getElementById('mProjectStatusSelect');
     const option = customSelect.querySelector(`.pj-dropdown-item[data-value="${status}"]`);
     if (option) {
         const trigger = customSelect.querySelector('.pj-modal-select-trigger');
         const triggerLabel = trigger.querySelector('span');
-        const triggerIcon = trigger.querySelector('i:first-child');
         
         if (triggerLabel) triggerLabel.textContent = option.querySelector('span').textContent.trim();
         
@@ -962,11 +1015,7 @@ async function updateProject() {
     }
 }
 
-function getFormData() {
-    const name = document.getElementById('mProjectName').value.trim();
-    const status = document.getElementById('mProjectStatus').value;
-    const desc = document.getElementById('mProjectDesc').value.trim();
-    const date = document.getElementById('mProjectDate').value;
+    const customerId = document.getElementById('mProjectCustomerId').value;
     const customer = document.getElementById('mCustomerName').value.trim();
     const phone = document.getElementById('mCustomerPhone').value.trim();
     const adminUrl = document.getElementById('mAdminLink').value.trim();
@@ -977,7 +1026,12 @@ function getFormData() {
     clearErrors();
     if (!name) { showToast('Vui lòng nhập tên dự án!', 'error'); markError('mProjectName'); return null; }
     if (!date) { showToast('Vui lòng chọn ngày tạo!', 'error'); markError('mProjectDate'); return null; }
-    if (!customer) { showToast('Vui lòng nhập tên khách hàng!', 'error'); markError('mCustomerName'); return null; }
+    
+    if (!customerId && !customer) { 
+        showToast('Vui lòng chọn hoặc nhập tên khách hàng!', 'error'); 
+        markError('mProjectCustomerSelect', true); 
+        return null; 
+    }
 
     const milestones = getMilestoneData();
     const milestoneTotal = milestones.reduce((sum, ms) => sum + ms.amount, 0);
@@ -996,13 +1050,13 @@ function getFormData() {
         date, 
         customer, 
         phone, 
+        customer_id: customerId,
         admin_url: adminUrl, 
         admin_user: adminUser, 
         admin_pass: adminPass, 
         value, 
         milestones 
     };
-}
 
 function populateRow(row, data) {
     const statusInfo = {
@@ -1070,11 +1124,14 @@ function populateRow(row, data) {
     row.setAttribute('data-status', data.status);
     row.setAttribute('data-desc', data.desc);
     row.setAttribute('data-phone', data.phone);
+    row.setAttribute('data-customer-id', data.customer_id || '');
     row.setAttribute('data-admin-url', adminUrlVal);
     row.setAttribute('data-admin-user', data.adminUser || '');
     row.setAttribute('data-admin-pass', data.adminPass || '');
     row.setAttribute('data-value', data.value);
     row.setAttribute('data-total-paid', data.total_paid || 0);
+
+    const customerDisplay = data.customer_name || data.customer || 'N/A';
 
     row.innerHTML = `
         <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
@@ -1085,7 +1142,7 @@ function populateRow(row, data) {
         <td>
             <div class="provider-info">
                 <i class="ph ph-user-circle color-gray"></i>
-                <span>${data.customer}</span>
+                <span>${customerDisplay}</span>
             </div>
         </td>
         <td><span class="val-badge"><i class="ph ph-currency-circle-dollar"></i> ${formattedVal}</span></td>
@@ -1104,26 +1161,46 @@ function populateRow(row, data) {
 }
 
 function openProjectDetail(tr) {
-    currentRowToEdit = tr;
     const name = tr.querySelector('.cell-main').textContent.trim();
-    const customer = tr.querySelector('.provider-info span').textContent.trim();
+    const customerName = tr.querySelector('.provider-info span').textContent.trim();
+    const customerId = tr.getAttribute('data-customer-id');
     const date = tr.querySelector('.date-info').textContent.trim();
     const statusBadge = tr.querySelector('.status-badge');
     const value = parseInt(tr.getAttribute('data-value')) || 0;
     
-    const desc = tr.getAttribute('data-desc') || 'Không có mô tả.';
-    const phone = tr.getAttribute('data-phone') || 'N/A';
-    const adminUrl = tr.getAttribute('data-admin-url') || 'N/A';
-    const adminUser = tr.getAttribute('data-admin-user') || 'N/A';
-    const adminPass = tr.getAttribute('data-admin-pass') || 'N/A';
+    // Find customer in PHP_DATA for detailed view
+    const customer = PHP_DATA.customers.find(c => c.id == customerId);
 
-    // Populate
+    // Populate common info
     document.getElementById('dpName').textContent = name;
-    document.getElementById('dpCustomer').textContent = customer;
     document.getElementById('dpDate').textContent = date;
     document.getElementById('dpValue').textContent = value.toLocaleString('vi-VN') + ' VNĐ';
-    document.getElementById('dpDesc').textContent = desc;
-    document.getElementById('dpPhone').textContent = phone;
+    document.getElementById('dpDesc').textContent = tr.getAttribute('data-desc') || 'Không có mô tả.';
+    
+    // Populate customer card
+    const dpCustName = document.getElementById('dpCustomerName');
+    const dpCustBadge = document.getElementById('dpCustomerTypeBadge');
+    const dpCustPhone = document.getElementById('dpCustomerPhone');
+    const dpCustDetails = document.getElementById('dpCustomerDetails');
+    const dpCustEmail = document.getElementById('dpCustomerEmail');
+    const dpCustCompany = document.getElementById('dpCustomerCompany');
+
+    if (customer) {
+        dpCustName.textContent = customer.name;
+        dpCustBadge.innerHTML = customer.type === 'company' 
+            ? '<span class="status-badge done" style="margin-right: 8px; font-size: 10px; padding: 2px 6px;">CÔNG TY</span>'
+            : '<span class="status-badge planning" style="margin-right: 8px; font-size: 10px; padding: 2px 6px;">CÁ NHÂN</span>';
+        dpCustPhone.innerHTML = `<i class="ph ph-phone"></i> ${customer.phone || 'N/A'}`;
+        dpCustEmail.textContent = customer.email || 'N/A';
+        dpCustCompany.textContent = customer.company || 'N/A';
+        dpCustDetails.style.display = 'block';
+    } else {
+        // Fallback to legacy data
+        dpCustName.textContent = tr.querySelector('.provider-info span').textContent;
+        dpCustBadge.innerHTML = '';
+        dpCustPhone.innerHTML = `<i class="ph ph-phone"></i> ${tr.getAttribute('data-phone') || 'N/A'}`;
+        dpCustDetails.style.display = 'none';
+    }
     document.getElementById('dpAdminUrl').textContent = adminUrl;
     document.getElementById('dpAdminUser').textContent = adminUser;
     document.getElementById('dpAdminPass').textContent = adminPass;
@@ -1238,7 +1315,15 @@ function resetProjectForm() {
         });
     }
 
-    document.getElementById('milestoneListContainer').innerHTML = '';
+    // Reset Customer Select
+    const custSelect = document.getElementById('mProjectCustomerSelect');
+    if (custSelect) {
+        custSelect.querySelector('.pj-modal-select-trigger span').textContent = 'Chọn khách hàng...';
+        custSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
+    }
+    document.getElementById('mProjectCustomerId').value = '';
+    document.getElementById('mCustomerName').value = '';
+    document.getElementById('mCustomerPhone').value = '';
     document.getElementById('milestoneTotalValue').textContent = 'Tổng: 0 VNĐ';
 
     document.getElementById('projectValueDisplay').textContent = '0 VNĐ';

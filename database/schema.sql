@@ -12,6 +12,7 @@ CREATE TABLE `projects` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `link` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `customer_id` int(11) DEFAULT NULL,
   `customer` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `phone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `value` decimal(15,2) DEFAULT 0.00,
