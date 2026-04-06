@@ -67,17 +67,22 @@ class ProjectModel {
         $sql = "INSERT INTO projects (name, link, status, description, date, customer, phone, admin_url, admin_user, admin_pass, value) 
                 VALUES (:name, :link, :status, :description, :date, :customer, :phone, :admin_url, :admin_user, :admin_pass, :value)";
         $stmt = $this->db->prepare($sql);
+        // Lấy admin_url từ nhiều nguồn để tránh bị rỗng (ưu tiên admin_url -> adminUrl -> link)
+        $adminUrl = !empty($data['admin_url']) ? $data['admin_url'] : (!empty($data['adminUrl']) ? $data['adminUrl'] : ($data['link'] ?? ''));
+        $adminUser = !empty($data['admin_user']) ? $data['admin_user'] : ($data['adminUser'] ?? '');
+        $adminPass = !empty($data['admin_pass']) ? $data['admin_pass'] : ($data['adminPass'] ?? '');
+
         return $stmt->execute([
             ':name' => $data['name'],
-            ':link' => $data['link'] ?? '',
+            ':link' => !empty($data['link']) ? $data['link'] : $adminUrl,
             ':status' => $data['status'],
             ':description' => $data['desc'] ?? '',
             ':date' => $data['date'],
             ':customer' => $data['customer'],
             ':phone' => $data['phone'] ?? '',
-            ':admin_url' => $data['admin_url'] ?? ($data['adminUrl'] ?? ''),
-            ':admin_user' => $data['admin_user'] ?? ($data['adminUser'] ?? ''),
-            ':admin_pass' => $data['admin_pass'] ?? ($data['adminPass'] ?? ''),
+            ':admin_url' => $adminUrl,
+            ':admin_user' => $adminUser,
+            ':admin_pass' => $adminPass,
             ':value' => $data['value'] ?? 0
         ]);
     }
@@ -100,18 +105,23 @@ class ProjectModel {
                 value = :value 
                 WHERE id = :id";
         $stmt = $this->db->prepare($sql);
+        // Lấy admin_url từ nhiều nguồn để tránh bị rỗng (ưu tiên admin_url -> adminUrl -> link)
+        $adminUrl = !empty($data['admin_url']) ? $data['admin_url'] : (!empty($data['adminUrl']) ? $data['adminUrl'] : ($data['link'] ?? ''));
+        $adminUser = !empty($data['admin_user']) ? $data['admin_user'] : ($data['adminUser'] ?? '');
+        $adminPass = !empty($data['admin_pass']) ? $data['admin_pass'] : ($data['adminPass'] ?? '');
+
         return $stmt->execute([
             ':id' => $id,
             ':name' => $data['name'],
-            ':link' => $data['link'] ?? '',
+            ':link' => !empty($data['link']) ? $data['link'] : $adminUrl,
             ':status' => $data['status'],
             ':description' => $data['desc'] ?? '',
             ':date' => $data['date'],
             ':customer' => $data['customer'],
             ':phone' => $data['phone'] ?? '',
-            ':admin_url' => $data['admin_url'] ?? ($data['adminUrl'] ?? ''),
-            ':admin_user' => $data['admin_user'] ?? ($data['adminUser'] ?? ''),
-            ':admin_pass' => $data['admin_pass'] ?? ($data['adminPass'] ?? ''),
+            ':admin_url' => $adminUrl,
+            ':admin_user' => $adminUser,
+            ':admin_pass' => $adminPass,
             ':value' => $data['value'] ?? 0
         ]);
     }

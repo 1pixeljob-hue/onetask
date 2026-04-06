@@ -1013,9 +1013,10 @@
             date: document.getElementById('mProjectDate').value,
             customer: document.getElementById('mCustomerName').value,
             phone: document.getElementById('mCustomerPhone').value,
-            adminUrl: document.getElementById('mAdminLink').value,
-            adminUser: document.getElementById('mAdminUser').value,
-            adminPass: document.getElementById('adminPassword').value,
+            admin_url: document.getElementById('mAdminLink').value,
+            admin_user: document.getElementById('mAdminUser').value,
+            admin_pass: document.getElementById('adminPassword').value,
+            link: document.getElementById('mAdminLink').value,
             value: document.getElementById('projectValue').value
         };
 

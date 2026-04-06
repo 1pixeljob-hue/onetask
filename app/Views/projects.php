@@ -1057,14 +1057,15 @@ function populateRow(row, data) {
         </div>
     `;
 
-    // Store attributes
+    // Store attributes (with fallbacks for legacy data)
+    const adminUrlVal = data.adminUrl || data.link || '';
     row.setAttribute('data-id', data.id || '');
     row.setAttribute('data-status', data.status);
     row.setAttribute('data-desc', data.desc);
     row.setAttribute('data-phone', data.phone);
-    row.setAttribute('data-admin-url', data.adminUrl);
-    row.setAttribute('data-admin-user', data.adminUser);
-    row.setAttribute('data-admin-pass', data.adminPass);
+    row.setAttribute('data-admin-url', adminUrlVal);
+    row.setAttribute('data-admin-user', data.adminUser || '');
+    row.setAttribute('data-admin-pass', data.adminPass || '');
     row.setAttribute('data-value', data.value);
     row.setAttribute('data-total-paid', data.total_paid || 0);
 
