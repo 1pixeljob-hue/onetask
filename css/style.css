@@ -6451,3 +6451,28 @@ body {
     border-radius: 3px;
 }
 
+
+/* Payment Milestone Styling */
+.status-paid-badge { 
+    background: #ecfdf5; 
+    color: #10b981; 
+    padding: 6px 12px; 
+    border-radius: 6px; 
+    font-size: 13px; 
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+    gap: 2px; 
+    min-width: 120px;
+}
+.milestone-paid-date {
+    font-size: 10px;
+    color: #059669;
+    opacity: 0.8;
+    font-weight: 500;
+}
+.cell-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}

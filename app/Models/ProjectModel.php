@@ -135,14 +135,14 @@ class ProjectModel {
     }
 
     /**
-     * Lấy doanh thu theo từng tháng trong năm
+     * Lấy doanh thu theo từng tháng trong năm (Dựa trên đợt thanh toán thực tế)
      */
     public function getMonthlyRevenue(int $year) {
         $monthlyData = array_fill(1, 12, 0);
 
-        $sql = "SELECT MONTH(date) as month, SUM(value) as total 
-                FROM projects 
-                WHERE YEAR(date) = :year 
+        $sql = "SELECT MONTH(paid_at) as month, SUM(amount) as total 
+                FROM project_payments 
+                WHERE YEAR(paid_at) = :year AND status = 'paid'
                 GROUP BY month 
                 ORDER BY month ASC";
         
@@ -264,5 +264,17 @@ class ProjectModel {
             FROM project_payments WHERE project_id = :pid");
         $stmt->execute([':pid' => $projectId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Lấy toàn bộ đợt thanh toán đã trả (Cho báo cáo)
+     */
+    public function getAllPaidPayments() {
+        $stmt = $this->db->query("SELECT p.name as project_name, pay.* 
+                                 FROM project_payments pay 
+                                 JOIN projects p ON pay.project_id = p.id 
+                                 WHERE pay.status = 'paid' 
+                                 ORDER BY pay.paid_at DESC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

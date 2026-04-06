@@ -16,6 +16,7 @@
             hostings: <?php echo json_encode($hostings); ?>,
             hosting_renewals: <?php echo json_encode($hosting_renewals ?? []); ?>,
             monthlyRevenue: <?php echo json_encode($monthlyRevenue); ?>,
+            project_payments: <?php echo json_encode($project_payments); ?>,
             recentLogs: <?php echo json_encode($recentLogs ?? []); ?>,
             password_categories: <?php echo json_encode($password_categories ?? []); ?>,
             snippet_categories: <?php echo json_encode($snippet_categories ?? []); ?>

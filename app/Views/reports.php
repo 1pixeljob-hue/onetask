@@ -13,7 +13,8 @@
         const PHP_DATA = {
             projects: <?php echo json_encode($projects); ?>,
             hostings: <?php echo json_encode($hostings); ?>,
-            hosting_renewals: <?php echo json_encode($hosting_renewals); ?>
+            hosting_renewals: <?php echo json_encode($hosting_renewals); ?>,
+            project_payments: <?php echo json_encode($project_payments); ?>
         };
     </script>
     <script src="/js/shared-data.js"></script>
@@ -580,63 +581,74 @@
         // ===== Modal Logic =====
         function openMonthDetail(month, year) {
             const modal = document.getElementById('reportDetailModal');
-            const projects = PROJECTS.filter(p => getYear(p.date) === year && getMonth(p.date) === month);
-            const hostings = HOSTING_RENEWALS.filter(r => getYear(r.reg_date) === year && getMonth(r.reg_date) === month);
             
-            const totalProj = projects.reduce((s, p) => s + p.value, 0);
-            const totalHost = hostings.reduce((s, h) => s + h.amount, 0);
+            // 1. Lọc các đợt thanh toán (Milestones) trong tháng/năm này
+            const paidMilestones = PROJECT_PAYMENTS.filter(p => {
+                const date = new Date(p.paid_at);
+                return date.getFullYear() === year && (date.getMonth() + 1) === month;
+            });
+
+            // 2. Lọc các đợt gia hạn Hosting trong tháng/năm này
+            const hostings = HOSTING_RENEWALS.filter(r => {
+                const date = new Date(r.reg_date);
+                return date.getFullYear() === year && (date.getMonth() + 1) === month;
+            });
+            
+            const totalProj = paidMilestones.reduce((s, p) => s + (Number(p.amount) || 0), 0);
+            const totalHost = hostings.reduce((s, h) => s + (Number(h.amount) || 0), 0);
             const totalRevenue = totalProj + totalHost;
 
-            // 1. Update Header
-            document.getElementById('rmTitle').textContent = `Chi Tiết Tháng ${month} / ${year}`;
+            // 3. Update Header
+            document.getElementById('rmTitle').textContent = `Chi Tiết Thu Nhập Tháng ${month} / ${year}`;
             
-            // 2. Summary Cards
+            // 4. Summary Cards
             document.getElementById('rmSummaryCards').innerHTML = `
                 <div class="rm-stat-card green">
                     <div class="rm-stat-label">Tổng Doanh Thu</div>
                     <div class="rm-stat-value color-green">${formatVNDFull(totalRevenue)}</div>
                 </div>
                 <div class="rm-stat-card teal">
-                    <div class="rm-stat-label">Projects (${projects.length})</div>
+                    <div class="rm-stat-label">Đợt Thanh Toán (${paidMilestones.length})</div>
                     <div class="rm-stat-value color-teal">${formatVNDFull(totalProj)}</div>
                 </div>
                 <div class="rm-stat-card blue">
-                    <div class="rm-stat-label">Hosting (${hostings.length})</div>
+                    <div class="rm-stat-label">Gia Hạn Hosting (${hostings.length})</div>
                     <div class="rm-stat-value color-blue">${formatVNDFull(totalHost)}</div>
                 </div>
             `;
 
-            // 3. Project List
+            // 5. Milestone List (Thay cho Project List)
             let projHtml = '';
-            if (projects.length > 0) {
+            if (paidMilestones.length > 0) {
                 projHtml = `
-                    <div class="rm-section-title"><i class="ph ph-folder"></i> Projects (${projects.length})</div>
+                    <div class="rm-section-title"><i class="ph ph-hand-coins"></i> Các Đợt Thanh Toán (${paidMilestones.length})</div>
                     <table class="rm-table">
                         <thead>
                             <tr>
-                                <th>Tên Project</th>
-                                <th>Khách Hàng</th>
-                                <th>Ngày Tạo</th>
-                                <th class="text-right">Giá Trị</th>
+                                <th>Tên Dự Án / Đợt</th>
+                                <th>Ghi Chú</th>
+                                <th>Ngày Thu</th>
+                                <th class="text-right">Số Tiền</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${projects.map(p => `
-                                <tr>
-                                    <td>
-                                        <div class="rm-project-name">${p.name}</div>
-                                        <div class="rm-project-desc">${p.desc || ''}</div>
-                                    </td>
-                                    <td>
-                                        <div class="rm-customer">
-                                            <div class="rm-c-info"><i class="ph ph-user"></i> ${p.customer}</div>
-                                            ${p.phone && p.phone !== 'N/A' ? `<div class="rm-c-phone"><i class="ph ph-phone"></i> ${p.phone}</div>` : ''}
-                                        </div>
-                                    </td>
-                                    <td class="rm-date">${formatDateVN(p.date)}</td>
-                                    <td class="rm-value color-teal text-right">${formatVNDFull(p.value)}</td>
-                                </tr>
-                            `).join('')}
+                            ${paidMilestones.map(p => {
+                                const [datePart, timePart] = p.paid_at.split(' ');
+                                return `
+                                    <tr>
+                                        <td>
+                                            <div class="rm-project-name">${p.project_name || 'N/A'}</div>
+                                            <div class="cell-sub"><i class="ph ph-tag"></i> ${p.milestone_name}</div>
+                                        </td>
+                                        <td><div class="rm-project-desc">${p.notes || ''}</div></td>
+                                        <td class="rm-date">
+                                            ${formatDateVN(datePart)}
+                                            <div class="cell-sub">${timePart.substring(0, 5)}</div>
+                                        </td>
+                                        <td class="rm-value color-teal text-right">${formatVNDFull(parseFloat(p.amount))}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
                         </tbody>
                     </table>
                 `;

@@ -41,6 +41,7 @@ class MainController extends BaseController {
             'hostings' => $this->hostingModel->getAll(),
             'hosting_renewals' => $this->hostingModel->getAllRenewals(),
             'monthlyRevenue' => $this->projectModel->getMonthlyRevenue($currentYear),
+            'project_payments' => $this->projectModel->getAllPaidPayments(),
             'recentLogs' => $this->logModel->getAll([], 5, 0),
             'password_categories' => $this->categoryModel->getAll(),
             'snippet_categories' => $this->codeCategoryModel->getAll()
@@ -57,7 +58,11 @@ class MainController extends BaseController {
     }
 
     public function projects() {
-        $data = ['projects' => $this->projectModel->getAll()];
+        $data = [
+            'projects' => $this->projectModel->getAll(),
+            'project_payments' => $this->projectModel->getAllPaidPayments(),
+            'hostings' => $this->hostingModel->getAll()
+        ];
         $this->view('projects', $data);
     }
 
@@ -66,6 +71,7 @@ class MainController extends BaseController {
             'projects' => $this->projectModel->getAll(),
             'hostings' => $this->hostingModel->getAll(),
             'hosting_renewals' => $this->hostingModel->getAllRenewals(),
+            'project_payments' => $this->projectModel->getAllPaidPayments(),
         ];
         $this->view('reports', $data);
     }

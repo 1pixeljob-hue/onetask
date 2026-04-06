@@ -261,6 +261,9 @@ var HOSTINGS = (typeof RAW_HOSTINGS !== 'undefined') ? RAW_HOSTINGS.map(h => ({
 var RAW_RENEWALS = (typeof PHP_DATA !== 'undefined' && PHP_DATA.hosting_renewals) ? PHP_DATA.hosting_renewals : [];
 var HOSTING_RENEWALS = RAW_RENEWALS.map(r => ({ ...r, amount: parseFloat(r.amount) || 0 }));
 
+var RAW_PAYMENTS = (typeof PHP_DATA !== 'undefined' && PHP_DATA.project_payments) ? PHP_DATA.project_payments : [];
+var PROJECT_PAYMENTS = RAW_PAYMENTS.map(p => ({ ...p, amount: parseFloat(p.amount) || 0 }));
+
 // ===================== HELPER FUNCTIONS =====================
 
 /**
@@ -329,7 +332,14 @@ function getAllYears() {
  */
 function getProjectStats(year) {
     const filtered = PROJECTS.filter(p => getYear(p.date) === year);
-    const totalValue = filtered.reduce((sum, p) => sum + p.value, 0);
+    
+    // Revenue is now based on PAID milestones in this year
+    const paidMilestonesInYear = PROJECT_PAYMENTS.filter(p => {
+        const date = new Date(p.paid_at);
+        return date.getFullYear() === year;
+    });
+    const totalValue = paidMilestonesInYear.reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+    
     const count = filtered.length;
     
     const stats = {
@@ -359,16 +369,21 @@ function getHostingStats(year) {
 function getMonthlyBreakdown(year) {
     const months = [];
     for (let m = 1; m <= 12; m++) {
-        const projectsInMonth = PROJECTS.filter(p => getYear(p.date) === year && getMonth(p.date) === m);
-        const renewalsInMonth = HOSTING_RENEWALS.filter(r => getYear(r.reg_date) === year && getMonth(r.reg_date) === m);
+        // Project Revenue (Based on PAID milestones in current year/month)
+        const paidMilestonesInMonth = PROJECT_PAYMENTS.filter(p => {
+            const date = new Date(p.paid_at);
+            return date.getFullYear() === year && (date.getMonth() + 1) === m;
+        });
+        const projValue = paidMilestonesInMonth.reduce((s, p) => s + (Number(p.amount) || 0), 0);
 
-        const projValue = projectsInMonth.reduce((s, p) => s + p.value, 0);
-        const hostValue = renewalsInMonth.reduce((s, r) => s + r.amount, 0);
+        // Hosting/Renewal Revenue
+        const renewalsInMonth = HOSTING_RENEWALS.filter(r => getYear(r.reg_date) === year && getMonth(r.reg_date) === m);
+        const hostValue = renewalsInMonth.reduce((s, r) => s + (Number(r.amount) || 0), 0);
 
         months.push({
             month: m,
             projectValue: projValue,
-            projectCount: projectsInMonth.length,
+            projectCount: paidMilestonesInMonth.length,
             hostingValue: hostValue,
             hostingCount: renewalsInMonth.length,
             total: projValue + hostValue
@@ -421,9 +436,12 @@ function getDashboardStats() {
     const pausedProjects = PROJECTS.filter(p => p.status === 'paused');
 
     // --- REVENUE CALCULATION (Current Year Focus) ---
-    // 1. Projects for the current year (all non-cancelled projects contribute to value)
-    const currentYearProjects = PROJECTS.filter(p => getYear(p.date) === currentYear);
-    const totalProjectRevenue = currentYearProjects.reduce((s, p) => s + (Number(p.value) || 0), 0);
+    // 1. Projects for the current year (Based on PAID milestones)
+    const currentYearPaidMilestones = PROJECT_PAYMENTS.filter(p => {
+        const date = new Date(p.paid_at);
+        return date.getFullYear() === currentYear;
+    });
+    const totalProjectRevenue = currentYearPaidMilestones.reduce((s, p) => s + (Number(p.amount) || 0), 0);
 
     // 2. Hostings renewals in the current year
     const currentYearRenewals = HOSTING_RENEWALS.filter(r => getYear(r.reg_date) === currentYear);

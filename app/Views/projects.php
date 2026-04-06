@@ -11,7 +11,8 @@
         // Data injected from PHP Models
         const PHP_DATA = {
             projects: <?php echo json_encode($projects ?? []); ?>,
-            hostings: <?php echo json_encode($hostings ?? []); ?>
+            hostings: <?php echo json_encode($hostings ?? []); ?>,
+            project_payments: <?php echo json_encode($project_payments ?? []); ?>
         };
     </script>
     <script src="/js/shared-data.js?v=<?php echo time(); ?>"></script>
@@ -1379,6 +1380,7 @@ function renderProjectPayments(data, projectId) {
                             <div class="status-paid-badge">
                                 <i class="ph ph-check-circle"></i>
                                 Đã thanh toán
+                                ${p.paid_at ? `<div class="milestone-paid-date">${formatDateVN(p.paid_at.split(' ')[0])} ${p.paid_at.split(' ')[1].substring(0, 5)}</div>` : ''}
                             </div>
                         ` : `
                             <button class="btn-confirm-paid" onclick="confirmPayment(${p.id}, ${projectId})">
