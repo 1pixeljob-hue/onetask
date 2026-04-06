@@ -75,9 +75,9 @@ class ProjectModel {
             ':date' => $data['date'],
             ':customer' => $data['customer'],
             ':phone' => $data['phone'] ?? '',
-            ':admin_url' => $data['adminUrl'] ?? '',
-            ':admin_user' => $data['adminUser'] ?? '',
-            ':admin_pass' => $data['adminPass'] ?? '',
+            ':admin_url' => $data['admin_url'] ?? ($data['adminUrl'] ?? ''),
+            ':admin_user' => $data['admin_user'] ?? ($data['adminUser'] ?? ''),
+            ':admin_pass' => $data['admin_pass'] ?? ($data['adminPass'] ?? ''),
             ':value' => $data['value'] ?? 0
         ]);
     }
@@ -109,9 +109,9 @@ class ProjectModel {
             ':date' => $data['date'],
             ':customer' => $data['customer'],
             ':phone' => $data['phone'] ?? '',
-            ':admin_url' => $data['adminUrl'] ?? '',
-            ':admin_user' => $data['adminUser'] ?? '',
-            ':admin_pass' => $data['adminPass'] ?? '',
+            ':admin_url' => $data['admin_url'] ?? ($data['adminUrl'] ?? ''),
+            ':admin_user' => $data['admin_user'] ?? ($data['adminUser'] ?? ''),
+            ':admin_pass' => $data['admin_pass'] ?? ($data['adminPass'] ?? ''),
             ':value' => $data['value'] ?? 0
         ]);
     }
