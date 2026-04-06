@@ -6220,3 +6220,234 @@ body {
     color: #0f172a;
 }
 
+/* Project Payment Milestones */
+.milestone-manager {
+    margin-top: 20px;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.milestone-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.milestone-row {
+    display: grid;
+    grid-template-columns: 1fr 160px 40px;
+    gap: 12px;
+    margin-bottom: 12px;
+    align-items: center;
+}
+
+.milestone-row:last-child {
+    margin-bottom: 0;
+}
+
+.btn-add-milestone {
+    margin-top: 16px;
+    background: white;
+    border: 1px dashed var(--primary-color);
+    color: var(--primary-color);
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-add-milestone:hover {
+    background: var(--primary-light);
+    border-style: solid;
+}
+
+.btn-remove-milestone {
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-remove-milestone:hover {
+    background: #fecaca;
+}
+
+/* Payment Progress in Detail Modal */
+.payment-progress-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    margin-top: 24px;
+    box-shadow: var(--shadow-sm);
+}
+
+.pp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.pp-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pp-stats {
+    text-align: right;
+}
+
+.pp-stats-main {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+.pp-stats-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.progress-bar-wrap {
+    height: 10px;
+    background: #f1f5f9;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), #2ab89c);
+    border-radius: 5px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.milestone-list-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.milestone-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.milestone-item-row:hover {
+    border-color: var(--border-color);
+    background: white;
+    box-shadow: var(--shadow-sm);
+}
+
+.milestone-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.milestone-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.milestone-amount {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.milestone-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.status-paid-badge {
+    background: #dcfce7;
+    color: #166534;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-confirm-paid {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-confirm-paid:hover {
+    background: #215e7a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(43, 116, 149, 0.20);
+}
+
+/* Mini Progress Bar in Table */
+.pj-progress-mini-wrap {
+    width: 100%;
+}
+
+.pj-progress-mini-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.pj-progress-mini-bar {
+    height: 6px;
+    background: #f1f5f9;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.pj-progress-mini-fill {
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+

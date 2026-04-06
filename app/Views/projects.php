@@ -98,6 +98,7 @@
                                 <th>TÊN PROJECT</th>
                                 <th>KHÁCH HÀNG</th>
                                 <th>GIÁ TRỊ</th>
+                                <th width="140">TIẾN ĐỘ</th>
                                 <th>NGÀY TẠO</th>
                                 <th>TRẠNG THÁI</th>
                                 <th width="80" class="text-center">THAO TÁC</th>
@@ -238,6 +239,27 @@
                 </div>
                 <div id="projectValueDisplay" class="modal-price-hint">0 VNĐ</div>
             </div>
+
+            <!-- Section 5: Các Đợt Thanh Toán -->
+            <div class="modal-section-header with-border">
+                <span class="modal-section-title">Tiến Độ Thanh Toán</span>
+            </div>
+            
+            <div class="milestone-manager">
+                <div class="milestone-header-row">
+                    <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">Danh sách các đợt thanh toán</span>
+                    <span id="milestoneTotalValue" style="font-size: 13px; font-weight: 700; color: var(--primary-color);">Tổng: 0 VNĐ</span>
+                </div>
+                
+                <div id="milestoneListContainer">
+                    <!-- Milestone rows will be added here -->
+                </div>
+
+                <button type="button" class="btn-add-milestone" onclick="addMilestoneRow()">
+                    <i class="ph ph-plus-circle"></i>
+                    Thêm đợt thanh toán
+                </button>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="modal-btn-cancel" onclick="closeAddProjectModal()">Hủy</button>
@@ -337,6 +359,11 @@
                         </button>
                     </div>
                 </div>
+            </div>
+
+            <!-- Section 3: Tiến Độ Thanh Toán (Card) -->
+            <div id="paymentProgressSection">
+                <!-- Dynamically populated by JS -->
             </div>
         </div>
         <div class="detail-footer">
@@ -721,6 +748,18 @@ function openEditProjectModal(tr) {
     
     document.getElementById('addProjectModal').classList.add('active');
     document.body.style.overflow = 'hidden';
+
+    // Fetch and populate milestones
+    const projectId = tr.getAttribute('data-id');
+    fetch(`/projects/payments?id=${projectId}`)
+        .then(res => res.json())
+        .then(result => {
+            if (result.status === 'success' || result.success) {
+                const container = document.getElementById('milestoneListContainer');
+                container.innerHTML = ''; // Clear
+                (result.data.payments || []).forEach(p => addMilestoneRow(p));
+            }
+        });
 }
 function closeAddProjectModal() {
     document.getElementById('addProjectModal').classList.remove('active');
@@ -939,7 +978,9 @@ function getFormData() {
     if (!date) { showToast('Vui lòng chọn ngày tạo!', 'error'); markError('mProjectDate'); return null; }
     if (!customer) { showToast('Vui lòng nhập tên khách hàng!', 'error'); markError('mCustomerName'); return null; }
 
-    return { name, link: adminUrl, status, desc, date, customer, phone, adminUrl, adminUser, adminPass, value };
+    const milestones = getMilestoneData();
+
+    return { name, link: adminUrl, status, desc, date, customer, phone, adminUrl, adminUser, adminPass, value, milestones };
 }
 
 function populateRow(row, data) {
@@ -982,6 +1023,26 @@ function populateRow(row, data) {
         formattedVal = valObj.toLocaleString('vi-VN');
     }
 
+    const totalValue = parseFloat(data.value) || 0;
+    const totalPaid = parseFloat(data.total_paid) || 0;
+    let progressPercent = 0;
+    if (totalValue > 0) {
+        progressPercent = Math.min(100, Math.round((totalPaid / totalValue) * 100));
+    }
+
+    // Mini progress bar HTML
+    const progressHTML = `
+        <div class="pj-progress-mini-wrap">
+            <div class="pj-progress-mini-header">
+                <span>${progressPercent}%</span>
+                <span>${totalPaid.toLocaleString('vi-VN')}</span>
+            </div>
+            <div class="pj-progress-mini-bar">
+                <div class="pj-progress-mini-fill" style="width: ${progressPercent}%"></div>
+            </div>
+        </div>
+    `;
+
     // Store attributes
     row.setAttribute('data-id', data.id || '');
     row.setAttribute('data-status', data.status);
@@ -991,6 +1052,7 @@ function populateRow(row, data) {
     row.setAttribute('data-admin-user', data.adminUser);
     row.setAttribute('data-admin-pass', data.adminPass);
     row.setAttribute('data-value', data.value);
+    row.setAttribute('data-total-paid', data.total_paid || 0);
 
     row.innerHTML = `
         <td><input type="checkbox" class="cb-custom" onclick="handleRowSelection(this)"></td>
@@ -1005,6 +1067,7 @@ function populateRow(row, data) {
             </div>
         </td>
         <td><span class="val-badge"><i class="ph ph-currency-circle-dollar"></i> ${formattedVal}</span></td>
+        <td>${progressHTML}</td>
         <td>
             <div class="date-info text-main"><i class="ph ph-calendar-blank"></i> ${formattedDate}</div>
         </td>
@@ -1046,6 +1109,9 @@ function openProjectDetail(tr) {
     // Status
     const statusContainer = document.getElementById('dpStatusBadge');
     statusContainer.innerHTML = `<span class="${statusBadge.className}">${statusBadge.innerHTML}</span>`;
+
+    const projectId = tr.getAttribute('data-id');
+    fetchProjectPayments(projectId);
 
     document.getElementById('detailProjectModal').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -1150,6 +1216,9 @@ function resetProjectForm() {
         });
     }
 
+    document.getElementById('milestoneListContainer').innerHTML = '';
+    document.getElementById('milestoneTotalValue').textContent = 'Tổng: 0 VNĐ';
+
     document.getElementById('projectValueDisplay').textContent = '0 VNĐ';
     
     // Reset password field type
@@ -1178,6 +1247,166 @@ function togglePasswordVisibility(id, btn) {
         input.type = 'password';
         icon.classList.remove('ph-eye-slash');
         icon.classList.add('ph-eye');
+    }
+}
+
+// === MILESTONE MANAGEMENT ===
+
+function addMilestoneRow(data = {}) {
+    const container = document.getElementById('milestoneListContainer');
+    const row = document.createElement('div');
+    row.className = 'milestone-row';
+    const id = data.id || '';
+    const name = data.milestone_name || '';
+    const amount = data.amount || '';
+    const notes = data.notes || '';
+
+    row.innerHTML = `
+        <input type="hidden" class="ms-id" value="${id}">
+        <div class="modal-field" style="margin-bottom: 0;">
+            <input type="text" class="modal-input ms-name" value="${name}" placeholder="Tên đợt (VD: Đợt 1)">
+        </div>
+        <div class="modal-field" style="margin-bottom: 0;">
+            <input type="number" class="modal-input ms-amount" value="${amount}" placeholder="Số tiền" oninput="updateMilestoneTotal()">
+        </div>
+        <button type="button" class="btn-remove-milestone" onclick="this.closest('.milestone-row').remove(); updateMilestoneTotal();">
+            <i class="ph ph-trash"></i>
+        </button>
+    `;
+    container.appendChild(row);
+    updateMilestoneTotal();
+}
+
+function updateMilestoneTotal() {
+    const amounts = document.querySelectorAll('.ms-amount');
+    let total = 0;
+    amounts.forEach(input => {
+        total += parseInt(input.value) || 0;
+    });
+    document.getElementById('milestoneTotalValue').textContent = `Tổng: ${total.toLocaleString('vi-VN')} VNĐ`;
+}
+
+function getMilestoneData() {
+    const rows = document.querySelectorAll('.milestone-row');
+    const milestones = [];
+    rows.forEach(row => {
+        const id = row.querySelector('.ms-id').value;
+        const name = row.querySelector('.ms-name').value.trim();
+        const amount = parseInt(row.querySelector('.ms-amount').value) || 0;
+        if (name) {
+            milestones.push({ id, name, amount });
+        }
+    });
+    return milestones;
+}
+
+// === DETAIL MODAL PAYMENTS ===
+
+async function fetchProjectPayments(projectId) {
+    const section = document.getElementById('paymentProgressSection');
+    section.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);"><i class="ph ph-circle-notch ph-spin"></i> Đang tải thông tin thanh toán...</div>';
+    
+    try {
+        const response = await fetch(`/projects/payments?id=${projectId}`);
+        const result = await response.json();
+        if (result.status === 'success' || result.success) {
+            renderProjectPayments(result.data, projectId);
+        } else {
+            section.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--danger-color);">Lỗi: ${result.message}</div>`;
+        }
+    } catch (err) {
+        console.error(err);
+        section.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--danger-color);">Không thể tải thông tin thanh toán.</div>';
+    }
+}
+
+function renderProjectPayments(data, projectId) {
+    const section = document.getElementById('paymentProgressSection');
+    const payments = data.payments || [];
+    const stats = data.stats || { total_paid: 0, total_milestone_value: 0 };
+    
+    const projectValue = parseInt(currentRowToEdit.getAttribute('data-value')) || 0;
+    const totalPaid = parseInt(stats.total_paid) || 0;
+    const progressPercent = projectValue > 0 ? Math.min(100, Math.round((totalPaid / projectValue) * 100)) : 0;
+    const remaining = Math.max(0, projectValue - totalPaid);
+
+    let html = `
+        <div class="payment-progress-card">
+            <div class="pp-header">
+                <div class="pp-title">
+                    <i class="ph ph-chart-pie-slice"></i>
+                    Tiến Độ Thanh Toán
+                </div>
+                <div class="pp-stats">
+                    <div class="pp-stats-main">${totalPaid.toLocaleString('vi-VN')} VNĐ</div>
+                    <div class="pp-stats-sub">Còn lại: ${remaining.toLocaleString('vi-VN')} VNĐ</div>
+                </div>
+            </div>
+            
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" style="width: ${progressPercent}%;"></div>
+            </div>
+            
+            <div class="milestone-list-compact">
+    `;
+
+    if (payments.length === 0) {
+        html += '<div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px;">Chưa có đợt thanh toán nào được thiết lập.</div>';
+    } else {
+        payments.forEach(p => {
+            const isPaid = p.status === 'paid';
+            html += `
+                <div class="milestone-item-row">
+                    <div class="milestone-info">
+                        <span class="milestone-name">${p.milestone_name}</span>
+                        <span class="milestone-amount">${(parseInt(p.amount) || 0).toLocaleString('vi-VN')} VNĐ</span>
+                    </div>
+                    <div class="milestone-actions">
+                        ${isPaid ? `
+                            <div class="status-paid-badge">
+                                <i class="ph ph-check-circle"></i>
+                                Đã thanh toán
+                            </div>
+                        ` : `
+                            <button class="btn-confirm-paid" onclick="confirmPayment(${p.id}, ${projectId})">
+                                <i class="ph ph-check"></i>
+                                Xác nhận
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    html += `
+            </div>
+        </div>
+    `;
+    section.innerHTML = html;
+}
+
+async function confirmPayment(paymentId, projectId) {
+    showToast('Đang xác nhận thanh toán...');
+    try {
+        const response = await fetch('/projects/payments/confirm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: paymentId })
+        });
+        const result = await response.json();
+        if (result.status === 'success' || result.success) {
+            showToast('Xác nhận thành công!', 'success');
+            // Refresh payments list
+            fetchProjectPayments(projectId);
+            // Optionally reload page to update table status, but we can do it smoother
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showToast('Lỗi: ' + (result.message || 'Không xác định'), 'error');
+        }
+    } catch (err) {
+        console.error(err);
+        showToast('Có lỗi xảy ra khi kết nối máy chủ.', 'error');
     }
 }
 </script>

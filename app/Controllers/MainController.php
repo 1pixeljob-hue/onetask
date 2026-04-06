@@ -319,16 +319,25 @@ class MainController extends BaseController {
                 return;
             }
 
-            if (isset($input['id']) && $input['id']) {
-                $oldData = $this->projectModel->find($input['id']);
-                $success = $this->projectModel->update($input['id'], $input);
+            $projectId = $input['id'] ?? null;
+            $milestones = $input['milestones'] ?? [];
+
+            if ($projectId) {
+                $oldData = $this->projectModel->find($projectId);
+                $success = $this->projectModel->update($projectId, $input);
                 if ($success) {
-                    $newData = $this->projectModel->find($input['id']);
+                    $this->projectModel->savePayments($projectId, $milestones);
+                    $newData = $this->projectModel->find($projectId);
                     $this->logModel->addLog('Project', 'Cập nhật', $input['name'], $_SESSION['user_name'] ?? 'System', json_encode(['old' => $oldData, 'new' => $newData]));
                 }
             } else {
                 $success = $this->projectModel->create($input);
-                if ($success) $this->logModel->addLog('Project', 'Tạo mới', $input['name'], $_SESSION['user_name'] ?? 'System');
+                if ($success) {
+                    $db = \App\Core\Database::getInstance()->getConnection();
+                    $projectId = $db->lastInsertId();
+                    $this->projectModel->savePayments($projectId, $milestones);
+                    $this->logModel->addLog('Project', 'Tạo mới', $input['name'], $_SESSION['user_name'] ?? 'System');
+                }
             }
 
             if ($success) {
@@ -338,7 +347,7 @@ class MainController extends BaseController {
             }
         } catch (\Exception $e) {
             error_log("Error saving project: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau']);
+            echo json_encode(['status' => 'error', 'message' => 'Hệ thống đang bận, vui lòng thử lại sau: ' . $e->getMessage()]);
         }
     }
 
@@ -828,6 +837,86 @@ class MainController extends BaseController {
             $success = $notifModel->deleteBulk($input['ids']);
 
             echo json_encode(['status' => 'success', 'success' => $success]);
+        } catch (\Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * API: Lấy danh sách đợt thanh toán của dự án
+     */
+    public function getProjectPayments() {
+        header('Content-Type: application/json');
+        try {
+            $id = $_GET['id'] ?? null;
+            if (!$id) {
+                echo json_encode(['status' => 'error', 'message' => 'ID không hợp lệ']);
+                return;
+            }
+            $payments = $this->projectModel->getPayments($id);
+            $stats = $this->projectModel->getPaymentStats($id);
+
+            echo json_encode([
+                'status' => 'success', 
+                'success' => true, 
+                'data' => [
+                    'payments' => $payments,
+                    'stats' => $stats
+                ]
+            ]);
+        } catch (\Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * API: Lưu danh sách đợt thanh toán
+     */
+    public function saveProjectPayments() {
+        header('Content-Type: application/json');
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            if (!$input || !isset($input['projectId'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ']);
+                return;
+            }
+
+            $projectId = $input['projectId'];
+            $payments = $input['payments'] ?? [];
+
+            $success = $this->projectModel->savePayments($projectId, $payments);
+
+            if ($success) {
+                $project = $this->projectModel->find($projectId);
+                $this->logModel->addLog('Project', 'Cập nhật thanh toán', $project['name'], $_SESSION['user_name'] ?? 'System');
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Lưu thông tin thanh toán thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi lưu thông tin thanh toán']);
+            }
+        } catch (\Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * API: Xác nhận thanh toán một đợt
+     */
+    public function confirmProjectPayment() {
+        header('Content-Type: application/json');
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            if (!$input || !isset($input['id'])) {
+                echo json_encode(['status' => 'error', 'message' => 'ID không hợp lệ']);
+                return;
+            }
+
+            $success = $this->projectModel->confirmPayment($input['id']);
+
+            if ($success) {
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xác nhận thanh toán thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xác nhận thanh toán']);
+            }
         } catch (\Exception $e) {
             echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
         }
