@@ -716,38 +716,56 @@ function showToast(msg, icon = 'dtSpinner') {
     else s.style.display = 'block';
 }
 
-// Row Actions Toggle (Mockup for dots-three buttons)
-document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.btn-action');
+// Row Actions Toggle (Directly from projects.php logic for consistency)
+document.addEventListener('click', function(e) {
     const menu = document.getElementById('rowActionMenu');
-    
-    if (btn) {
-        const tr = btn.closest('tr');
-        currentRowToEdit = tr;
-        const rect = btn.getBoundingClientRect();
-        menu.style.top = (rect.bottom + window.scrollY) + 'px';
-        menu.style.left = (rect.left - 120 + window.scrollX) + 'px';
-        menu.classList.add('active');
+    if (!menu) return;
+
+    // Toggle row action menu
+    if (e.target.closest('.btn-action')) {
+        const btn = e.target.closest('.btn-action');
+        const isOpen = menu.classList.contains('open') && menu._trigger === btn;
+        menu.classList.remove('open');
+        if (!isOpen) {
+            const rect = btn.getBoundingClientRect();
+            menu.style.top  = (rect.bottom + window.scrollY + 6) + 'px';
+            
+            const menuWidth = 160;
+            let leftPos = rect.right + window.scrollX - menuWidth - 4;
+            menu.style.left = Math.max(4, leftPos) + 'px';
+            
+            menu.classList.add('open');
+            menu._trigger = btn;
+        }
         e.stopPropagation();
-    } else if (!e.target.closest('#rowActionMenu')) {
-        menu.classList.remove('active');
+        return;
+    }
+
+    if (e.target.closest('.ram-item')) {
+        const item = e.target.closest('.ram-item');
+        const tr = menu._trigger ? menu._trigger.closest('tr') : null;
+        menu.classList.remove('open');
+
+        if (tr) {
+            if (item.classList.contains('ram-view')) {
+                openCustomerDetail(tr);
+            } else if (item.classList.contains('ram-edit')) {
+                openEditCustomerModal(tr);
+            } else if (item.classList.contains('ram-delete')) {
+                rowToDelete = tr;
+                const name = tr.querySelector('.cell-main').textContent.trim();
+                document.getElementById('cdmCustomerName').textContent = name;
+                document.getElementById('confirmDeleteModal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        return;
+    }
+
+    if (!e.target.closest('#rowActionMenu')) {
+        menu.classList.remove('open');
     }
 });
-
-document.querySelector('.ram-view').onclick = () => {
-    document.getElementById('rowActionMenu').classList.remove('active');
-    openCustomerDetail(currentRowToEdit);
-};
-document.querySelector('.ram-edit').onclick = () => {
-    document.getElementById('rowActionMenu').classList.remove('active');
-    openEditCustomerModal(currentRowToEdit);
-};
-document.querySelector('.ram-delete').onclick = () => {
-    document.getElementById('rowActionMenu').classList.remove('active');
-    rowToDelete = currentRowToEdit;
-    document.getElementById('cdmCustomerName').textContent = rowToDelete.querySelector('.cell-main').textContent;
-    document.getElementById('confirmDeleteModal').classList.add('active');
-};
 </script>
 
 <?php include APP_DIR . '/Views/partials/footer.php'; ?>
