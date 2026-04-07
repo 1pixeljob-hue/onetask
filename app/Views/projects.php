@@ -217,17 +217,6 @@
                 </div>
             </div>
             
-            <div class="modal-row" id="legacyCustomerFields">
-                <div class="modal-field">
-                    <label class="modal-label">Tên Khách Hàng (Dự phòng)</label>
-                    <input type="text" class="modal-input" id="mCustomerName" placeholder="VD: Nguyễn Văn A">
-                </div>
-                <div class="modal-field">
-                    <label class="modal-label">Số Điện Thoại</label>
-                    <input type="text" class="modal-input" id="mCustomerPhone" placeholder="VD: 0912345678">
-                </div>
-            </div>
-
             <!-- Section 3: Thông Tin Quản Trị -->
             <div class="modal-section-header with-border">
                 <span class="modal-section-title">Thông Tin Quản Trị</span>
@@ -759,30 +748,32 @@ function openEditProjectModal(tr) {
     document.getElementById('mProjectStatus').value = status;
     document.getElementById('mProjectDesc').value = desc;
     document.getElementById('mProjectDate').value = rawDate;
-    document.getElementById('mCustomerName').value = customer;
-    document.getElementById('mCustomerPhone').value = phone;
     document.getElementById('mAdminLink').value = adminUrl;
     document.getElementById('mAdminUser').value = adminUser;
     document.getElementById('adminPassword').value = adminPass;
     document.getElementById('projectValue').value = value;
+    updateProjectValueDisplay(document.getElementById('projectValue'));
+
+    // Set Customer Dropdown
+    const custId = tr.getAttribute('data-customer-id');
+    const custInput = document.getElementById('mProjectCustomerId');
+    const custTrigger = document.querySelector('#mProjectCustomerSelect .pj-modal-select-trigger span');
     
-    // Set customer selection
-    const customerId = tr.getAttribute('data-customer-id') || '';
-    const customerSelect = document.getElementById('mProjectCustomerSelect');
-    const customerHiddenInput = document.getElementById('mProjectCustomerId');
-    customerHiddenInput.value = customerId;
-    
-    const customerOption = customerSelect.querySelector(`.pj-dropdown-item[data-value="${customerId}"]`);
-    const customerTrigger = customerSelect.querySelector('.pj-modal-select-trigger span');
-    if (customerOption) {
-        customerTrigger.textContent = customerOption.querySelector('span').textContent.trim();
-        customerSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
-        customerOption.classList.add('active');
+    if (custId) {
+        custInput.value = custId;
+        const customer = (typeof CUSTOMERS !== 'undefined') ? CUSTOMERS.find(c => c.id == custId) : null;
+        if (customer) {
+            custTrigger.textContent = customer.name;
+        } else {
+            // Fallback to name from row if customer not found in list
+            custTrigger.textContent = tr.querySelector('.provider-info span')?.textContent || 'Chọn khách hàng...';
+        }
     } else {
-        customerTrigger.textContent = '-- Không chọn --';
+        custInput.value = '';
+        custTrigger.textContent = 'Chọn khách hàng...';
     }
 
-    // Update Custom Select UI for Status
+    // Set Status Dropdown
     const customSelect = document.getElementById('mProjectStatusSelect');
     const option = customSelect.querySelector(`.pj-dropdown-item[data-value="${status}"]`);
     if (option) {
@@ -1023,8 +1014,6 @@ function getFormData() {
     const desc = document.getElementById('mProjectDesc').value.trim();
     const date = document.getElementById('mProjectDate').value;
     const customerId = document.getElementById('mProjectCustomerId').value;
-    const customer = document.getElementById('mCustomerName').value.trim();
-    const phone = document.getElementById('mCustomerPhone').value.trim();
     const adminUrl = document.getElementById('mAdminLink').value.trim();
     const adminUser = document.getElementById('mAdminUser').value.trim();
     const adminPass = document.getElementById('adminPassword').value;
@@ -1034,8 +1023,8 @@ function getFormData() {
     if (!name) { showToast('Vui lòng nhập tên dự án!', 'error'); markError('mProjectName'); return null; }
     if (!date) { showToast('Vui lòng chọn ngày tạo!', 'error'); markError('mProjectDate'); return null; }
     
-    if (!customerId && !customer) { 
-        showToast('Vui lòng chọn hoặc nhập tên khách hàng!', 'error'); 
+    if (!customerId) { 
+        showToast('Vui lòng chọn khách hàng từ danh sách!', 'error'); 
         markError('mProjectCustomerSelect', true); 
         return null; 
     }
@@ -1055,8 +1044,6 @@ function getFormData() {
         status, 
         desc, 
         date, 
-        customer, 
-        phone, 
         customer_id: customerId,
         admin_url: adminUrl, 
         admin_user: adminUser, 
@@ -1131,7 +1118,6 @@ function populateRow(row, data) {
     row.setAttribute('data-id', data.id || '');
     row.setAttribute('data-status', data.status);
     row.setAttribute('data-desc', data.desc);
-    row.setAttribute('data-phone', data.phone);
     row.setAttribute('data-customer-id', data.customer_id || '');
     row.setAttribute('data-admin-url', adminUrlVal);
     row.setAttribute('data-admin-user', data.adminUser || '');
@@ -1171,7 +1157,6 @@ function populateRow(row, data) {
 function openProjectDetail(tr) {
     currentRowToEdit = tr;
     const name = tr.querySelector('.cell-main').textContent.trim();
-    const customerName = tr.querySelector('.provider-info span').textContent.trim();
     const customerId = tr.getAttribute('data-customer-id');
     const date = tr.querySelector('.date-info').textContent.trim();
     const statusBadge = tr.querySelector('.status-badge');
@@ -1207,7 +1192,7 @@ function openProjectDetail(tr) {
         // Fallback to legacy data
         dpCustName.textContent = tr.querySelector('.provider-info span').textContent;
         dpCustBadge.innerHTML = '';
-        dpCustPhone.innerHTML = `<i class="ph ph-phone"></i> ${tr.getAttribute('data-phone') || 'N/A'}`;
+        dpCustPhone.innerHTML = `<i class="ph ph-phone"></i> N/A`;
         dpCustDetails.style.display = 'none';
     }
     // Admin Info
@@ -1336,8 +1321,9 @@ function resetProjectForm() {
         custSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
     }
     document.getElementById('mProjectCustomerId').value = '';
-    document.getElementById('mCustomerName').value = '';
-    document.getElementById('mCustomerPhone').value = '';
+    document.querySelector('#mProjectCustomerSelect .pj-modal-select-trigger span').textContent = 'Chọn khách hàng...';
+    
+    document.getElementById('mAdminLink').value = '';
     document.getElementById('milestoneTotalValue').textContent = 'Tổng: 0 VNĐ';
 
     document.getElementById('projectValueDisplay').textContent = '0 VNĐ';
