@@ -15,8 +15,6 @@
             project_payments: <?php echo json_encode($project_payments ?? []); ?>,
             customers: <?php echo json_encode($customers ?? []); ?>
         };
-        const PROJECTS = PHP_DATA.projects;
-        const CUSTOMERS = PHP_DATA.customers;
     </script>
     <script src="/js/shared-data.js?v=<?php echo time(); ?>"></script>
 </head>
@@ -151,7 +149,7 @@
             <div class="modal-field full">
                 <label class="modal-label">Trạng Thái <span class="req">*</span></label>
                 <div class="pj-modal-select" id="mProjectStatusSelect" data-input-id="mProjectStatus">
-                    <div class="pj-modal-select-trigger" onclick="togglePjModalSelect(this)">
+                    <div class="pj-modal-select-trigger">
                         <span>Lên Kế Hoạch</span>
                         <i class="ph ph-caret-down trigger-chevron"></i>
                     </div>
@@ -196,7 +194,7 @@
             <div class="modal-field full">
                 <label class="modal-label">Chọn Khách Hàng <span class="req">*</span></label>
                 <div class="pj-modal-select" id="mProjectCustomerSelect" data-input-id="mProjectCustomerId">
-                    <div class="pj-modal-select-trigger" onclick="togglePjModalSelect(this)">
+                    <div class="pj-modal-select-trigger">
                         <span>Chọn khách hàng...</span>
                         <i class="ph ph-caret-down trigger-chevron"></i>
                     </div>

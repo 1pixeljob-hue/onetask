@@ -251,6 +251,7 @@ const RAW_HOSTINGS = (typeof PHP_DATA !== 'undefined' && PHP_DATA.hostings) ? PH
 
 // Định dạng lại giá trị số vì PHP json_encode có thể trả về string cho DECIMAL
 var PROJECTS = (typeof RAW_PROJECTS !== 'undefined') ? RAW_PROJECTS.map(p => ({ ...p, value: parseFloat(p.value) || 0 })) : [];
+var CUSTOMERS = (typeof PHP_DATA !== 'undefined' && PHP_DATA.customers) ? PHP_DATA.customers : [];
 var HOSTINGS = (typeof RAW_HOSTINGS !== 'undefined') ? RAW_HOSTINGS.map(h => ({ 
     ...h, 
     price: parseFloat(h.price) || 0,
