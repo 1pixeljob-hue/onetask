@@ -1017,6 +1017,11 @@ async function updateProject() {
     }
 }
 
+function getFormData() {
+    const name = document.getElementById('mProjectName').value.trim();
+    const status = document.getElementById('mProjectStatus').value;
+    const desc = document.getElementById('mProjectDesc').value.trim();
+    const date = document.getElementById('mProjectDate').value;
     const customerId = document.getElementById('mProjectCustomerId').value;
     const customer = document.getElementById('mCustomerName').value.trim();
     const phone = document.getElementById('mCustomerPhone').value.trim();
@@ -1059,6 +1064,7 @@ async function updateProject() {
         value, 
         milestones 
     };
+}
 
 function populateRow(row, data) {
     const statusInfo = {
