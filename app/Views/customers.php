@@ -76,7 +76,7 @@
                                 <th>THÔNG TIN LIÊN HỆ</th>
                                 <th>CÔNG TY / MST</th>
                                 <th>NGÀY TẠO</th>
-                                <th width="80" class="text-center">THAO TÁC</th>
+                                <th width="130" class="text-center" style="white-space: nowrap;">THAO TÁC</th>
                             </tr>
                         </thead>
                         <tbody id="customerTableBody">

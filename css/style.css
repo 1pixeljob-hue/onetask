@@ -1154,6 +1154,82 @@ body {
     border-color: var(--primary-light);
 }
 
+/* --- Direct Table Action Buttons (Premium) --- */
+.pj-table-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+    width: max-content;
+    margin: 0 auto;
+}
+
+.btn-table-action {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    background-color: #fff;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 18px;
+    position: relative;
+    padding: 0;
+}
+
+.btn-table-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.btn-table-action.view:hover {
+    background-color: #eff6ff;
+    color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.btn-table-action.edit:hover {
+    background-color: #ecfdf5;
+    color: #10b981;
+    border-color: #10b981;
+}
+
+.btn-table-action.delete:hover {
+    background-color: #fef2f2;
+    color: #ef4444;
+    border-color: #ef4444;
+}
+
+.btn-table-action::after {
+    content: attr(title);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    padding: 5px 10px;
+    background: #1e293b;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s;
+    z-index: 100;
+}
+
+.btn-table-action:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
 /* Bulk Action Bar */
 .bulk-action-bar {
     position: fixed;
