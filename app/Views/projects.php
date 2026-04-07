@@ -1169,6 +1169,7 @@ function populateRow(row, data) {
 }
 
 function openProjectDetail(tr) {
+    currentRowToEdit = tr;
     const name = tr.querySelector('.cell-main').textContent.trim();
     const customerName = tr.querySelector('.provider-info span').textContent.trim();
     const customerId = tr.getAttribute('data-customer-id');
