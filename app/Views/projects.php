@@ -1457,7 +1457,12 @@ function renderProjectPayments(data, projectId) {
     const payments = data.payments || [];
     const stats = data.stats || { total_paid: 0, total_milestone_value: 0 };
     
-    const projectValue = parseInt(currentRowToEdit.getAttribute('data-value')) || 0;
+    // Use currentRowToEdit if available, otherwise fallback to 0
+    let projectValue = 0;
+    if (currentRowToEdit && typeof currentRowToEdit.getAttribute === 'function') {
+        projectValue = parseInt(currentRowToEdit.getAttribute('data-value')) || 0;
+    }
+    
     const totalPaid = parseInt(stats.total_paid) || 0;
     const progressPercent = projectValue > 0 ? Math.min(100, Math.round((totalPaid / projectValue) * 100)) : 0;
     const remaining = Math.max(0, projectValue - totalPaid);
@@ -1487,6 +1492,19 @@ function renderProjectPayments(data, projectId) {
     } else {
         payments.forEach(p => {
             const isPaid = p.status === 'paid';
+            let paidDateHtml = '';
+            
+            if (isPaid && p.paid_at) {
+                try {
+                    const parts = p.paid_at.split(' ');
+                    const datePart = parts[0] ? formatDateVN(parts[0]) : '';
+                    const timePart = parts[1] ? parts[1].substring(0, 5) : '';
+                    paidDateHtml = `<div class="milestone-paid-date">${datePart} ${timePart}</div>`;
+                } catch (e) {
+                    console.error('Error formatting date:', e);
+                }
+            }
+
             html += `
                 <div class="milestone-item-row">
                     <div class="milestone-info">
@@ -1498,7 +1516,7 @@ function renderProjectPayments(data, projectId) {
                             <div class="status-paid-badge">
                                 <i class="ph ph-check-circle"></i>
                                 Đã thanh toán
-                                ${p.paid_at ? `<div class="milestone-paid-date">${formatDateVN(p.paid_at.split(' ')[0])} ${p.paid_at.split(' ')[1].substring(0, 5)}</div>` : ''}
+                                ${paidDateHtml}
                             </div>
                         ` : `
                             <button class="btn-confirm-paid" onclick="confirmPayment(${p.id}, ${projectId})">
