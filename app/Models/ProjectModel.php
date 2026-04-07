@@ -264,11 +264,44 @@ class ProjectModel {
 
     /**
      * Xác nhận thanh toán cho một đợt
+     * Tính năng mới: Tự động hoàn thành dự án nếu tất cả các đợt đã thanh toán
      */
     public function confirmPayment($paymentId) {
+        // 1. Lấy project_id từ đợt thanh toán
+        $stmt = $this->db->prepare("SELECT project_id FROM project_payments WHERE id = :id");
+        $stmt->execute([':id' => $paymentId]);
+        $payment = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$payment) return false;
+        $projectId = $payment['project_id'];
+
+        // 2. Cập nhật trạng thái đợt thanh toán
         $sql = "UPDATE project_payments SET status = 'paid', paid_at = NOW() WHERE id = :id";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([':id' => $paymentId]);
+        $success = $stmt->execute([':id' => $paymentId]);
+
+        if ($success) {
+            // 3. Kiểm tra xem tất cả các đợt của dự án này đã thanh toán chưa
+            $stmt = $this->db->prepare("SELECT COUNT(*) as unpaid FROM project_payments WHERE project_id = :pid AND status != 'paid'");
+            $stmt->execute([':pid' => $projectId]);
+            $unpaidCount = $stmt->fetch(PDO::FETCH_ASSOC)['unpaid'];
+
+            $projectCompleted = false;
+            if ($unpaidCount == 0) {
+                // 4. Cập nhật trạng thái dự án sang 'done'
+                $stmt = $this->db->prepare("UPDATE projects SET status = 'done' WHERE id = :pid");
+                $stmt->execute([':pid' => $projectId]);
+                $projectCompleted = true;
+            }
+
+            return [
+                'success' => true,
+                'projectCompleted' => $projectCompleted,
+                'projectId' => $projectId
+            ];
+        }
+
+        return false;
     }
 
     /**

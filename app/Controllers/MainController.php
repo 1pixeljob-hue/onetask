@@ -1034,10 +1034,24 @@ class MainController extends BaseController {
                 return;
             }
 
-            $success = $this->projectModel->confirmPayment($input['id']);
+            $result = $this->projectModel->confirmPayment($input['id']);
 
-            if ($success) {
-                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Xác nhận thanh toán thành công']);
+            if ($result && isset($result['success']) && $result['success']) {
+                $message = 'Xác nhận thanh toán thành công';
+                
+                if ($result['projectCompleted']) {
+                    $project = $this->projectModel->find($result['projectId']);
+                    $projectName = $project['name'] ?? 'Project #' . $result['projectId'];
+                    $this->logModel->addLog('Project', 'Hoàn thành', $projectName, $_SESSION['user_name'] ?? 'System', 'Dự án tự động hoàn thành do các phí đã được thanh toán đầy đủ.');
+                    $message .= '. Dự án đã được chuyển sang trạng thái Hoàn thành';
+                }
+
+                echo json_encode([
+                    'status' => 'success', 
+                    'success' => true, 
+                    'message' => $message,
+                    'projectCompleted' => $result['projectCompleted']
+                ]);
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Lỗi khi xác nhận thanh toán']);
             }
