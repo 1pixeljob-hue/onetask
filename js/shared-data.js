@@ -511,16 +511,23 @@ function formatDateVN(dateStr) {
  * Global toggle for .pj-modal-select components
  */
 window.togglePjModalSelect = function(trigger) {
+    if (!trigger) return;
     const dropdown = trigger.closest('.pj-modal-select');
     if (!dropdown) return;
     
-    // Close all others
+    const isOpen = dropdown.classList.contains('open');
+    
+    // Close all other dropdowns
     document.querySelectorAll('.pj-modal-select.open').forEach(d => {
         if (d !== dropdown) d.classList.remove('open');
     });
     
     // Toggle current
-    dropdown.classList.toggle('open');
+    if (isOpen) {
+        dropdown.classList.remove('open');
+    } else {
+        dropdown.classList.add('open');
+    }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
