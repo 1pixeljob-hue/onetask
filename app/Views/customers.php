@@ -259,19 +259,7 @@
     </div>
 </div>
 
-<!-- Row Action Menu -->
-<div class="row-action-menu" id="rowActionMenu">
-    <button class="ram-item ram-view">
-        <i class="ph ph-eye"></i> Xem Chi Tiết
-    </button>
-    <button class="ram-item ram-edit">
-        <i class="ph ph-pencil-simple"></i> Chỉnh Sửa
-    </button>
-    <div class="ram-divider"></div>
-    <button class="ram-item ram-delete">
-        <i class="ph ph-trash"></i> Xóa
-    </button>
-</div>
+<!-- Row Action Menu Removed (Replaced by direct buttons) -->
 
 <!-- Toast & Confirm Delete -->
 <div class="delete-toast" id="deleteToast">
@@ -394,7 +382,19 @@ function populateRow(row, data) {
             ${data.tax_id ? `<div class="cell-sub" style="font-size: 11px; margin-top: 2px;">MST: ${data.tax_id}</div>` : ''}
         </td>
         <td><div class="date-info"><i class="ph ph-calendar-blank"></i> ${formattedDate}</div></td>
-        <td class="text-center"><button class="btn-action"><i class="ph ph-dots-three"></i></button></td>
+        <td class="text-center">
+            <div class="pj-table-actions">
+                <button class="btn-table-action view" onclick="openCustomerDetail(this.closest('tr'))" title="Xem">
+                    <i class="ph ph-eye"></i>
+                </button>
+                <button class="btn-table-action edit" onclick="openEditCustomerModal(this.closest('tr'))" title="Sửa">
+                    <i class="ph ph-pencil-simple"></i>
+                </button>
+                <button class="btn-table-action delete" onclick="deleteCustomerFromRow(this.closest('tr'))" title="Xóa">
+                    <i class="ph ph-trash"></i>
+                </button>
+            </div>
+        </td>
     `;
 }
 
@@ -716,38 +716,11 @@ function showToast(msg, icon = 'dtSpinner') {
     else s.style.display = 'block';
 }
 
-// Row Actions Toggle (Mockup for dots-three buttons)
-document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.btn-action');
-    const menu = document.getElementById('rowActionMenu');
-    
-    if (btn) {
-        const tr = btn.closest('tr');
-        currentRowToEdit = tr;
-        const rect = btn.getBoundingClientRect();
-        menu.style.top = (rect.bottom + window.scrollY) + 'px';
-        menu.style.left = (rect.left - 120 + window.scrollX) + 'px';
-        menu.classList.add('active');
-        e.stopPropagation();
-    } else if (!e.target.closest('#rowActionMenu')) {
-        menu.classList.remove('active');
-    }
-});
-
-document.querySelector('.ram-view').onclick = () => {
-    document.getElementById('rowActionMenu').classList.remove('active');
-    openCustomerDetail(currentRowToEdit);
-};
-document.querySelector('.ram-edit').onclick = () => {
-    document.getElementById('rowActionMenu').classList.remove('active');
-    openEditCustomerModal(currentRowToEdit);
-};
-document.querySelector('.ram-delete').onclick = () => {
-    document.getElementById('rowActionMenu').classList.remove('active');
-    rowToDelete = currentRowToEdit;
-    document.getElementById('cdmCustomerName').textContent = rowToDelete.querySelector('.cell-main').textContent;
+function deleteCustomerFromRow(tr) {
+    rowToDelete = tr;
+    document.getElementById('cdmCustomerName').textContent = tr.querySelector('.cell-main').textContent;
     document.getElementById('confirmDeleteModal').classList.add('active');
-};
+}
 </script>
 
 <?php include APP_DIR . '/Views/partials/footer.php'; ?>
