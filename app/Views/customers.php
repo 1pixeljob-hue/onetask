@@ -642,6 +642,11 @@ function deleteCustomerFromDetail() {
     document.getElementById('confirmDeleteModal').classList.add('active');
 }
 
+function openEditCustomerFromDetail() {
+    closeDetailCustomerModalBtn();
+    openEditCustomerModal(currentRowToEdit);
+}
+
 function closeConfirmDeleteBtn() {
     document.getElementById('confirmDeleteModal').classList.remove('active');
 }
