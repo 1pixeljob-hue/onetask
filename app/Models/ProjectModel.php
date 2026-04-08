@@ -136,6 +136,18 @@ class ProjectModel {
     }
 
     /**
+     * Cập nhật trạng thái dự án
+     */
+    public function updateStatus($id, $status) {
+        $sql = "UPDATE projects SET status = :status WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id' => $id,
+            ':status' => $status
+        ]);
+    }
+
+    /**
      * Xóa dự án
      */
     public function delete($id) {

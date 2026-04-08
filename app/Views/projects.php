@@ -1147,7 +1147,7 @@ function populateRow(row, data) {
             <div class="date-info text-main"><i class="ph ph-calendar-blank"></i> ${formattedDate}</div>
         </td>
         <td>
-            <span class="status-badge ${s.cls}">
+            <span class="status-badge ${s.cls} clickable" onclick="openStatusPicker(event, ${data.id})">
                 <i class="ph ${s.icon}"></i>
                 ${s.label}
             </span>
@@ -1574,7 +1574,107 @@ function filterCustomerSelect(input) {
         }
     });
 }
+// === STATUS PICKER LOGIC ===
+let currentStatusPickerId = null;
+
+function openStatusPicker(e, projectId) {
+    e.stopPropagation();
+    currentStatusPickerId = projectId;
+    
+    const picker = document.getElementById('projectStatusPicker');
+    const badge = e.currentTarget;
+    const rect = badge.getBoundingClientRect();
+    
+    // Position picker
+    picker.style.top = (rect.bottom + window.scrollY + 5) + 'px';
+    picker.style.left = (rect.left + window.scrollX) + 'px';
+    picker.classList.add('active');
+    
+    // Highlight current status
+    const currentStatus = badge.closest('tr').getAttribute('data-status');
+    picker.querySelectorAll('.status-picker-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.status === currentStatus);
+    });
+}
+
+async function selectNewStatus(status) {
+    if (!currentStatusPickerId) return;
+    const id = currentStatusPickerId;
+    document.getElementById('projectStatusPicker').classList.remove('active');
+
+    showToast('Đang cập nhật trạng thái...');
+    try {
+        const response = await fetch('/projects/status/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id, status: status })
+        });
+        const result = await response.json();
+        
+        if (result.status === 'success' || result.success) {
+            showToast('Cập nhật trạng thái thành công!', 'success');
+            // Update the row UI
+            const tr = document.querySelector(`.data-table tr[data-id="${id}"]`);
+            if (tr) {
+                // We could call populateRow or just manually update the badge
+                // Manual update is smoother:
+                tr.setAttribute('data-status', status);
+                
+                const statusInfo = {
+                    'planning': { cls: 'planning', icon: 'ph-calendar-blank', label: 'Lên Kế Hoạch' },
+                    'doing': { cls: 'doing', icon: 'ph-clock', label: 'Đang Thực Hiện' },
+                    'testing': { cls: 'testing', icon: 'ph-circle-dashed', label: 'Chờ Nghiệm Thu' },
+                    'done': { cls: 'done', icon: 'ph-check-circle', label: 'Hoàn Thành' },
+                    'paused': { cls: 'paused', icon: 'ph-pause-circle', label: 'Tạm Dừng' }
+                };
+                const s = statusInfo[status];
+                const badge = tr.querySelector('.status-badge');
+                if (badge && s) {
+                    badge.className = `status-badge ${s.cls} clickable`;
+                    badge.innerHTML = `<i class="ph ${s.icon}"></i> ${s.label}`;
+                }
+                
+                // If status is 'done', we might want to refresh to see the automation (like payments)
+                // but for simple status change, UI update is enough.
+                if (status === 'done') {
+                    setTimeout(() => location.reload(), 1000);
+                }
+            }
+        } else {
+            showToast('Lỗi: ' + (result.message || 'Không xác định'), 'error');
+        }
+    } catch (err) {
+        console.error(err);
+        showToast('Có lỗi xảy ra khi kết nối máy chủ.', 'error');
+    }
+}
+
+// Global click to close picker
+document.addEventListener('click', () => {
+    const picker = document.getElementById('projectStatusPicker');
+    if (picker) picker.classList.remove('active');
+});
+
 </script>
     <?php include APP_DIR . '/Views/partials/footer.php'; ?>
+
+    <!-- Status Picker Dropdown -->
+    <div id="projectStatusPicker" class="status-picker-menu">
+        <div class="status-picker-item" data-status="planning" onclick="selectNewStatus('planning')">
+            <span class="status-dot planning"></span> Lên Kế Hoạch
+        </div>
+        <div class="status-picker-item" data-status="doing" onclick="selectNewStatus('doing')">
+            <span class="status-dot doing"></span> Đang Thực Hiện
+        </div>
+        <div class="status-picker-item" data-status="testing" onclick="selectNewStatus('testing')">
+            <span class="status-dot testing"></span> Chờ Nghiệm Thu
+        </div>
+        <div class="status-picker-item" data-status="done" onclick="selectNewStatus('done')">
+            <span class="status-dot done"></span> Hoàn Thành
+        </div>
+        <div class="status-picker-item" data-status="paused" onclick="selectNewStatus('paused')">
+            <span class="status-dot paused"></span> Tạm Dừng
+        </div>
+    </div>
 </body>
 </html>

@@ -24,6 +24,7 @@ $router->add('/projects/delete', 'App\Controllers\MainController', 'deleteProjec
 $router->add('/projects/bulk-delete', 'App\Controllers\MainController', 'deleteProjectsBulk');
 $router->add('/projects/payments', 'App\Controllers\MainController', 'getProjectPayments');
 $router->add('/projects/payments/confirm', 'App\Controllers\MainController', 'confirmProjectPayment');
+$router->add('/projects/status/update', 'App\Controllers\MainController', 'updateStatus');
 $router->add('/customers/save', 'App\Controllers\MainController', 'saveCustomer');
 $router->add('/customers/delete', 'App\Controllers\MainController', 'deleteCustomer');
 $router->add('/customers/bulk-delete', 'App\Controllers\MainController', 'deleteCustomersBulk');

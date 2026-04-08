@@ -974,6 +974,44 @@ class MainController extends BaseController {
     }
 
     /**
+     * API: Cập nhật trạng thái dự án (Quick Update)
+     */
+    public function updateStatus() {
+        header('Content-Type: application/json');
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            $id = $input['id'] ?? null;
+            $status = $input['status'] ?? null;
+
+            if (!$id || !$status) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu thiếu ID hoặc Trạng thái']);
+                return;
+            }
+
+            $oldData = $this->projectModel->find($id);
+            $success = $this->projectModel->updateStatus($id, $status);
+
+            if ($success) {
+                $statusLabels = [
+                    'planning' => 'Lên Kế Hoạch',
+                    'doing' => 'Đang Thực Hiện',
+                    'testing' => 'Chờ Nghiệm Thu',
+                    'done' => 'Hoàn Thành',
+                    'paused' => 'Tạm Dừng'
+                ];
+                $label = $statusLabels[$status] ?? $status;
+                $this->logModel->addLog('Project', 'Cập nhật trạng thái', "Thay đổi trạng thái dự án \"{$oldData['name']}\" thành \"{$label}\"", $_SESSION['user_name'] ?? 'System');
+                
+                echo json_encode(['status' => 'success', 'success' => true, 'message' => 'Cập nhật trạng thái thành công']);
+            } else {
+                echo json_encode(['status' => 'error', 'success' => false, 'message' => 'Lỗi khi cập nhật trạng thái']);
+            }
+        } catch (\Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+    /**
      * API: Lấy danh sách đợt thanh toán của dự án
      */
     public function getProjectPayments() {
