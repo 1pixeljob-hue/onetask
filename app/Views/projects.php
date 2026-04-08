@@ -76,12 +76,12 @@
                                 <i class="ph ph-caret-down"></i>
                             </button>
                             <div class="pj-dropdown" id="filterDropdown">
-                                <div class="pj-dropdown-item active" onclick="setFilter('', 'Lọc bởi trạng thái', this)">Tất cả</div>
-                                <div class="pj-dropdown-item" onclick="setFilter('planning', 'Lên Kế Hoạch', this)">Lên Kế Hoạch</div>
-                                <div class="pj-dropdown-item" onclick="setFilter('doing', 'Đang Thực Hiện', this)">Đang Thực Hiện</div>
-                                <div class="pj-dropdown-item" onclick="setFilter('testing', 'Chờ Nghiệm Thu', this)">Chờ Nghiệm Thu</div>
-                                <div class="pj-dropdown-item" onclick="setFilter('done', 'Hoàn Thành', this)">Hoàn Thành</div>
-                                <div class="pj-dropdown-item" onclick="setFilter('paused', 'Tạm Dừng', this)">Tạm Dừng</div>
+                                <div class="pj-dropdown-item active" data-value="" onclick="setFilter('', 'Lọc bởi trạng thái', this)">Tất cả</div>
+                                <div class="pj-dropdown-item" data-value="planning" onclick="setFilter('planning', 'Lên Kế Hoạch', this)">Lên Kế Hoạch</div>
+                                <div class="pj-dropdown-item" data-value="doing" onclick="setFilter('doing', 'Đang Thực Hiện', this)">Đang Thực Hiện</div>
+                                <div class="pj-dropdown-item" data-value="testing" onclick="setFilter('testing', 'Chờ Nghiệm Thu', this)">Chờ Nghiệm Thu</div>
+                                <div class="pj-dropdown-item" data-value="done" onclick="setFilter('done', 'Hoàn Thành', this)">Hoàn Thành</div>
+                                <div class="pj-dropdown-item" data-value="paused" onclick="setFilter('paused', 'Tạm Dừng', this)">Tạm Dừng</div>
                             </div>
                         </div>
                         <button class="pj-add-btn" onclick="openAddProjectModal()">
@@ -455,6 +455,7 @@ let selectedProjects = new Set();
 let currentPage = 1;
 const itemsPerPage = 10;
 let filteredProjects = [];
+const PROJECTS = (typeof PHP_DATA !== 'undefined' && PHP_DATA.projects) ? PHP_DATA.projects : [];
 
 function clearErrors() {
     document.querySelectorAll('.modal-input-error').forEach(el => el.classList.remove('modal-input-error'));
@@ -571,9 +572,10 @@ function toggleFilterDropdown() {
 }
 function setFilter(val, label, el) {
     document.getElementById('filterLabel').textContent = label;
-    document.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
+    const filterDropdown = document.getElementById('filterDropdown');
+    filterDropdown.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
     el.classList.add('active');
-    document.getElementById('filterDropdown').classList.remove('open');
+    filterDropdown.classList.remove('open');
     
     // Reset selection and page
     deselectAllProjects();
@@ -599,7 +601,8 @@ function initProjectsTable() {
     tbody.innerHTML = '';
     
     // Get current filter and search
-    const statusFilter = document.querySelector('.pj-dropdown-item.active').dataset.value || '';
+    const statusFilterBtn = document.querySelector('#filterDropdown .pj-dropdown-item.active');
+    const statusFilter = statusFilterBtn ? (statusFilterBtn.dataset.value || '') : '';
     const searchVal = document.getElementById('p_search_v2').value.toLowerCase();
     
     // Apply filters
