@@ -199,6 +199,10 @@
                         <i class="ph ph-caret-down trigger-chevron"></i>
                     </div>
                     <div class="pj-modal-select-menu pj-dropdown" style="width: 100%; right: auto; left: 0; max-height: 250px; overflow-y: auto;">
+                        <div class="pj-dropdown-search-wrap" onclick="event.stopPropagation()">
+                            <i class="ph ph-magnifying-glass"></i>
+                            <input type="text" class="pj-dropdown-search" placeholder="Tìm kiếm khách hàng..." oninput="filterCustomerSelect(this)">
+                        </div>
                         <div class="pj-dropdown-item active" data-value="">
                             <span>-- Không chọn --</span>
                         </div>
@@ -1316,7 +1320,12 @@ function resetProjectForm() {
     const custSelect = document.getElementById('mProjectCustomerSelect');
     if (custSelect) {
         custSelect.querySelector('.pj-modal-select-trigger span').textContent = 'Chọn khách hàng...';
-        custSelect.querySelectorAll('.pj-dropdown-item').forEach(i => i.classList.remove('active'));
+        custSelect.querySelectorAll('.pj-dropdown-item').forEach(i => {
+            i.classList.remove('active');
+            i.style.display = 'flex'; // Reset visibility
+        });
+        const searchInput = custSelect.querySelector('.pj-dropdown-search');
+        if (searchInput) searchInput.value = '';
     }
     document.getElementById('mProjectCustomerId').value = '';
     document.querySelector('#mProjectCustomerSelect .pj-modal-select-trigger span').textContent = 'Chọn khách hàng...';
@@ -1543,6 +1552,27 @@ async function confirmPayment(paymentId, projectId) {
         console.error(err);
         showToast('Có lỗi xảy ra khi kết nối máy chủ.', 'error');
     }
+}
+// === SEARCH FILTER FOR CUSTOMER SELECT ===
+function filterCustomerSelect(input) {
+    const filter = input.value.toLowerCase().trim();
+    const dropdown = input.closest('.pj-modal-select-menu');
+    const items = dropdown.querySelectorAll('.pj-dropdown-item');
+    
+    items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        // Skip the "-- Không chọn --" item if filter is active
+        if (item.getAttribute('data-value') === "" && filter !== "") {
+            item.style.display = 'none';
+            return;
+        }
+        
+        if (text.includes(filter)) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    });
 }
 </script>
     <?php include APP_DIR . '/Views/partials/footer.php'; ?>

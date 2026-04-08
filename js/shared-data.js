@@ -527,6 +527,16 @@ window.togglePjModalSelect = function(trigger) {
         dropdown.classList.remove('open');
     } else {
         dropdown.classList.add('open');
+        
+        // --- NEW: Handle Search Input Reset ---
+        const searchInput = dropdown.querySelector('.pj-dropdown-search');
+        if (searchInput) {
+            searchInput.value = '';
+            // Manually trigger filter logic (in case it's defined on the input itself)
+            searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+            // Focus for better UX
+            setTimeout(() => searchInput.focus(), 100);
+        }
     }
 };
 
