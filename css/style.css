@@ -3242,7 +3242,7 @@ body {
 }
 
 .projects-table th:nth-child(2) {
-    width: 34%;
+    width: 28%;
 }
 
 .projects-table th:nth-child(3) {
@@ -3262,7 +3262,7 @@ body {
 }
 
 .projects-table th:nth-child(7) {
-    width: 8%;
+    width: 14%;
 }
 
 .project-info-cell {
