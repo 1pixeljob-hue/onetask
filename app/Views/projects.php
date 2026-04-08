@@ -455,7 +455,6 @@ let selectedProjects = new Set();
 let currentPage = 1;
 const itemsPerPage = 10;
 let filteredProjects = [];
-const PROJECTS = (typeof PHP_DATA !== 'undefined' && PHP_DATA.projects) ? PHP_DATA.projects : [];
 
 function clearErrors() {
     document.querySelectorAll('.modal-input-error').forEach(el => el.classList.remove('modal-input-error'));
