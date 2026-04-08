@@ -425,6 +425,13 @@ class MainController extends BaseController {
                 return;
             }
 
+            // Kiểm tra trùng tên khách hàng (case-insensitive)
+            $existing = $this->customerModel->findByName($input['name'], $input['id'] ?? null);
+            if ($existing) {
+                echo json_encode(['status' => 'error', 'message' => 'Tên khách hàng này đã tồn tại trong hệ thống.']);
+                return;
+            }
+
             if (isset($input['id']) && $input['id']) {
                 $oldData = $this->customerModel->find($input['id']);
                 $success = $this->customerModel->update($input['id'], $input);

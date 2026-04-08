@@ -96,4 +96,20 @@ class CustomerModel {
         $stmt = $this->db->prepare("DELETE FROM customers WHERE id IN ($placeholders)");
         return $stmt->execute(array_values($ids));
     }
+    /**
+     * Tìm khách hàng theo tên (kiểm tra trùng)
+     */
+    public function findByName($name, $excludeId = null) {
+        $sql = "SELECT * FROM customers WHERE LOWER(name) = LOWER(:name)";
+        $params = [':name' => $name];
+        
+        if ($excludeId) {
+            $sql .= " AND id != :excludeId";
+            $params[':excludeId'] = $excludeId;
+        }
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
