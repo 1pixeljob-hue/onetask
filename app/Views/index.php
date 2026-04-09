@@ -836,44 +836,56 @@
                     const diffHours = Math.floor(diffMins / 60);
                     const diffDays = Math.floor(diffHours / 24);
 
-                    if (diffMins < 1) return 'VỪA XONG';
-                    if (diffMins < 60) return `${diffMins} PHÚT TRƯỚC`;
-                    if (diffHours < 24) return `${diffHours} GIỜ TRƯỚC`;
-                    if (diffDays === 1) return 'HÔM QUA';
+                    if (diffMins < 1) return 'Vừa xong';
+                    if (diffMins < 60) return `${diffMins} phút trước`;
+                    if (diffHours < 24) return `${diffHours} giờ trước`;
+                    if (diffDays === 1) return 'Hôm qua';
                     return past.toLocaleDateString('vi-VN');
                 }
 
+                const moduleConfig = {
+                    'Project': { label: 'Dự án', icon: 'ph-briefcase', tagClass: 'tag-project', iconClass: 'icon-project', color: '#3b82f6' },
+                    'Hosting': { label: 'Hosting', icon: 'ph-hard-drives', tagClass: 'tag-hosting', iconClass: 'icon-hosting', color: '#10b981' },
+                    'Passwords': { label: 'Bảo mật', icon: 'ph-lock', tagClass: 'tag-security', iconClass: 'icon-security', color: '#ef4444' },
+                    'CodeX': { label: 'Thảo luận', icon: 'ph-code', tagClass: 'tag-discussion', iconClass: 'icon-discussion', color: '#8b5cf6' },
+                    'Report': { label: 'Báo cáo', icon: 'ph-file-text', tagClass: 'tag-report', iconClass: 'icon-report', color: '#0ea5e9' }
+                };
+
                 let actHtml = '';
                 logs.forEach(log => {
-                    const userName = log.user_name || 'quy';
+                    const userName = log.user_name || 'Hệ thống';
                     const userInitial = userName.substring(0, 1).toUpperCase();
+                    const config = moduleConfig[log.module] || { label: 'Hệ thống', icon: 'ph-gear', tagClass: 'tag-system', iconClass: 'icon-system', color: '#64748b' };
 
-                    // Module mapping
-                    const moduleMap = {
-                        'Project': 'dự án',
-                        'Hosting': 'hosting',
-                        'Passwords': 'passwords',
-                        'CodeX': 'codex'
-                    };
-                    const moduleName = moduleMap[log.module] || (log.module ? log.module.toLowerCase() : '');
-
-                    // Get random color for avatar if not existing
+                    // Avatar colors
                     const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
                     const colorIndex = userName.length % colors.length;
-                    const avatarColor = colors[colorIndex];
+                    const avatarColor = log.module === 'Passwords' ? '#fff1f2' : (log.user_name ? colors[colorIndex] : '#f1f5f9');
+                    const textColor = log.user_name ? '#fff' : '#64748b';
+
+                    // Special case for system/security alerts in the image
+                    const isSystem = log.module === 'Passwords' || !log.user_name;
 
                     actHtml += `
-                    <div class="activity-item-v3">
-                        <div class="activity-avatar" style="background: ${avatarColor}">
-                            ${userInitial}
+                    <div class="activity-item-premium" onclick="location.href='/logs'">
+                        <div class="activity-avatar-wrap">
+                            <div class="activity-avatar-inner" style="background: ${avatarColor}; color: ${textColor}">
+                                ${isSystem && !log.user_name ? '<i class="ph-fill ph-warning-diamond" style="color: #ef4444; font-size: 24px;"></i>' : userInitial}
+                            </div>
+                            <div class="activity-badge-icon">
+                                <i class="ph ${config.icon} ${config.iconClass}"></i>
+                            </div>
                         </div>
-                        <div class="activity-details">
-                            <p>
-                                <b style="color: #1e293b;">${userName}</b> đã ${log.action.toLowerCase()}${moduleName ? ' ' + moduleName : ''} 
-                                <span class="activity-link">${log.item_name}</span>
-                            </p>
-                            <span class="activity-time">${timeAgo(log.created_at)}</span>
+                        <div class="activity-content">
+                            <div class="activity-user-info">
+                                <span class="activity-user-name">${userName}</span>
+                                <span class="activity-tag-premium ${config.tagClass}">${config.label}</span>
+                            </div>
+                            <div class="activity-description">
+                                đã ${log.action.toLowerCase()} <b>${log.item_name}</b>
+                            </div>
                         </div>
+                        <div class="activity-time-right">${timeAgo(log.created_at)}</div>
                     </div>
                     `;
                 });
