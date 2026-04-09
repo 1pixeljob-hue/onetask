@@ -25,6 +25,7 @@ class ProjectModel {
                         p.admin_url as adminUrl, 
                         p.admin_user as adminUser, 
                         p.admin_pass as adminPass,
+                        p.handover_link,
                         c.name as customer_name,
                         p.date as created_at_alt,
                         (SELECT COALESCE(SUM(amount), 0) FROM project_payments WHERE project_id = p.id AND status = 'paid') as total_paid
@@ -70,8 +71,8 @@ class ProjectModel {
      * Thêm dự án mới
      */
     public function create($data) {
-        $sql = "INSERT INTO projects (name, link, status, description, date, customer, phone, customer_id, admin_url, admin_user, admin_pass, value) 
-                VALUES (:name, :link, :status, :description, :date, :customer, :phone, :customer_id, :admin_url, :admin_user, :admin_pass, :value)";
+        $sql = "INSERT INTO projects (name, link, status, description, date, customer, phone, customer_id, admin_url, admin_user, admin_pass, value, handover_link) 
+                VALUES (:name, :link, :status, :description, :date, :customer, :phone, :customer_id, :admin_url, :admin_user, :admin_pass, :value, :handover_link)";
         $stmt = $this->db->prepare($sql);
         // Lấy admin_url từ nhiều nguồn để tránh bị rỗng (ưu tiên admin_url -> adminUrl -> link)
         $adminUrl = !empty($data['admin_url']) ? $data['admin_url'] : (!empty($data['adminUrl']) ? $data['adminUrl'] : ($data['link'] ?? ''));
@@ -90,7 +91,8 @@ class ProjectModel {
             ':admin_url' => $adminUrl,
             ':admin_user' => $adminUser,
             ':admin_pass' => $adminPass,
-            ':value' => $data['value'] ?? 0
+            ':value' => $data['value'] ?? 0,
+            ':handover_link' => $data['handover_link'] ?? null
         ]);
     }
 
@@ -110,7 +112,8 @@ class ProjectModel {
                 admin_url = :admin_url, 
                 admin_user = :admin_user, 
                 admin_pass = :admin_pass, 
-                value = :value 
+                value = :value,
+                handover_link = :handover_link 
                 WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         // Lấy admin_url từ nhiều nguồn để tránh bị rỗng (ưu tiên admin_url -> adminUrl -> link)
@@ -131,7 +134,8 @@ class ProjectModel {
             ':admin_url' => $adminUrl,
             ':admin_user' => $adminUser,
             ':admin_pass' => $adminPass,
-            ':value' => $data['value'] ?? 0
+            ':value' => $data['value'] ?? 0,
+            ':handover_link' => $data['handover_link'] ?? null
         ]);
     }
 
@@ -198,6 +202,7 @@ class ProjectModel {
             p.admin_url as adminUrl, 
             p.admin_user as adminUser, 
             p.admin_pass as adminPass,
+            p.handover_link,
             c.name as customer_name,
             c.phone as customer_phone,
             c.email as customer_email,

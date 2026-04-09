@@ -229,19 +229,14 @@
                 <input type="text" class="modal-input" id="mAdminLink" placeholder="VD: https://example.com/admin">
             </div>
 
-            <div class="modal-row">
-                <div class="modal-field">
-                    <label class="modal-label">Tài Khoản Admin</label>
-                    <input type="text" class="modal-input" id="mAdminUser" placeholder="VD: admin">
                 </div>
-                <div class="modal-field">
-                    <label class="modal-label">Mật Khẩu Admin</label>
-                    <div class="modal-input-group">
-                        <input type="password" class="modal-input" id="adminPassword" placeholder="********">
-                        <button type="button" class="modal-input-icon-btn" onclick="togglePasswordVisibility('adminPassword', this)">
-                            <i class="ph ph-eye"></i>
-                        </button>
-                    </div>
+            </div>
+
+            <div class="modal-field full">
+                <label class="modal-label">Link Bàn Giao Dự Án</label>
+                <div class="modal-input-group">
+                    <i class="ph ph-handshake modal-input-prefix"></i>
+                    <input type="text" class="modal-input with-prefix" id="mHandoverLink" placeholder="VD: https://docs.google.com/delivery-link">
                 </div>
             </div>
 
@@ -389,6 +384,24 @@
                         <button class="btn-copy-small" onclick="copyTextFrom('dpAdminPass')">
                             <i class="ph ph-copy"></i>
                         </button>
+                    </div>
+                </div>
+
+                <div class="detail-group" id="dpHandoverGroup" style="display: none;">
+                    <span class="detail-label">Link Bàn Giao</span>
+                    <div class="detail-copy-row">
+                        <div class="detail-copy-field">
+                            <i class="ph ph-handshake"></i>
+                            <span id="dpHandoverLink" style="color: var(--primary-color); font-weight: 600;">https://...</span>
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <button class="btn-copy-small" onclick="copyTextFrom('dpHandoverLink')" title="Sao chép link">
+                                <i class="ph ph-copy"></i>
+                            </button>
+                            <a id="dpHandoverBtn" href="#" target="_blank" class="btn-copy-small" title="Mở link bàn giao" style="display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                                <i class="ph ph-arrow-square-out"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -645,6 +658,7 @@ function initProjectsTable() {
     pageData.forEach((p) => {
         try {
             const tr = document.createElement('tr');
+            tr.setAttribute('data-handover-link', p.handover_link || '');
             populateRow(tr, p);
             tr.onclick = (e) => {
                 if (!e.target.closest('input') && !e.target.closest('button')) {
@@ -740,6 +754,7 @@ function openEditProjectModal(tr) {
     const adminUrl = tr.getAttribute('data-admin-url') || '';
     const adminUser = tr.getAttribute('data-admin-user') || '';
     const adminPass = tr.getAttribute('data-admin-pass') || '';
+    const handoverLink = tr.getAttribute('data-handover-link') || '';
     const value = tr.getAttribute('data-value') || 0;
     
     // Get raw date (DD/MM/YYYY -> YYYY-MM-DD)
@@ -755,6 +770,7 @@ function openEditProjectModal(tr) {
     document.getElementById('mAdminLink').value = adminUrl;
     document.getElementById('mAdminUser').value = adminUser;
     document.getElementById('adminPassword').value = adminPass;
+    document.getElementById('mHandoverLink').value = handoverLink;
     document.getElementById('projectValue').value = value;
     updateProjectValueDisplay(document.getElementById('projectValue'));
 
@@ -1021,6 +1037,7 @@ function getFormData() {
     const adminUrl = document.getElementById('mAdminLink').value.trim();
     const adminUser = document.getElementById('mAdminUser').value.trim();
     const adminPass = document.getElementById('adminPassword').value;
+    const handoverLink = document.getElementById('mHandoverLink').value.trim();
     const value = parseInt(document.getElementById('projectValue').value) || 0;
 
     clearErrors();
@@ -1053,6 +1070,7 @@ function getFormData() {
         admin_user: adminUser, 
         admin_pass: adminPass, 
         value, 
+        handover_link: handoverLink,
         milestones 
     };
 }
@@ -1208,6 +1226,22 @@ function openProjectDetail(tr) {
     document.getElementById('dpAdminUser').textContent = adminUser;
     document.getElementById('dpAdminPass').textContent = adminPass;
 
+    // Handover Link
+    const handoverLink = tr.getAttribute('data-handover-link');
+    const handoverGroup = document.getElementById('dpHandoverGroup');
+    const handoverText = document.getElementById('dpHandoverLink');
+    const handoverBtn = document.getElementById('dpHandoverBtn');
+    
+    if (handoverLink && handoverLink.trim() !== '') {
+        handoverGroup.style.display = 'block';
+        handoverText.textContent = handoverLink;
+        handoverBtn.href = handoverLink;
+    } else {
+        handoverGroup.style.display = 'none';
+        handoverText.textContent = '...';
+        handoverBtn.href = '#';
+    }
+
     // Status
     const statusContainer = document.getElementById('dpStatusBadge');
     statusContainer.innerHTML = `<span class="${statusBadge.className}">${statusBadge.innerHTML}</span>`;
@@ -1333,6 +1367,7 @@ function resetProjectForm() {
     document.querySelector('#mProjectCustomerSelect .pj-modal-select-trigger span').textContent = 'Chọn khách hàng...';
     
     document.getElementById('mAdminLink').value = '';
+    document.getElementById('mHandoverLink').value = '';
     document.getElementById('milestoneTotalValue').textContent = 'Tổng: 0 VNĐ';
 
     document.getElementById('projectValueDisplay').textContent = '0 VNĐ';
