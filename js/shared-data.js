@@ -640,6 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. Notification Dropdown Logic - Handled inline in header.php for robustness
     const notifDropdown = document.getElementById('notifDropdown');
     const notifWrapper = document.getElementById('notifDropdownWrapper');
+    const notifCloseBtn = document.getElementById('notifCloseBtn');
 
 
     if (notifCloseBtn && notifDropdown) {

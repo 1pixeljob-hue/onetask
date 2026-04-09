@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="/css/style.css?v=<?php echo time(); ?>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="/css/datepicker.css?v=<?php echo time(); ?>">
+    <script src="/js/datepicker.js?v=<?php echo time(); ?>"></script>
     <script>
         // Data injected from PHP Models
         const PHP_DATA = {
@@ -963,23 +965,7 @@ function closeAddProjectModalOverlay(e) {
     if (e.target === document.getElementById('addProjectModal')) closeAddProjectModal();
 }
 
-function togglePasswordVisibility(inputId, btn) {
-    const input = document.getElementById(inputId);
-    const icon = btn.querySelector('i');
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.classList.replace('ph-eye', 'ph-eye-slash');
-    } else {
-        input.type = 'password';
-        icon.classList.replace('ph-eye-slash', 'ph-eye');
-    }
-}
 
-function updateProjectValueDisplay(input) {
-    const display = document.getElementById('projectValueDisplay');
-    const val = parseInt(input.value) || 0;
-    display.textContent = val.toLocaleString('vi-VN') + ' VNĐ';
-}
 
 function submitProjectForm() {
     if (currentActionMode === 'add') {
@@ -1386,11 +1372,16 @@ function resetProjectForm() {
     
     // Reset password field type
     const passInput = document.getElementById('adminPassword');
-    passInput.type = 'password';
-    const icon = passInput.nextElementSibling.querySelector('i');
-    if (icon) {
-        icon.classList.remove('ph-eye-slash');
-        icon.classList.add('ph-eye');
+    if (passInput) {
+        passInput.type = 'password';
+        const nextEl = passInput.nextElementSibling;
+        if (nextEl) {
+            const icon = nextEl.querySelector('i');
+            if (icon) {
+                icon.classList.remove('ph-eye-slash');
+                icon.classList.add('ph-eye');
+            }
+        }
     }
 }
 
