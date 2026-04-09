@@ -228,7 +228,19 @@
                 <label class="modal-label">Đường Dẫn Admin</label>
                 <input type="text" class="modal-input" id="mAdminLink" placeholder="VD: https://example.com/admin">
             </div>
-
+            <div class="modal-row">
+                <div class="modal-field">
+                    <label class="modal-label">Tài Khoản Admin</label>
+                    <input type="text" class="modal-input" id="mAdminUser" placeholder="VD: admin">
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Mật Khẩu Admin</label>
+                    <div class="modal-input-group">
+                        <input type="password" class="modal-input" id="adminPassword" placeholder="********">
+                        <button type="button" class="modal-input-icon-btn" onclick="togglePasswordVisibility('adminPassword', this)">
+                            <i class="ph ph-eye"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
